@@ -8,9 +8,11 @@ Credits to:
 
 gigi - For helping with the api in terms of structure and higher level functionality.
 
-ACB,Harboe - For their work in the original GWCA and GWLP:R projects, the reverse work done then set the base for this (as well as all) Gw APIs.
+ACB,Harboe - For their work in the original GWCA project, most agentarray and ctogs functions are derived from this work
 
-Miracle444,TheArkanaProject - Work done in the GWA2 Project, as well as GWLP:R for Miracle.
+ACB,_rusty,miracle44 - GWLP:R work with StoC packets, StoC handler derived form the GWLP Dumper
+
+Miracle444,TheArkanaProject - Work done in the GWA2 Project.
 
 ## Usage ##
 

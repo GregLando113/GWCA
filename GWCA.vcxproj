@@ -55,8 +55,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{37ABFEBA-D5E8-4A84-86EE-722B46FAA7F2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>API</RootNamespace>
-    <ProjectName>API</ProjectName>
+    <RootNamespace>GWCA</RootNamespace>
+    <ProjectName>GWCA</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -83,12 +83,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>API_d</TargetName>
+    <TargetName>GWCA_d</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
     <IncludePath>Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>API_r</TargetName>
+    <TargetName>GWCA_r</TargetName>
     <IncludePath>Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)</OutDir>
   </PropertyGroup>

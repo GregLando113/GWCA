@@ -13,7 +13,7 @@
 		 \____/\/  \/ \____/\_| |_/            
                                 
 
-		Created by KAOS (a.k.a. 4D 1) for use in GWToolbox++
+		Created by KAOS (a.k.a. 4D 1) and gigi for use in GWToolbox++
 		
 		Credits to:
 		
@@ -30,7 +30,7 @@
 			Zraw menu/api which acted as a gateway to get a grasp of cpp as well
 			as directx.
 			
-		Has - 
+		gigi - 
 			For getting me to not make everything singletons :P
 		
    Permission is hereby granted, free of charge, to any person obtaining a copy

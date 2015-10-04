@@ -77,11 +77,11 @@
     <ClCompile Include="GWCA\GuildMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\disasm\ld32.c">
-      <Filter>disasm</Filter>
-    </ClCompile>
     <ClCompile Include="GWCA\PatternScanner.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\disasm\ld32.c">
+      <Filter>disasm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

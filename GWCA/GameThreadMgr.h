@@ -13,26 +13,8 @@ namespace GWAPI{
 	// Shoutouts to DarthTon @ unknowncheats.me for this class.
 
 	class GameThreadMgr{
-
-		friend class GWAPIMgr;
-
-		GWAPIMgr* const parent_;
-
-		bool render_state_;
-
-		Hook hk_game_thread_;
-
-		void RestoreHooks();
-
-		std::vector<std::function<void(void)> > calls_;
-		std::vector<std::function<void(void)> > calls_permanent_;
-		mutable std::mutex call_vector_mutex_;
-
-		GameThreadMgr(GWAPIMgr* obj);
-		~GameThreadMgr();
-
 	public:
-		
+
 		// For use only in gameloop hook.
 		void __stdcall CallFunctions();
 
@@ -54,6 +36,25 @@ namespace GWAPI{
 		static void gameLoopHook();
 		static void renderHook();
 		void ToggleRenderHook();
+
+	private:
+
+		friend class GWAPIMgr;
+
+		GWAPIMgr* const parent_;
+
+		bool render_state_;
+
+		Hook hk_game_thread_;
+
+		void RestoreHooks();
+
+		std::vector<std::function<void(void)> > calls_;
+		std::vector<std::function<void(void)> > calls_permanent_;
+		mutable std::mutex call_vector_mutex_;
+
+		GameThreadMgr(GWAPIMgr* obj);
+		~GameThreadMgr();
 	};
 
 }

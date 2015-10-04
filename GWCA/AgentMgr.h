@@ -7,34 +7,6 @@
 namespace GWAPI {
 
 	class AgentMgr {
-		AgentMgr(GWAPIMgr* obj);
-		~AgentMgr();
-
-		friend class GWAPIMgr;
-		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID,DWORD smth);
-		struct MovePosition {
-			float X;
-			float Y;
-			DWORD ZPlane; // Ground in gwapi.
-		};
-		typedef void(__fastcall *Move_t)(MovePosition* Pos);
-
-		GWAPIMgr* const parent_;
-
-		ChangeTarget_t change_target_;
-
-		
-		Hook hk_dialog_log_;
-
-		void RestoreHooks();
-
-		static BYTE* dialog_log_ret_;
-		static DWORD last_dialog_id_;
-		static void detourDialogLog();
-
-		Move_t move_;
-
-
 	public:
 
 		// Get AgentArray Structures of player or target.
@@ -122,6 +94,34 @@ namespace GWAPI {
 
 		// Returns the profession as short string, e.g. "W" for warrior
 		const char* GetProfessionAcronym(GwConstants::Profession profession);
+
+	private:
+		AgentMgr(GWAPIMgr* obj);
+		~AgentMgr();
+
+		friend class GWAPIMgr;
+		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID,DWORD smth);
+		struct MovePosition {
+			float X;
+			float Y;
+			DWORD ZPlane; // Ground in gwapi.
+		};
+		typedef void(__fastcall *Move_t)(MovePosition* Pos);
+
+		GWAPIMgr* const parent_;
+
+		ChangeTarget_t change_target_;
+
+		
+		Hook hk_dialog_log_;
+
+		void RestoreHooks();
+
+		static BYTE* dialog_log_ret_;
+		static DWORD last_dialog_id_;
+		static void detourDialogLog();
+
+		Move_t move_;
 	};
 
 }

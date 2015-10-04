@@ -339,7 +339,7 @@ GWAPI::GW::Item* GWAPI::MerchantMgr::GetMerchantItemByModelId(DWORD modelid)
 		GW::ItemArray itemstructs = parent_->Items()->GetItemArray();
 		if (!itemstructs.valid()) throw API_EXCEPTION;
 
-		ItemRowArray merchitems = GetMerchantItemsArray();
+		GW::ItemRowArray merchitems = GetMerchantItemsArray();
 		if (!merchitems.valid()) throw API_EXCEPTION;
 
 		for (DWORD i = 0; i < merchitems.size(); i++){
@@ -354,9 +354,9 @@ GWAPI::GW::Item* GWAPI::MerchantMgr::GetMerchantItemByModelId(DWORD modelid)
 	return NULL;
 }
 
-GWAPI::MerchantMgr::ItemRowArray GWAPI::MerchantMgr::GetMerchantItemsArray()
+GWAPI::GW::ItemRowArray GWAPI::MerchantMgr::GetMerchantItemsArray()
 {
-	ItemRowArray ret = *MemoryMgr::ReadPtrChain<ItemRowArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x24);
+	GW::ItemRowArray ret = *MemoryMgr::ReadPtrChain<GW::ItemRowArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x24);
 
 	if (!ret.valid()) throw API_EXCEPTION;
 

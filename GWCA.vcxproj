@@ -53,7 +53,7 @@
     <ClCompile Include="GWCA\SkillbarMgr.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{37ABFEBA-D5E8-4A84-86EE-722B46FAA7F2}</ProjectGuid>
+    <ProjectGuid>{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GWCA</RootNamespace>
     <ProjectName>GWCA</ProjectName>
@@ -85,11 +85,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>GWCA_d</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
-    <IncludePath>Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
+    <IncludePath>Dependencies\DirectX\Include;Dependencies\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>GWCA_r</TargetName>
-    <IncludePath>Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
+    <IncludePath>Dependencies\DirectX\Include;Dependencies\;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

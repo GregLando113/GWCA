@@ -2,7 +2,7 @@
 
 Another C++ API to interface with the Guild Wars client.
 
-by 4D 1 (KAOS) initially for use in GWToolbox++
+by 4D 1 and gigi initially for use in GWToolbox++
 
 Credits to:
 

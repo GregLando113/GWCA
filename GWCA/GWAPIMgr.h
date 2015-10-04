@@ -9,6 +9,13 @@ namespace GWAPI {
 	const APIException_t API_EXCEPTION = 1;
 
 	class GWAPIMgr {
+	public:
+
+		static bool Initialize();
+		static GWAPIMgr* instance();
+		static void Destruct();
+
+	private:
 
 		static bool init_sucessful_;
 		static GWAPIMgr* instance_;
@@ -39,30 +46,28 @@ namespace GWAPI {
 		GuildMgr* guild_;
 #ifdef GWAPI_USEDIRECTX
 		DirectXMgr* directx_;
-
 #endif
 		
 		GWAPIMgr();
 		~GWAPIMgr();
+
 	public:
 
-		inline GameThreadMgr* Gamethread() const { return gamethread_; }
-		inline CtoSMgr* CtoS() const { return ctos_; }
-		inline AgentMgr* Agents() const { return agents_; }
-		inline ItemMgr* Items() const { return items_; }
-		inline SkillbarMgr* Skillbar() const { return skillbar_; }
-		inline EffectMgr* Effects() const { return effects_; }
-		inline ChatMgr* Chat() const { return chat_; }
-		inline MerchantMgr* Merchant() const { return merchant_; }
-		inline GuildMgr* Guild() const { return guild_; }
-		inline MapMgr* Map() const { return map_; }
+		// Module Accessors.
+		GameThreadMgr* Gamethread() const { return gamethread_; }
+		CtoSMgr* CtoS() const { return ctos_; }
+		AgentMgr* Agents() const { return agents_; }
+		ItemMgr* Items() const { return items_; }
+		SkillbarMgr* Skillbar() const { return skillbar_; }
+		EffectMgr* Effects() const { return effects_; }
+		ChatMgr* Chat() const { return chat_; }
+		MerchantMgr* Merchant() const { return merchant_; }
+		GuildMgr* Guild() const { return guild_; }
+		MapMgr* Map() const { return map_; }
 #ifdef GWAPI_USEDIRECTX
-		inline DirectXMgr* DirectX() const { return directx_; }
+		DirectXMgr* DirectX() const { return directx_; }
 #endif
 
-		static bool Initialize();
-		static GWAPIMgr* instance();
-		static void Destruct();
 	};
 
 }

@@ -1,0 +1,30 @@
+﻿Build started 10/4/2015 3:02:19 PM.
+     1>Project "F:\GW Project Folder\GWCA++\GWCA.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W3 /WX- /MP /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GWCA\Hooker.cpp
+         Hooker.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W3 /WX- /MP /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt Dependencies\disasm\ld32.c
+         ld32.c
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"F:\GW Project Folder\GWCA++\GWCA_d.lib" /NOLOGO Debug\AgentMgr.obj
+         Debug\ChatMgr.obj
+         Debug\CtoSMgr.obj
+         Debug\DirectXMgr.obj
+         Debug\ld32.obj
+         Debug\EffectMgr.obj
+         Debug\GameThreadMgr.obj
+         Debug\GuildMgr.obj
+         Debug\GWAPIMgr.obj
+         Debug\Hooker.obj
+         Debug\ItemMgr.obj
+         Debug\MapMgr.obj
+         Debug\MemoryMgr.obj
+         Debug\MerchantMgr.obj
+         Debug\PatternScanner.obj
+         Debug\SkillbarMgr.obj
+         GWCA.vcxproj -> F:\GW Project Folder\GWCA++\GWCA_d.lib
+     1>Done Building Project "F:\GW Project Folder\GWCA++\GWCA.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.87

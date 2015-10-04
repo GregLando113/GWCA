@@ -6,6 +6,30 @@
 namespace GWAPI {
 
 	namespace GW {
+		template <typename T>
+		class gw_array {
+		protected:
+			T* array_;
+			DWORD allocated_size_;
+			DWORD current_size_;
+			DWORD unknown_;
+		public:
+			T index(DWORD _index)
+			{
+				if (_index > current_size_ || _index < 0) throw 1;
+				return array_[_index];
+			}
+
+			T operator[](DWORD _index)
+			{
+				return index(_index);
+			}
+			bool valid() {
+				return array_ != NULL;
+			}
+
+			DWORD size() const { return current_size_; }
+		};
 
 		struct Agent {
 			DWORD* vtable;
@@ -148,10 +172,10 @@ namespace GWAPI {
 		};
 
 
-		typedef MemoryMgr::gw_array<MapAgent> MapAgentArray;
-		typedef MemoryMgr::gw_array<PartyMember> PartyMemberArray;
+		typedef gw_array<MapAgent> MapAgentArray;
+		typedef gw_array<PartyMember> PartyMemberArray;
 
-		class AgentArray : public MemoryMgr::gw_array < Agent* > {
+		class AgentArray : public gw_array < Agent* > {
 		public:
 			Agent* GetPlayer() { return index(GetPlayerId()); }
 			Agent* GetTarget() { return index(GetTargetId()); }
@@ -164,7 +188,7 @@ namespace GWAPI {
 		struct Bag;
 		struct Item;
 
-		typedef MemoryMgr::gw_array<Item*> ItemArray;
+		typedef gw_array<Item*> ItemArray;
 
 		struct Bag{							// total : 24 BYTEs
 			BYTE unknown1[4];					// 0000	|--4 BYTEs--|
@@ -265,7 +289,7 @@ namespace GWAPI {
 			BYTE unknown2[8];					// 00B4	|--8 BYTEs--|
 		};
 
-		typedef MemoryMgr::gw_array<Skillbar> SkillbarArray;
+		typedef gw_array<Skillbar> SkillbarArray;
 
 		struct Effect {							// total : 18 BYTEs
 			DWORD SkillId;						// 0000						skill id of the effect
@@ -288,8 +312,8 @@ namespace GWAPI {
 			static Buff Nil() { return Buff{ 0, 0, 0, 0 }; }
 		};
 
-		typedef MemoryMgr::gw_array<Effect> EffectArray;
-		typedef MemoryMgr::gw_array<Buff> BuffArray;
+		typedef gw_array<Effect> EffectArray;
+		typedef gw_array<Buff> BuffArray;
 
 
 		struct AgentEffects {
@@ -298,7 +322,7 @@ namespace GWAPI {
 			EffectArray Effects;
 		};
 
-		typedef MemoryMgr::gw_array<AgentEffects> AgentEffectsArray;
+		typedef gw_array<AgentEffects> AgentEffectsArray;
 
 
 		struct GHKey{
@@ -312,7 +336,7 @@ namespace GWAPI {
 			inline wchar_t* GetGuildTag(){ return (wchar_t*)(this + 0x80); }
 		};
 
-		typedef MemoryMgr::gw_array<Guild*> GuildArray;
+		typedef gw_array<Guild*> GuildArray;
 
 		struct MissionMapIcon { // MapOverlay from GWCA
 			long index;
@@ -327,7 +351,9 @@ namespace GWAPI {
 			void* unknown5; // May concern the name
 		};
 
-		typedef MemoryMgr::gw_array<MissionMapIcon> MissionMapIconArray;
+		typedef gw_array<MissionMapIcon> MissionMapIconArray;
+
+		typedef gw_array<DWORD> ItemRowArray;
 
 	}
 }

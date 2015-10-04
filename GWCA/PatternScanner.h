@@ -9,9 +9,6 @@ namespace GWAPI {
 	// Credits to Zat & Midi12 @ unknowncheats.me for the functionality of this class.
 
 	class PatternScanner {
-		DWORD base_;
-		DWORD size_;
-
 	public:
 
 		// Initializer to determine scan range.
@@ -22,6 +19,9 @@ namespace GWAPI {
 		// Actual pattern finder.
 		DWORD FindPattern(char* pattern, char* mask, DWORD offset);
 
+	private:
+		DWORD base_;
+		DWORD size_;
 	};
 
 }

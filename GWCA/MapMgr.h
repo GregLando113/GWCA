@@ -6,20 +6,7 @@
 
 namespace GWAPI{
 	class MapMgr{
-		GWAPIMgr* const parent_;
-		friend class GWAPIMgr;
-		struct PAB_ZoneMap {
-			const DWORD header = 0xAB;
-			DWORD mapid;
-			int region;
-			int district;
-			int language;
-			DWORD unk;
-		};
-
-		MapMgr(GWAPIMgr* obj);
 	public:
-
 
 		// Get current map ID.
 		GwConstants::MapID GetMapID();
@@ -42,5 +29,20 @@ namespace GWAPI{
 		// Returns array of icons (res shrines, quarries, traders, etc) on mission map.
 		// Look at MissionMapIcon struct for more info.
 		GW::MissionMapIconArray GetMissionMapIconArray();
+
+	private:
+		GWAPIMgr* const parent_;
+		friend class GWAPIMgr;
+		struct PAB_ZoneMap {
+			const DWORD header = 0xAB;
+			DWORD mapid;
+			int region;
+			int district;
+			int language;
+			DWORD unk;
+		};
+
+		MapMgr(GWAPIMgr* obj);
+
 	};
 }

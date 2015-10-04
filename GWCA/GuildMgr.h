@@ -6,15 +6,12 @@
 namespace GWAPI {
 
 	class GuildMgr {
-		GWAPIMgr* const parent_;
-		friend class GWAPIMgr;
-		GuildMgr(GWAPIMgr* obj) : parent_(obj) {}
 
 	public:
 
 		// Array of guilds, holds basically everything about a guild. Can get structs of all players in outpost ;)
 		GW::GuildArray GetGuildArray();
-		
+
 		// Index in guild array of player guild.
 		DWORD GetPlayerGuildIndex();
 
@@ -23,5 +20,10 @@ namespace GWAPI {
 
 		// Name of player who last edited the announcement.
 		wchar_t* GetPlayerGuildAnnouncer();
+
+	private:
+		GWAPIMgr* const parent_;
+		friend class GWAPIMgr;
+		GuildMgr(GWAPIMgr* obj) : parent_(obj) {}
 	};
 }

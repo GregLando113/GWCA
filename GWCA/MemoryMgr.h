@@ -7,31 +7,6 @@ namespace GWAPI{
 
 	struct MemoryMgr{
 
-		template <typename T>
-		class gw_array {
-		protected:
-			T* array_;
-			DWORD allocated_size_;
-			DWORD current_size_;
-			DWORD unknown_;
-		public:
-			T index(DWORD _index)
-			{
-				if (_index > current_size_ || _index < 0) throw 1;
-				return array_[_index];
-			}
-
-			T operator[](DWORD _index)
-			{
-				return index(_index);
-			}
-			bool valid(){
-				return array_ != NULL;
-			}
-
-			DWORD size() const { return current_size_; }
-		};
-
 		// Agent shit
 		static BYTE* agArrayPtr;
 		static BYTE* PlayerAgentIDPtr;

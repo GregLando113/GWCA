@@ -12,9 +12,6 @@
 namespace GWAPI {
 
 	class DirectXMgr {
-
-		DirectXMgr(GWAPIMgr* obj);
-		~DirectXMgr();
 	public:
 		typedef HRESULT(WINAPI *EndScene_t)(IDirect3DDevice9* pDevice);
 		typedef HRESULT(WINAPI *Reset_t)(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
@@ -28,6 +25,10 @@ namespace GWAPI {
 
 	private:
 		friend class GWAPIMgr;
+
+		DirectXMgr(GWAPIMgr* obj);
+		~DirectXMgr();
+
 		GWAPIMgr* const parent_;
 		EndScene_t endscene_ = NULL;
 		Reset_t reset_ = NULL;

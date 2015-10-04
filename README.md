@@ -42,7 +42,7 @@ void printCoords(){
    GWAPI::GWAPIMgr* api = GWAPI::GWAPIMgr::instance();
 
    // Get Player Agent Structure.
-   GWAPI::GW:Agent* player = api->Agents()->GetPlayer();
+   GWAPI::GW::Agent* player = api->Agents()->GetPlayer();
 
    // Print coords.
    printf("Player: %f %f",player->X,player->Y);

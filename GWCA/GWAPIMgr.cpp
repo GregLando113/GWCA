@@ -26,7 +26,7 @@ bool GWAPI::GWAPIMgr::init_sucessful_;
 
 GWAPI::GWAPIMgr* GWAPI::GWAPIMgr::instance()
 {
-	return instance_ ? instance_ : NULL;
+	return instance_;
 }
 
 GWAPI::GWAPIMgr::GWAPIMgr()

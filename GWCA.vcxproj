@@ -33,6 +33,7 @@
     <ClInclude Include="GWCA\MerchantMgr.h" />
     <ClInclude Include="GWCA\PatternScanner.h" />
     <ClInclude Include="GWCA\SkillbarMgr.h" />
+    <ClInclude Include="GWCA\StoCMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp" />
@@ -51,6 +52,7 @@
     <ClCompile Include="GWCA\MerchantMgr.cpp" />
     <ClCompile Include="GWCA\PatternScanner.cpp" />
     <ClCompile Include="GWCA\SkillbarMgr.cpp" />
+    <ClCompile Include="GWCA\StoCMgr.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{37ABFEBA-D5E8-4A84-86EE-722B46FAA7F2}</ProjectGuid>

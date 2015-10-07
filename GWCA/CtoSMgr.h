@@ -17,7 +17,7 @@ namespace GWAPI {
 		void SendPacket(T* packet)
 		{
 			DWORD size = sizeof(T);
-			parent_->Gamethread()->Enqueue(gs_send_function_, GetCtoGSObj(), size, (DWORD*)packet);
+			parent_->Gamethread()->Enqueue(gs_send_function_, MemoryMgr::GetGSObject(), size, (DWORD*)packet);
 		}
 
 
@@ -27,7 +27,6 @@ namespace GWAPI {
 		GWAPIMgr* parent_;
 
 		static SendCtoGSPacket_t gs_send_function_;
-		DWORD GetCtoGSObj();
 
 		static void __fastcall packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet);
 

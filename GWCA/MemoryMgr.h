@@ -17,7 +17,7 @@ namespace GWAPI{
 
 
 		// Send Packet Shit
-		static BYTE* CtoGSObjectPtr;
+		static BYTE* GSObjectPtr;
 		static BYTE* CtoGSSendFunction;
 
 		// Base ptr to get context ptr for gameworld
@@ -73,6 +73,8 @@ namespace GWAPI{
 
 		static BYTE* DialogFunc;
 
+		static BYTE* GStoCBase;
+
 		// Basics
 		static bool Scan();
 		template <typename T> static T ReadPtrChain(DWORD _base,DWORD _amount_of_offsets,...)
@@ -99,5 +101,6 @@ namespace GWAPI{
 		inline static DWORD GetContextPtr(){ return (*(DWORD*)BasePointerLocation) + 0x18; }
 		inline static DWORD GetSkillTimer(){ return *(DWORD*)SkillTimerPtr; }
 		inline static HWND GetGWWindowHandle(){ return *(HWND*)WinHandlePtr; }
+		inline static DWORD GetGSObject() { return **(DWORD**)(MemoryMgr::GSObjectPtr - 4); }
 	};
 }

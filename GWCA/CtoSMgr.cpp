@@ -16,17 +16,12 @@ void GWAPI::CtoSMgr::SendPacket(DWORD size, ...)
 	}
 	va_end(vl);
 
-	parent_->Gamethread()->Enqueue(packetsendintermediary, GetCtoGSObj(), size, pak);
+	parent_->Gamethread()->Enqueue(packetsendintermediary, MemoryMgr::GetGSObject(), size, pak);
 }
 
 GWAPI::CtoSMgr::CtoSMgr(GWAPIMgr* obj) : parent_(obj)
 {
 	gs_send_function_ = (SendCtoGSPacket_t)MemoryMgr::CtoGSSendFunction;
-}
-
-DWORD GWAPI::CtoSMgr::GetCtoGSObj()
-{
-	return **(DWORD**)(MemoryMgr::CtoGSObjectPtr - 4);
 }
 
 void GWAPI::CtoSMgr::packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet)

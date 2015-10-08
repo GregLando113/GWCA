@@ -26,7 +26,7 @@ bool GWAPI::GWAPIMgr::init_sucessful_;
 
 GWAPI::GWAPIMgr* GWAPI::GWAPIMgr::instance()
 {
-	return instance_ ? instance_ : NULL;
+	return instance_;
 }
 
 GWAPI::GWAPIMgr::GWAPIMgr()
@@ -45,6 +45,7 @@ GWAPI::GWAPIMgr::GWAPIMgr()
 		chat_ = new ChatMgr(this);
 		merchant_ = new MerchantMgr(this);
 		guild_ = new GuildMgr(this);
+		stoc_ = new StoCMgr(this);
 		init_sucessful_ = true;
 	}
 	else{
@@ -79,6 +80,7 @@ GWAPI::GWAPIMgr::~GWAPIMgr()
 
 	if (effects_) delete effects_;
 	if (merchant_) delete merchant_;
+	if (stoc_) delete stoc_;
 }
 
 bool GWAPI::GWAPIMgr::Initialize()

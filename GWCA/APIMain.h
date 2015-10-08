@@ -85,4 +85,6 @@
 
 #include "ChatMgr.h"
 
+#include "StoCMgr.h"
+
 #endif

@@ -33,6 +33,7 @@ namespace GWAPI {
 		friend class ChatMgr;
 		friend class MerchantMgr;
 		friend class GuildMgr;
+		friend class StoCMgr;
 
 		GameThreadMgr* gamethread_;
 		CtoSMgr* ctos_;
@@ -47,6 +48,7 @@ namespace GWAPI {
 #ifdef GWAPI_USEDIRECTX
 		DirectXMgr* directx_;
 #endif
+		StoCMgr* stoc_;
 		
 		GWAPIMgr();
 		~GWAPIMgr();
@@ -54,19 +56,20 @@ namespace GWAPI {
 	public:
 
 		// Module Accessors.
-		GameThreadMgr* Gamethread() const { return gamethread_; }
-		CtoSMgr* CtoS() const { return ctos_; }
-		AgentMgr* Agents() const { return agents_; }
-		ItemMgr* Items() const { return items_; }
-		SkillbarMgr* Skillbar() const { return skillbar_; }
-		EffectMgr* Effects() const { return effects_; }
-		ChatMgr* Chat() const { return chat_; }
-		MerchantMgr* Merchant() const { return merchant_; }
-		GuildMgr* Guild() const { return guild_; }
-		MapMgr* Map() const { return map_; }
+		inline GameThreadMgr* Gamethread() const { return gamethread_; }
+		inline CtoSMgr* CtoS() const { return ctos_; }
+		inline AgentMgr* Agents() const { return agents_; }
+		inline ItemMgr* Items() const { return items_; }
+		inline SkillbarMgr* Skillbar() const { return skillbar_; }
+		inline EffectMgr* Effects() const { return effects_; }
+		inline ChatMgr* Chat() const { return chat_; }
+		inline MerchantMgr* Merchant() const { return merchant_; }
+		inline GuildMgr* Guild() const { return guild_; }
+		inline MapMgr* Map() const { return map_; }
 #ifdef GWAPI_USEDIRECTX
-		DirectXMgr* DirectX() const { return directx_; }
+		inline DirectXMgr* DirectX() const { return directx_; }
 #endif
+		inline StoCMgr* StoC() const { return stoc_; }
 
 	};
 

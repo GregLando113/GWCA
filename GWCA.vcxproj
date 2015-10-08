@@ -15,6 +15,7 @@
     <ClInclude Include="GWCA\APIMain.h" />
     <ClInclude Include="GWCA\APIncludes.h" />
     <ClInclude Include="GWCA\ChatMgr.h" />
+    <ClInclude Include="GWCA\CommandMgr.h" />
     <ClInclude Include="GWCA\CtoSMgr.h" />
     <ClInclude Include="GWCA\DirectXMgr.h" />
     <ClInclude Include="Dependencies\disasm\ld32.h" />
@@ -38,6 +39,7 @@
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp" />
     <ClCompile Include="GWCA\ChatMgr.cpp" />
+    <ClCompile Include="GWCA\CommandMgr.cpp" />
     <ClCompile Include="GWCA\CtoSMgr.cpp" />
     <ClCompile Include="GWCA\DirectXMgr.cpp" />
     <ClCompile Include="Dependencies\disasm\ld32.c" />
@@ -55,7 +57,7 @@
     <ClCompile Include="GWCA\StoCMgr.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{37ABFEBA-D5E8-4A84-86EE-722B46FAA7F2}</ProjectGuid>
+    <ProjectGuid>{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GWCA</RootNamespace>
     <ProjectName>GWCA</ProjectName>

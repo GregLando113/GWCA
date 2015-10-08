@@ -84,5 +84,6 @@
 #include "MapMgr.h"
 
 #include "ChatMgr.h"
+#include "CommandMgr.h"
 
 #endif

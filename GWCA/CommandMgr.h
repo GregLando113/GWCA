@@ -16,7 +16,7 @@ namespace GWAPI {
 		typedef void(__fastcall *CallBack_t)(WCHAR *arg);
 
 		void RestoreHook();
-		void RegistrerKey(std::wstring key, CallBack_t callback, bool override = true);
+		void RegisterKey(std::wstring key, CallBack_t callback, bool override = true);
 		void DeleteKey(std::wstring key);
 
 	private:

@@ -33,6 +33,7 @@
     <ClInclude Include="GWCA\MerchantMgr.h" />
     <ClInclude Include="GWCA\SkillbarMgr.h" />
     <ClInclude Include="GWCA\PatternScanner.h" />
+    <ClInclude Include="GWCA\CommandMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">
@@ -82,6 +83,9 @@
     </ClCompile>
     <ClCompile Include="Dependencies\disasm\ld32.c">
       <Filter>disasm</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\CommandMgr.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

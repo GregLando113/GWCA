@@ -25,7 +25,7 @@ void GWAPI::CommandMgr::RestoreHook()
 	hooked_ = false;
 }
 
-void GWAPI::CommandMgr::RegistrerKey(std::wstring key, CallBack_t callback, bool override)
+void GWAPI::CommandMgr::RegisterKey(std::wstring key, CallBack_t callback, bool override)
 {
 	callbacks[key] = std::tuple<CallBack_t, bool>(callback, override);
 }

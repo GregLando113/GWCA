@@ -7,9 +7,9 @@
 
 namespace GWAPI {
 
-	class CommandMgr {
+	class ChatCommandMgr {
 
-		CommandMgr(GWAPIMgr *obj);
+		ChatCommandMgr(GWAPIMgr *obj);
 		
 	public:
 		typedef void(__fastcall *CommandCheck_t)(WCHAR *message);

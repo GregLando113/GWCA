@@ -34,7 +34,7 @@ void GWAPI::DirectXMgr::CreateRenderHooks(EndScene_t _endscene, Reset_t _reset)
 	}
 
 	DWORD pA1 = NULL;
-	for (int i = 0; i < (cbNeeded / sizeof(HMODULE)); ++i) {
+	for (DWORD i = 0; i < (cbNeeded / sizeof(HMODULE)); ++i) {
 		TCHAR mod_name[MAX_PATH];
 		if (!GetModuleBaseName(hProcess, hMods[i], mod_name, MAX_PATH)) {
 			printf("GetModuleBaseName failed, error %X\n", GetLastError());

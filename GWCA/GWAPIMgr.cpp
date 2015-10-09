@@ -43,7 +43,7 @@ GWAPI::GWAPIMgr::GWAPIMgr()
 		effects_ = new EffectMgr(this);
 		map_ = new MapMgr(this);
 		chat_ = new ChatMgr(this);
-		command_ = new CommandMgr(this);
+		chatcommands_ = new ChatCommandMgr(this);
 		merchant_ = new MerchantMgr(this);
 		guild_ = new GuildMgr(this);
 		stoc_ = new StoCMgr(this);
@@ -63,7 +63,7 @@ GWAPI::GWAPIMgr::~GWAPIMgr()
 	merchant_->RestoreHooks();
 	agents_->RestoreHooks();
 	effects_->RestoreHooks();
-	command_->RestoreHook();
+	chatcommands_->RestoreHook();
 
 	Gamethread()->calls_.clear();
 #ifdef GWAPI_USEDIRECTX
@@ -83,7 +83,7 @@ GWAPI::GWAPIMgr::~GWAPIMgr()
 	if (effects_) delete effects_;
 	if (merchant_) delete merchant_;
 	if (stoc_) delete stoc_;
-	if (command_) delete command_;
+	if (chatcommands_) delete chatcommands_;
 }
 
 bool GWAPI::GWAPIMgr::Initialize()

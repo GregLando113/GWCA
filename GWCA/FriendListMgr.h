@@ -19,10 +19,15 @@ namespace GWAPI {
 
 		inline DWORD getMyStatus() { return fList_->myStatus; }
 
+		void SetFriendListStatus(GwConstants::OnlineStatus status);
+
 	private:
+		typedef void(__fastcall *SetOnlineStatus_t)(DWORD status);
+		
 		friend class GWAPIMgr;
 		const GWAPIMgr* parent_;
 
+		SetOnlineStatus_t set_online_status_;
 		GWAPI::GW::FriendList* fList_;
 
 		void FindList();

@@ -30,7 +30,7 @@ namespace GwConstants {
 		None = 0xff
 	};
 
-	enum class OnlineStatus{ Offline, Online, DND, Away };
+	enum class OnlineStatus{ OFFLINE, ONLINE, DO_NOT_DISTURB, AWAY };
 
 	enum class Bag{	None,Backpack,Belt_Pouch,Bag_1,Bag_2,Equipment_Pack,
 					Material_Storage,Unclaimed_Items,Storage_1,Storage_2,

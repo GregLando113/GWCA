@@ -46,6 +46,7 @@ GWAPI::GWAPIMgr::GWAPIMgr()
 		chatcommands_ = new ChatCommandMgr(this);
 		merchant_ = new MerchantMgr(this);
 		guild_ = new GuildMgr(this);
+		fList_ = new FriendListMgr(this);
 		stoc_ = new StoCMgr(this);
 		init_sucessful_ = true;
 	}
@@ -84,6 +85,7 @@ GWAPI::GWAPIMgr::~GWAPIMgr()
 	if (merchant_) delete merchant_;
 	if (stoc_) delete stoc_;
 	if (chatcommands_) delete chatcommands_;
+	if (fList_) delete fList_;
 }
 
 bool GWAPI::GWAPIMgr::Initialize()

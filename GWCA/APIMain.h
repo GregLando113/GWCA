@@ -88,4 +88,6 @@
 
 #include "StoCMgr.h"
 
+#include "FriendListMgr.h"
+
 #endif

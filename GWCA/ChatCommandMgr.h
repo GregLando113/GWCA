@@ -7,6 +7,8 @@
 
 namespace GWAPI {
 
+	/* ChatCommandMgr class by reduf */
+	
 	class ChatCommandMgr {
 
 		ChatCommandMgr(GWAPIMgr *obj);

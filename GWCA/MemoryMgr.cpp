@@ -78,7 +78,7 @@ bool GWAPI::MemoryMgr::Scan()
 		}
 
 		// Packet Sender Stuff
-		GSObjectPtr = (BYTE*)scan.FindPattern("\x56\x33\xF6\x3B\xCE\x74\x0E\x56\x33\xD2", "xxxxxxxxxx", 0);
+		GSObjectPtr = (BYTE*)scan.FindPattern("\x56\x33\xF6\x3B\xCE\x74\x0E\x56\x33\xD2", "xxxxxxxxxx", -4);
 		if (GSObjectPtr){
 			printf("CtoGSObjectPtr = %X\n", GSObjectPtr);
 		}

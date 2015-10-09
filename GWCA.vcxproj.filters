@@ -35,6 +35,7 @@
     <ClInclude Include="GWCA\PatternScanner.h" />
     <ClInclude Include="GWCA\StoCMgr.h" />
     <ClInclude Include="GWCA\ChatCommandMgr.h" />
+    <ClInclude Include="GWCA\FriendListMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">
@@ -89,6 +90,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\ChatCommandMgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\FriendListMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

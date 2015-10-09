@@ -20,6 +20,7 @@
     <ClInclude Include="GWCA\DirectXMgr.h" />
     <ClInclude Include="Dependencies\disasm\ld32.h" />
     <ClInclude Include="GWCA\EffectMgr.h" />
+    <ClInclude Include="GWCA\FriendListMgr.h" />
     <ClInclude Include="GWCA\GameThreadMgr.h" />
     <ClInclude Include="GWCA\GuildMgr.h" />
     <ClInclude Include="GWCA\GWAPIMgr.h" />
@@ -44,6 +45,7 @@
     <ClCompile Include="GWCA\DirectXMgr.cpp" />
     <ClCompile Include="Dependencies\disasm\ld32.c" />
     <ClCompile Include="GWCA\EffectMgr.cpp" />
+    <ClCompile Include="GWCA\FriendListMgr.cpp" />
     <ClCompile Include="GWCA\GameThreadMgr.cpp" />
     <ClCompile Include="GWCA\GuildMgr.cpp" />
     <ClCompile Include="GWCA\GWAPIMgr.cpp" />
@@ -90,6 +92,7 @@
     <TargetName>GWCA_d</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
     <IncludePath>Dependencies\;Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>GWCA_r</TargetName>

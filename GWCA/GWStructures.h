@@ -355,5 +355,28 @@ namespace GWAPI {
 
 		typedef gw_array<DWORD> ItemRowArray;
 
+		struct Friend {
+			DWORD type;				// 0 = Friend, 1 = Ignore, 2 = Played, 3 = Trade
+			DWORD status;			// 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
+			WCHAR account[20];
+			WCHAR name[20];
+			DWORD index;			// Order by adding time
+			DWORD zoneId;
+		};
+
+		struct FriendList {
+			Friend **friends;		// friend list actually start at friends[1] since friends[0] == 0 (always ?)
+			DWORD arraySize;		// Actually friends is a dynamic array & size = 0x40 * n for some n
+			DWORD biggestIndex;		// ?
+			BYTE unknow[24];
+			DWORD nFriend;
+			DWORD nIgnore;
+			DWORD nPlayed;
+			DWORD nTrade;
+			BYTE unknow2[72];
+			DWORD myStatus;
+
+			inline DWORD size() { return (nFriend + nIgnore + nPlayed + nTrade); };
+		};
 	}
 }

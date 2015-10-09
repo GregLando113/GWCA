@@ -54,7 +54,7 @@
 \**********************************************************************************/
 
 // Comment out this #define to make the directx shit not compile into the project.
-#define GWAPI_USEDIRECTX
+//#define GWAPI_USEDIRECTX
 #include "Hooker.h"
 
 #include "GwConstants.h"
@@ -89,5 +89,7 @@
 #include "StoCMgr.h"
 
 #include "FriendListMgr.h"
+
+#include "CameraMgr.h"
 
 #endif

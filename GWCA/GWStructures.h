@@ -364,11 +364,11 @@ namespace GWAPI {
 			DWORD zoneId;
 		};
 
+		typedef gw_array<Friend*> FriendsListArray;
+
 		struct FriendList {
-			Friend **friends;		// friend list actually start at friends[1] since friends[0] == 0 (always ?)
-			DWORD arraySize;		// Actually friends is a dynamic array & size = 0x40 * n for some n
-			DWORD biggestIndex;		// ?
-			BYTE unknow[24];
+			FriendsListArray friends;
+			BYTE unknow[20];
 			DWORD nFriend;
 			DWORD nIgnore;
 			DWORD nPlayed;

@@ -1,12 +1,12 @@
-#include "CommandMgr.h"
+#include "ChatCommandMgr.h"
 #include "PatternScanner.h"
 
-GWAPI::CommandMgr::CommandMgr(GWAPIMgr *parent) : parent_(parent)
+GWAPI::ChatCommandMgr::ChatCommandMgr(GWAPIMgr *parent) : parent_(parent)
 {
 	CreateHook((BYTE*)NewCmdCheck);
 }
 
-void GWAPI::CommandMgr::CreateHook(BYTE *detour)
+void GWAPI::ChatCommandMgr::CreateHook(BYTE *detour)
 {
 	PatternScanner scanner(0x401000, 0x4FF000); // Can definitly be optimize but w/e
 	DWORD origin = scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
@@ -17,7 +17,7 @@ void GWAPI::CommandMgr::CreateHook(BYTE *detour)
 	hooked_ = true;
 }
 
-void GWAPI::CommandMgr::RestoreHook()
+void GWAPI::ChatCommandMgr::RestoreHook()
 {
 	if (!hooked_) return;
 	hk_cmdCheck_.Retour();
@@ -25,17 +25,17 @@ void GWAPI::CommandMgr::RestoreHook()
 	hooked_ = false;
 }
 
-void GWAPI::CommandMgr::RegisterKey(std::wstring key, CallBack_t callback, bool override)
+void GWAPI::ChatCommandMgr::RegisterKey(std::wstring key, CallBack_t callback, bool override)
 {
 	callbacks[key] = std::tuple<CallBack_t, bool>(callback, override);
 }
 
-void GWAPI::CommandMgr::DeleteKey(std::wstring key)
+void GWAPI::ChatCommandMgr::DeleteKey(std::wstring key)
 {
 	callbacks.erase(key);
 }
 
-void __fastcall GWAPI::CommandMgr::NewCmdCheck(WCHAR *message)
+void __fastcall GWAPI::ChatCommandMgr::NewCmdCheck(WCHAR *message)
 {
 	WCHAR channel = *message, *arguments = NULL;
 
@@ -46,7 +46,7 @@ void __fastcall GWAPI::CommandMgr::NewCmdCheck(WCHAR *message)
 		key = key.substr(0, fPos);
 		arguments = message + fPos;
 	}
-	CommandMgr *command = GWAPI::GWAPIMgr::instance()->Command();
+	ChatCommandMgr *command = GWAPI::GWAPIMgr::instance()->ChatCommands();
 	std::tuple<CallBack_t, bool> callback = command->callbacks[key];
 	if (std::get<0>(callback) && channel == '/')
 	{

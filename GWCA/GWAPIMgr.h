@@ -34,7 +34,7 @@ namespace GWAPI {
 		friend class MerchantMgr;
 		friend class GuildMgr;
 		friend class StoCMgr;
-		friend class CommandMgr;
+		friend class ChatCommandMgr;
 
 		GameThreadMgr* gamethread_;
 		CtoSMgr* ctos_;
@@ -44,7 +44,7 @@ namespace GWAPI {
 		EffectMgr* effects_;
 		MapMgr* map_;
 		ChatMgr* chat_;
-		CommandMgr* command_;
+		ChatCommandMgr* chatcommands_;
 		MerchantMgr* merchant_;
 		GuildMgr* guild_;
 #ifdef GWAPI_USEDIRECTX
@@ -68,7 +68,7 @@ namespace GWAPI {
 		inline MerchantMgr* Merchant() const { return merchant_; }
 		inline GuildMgr* Guild() const { return guild_; }
 		inline MapMgr* Map() const { return map_; }
-		inline CommandMgr* Command() const { return command_; }
+		inline ChatCommandMgr* ChatCommands() const { return chatcommands_; }
 
 #ifdef GWAPI_USEDIRECTX
 		inline DirectXMgr* DirectX() const { return directx_; }

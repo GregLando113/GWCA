@@ -48,6 +48,7 @@ GWAPI::GWAPIMgr::GWAPIMgr()
 		guild_ = new GuildMgr(this);
 		fList_ = new FriendListMgr(this);
 		stoc_ = new StoCMgr(this);
+		camera_ = new CameraMgr(this);
 		init_sucessful_ = true;
 	}
 	else{
@@ -86,6 +87,7 @@ GWAPI::GWAPIMgr::~GWAPIMgr()
 	if (stoc_) delete stoc_;
 	if (chatcommands_) delete chatcommands_;
 	if (fList_) delete fList_;
+	if (camera_) delete camera_;
 }
 
 bool GWAPI::GWAPIMgr::Initialize()

@@ -378,5 +378,47 @@ namespace GWAPI {
 
 			inline DWORD size() { return (nFriend + nIgnore + nPlayed + nTrade); };
 		};
+
+		struct Vector3D{
+			float x;
+			float y;
+			float z;
+		};
+
+		struct Camera {
+			DWORD unk1[2];
+			float unk2[2];
+			float maxdistance; // Max distance camera can go, usually constant @ 750 unless max zoom changed
+			float unk3;
+			float yaw; // left/right camera angle, radians w/ origin @ east
+			float pitch; // up/down camera angle, range of [-1,1]
+			float distance; // current distance from players head.
+			DWORD unk4[4];
+			float yaw_rightclick; // Only changes when you move camera using right click, keyboard movement does not effect.
+			float yaw_rightclick2; // ^
+			float pitch_rightclick; // ^
+			float distance2;
+			float accelerationconstant; // According to http://www.gamerevision.com/showthread.php?217-Guild-Wars-WorldToSreen-by-Cronos&p=20003&viewfull=1#post20003
+			float timesincelastkeyboardrotation; // In seconds it seems.
+			float timesincelastmouserotation;
+			float timesincelastmousemove;
+			float timesincelastagentselection;
+			float timeinthemap;
+			float timeinthedistrict;
+			float yaw_togo;
+			float pitch_togo;
+			float dist_togo;
+			float maxdistance2;
+			float unk5[2];
+			Vector3D camerapos;
+			Vector3D camerapos_togo;
+			Vector3D campos_inverted;
+			Vector3D campos_inverted_togo;
+			Vector3D LookAtTarget;
+			Vector3D LookAt_togo;
+			float fieldofview;
+			float fieldofview2;
+			// ...
+		};
 	}
 }

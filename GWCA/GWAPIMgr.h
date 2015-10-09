@@ -36,6 +36,7 @@ namespace GWAPI {
 		friend class StoCMgr;
 		friend class ChatCommandMgr;
 		friend class FriendListMgr;
+		friend class CameraMgr;
 
 		GameThreadMgr* gamethread_;
 		CtoSMgr* ctos_;
@@ -53,6 +54,7 @@ namespace GWAPI {
 		DirectXMgr* directx_;
 #endif
 		StoCMgr* stoc_;
+		CameraMgr* camera_;
 		
 		GWAPIMgr();
 		~GWAPIMgr();
@@ -72,6 +74,7 @@ namespace GWAPI {
 		inline MapMgr* Map() const { return map_; }
 		inline ChatCommandMgr* ChatCommands() const { return chatcommands_; }
 		inline FriendListMgr* FriendList() const { return fList_; }
+		inline CameraMgr* Camera() const { return camera_; }
 
 #ifdef GWAPI_USEDIRECTX
 		inline DirectXMgr* DirectX() const { return directx_; }

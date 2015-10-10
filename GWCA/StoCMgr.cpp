@@ -5,7 +5,7 @@ DWORD GWAPI::StoCMgr::game_server_handler_count_ = 0;
 GWAPI::StoCMgr::StoCHandler* GWAPI::StoCMgr::original_functions_ = NULL;
 std::map<DWORD, std::vector<GWAPI::StoCMgr::Handler>> GWAPI::StoCMgr::event_calls_;
 
-bool GWAPI::StoCMgr::StoCHandlerFunc(StoCPacketBase* pak, DWORD unk)
+bool GWAPI::StoCMgr::StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk)
 {
 	for (auto call : event_calls_[pak->header])
 	{

@@ -37,6 +37,7 @@
     <ClInclude Include="GWCA\ChatCommandMgr.h" />
     <ClInclude Include="GWCA\FriendListMgr.h" />
     <ClInclude Include="GWCA\CameraMgr.h" />
+    <ClInclude Include="GWCA\StoCPackets.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">

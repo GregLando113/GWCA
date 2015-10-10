@@ -9,7 +9,7 @@ namespace GWAPI {
 
 	/*
 	
-		StoC Manager v1
+		StoC Manager
 		See https://github.com/GameRevision/GWLP-R/wiki/GStoC for some already explored packets.
 	*/
 

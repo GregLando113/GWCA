@@ -23,12 +23,28 @@ namespace GWAPI {
 		struct StoCPacketBase {
 			DWORD header;
 		};
+
+		template <class Specific>
+		struct Packet : StoCPacketBase {
+		public:
+			static const DWORD STATIC_HEADER;
+		};
+
 		typedef std::function<void(StoCPacketBase*)> Handler;
 
+		template <typename T>
+		using CallbackFunc = std::function<void(T*)>;
 
 
 		/* Use this to add handlers to the stocmgr, primary function. */
-		void AddGameServerEvent(DWORD packetheader, Handler func);
+		template <typename T>
+		void AddGameServerEvent(CallbackFunc<T> handler) {
+			DWORD header = Packet<T>::STATIC_HEADER;
+			event_calls_[header].push_back([handler](StoCPacketBase* pak) {
+				handler((T*)pak);
+			});
+			game_server_handler_[header].handlerfunc = StoCHandlerFunc;
+		}
 
 	private:
 
@@ -52,7 +68,7 @@ namespace GWAPI {
 		static StoCHandler* game_server_handler_;
 		static DWORD game_server_handler_count_;
 		static StoCHandler* original_functions_;
-		static std::vector<Handler>* event_calls_;
+		static std::map<DWORD,std::vector<Handler>> event_calls_;
 		friend class GWAPIMgr;
 		GWAPIMgr* const parent_;
 	};

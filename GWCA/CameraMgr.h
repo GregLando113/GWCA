@@ -13,8 +13,11 @@ namespace GWAPI {
 		// LookAt Target (players head if not modified) of camera.
 		inline GW::Vector3D GetLookAtTarget(){ return cam_class_->LookAtTarget; }
 
-		// Yaw and Pitch in X and Y fields respectively.
-		inline GW::Vector3D GetViewAngles(){ return GW::Vector3D{ cam_class_->yaw,cam_class_->pitch}; }
+		// camera yaw in radians from east
+		inline float GetYaw() { return cam_class_->yaw; }
+
+		// camera pitch
+		inline float GetPitch() { return cam_class_->pitch; }
 
 		// Distance of camera from lookat target (player)
 		inline float GetCameraZoom() { return cam_class_->distance; }

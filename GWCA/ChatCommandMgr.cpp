@@ -25,7 +25,7 @@ void GWAPI::ChatCommandMgr::RestoreHook()
 	hooked_ = false;
 }
 
-void GWAPI::ChatCommandMgr::RegisterKey(std::wstring key, CallBack_t callback, bool override)
+void GWAPI::ChatCommandMgr::RegisterKey(std::wstring key, std::function<void(std::wstring)> callback, bool override)
 {
 	callbacks[key] = std::tuple<CallBack_t, bool>(callback, override);
 }
@@ -37,14 +37,15 @@ void GWAPI::ChatCommandMgr::DeleteKey(std::wstring key)
 
 void __fastcall GWAPI::ChatCommandMgr::NewCmdCheck(WCHAR *message)
 {
-	WCHAR channel = *message, *arguments = NULL;
+	WCHAR channel = *message;
 
-	std::wstring key(++message);
+	std::wstring key(message + 1);
+	std::wstring arguments(L"");
 	unsigned int fPos = key.find_first_of(' ');
 	if (fPos != std::wstring::npos)
 	{
 		key = key.substr(0, fPos);
-		arguments = message + fPos;
+		arguments = std::wstring(message + fPos + 2);
 	}
 	ChatCommandMgr *command = GWAPI::GWAPIMgr::instance()->ChatCommands();
 	std::tuple<CallBack_t, bool> callback = command->callbacks[key];
@@ -56,5 +57,5 @@ void __fastcall GWAPI::ChatCommandMgr::NewCmdCheck(WCHAR *message)
 			return command->cmdCheck_(L"");
 	}
 
-	return command->cmdCheck_(--message);
+	return command->cmdCheck_(message);
 }

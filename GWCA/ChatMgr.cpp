@@ -69,28 +69,11 @@ void GWAPI::ChatMgr::WriteChat(const wchar_t* msg, const wchar_t* from) {
 		(0, from, msg);
 }
 
-void GWAPI::ChatMgr::SetColor(DWORD rgb_color)
-{
-#define __itoc(number) (WCHAR)((number) < 0xA ? ((number) + '0') : ((number) + 'A' - 0xA))
-	DWORD red = (rgb_color & 0x00ff0000) >> 16;
-	DWORD green = (rgb_color & 0x0000ff00) >> 8;
-	DWORD blue = rgb_color & 0x000000ff;
-
-	WCHAR buffer[] = {
-		__itoc(red / 0x10), __itoc(red % 0x10),
-		__itoc(green / 0x10), __itoc(green % 0x10),
-		__itoc(blue / 0x10), __itoc(blue % 0x10), '\0' };
-
-	memcpy(chatlog_prefix_color, buffer, 14); /*14 = 7 * sizeof(WCHAR) */
-#undef __itoc
-}
-
 void GWAPI::ChatMgr::RegisterKey(std::wstring key, CallBack_t callback, bool override)
 {
 	chatcmd_callbacks[key] = std::tuple<CallBack_t, bool>(callback, override);
 }
 
-#define COLORS(color, str) L"<c=#" << (color) << L">" << (str) << L"</c>"
 void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless /* same as edx */)
 {
 	GWAPI::ChatMgr *chat = GWAPI::GWAPIMgr::instance()->Chat();
@@ -98,7 +81,7 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
 	std::wostringstream stream;
 
-	stream << COLORS(chat->chatlog_prefix_color, L"[20:30] ") << mInfo->message;
+	stream << L"<c=#" << std::hex << chat->chatlog_prefix_color << L">[20:30]</c> " << mInfo->message;
 	DWORD length = stream.str().length() + 1;
 	chat->chatlog_result = stream.str(); // String should free memory for old string
 
@@ -107,7 +90,6 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 
 	return chat->ori_chatlog(ecx, edx, useless);
 }
-#undef COLOR
 
 void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 {

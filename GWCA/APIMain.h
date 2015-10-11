@@ -54,7 +54,7 @@
 \**********************************************************************************/
 
 // Comment out this #define to make the directx shit not compile into the project.
-// #define GWAPI_USEDIRECTX
+#define GWAPI_USEDIRECTX
 
 #include "Hooker.h"
 

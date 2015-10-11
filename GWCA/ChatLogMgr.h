@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <string>
 #include "GWAPIMgr.h"
 
 namespace GWAPI {
@@ -24,6 +25,8 @@ namespace GWAPI {
 		void CreateHook(BYTE *detour);
 		void RestoreHook();
 		static void __fastcall NewChatLog(DWORD, DWORD, DWORD);
+
+		std::wstring buffer;
 	};
 
 }

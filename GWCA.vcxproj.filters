@@ -34,11 +34,9 @@
     <ClInclude Include="GWCA\SkillbarMgr.h" />
     <ClInclude Include="GWCA\PatternScanner.h" />
     <ClInclude Include="GWCA\StoCMgr.h" />
-    <ClInclude Include="GWCA\ChatCommandMgr.h" />
     <ClInclude Include="GWCA\FriendListMgr.h" />
     <ClInclude Include="GWCA\CameraMgr.h" />
     <ClInclude Include="GWCA\StoCPackets.h" />
-    <ClInclude Include="GWCA\ChatLogMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">
@@ -92,16 +90,10 @@
     <ClCompile Include="GWCA\StoCMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\ChatCommandMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="GWCA\FriendListMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\CameraMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\ChatLogMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

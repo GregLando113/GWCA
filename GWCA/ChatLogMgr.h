@@ -11,13 +11,16 @@ namespace GWAPI {
 		ChatLogMgr(GWAPIMgr* parent);
 
 	public:
+		void setColor(DWORD rgbColor);
 
 	private:
 		friend class GWAPIMgr;
 		GWAPIMgr* parent_;
 
-		typedef void(__fastcall *ChatLog_t)(DWORD, DWORD, DWORD);
+		std::wstring buffer;
+		WCHAR color[7];
 
+		typedef void(__fastcall *ChatLog_t)(DWORD, DWORD, DWORD);
 		ChatLog_t ChatLogOri_;
 		Hook hk_chatLog_;
 		bool hooked_;
@@ -25,8 +28,6 @@ namespace GWAPI {
 		void CreateHook(BYTE *detour);
 		void RestoreHook();
 		static void __fastcall NewChatLog(DWORD, DWORD, DWORD);
-
-		std::wstring buffer;
 	};
 
 }

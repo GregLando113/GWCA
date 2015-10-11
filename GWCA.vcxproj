@@ -15,6 +15,7 @@
     <ClInclude Include="GWCA\APIMain.h" />
     <ClInclude Include="GWCA\APIncludes.h" />
     <ClInclude Include="GWCA\CameraMgr.h" />
+    <ClInclude Include="GWCA\ChatLogMgr.h" />
     <ClInclude Include="GWCA\ChatMgr.h" />
     <ClInclude Include="GWCA\ChatCommandMgr.h" />
     <ClInclude Include="GWCA\CtoSMgr.h" />
@@ -42,6 +43,7 @@
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp" />
     <ClCompile Include="GWCA\CameraMgr.cpp" />
+    <ClCompile Include="GWCA\ChatLogMgr.cpp" />
     <ClCompile Include="GWCA\ChatMgr.cpp" />
     <ClCompile Include="GWCA\ChatCommandMgr.cpp" />
     <ClCompile Include="GWCA\CtoSMgr.cpp" />

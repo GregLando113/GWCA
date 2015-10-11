@@ -49,6 +49,7 @@ GWAPI::GWAPIMgr::GWAPIMgr()
 		fList_ = new FriendListMgr(this);
 		stoc_ = new StoCMgr(this);
 		camera_ = new CameraMgr(this);
+		chatlog_ = new ChatLogMgr(this);
 		init_sucessful_ = true;
 	}
 	else{
@@ -66,6 +67,7 @@ GWAPI::GWAPIMgr::~GWAPIMgr()
 	agents_->RestoreHooks();
 	effects_->RestoreHooks();
 	chatcommands_->RestoreHook();
+	chatlog_->RestoreHook();
 
 	Gamethread()->calls_.clear();
 #ifdef GWAPI_USEDIRECTX
@@ -88,6 +90,7 @@ GWAPI::GWAPIMgr::~GWAPIMgr()
 	if (chatcommands_) delete chatcommands_;
 	if (fList_) delete fList_;
 	if (camera_) delete camera_;
+	if (chatlog_) delete chatlog_;
 }
 
 bool GWAPI::GWAPIMgr::Initialize()

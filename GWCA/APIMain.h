@@ -86,6 +86,7 @@
 
 #include "ChatMgr.h"
 #include "ChatCommandMgr.h"
+#include "ChatLogMgr.h"
 
 #include "StoCMgr.h"
 

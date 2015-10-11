@@ -4,6 +4,7 @@
 
 GWAPI::ChatLogMgr::ChatLogMgr(GWAPIMgr* parent) : parent_(parent)
 {
+	setColor(0x00ff00);
 	CreateHook((BYTE*)NewChatLog);
 }
 
@@ -22,6 +23,22 @@ void GWAPI::ChatLogMgr::RestoreHook()
 	hk_chatLog_.Retour();
 
 	hooked_ = false;
+}
+
+void GWAPI::ChatLogMgr::setColor(DWORD rgbColor)
+{
+#define __itoc(number) (WCHAR)((number) < 0xA ? ((number) + '0') : ((number) + 'A' - 0xA))
+	DWORD red = (rgbColor & 0x00ff0000) >> 16;
+	DWORD green = (rgbColor & 0x0000ff00) >> 8;
+	DWORD blue = rgbColor & 0x000000ff;
+
+	WCHAR buffer[] = {
+		__itoc(red / 0x10), __itoc(red % 0x10),
+		__itoc(green / 0x10), __itoc(green % 0x10),
+		__itoc(blue / 0x10), __itoc(blue % 0x10), '\0'};
+
+	memcpy(color, buffer, 14); /*14 = 7 * sizeof(WCHAR) */
+#undef __itoc
 }
 
 struct MessageInfo {
@@ -47,12 +64,12 @@ void __fastcall GWAPI::ChatLogMgr::NewChatLog(DWORD ecx, DWORD edx, DWORD useles
 	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
 	std::wostringstream stream;
 
-	stream << L"<c=#ffffff>[20:30]</c> " << mInfo->message;
+	stream << L"<c=#" << chat->color << L">" << L"[30:00]" << L"</c> " << mInfo->message;
 	DWORD length = stream.str().length() + 1;
-	chat->buffer = stream.str(); // String should prevent memory leak
+	chat->buffer = stream.str(); // String should free memory for old string
 
 	mInfo->message = (WCHAR*)chat->buffer.c_str();
 	mInfo->size1 = (mInfo->size2 = length);
 
-	return chat->ChatLogOri_(ecx, useless, useless);
+	return chat->ChatLogOri_(ecx, edx, useless);
 }

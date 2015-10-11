@@ -4,6 +4,7 @@
 #include "CtoSMgr.h"
 #include "PatternScanner.h"
 #include <sstream>
+#include <iomanip>
 
 GWAPI::ChatMgr::ChatMgr(GWAPIMgr* parent) : parent_(parent)
 {
@@ -81,7 +82,8 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
 	std::wostringstream stream;
 
-	stream << L"<c=#" << std::hex << chat->chatlog_prefix_color << L">[20:30]</c> " << mInfo->message;
+	stream << L"<c=#" << std::hex << std::setw(6) << std::setfill(L'0') << chat->chatlog_prefix_color << L">[20:30]</c> ";
+	stream << mInfo->message;
 	DWORD length = stream.str().length() + 1;
 	chat->chatlog_result = stream.str(); // String should free memory for old string
 

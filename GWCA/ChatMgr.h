@@ -14,6 +14,7 @@ namespace GWAPI {
 	public:
 		
 		typedef std::function<void(std::wstring)> CallBack_t;
+		typedef unsigned int CHAT_COLOR;
 
 		// Sendchat, should be self explanatory. SendChat(L"I love gwtoolbox",L'!');
 		void SendChat(const wchar_t* msg, wchar_t channel);
@@ -35,10 +36,12 @@ namespace GWAPI {
 		GWAPIMgr* const parent_;
 
 		std::wstring chatlog_result;
-		DWORD chatlog_prefix_color;
-		DWORD chatlog_suffix_color; // unused
+		CHAT_COLOR chatlog_prefix_color;
+		CHAT_COLOR chatlog_suffix_color; // unused
 
 		std::map< std::wstring, std::tuple<CallBack_t, bool> > chatcmd_callbacks;
+
+		std::wstring RemakeMessage(const wchar_t* format, ...);
 
 		struct P5E_SendChat{
 			const DWORD header = 0x5E;

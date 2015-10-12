@@ -75,20 +75,87 @@ void GWAPI::ChatMgr::RegisterKey(std::wstring key, CallBack_t callback, bool ove
 	chatcmd_callbacks[key] = std::tuple<CallBack_t, bool>(callback, override);
 }
 
+std::wstring GWAPI::ChatMgr::RemakeMessage(const wchar_t* format, ...)
+{
+	/*
+	%xH, %xM, %xS = hours, minutes, secondes where x is a digit
+	%N = name of the sender (unimplemented)
+	%T = Text
+	%C{string} = color string, color is retrieve from argument
+	*/
+	va_list args;
+	va_start(args, format);
+	std::wostringstream buffer;
+	DWORD time = GWAPI::GWAPIMgr::instance()->Map()->GetInstanceTime() / 1000;
+
+	while (*format)
+	{
+		if (*format == '%')
+		{
+			format++;
+			DWORD width = 1;
+			if (*format > '0' && *format <= '9')
+			{
+				width = *format - '0';
+				format++;
+			}
+			switch (*format)
+			{
+				case 'H':
+				{
+					buffer << std::dec << std::setw(width) << std::setfill(L'0') << (time / 3600) % 60;
+				} break;
+				case 'M':
+				{
+					buffer << std::dec << std::setw(width) << std::setfill(L'0') << (time / 60) % 60;
+				} break;
+				case 'S':
+				{
+					buffer << std::dec << std::setw(width) << std::setfill(L'0') << time % 60;
+				} break;
+				case 'C':
+				{
+					CHAT_COLOR color = va_arg(args, CHAT_COLOR);
+					buffer << "<c=#" << std::hex << std::setw(6) << std::setfill(L'0') << color << ">";
+					format++;
+				} break;
+				case 'N':
+				{
+
+				} break;
+				case 'T':
+				{
+					wchar_t* text = va_arg(args, wchar_t*);
+					buffer << text;
+				} break;
+			}
+		}
+		else if (*format == '}')
+		{
+			if (format[1])
+				buffer << "</c>";
+		}
+		else
+		{
+			buffer << *format;
+		}
+		format++;
+	}
+
+	va_end(args);
+	return buffer.str();
+}
+
 void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless /* same as edx */)
 {
 	GWAPI::ChatMgr *chat = GWAPI::GWAPIMgr::instance()->Chat();
 	MessageInfo *mInfo = reinterpret_cast<MessageInfo*>(edx);
 	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
-	std::wostringstream stream;
-
-	stream << L"<c=#" << std::hex << std::setw(6) << std::setfill(L'0') << chat->chatlog_prefix_color << L">[20:30]</c> ";
-	stream << mInfo->message;
-	DWORD length = stream.str().length() + 1;
-	chat->chatlog_result = stream.str(); // String should free memory for old string
+	
+	chat->chatlog_result = chat->RemakeMessage(L"%C{[%2M:%2S]} %T", chat->chatlog_prefix_color, mInfo->message);
 
 	mInfo->message = (WCHAR*)chat->chatlog_result.c_str();
-	mInfo->size1 = (mInfo->size2 = length);
+	mInfo->size1 = (mInfo->size2 = chat->chatlog_result.length() + 1);
 
 	return chat->ori_chatlog(ecx, edx, useless);
 }

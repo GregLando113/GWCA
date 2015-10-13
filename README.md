@@ -34,7 +34,7 @@ To clone the repo. From here, include the project (.vcxproj) in your solution us
 
 You must always start with calling the GWCA::Initialize() function, this function is what scans memory and places hooks, creates objects, etc. It will return a boolean on if the Initialize with sucessful.
 
-Once this has been done, create a static GWCA object in whatever function you are accessing GWCA from. **Do NOT make the GWCA object a class member, global variable, or allocate the object on heap.**
+Once this has been done, create a static GWCA object in whatever function you are accessing GWCA from. **Do NOT make the GWCA object a class member, global variable, or allocate the object on heap (new operator).**
 
 From there you can retrieve different submodules such as Agents,Items,Skillbar,Effects,Map,etc. Using the -> operator on the GWCA object.
 

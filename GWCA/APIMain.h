@@ -85,7 +85,6 @@
 #include "MapMgr.h"
 
 #include "ChatMgr.h"
-#include "ChatCommandMgr.h"
 
 #include "StoCMgr.h"
 #include "StoCPackets.h"

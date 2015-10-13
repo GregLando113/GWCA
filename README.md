@@ -32,11 +32,11 @@ To clone the repo. From here, include the project (.vcxproj) in your solution us
 
 ### Using in code ###
 
-You must always start with calling the GWAPIMgr::Initialize() function, this function is what scans memory and places hooks, creates objects, etc. It will return a boolean on if the Initialize with sucessful.
+You must always start with calling the GWCA::Initialize() function, this function is what scans memory and places hooks, creates objects, etc. It will return a boolean on if the Initialize with sucessful.
 
-Once this has been done, a ptr to the API base object can be retrieved using GWAPIMgr::instance().
+Once this has been done, create a static GWCA object in whatever function you are accessing GWCA from. **Do not make the GWCA object a class member or a global variable.**
 
-From there you can retrieve different submodules such as Agents,Items,Skillbar,Effects,Map,etc.
+From there you can retrieve different submodules such as Agents,Items,Skillbar,Effects,Map,etc. Using the -> operator on the GWCA object.
 
 ## Example ##
 
@@ -50,12 +50,14 @@ From there you can retrieve different submodules such as Agents,Items,Skillbar,E
 
 void printCoords(){
 
-  // Initialize API, exit out if it failed.
-   if(!GWAPI::GWAPIMgr::Initialize())
+   // Initialize API, exit out if it failed.
+   if(!GWAPI::GWCA::Initialize())
          return 0;
 
-   // Grab API object.
-   GWAPI::GWAPIMgr* api = GWAPI::GWAPIMgr::instance();
+   // Grab API object. Always statically allocate this as a local variable.
+   // While this object is allocated, you have ownership of the api.
+   // All other threads will wait for this function to complete if trying to access GWCA
+   GWAPI::GWCA api;
 
    // Get Player Agent Structure.
    GWAPI::GW::Agent* player = api->Agents()->GetPlayer();

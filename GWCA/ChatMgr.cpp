@@ -152,7 +152,7 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	MessageInfo *mInfo = reinterpret_cast<MessageInfo*>(edx);
 	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
 	
-	chat->chatlog_result = chat->RemakeMessage(L"%C{[%2M:%2S]} %T", chat->chatlog_prefix_color, mInfo->message);
+	chat->chatlog_result = chat->RemakeMessage(L"%C{[%2M:%2S]} %T", chat->timestamp_color, mInfo->message);
 
 	mInfo->message = (WCHAR*)chat->chatlog_result.c_str();
 	mInfo->size1 = (mInfo->size2 = chat->chatlog_result.length() + 1);

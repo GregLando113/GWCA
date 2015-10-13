@@ -25,7 +25,7 @@ namespace GWAPI {
 		// Simple write to chat as a PM
 		void WriteChat(const wchar_t* msg, const wchar_t* from = L"GWToolbox++");
 
-		inline void SetColor(DWORD rgb_color) { chatlog_prefix_color = rgb_color; }
+		inline void SetColor(DWORD rgb_color) { timestamp_color = rgb_color; }
 		void RegisterKey(std::wstring key, CallBack_t callback, bool override = true);
 
 		inline void DeleteKey(std::wstring key) { chatcmd_callbacks.erase(key); }
@@ -36,8 +36,7 @@ namespace GWAPI {
 		GWAPIMgr* const parent_;
 
 		std::wstring chatlog_result;
-		CHAT_COLOR chatlog_prefix_color;
-		CHAT_COLOR chatlog_suffix_color; // unused
+		CHAT_COLOR timestamp_color;
 
 		std::map< std::wstring, std::tuple<CallBack_t, bool> > chatcmd_callbacks;
 

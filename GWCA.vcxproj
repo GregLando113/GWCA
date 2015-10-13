@@ -37,6 +37,7 @@
     <ClInclude Include="GWCA\PatternScanner.h" />
     <ClInclude Include="GWCA\SkillbarMgr.h" />
     <ClInclude Include="GWCA\StoCMgr.h" />
+    <ClInclude Include="GWCA\StoCPackets.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp" />

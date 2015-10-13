@@ -66,3 +66,56 @@ void printCoords(){
    printf("Player: %f %f",player->X,player->Y);
 }
 ```
+
+### Make all ZRanks look like rank 12 (Full Script) ###
+
+
+```
+#!c++
+
+#include <Windows.h>
+#include "GWCA\GWCA\APIMain.h"
+
+using namespace GWAPI;
+
+struct P147_UpdateGenericValue : public StoC::Packet<P147_UpdateGenericValue> {
+	DWORD type;
+	DWORD AgentID;
+	DWORD value;
+};
+const DWORD StoC::Packet<P147_UpdateGenericValue>::STATIC_HEADER = 147;
+
+
+void init(HMODULE hModule){
+
+
+	GWCA::Initialize();
+
+	GWCA api;
+
+	api->StoC()->AddGameServerEvent<P147_UpdateGenericValue> (
+		[](P147_UpdateGenericValue* pak) {
+			if (pak->type == 27) {
+				pak->value = 12;
+			}
+		}
+	);
+
+	while (1) {
+		Sleep(100);
+		if (GetAsyncKeyState(VK_END) & 1) {
+			GWCA::Destruct();
+			FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
+		}
+	}
+}
+
+
+BOOL WINAPI DllMain(_In_ HMODULE _HDllHandle, _In_ DWORD _Reason, _In_opt_ LPVOID _Reserved){
+	if (_Reason == DLL_PROCESS_ATTACH){
+		DisableThreadLibraryCalls(_HDllHandle);
+		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)init, _HDllHandle, 0, 0);
+	}
+	return TRUE;
+}
+```

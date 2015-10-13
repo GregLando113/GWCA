@@ -22,3 +22,5 @@ Release/
 *.pch
 *.idb
 *.pdb
+dox/
+GWCA_d.lib

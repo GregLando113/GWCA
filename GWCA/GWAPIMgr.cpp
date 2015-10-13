@@ -21,6 +21,7 @@
 #include "ChatMgr.h"
 
 GWAPI::GWAPIMgr* GWAPI::GWAPIMgr::instance_ = NULL;
+HANDLE GWAPI::GWCA::mutex_ = CreateMutexA(NULL, FALSE, NULL);
 
 bool GWAPI::GWAPIMgr::init_sucessful_;
 
@@ -101,4 +102,26 @@ void GWAPI::GWAPIMgr::Destruct()
 	if (instance_){
 		delete instance_;
 	}
+}
+
+GWAPI::GWCA::GWCA()
+{
+	if (WaitForSingleObject(mutex_, INFINITE) != WAIT_OBJECT_0)
+	{
+		throw 1;
+	}
+	api_ = GWAPIMgr::instance();
+}
+
+GWAPI::GWCA::GWCA(DWORD mutex_timeout)
+{
+	if (WaitForSingleObject(mutex_, mutex_timeout) != WAIT_OBJECT_0)
+	{
+		throw 1;
+	}
+	api_ = GWAPIMgr::instance();
+}
+
+GWAPI::GWCA::~GWCA() {
+	ReleaseMutex(mutex_);
 }

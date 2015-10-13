@@ -83,4 +83,33 @@ namespace GWAPI {
 
 	};
 
+
+
+	/* 
+	   Accessor class that should become standardized.
+	   Will allow for thread-safe operations as well as safe access (safe access needs work :P)
+	*/
+	class GWCA {
+	public:
+
+		/* Simple accessor that will wait infinitely for other threads to relinquish api use. */
+		GWCA();
+
+		/* Waits specified milliseconds for object to be free, will throw API_EXCEPTION if this does not occur. */
+		GWCA(DWORD mutex_timeout);
+
+		/* Destructor relinquishes mutex ownership and allows other thread to use GWCA++ */
+		~GWCA();
+
+		GWAPIMgr* operator->() { return api_; }
+
+		/* Optional to use these instead of GWAPIMgr::Initialize() */
+		inline static bool Initialize() { return GWAPIMgr::Initialize(); }
+		inline static void Destruct() { return GWAPIMgr::Destruct(); }
+
+	private:
+		GWAPIMgr* api_;
+		static HANDLE mutex_;
+	};
+
 }

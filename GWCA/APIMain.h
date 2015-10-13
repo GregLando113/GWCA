@@ -88,6 +88,7 @@
 #include "ChatCommandMgr.h"
 
 #include "StoCMgr.h"
+#include "StoCPackets.h"
 
 #include "FriendListMgr.h"
 

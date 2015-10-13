@@ -2,7 +2,9 @@
 
 #include <Windows.h>
 #include <map>
+#include <functional>
 #include <string>
+
 #include "GWAPIMgr.h"
 
 namespace GWAPI {
@@ -15,10 +17,10 @@ namespace GWAPI {
 		
 	public:
 		typedef void(__fastcall *CommandCheck_t)(WCHAR *message);
-		typedef void(__fastcall *CallBack_t)(WCHAR *arg);
+		typedef std::function<void(std::wstring)> CallBack_t;
 
 		void RestoreHook();
-		void RegisterKey(std::wstring key, CallBack_t callback, bool override = true);
+		void RegisterKey(std::wstring key, std::function<void(std::wstring)> callback, bool override = true);
 		void DeleteKey(std::wstring key);
 
 	private:

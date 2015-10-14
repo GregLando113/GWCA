@@ -101,6 +101,7 @@ namespace GWAPI {
 		/* Destructor relinquishes mutex ownership and allows other thread to use GWCA++ */
 		~GWCA();
 
+		/* Module Accessor */
 		GWAPIMgr* operator->() { return api_; }
 
 		/* Optional to use these instead of GWAPIMgr::Initialize() */

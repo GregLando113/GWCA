@@ -25,11 +25,15 @@ namespace GWAPI {
 		// Horizonal Field of View
 		inline float GetFieldOfView() { return cam_class_->fieldofview; }
 
+		// Returns (possible?) projection matrix of the game. Needs to be delved into.
+		inline float* GetProjectionMatrix() { return projection_matrix_; }
+
 	private:
 		friend class GWAPIMgr;
 		CameraMgr(GWAPIMgr* obj);
 		GWAPIMgr* const parent_;
 		GW::Camera* cam_class_;
+		float* projection_matrix_;
 	};
 
 }

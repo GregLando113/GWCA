@@ -32,11 +32,11 @@ To clone the repo. From here, include the project (.vcxproj) in your solution us
 
 ### Using in code ###
 
-You must always start with calling the GWAPIMgr::Initialize() function, this function is what scans memory and places hooks, creates objects, etc. It will return a boolean on if the Initialize with sucessful.
+You must always start with calling the GWCA::Initialize() function, this function is what scans memory and places hooks, creates objects, etc. It will return a boolean on if the Initialize with sucessful.
 
-Once this has been done, a ptr to the API base object can be retrieved using GWAPIMgr::instance().
+Once this has been done, create a static GWCA object in whatever function you are accessing GWCA from. **Do NOT make the GWCA object a class member, global variable, or allocate the object on heap (new operator).**
 
-From there you can retrieve different submodules such as Agents,Items,Skillbar,Effects,Map,etc.
+From there you can retrieve different submodules such as Agents,Items,Skillbar,Effects,Map,etc. Using the -> operator on the GWCA object.
 
 ## Example ##
 
@@ -50,17 +50,72 @@ From there you can retrieve different submodules such as Agents,Items,Skillbar,E
 
 void printCoords(){
 
-  // Initialize API, exit out if it failed.
-   if(!GWAPI::GWAPIMgr::Initialize())
+   // Initialize API, exit out if it failed.
+   if(!GWAPI::GWCA::Initialize())
          return 0;
 
-   // Grab API object.
-   GWAPI::GWAPIMgr* api = GWAPI::GWAPIMgr::instance();
+   // Grab API object. Always statically allocate this as a local variable.
+   // While this object is allocated, you have ownership of the api.
+   // All other threads will wait for this function to complete if trying to access GWCA
+   GWAPI::GWCA api;
 
    // Get Player Agent Structure.
    GWAPI::GW::Agent* player = api->Agents()->GetPlayer();
 
    // Print coords.
    printf("Player: %f %f",player->X,player->Y);
+}
+```
+
+### Make all ZRanks look like rank 12 (Full Script) ###
+
+
+```
+#!c++
+
+#include <Windows.h>
+#include "GWCA\GWCA\APIMain.h"
+
+using namespace GWAPI;
+
+struct P147_UpdateGenericValue : public StoC::Packet<P147_UpdateGenericValue> {
+	DWORD type;
+	DWORD AgentID;
+	DWORD value;
+};
+const DWORD StoC::Packet<P147_UpdateGenericValue>::STATIC_HEADER = 147;
+
+
+void init(HMODULE hModule){
+
+
+	GWCA::Initialize();
+
+	GWCA api;
+
+	api->StoC()->AddGameServerEvent<P147_UpdateGenericValue> (
+		[](P147_UpdateGenericValue* pak) {
+			if (pak->type == 27) {
+				pak->value = 12;
+			}
+		}
+	);
+
+	while (1) {
+		Sleep(100);
+		if (GetAsyncKeyState(VK_END) & 1) {
+			GWCA::Destruct();
+			FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
+		}
+	}
+}
+
+
+BOOL WINAPI DllMain(_In_ HMODULE _HDllHandle, _In_ DWORD _Reason, _In_opt_ LPVOID _Reserved){
+	if (_Reason == DLL_PROCESS_ATTACH){
+		DisableThreadLibraryCalls(_HDllHandle);
+		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)init, _HDllHandle, 0, 0);
+	}
+	return TRUE;
 }
 ```

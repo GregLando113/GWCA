@@ -11,4 +11,12 @@ GWAPI::CameraMgr::CameraMgr(GWAPIMgr* obj) : parent_(obj)
 	else{
 		cam_class_ = NULL;
 	}
+	DWORD scanprojmatrix = scan.FindPattern("\x89\x4D\xCC\x89\x45\xD4\x8B\x56\x08", "xxxxxxxxx", -4);
+	if (scancamclass){
+		projection_matrix_ = (*(float**)scanprojmatrix) + 0x68;
+	}
+	else{
+		projection_matrix_ = NULL;
+	}
+
 }

@@ -11,9 +11,25 @@ namespace GWAPI {
 
 		ChatMgr(GWAPIMgr* parent);
 
+		typedef std::function<void(std::wstring)> CB_T;
+		struct CallBack {
+			CB_T callback; // 0, default
+			bool override;
+		};
+
+		struct P5E_SendChat {
+			const DWORD header = 0x5E;
+			wchar_t channel;
+			wchar_t msg[137];
+			DWORD unk;
+		};
+
+		struct Channel {
+			const DWORD id;
+		};
+
 	public:
 		
-		typedef std::function<void(std::wstring)> CallBack_t;
 		typedef unsigned int CHAT_COLOR;
 
 		// Sendchat, should be self explanatory. SendChat(L"I love gwtoolbox",L'!');
@@ -26,8 +42,7 @@ namespace GWAPI {
 		void WriteChat(const wchar_t* msg, const wchar_t* from = L"GWToolbox++");
 
 		inline void SetColor(DWORD rgb_color) { timestamp_color = rgb_color; }
-		void RegisterKey(std::wstring key, CallBack_t callback, bool override = true);
-
+		inline void RegisterKey(std::wstring key, CB_T callback, bool override = true) { chatcmd_callbacks[key] = { callback, override }; }
 		inline void DeleteKey(std::wstring key) { chatcmd_callbacks.erase(key); }
 		inline void RestoreHook() { EndHook(); }
 
@@ -38,32 +53,10 @@ namespace GWAPI {
 		std::wstring chatlog_result;
 		CHAT_COLOR timestamp_color;
 
-		std::map< std::wstring, std::tuple<CallBack_t, bool> > chatcmd_callbacks;
+		std::map< std::wstring, CallBack > chatcmd_callbacks;
 
 		std::wstring RemakeMessage(const wchar_t* format, ...);
-
-		struct P5E_SendChat{
-			const DWORD header = 0x5E;
-			wchar_t channel;
-			wchar_t msg[137];
-			DWORD unk;
-		};
-
-		struct MessageInfo {
-			WCHAR *message;
-			DWORD size1;
-			DWORD size2;
-			DWORD unknow;
-		};
-
-		struct ChannelInfo {
-			DWORD unknow1;
-			DWORD channel;
-			DWORD isHandled; // seem to be 1 until he is handled
-			BYTE unknow2[12];
-			DWORD unknow3; // alway 6
-			DWORD unknow4;
-		};
+		DWORD getChan(wchar_t* message);
 
 		typedef void(__fastcall *ChatLog_t)(DWORD, DWORD, DWORD);
 		typedef void(__fastcall *ChatCmd_t)(DWORD);

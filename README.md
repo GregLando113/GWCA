@@ -34,7 +34,7 @@ To clone the repo. From here, include the project (.vcxproj) in your solution us
 
 You must always start with calling the GWCA::Initialize() function, this function is what scans memory and places hooks, creates objects, etc. It will return a boolean on if the Initialize with sucessful.
 
-Once this has been done, create a static GWCA object in whatever function you are accessing GWCA from. **Do not make the GWCA object a class member or a global variable.**
+Once this has been done, create a static GWCA object in whatever function you are accessing GWCA from. **Do NOT make the GWCA object a class member, global variable, or allocate the object on heap (new operator).** With normal usage, creating this object will pause execution until the calling thread can obtain "api ownership" then it will proceed. For that functions execution, the thread will be the only one accessing the api under normal circumstances to avoid concurrency issues.
 
 From there you can retrieve different submodules such as Agents,Items,Skillbar,Effects,Map,etc. Using the -> operator on the GWCA object.
 
@@ -64,5 +64,58 @@ void printCoords(){
 
    // Print coords.
    printf("Player: %f %f",player->X,player->Y);
+}
+```
+
+### Make all ZRanks look like rank 12 (Full Script) ###
+
+
+```
+#!c++
+
+#include <Windows.h>
+#include "GWCA\GWCA\APIMain.h"
+
+using namespace GWAPI;
+
+struct P147_UpdateGenericValue : public StoC::Packet<P147_UpdateGenericValue> {
+	DWORD type;
+	DWORD AgentID;
+	DWORD value;
+};
+const DWORD StoC::Packet<P147_UpdateGenericValue>::STATIC_HEADER = 147;
+
+
+void init(HMODULE hModule){
+
+
+	GWCA::Initialize();
+
+	GWCA api;
+
+	api->StoC()->AddGameServerEvent<P147_UpdateGenericValue> (
+		[](P147_UpdateGenericValue* pak) {
+			if (pak->type == 27) {
+				pak->value = 12;
+			}
+		}
+	);
+
+	while (1) {
+		Sleep(100);
+		if (GetAsyncKeyState(VK_END) & 1) {
+			GWCA::Destruct();
+			FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
+		}
+	}
+}
+
+
+BOOL WINAPI DllMain(_In_ HMODULE _HDllHandle, _In_ DWORD _Reason, _In_opt_ LPVOID _Reserved){
+	if (_Reason == DLL_PROCESS_ATTACH){
+		DisableThreadLibraryCalls(_HDllHandle);
+		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)init, _HDllHandle, 0, 0);
+	}
+	return TRUE;
 }
 ```

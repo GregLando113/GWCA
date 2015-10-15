@@ -1,7 +1,6 @@
 #include "StoCMgr.h"
 
-GWAPI::StoCMgr::StoCHandler* GWAPI::StoCMgr::game_server_handler_ = NULL;
-DWORD GWAPI::StoCMgr::game_server_handler_count_ = 0;
+GWAPI::StoCMgr::StoCHandlerArray GWAPI::StoCMgr::game_server_handler_;
 GWAPI::StoCMgr::StoCHandler* GWAPI::StoCMgr::original_functions_ = NULL;
 std::map<DWORD, std::vector<GWAPI::StoCMgr::Handler>> GWAPI::StoCMgr::event_calls_;
 
@@ -15,15 +14,14 @@ bool GWAPI::StoCMgr::StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk)
 }
 
 GWAPI::StoCMgr::StoCMgr(GWAPIMgr * obj) : parent_(obj) {
-	StoCHandler** ptr = MemoryMgr::ReadPtrChain<StoCHandler**>(*(DWORD*)MemoryMgr::GSObjectPtr, 2, 0x8, 0x2C);
+	StoCHandlerArray* ptr = MemoryMgr::ReadPtrChain<StoCHandlerArray*>(*(DWORD*)MemoryMgr::GSObjectPtr, 2, 0x8, 0x2C);
 
 	
 	game_server_handler_ = *ptr;
-	game_server_handler_count_ = *(DWORD*)(((BYTE*)ptr) + 0x8);
 
-	original_functions_ = new StoCHandler[game_server_handler_count_];
+	original_functions_ = new StoCHandler[game_server_handler_.size()];
 
-	for (DWORD i = 0; i < game_server_handler_count_; ++i) {
+	for (DWORD i = 0; i < game_server_handler_.size(); ++i) {
 		original_functions_[i] = game_server_handler_[i];
 	}
 
@@ -31,7 +29,7 @@ GWAPI::StoCMgr::StoCMgr(GWAPIMgr * obj) : parent_(obj) {
 
 GWAPI::StoCMgr::~StoCMgr() {
 
-	for (DWORD i = 0; i < game_server_handler_count_; ++i) {
+	for (DWORD i = 0; i < game_server_handler_.size(); ++i) {
 		game_server_handler_[i] = original_functions_[i];
 	}
 

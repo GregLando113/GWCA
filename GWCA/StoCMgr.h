@@ -54,8 +54,7 @@ namespace GWAPI {
 
 		static bool __fastcall StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk);
 
-		static StoCHandler* game_server_handler_;
-		static DWORD game_server_handler_count_;
+		static StoCHandlerArray game_server_handler_;
 		static StoCHandler* original_functions_;
 		static std::map<DWORD,std::vector<Handler>> event_calls_;
 		friend class GWAPIMgr;

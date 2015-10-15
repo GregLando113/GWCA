@@ -70,11 +70,6 @@ void GWAPI::ChatMgr::WriteChat(const wchar_t* msg, const wchar_t* from) {
 		(0, from, msg);
 }
 
-void GWAPI::ChatMgr::RegisterKey(std::wstring key, CallBack_t callback, bool override)
-{
-	chatcmd_callbacks[key] = std::tuple<CallBack_t, bool>(callback, override);
-}
-
 std::wstring GWAPI::ChatMgr::RemakeMessage(const wchar_t* format, ...)
 {
 	/*
@@ -93,47 +88,28 @@ std::wstring GWAPI::ChatMgr::RemakeMessage(const wchar_t* format, ...)
 		if (*format == '%')
 		{
 			format++;
-			DWORD width = 1;
-			if (*format > '0' && *format <= '9')
+			DWORD width = 0;
+			while (*format > '0' && *format <= '9')
 			{
+				width *= 10;
 				width = *format - '0';
 				format++;
 			}
+			if (!width) width = 1;
+
 			switch (*format)
 			{
-				case 'H':
-				{
-					buffer << std::dec << std::setw(width) << std::setfill(L'0') << (time / 3600) % 60;
-				} break;
-				case 'M':
-				{
-					buffer << std::dec << std::setw(width) << std::setfill(L'0') << (time / 60) % 60;
-				} break;
-				case 'S':
-				{
-					buffer << std::dec << std::setw(width) << std::setfill(L'0') << time % 60;
-				} break;
-				case 'C':
-				{
-					CHAT_COLOR color = va_arg(args, CHAT_COLOR);
-					buffer << "<c=#" << std::hex << std::setw(6) << std::setfill(L'0') << color << ">";
-					format++;
-				} break;
-				case 'N':
-				{
-
-				} break;
-				case 'T':
-				{
-					wchar_t* text = va_arg(args, wchar_t*);
-					buffer << text;
-				} break;
+				case 'H': buffer << std::dec << std::setw(width) << std::setfill(L'0') << (time / 3600) % 60;	break;
+				case 'M': buffer << std::dec << std::setw(width) << std::setfill(L'0') << (time / 60) % 60;		break;
+				case 'S': buffer << std::dec << std::setw(width) << std::setfill(L'0') << time % 60;			break;
+				case 'C': buffer << "<c=#" << std::hex << std::setw(6) << std::setfill(L'0') << va_arg(args, CHAT_COLOR) << ">"; format++; break;
+				case 'N': break;
+				case 'T': buffer << va_arg(args, wchar_t*); break;
 			}
 		}
 		else if (*format == '}')
 		{
-			if (format[1])
-				buffer << "</c>";
+			if (format[1]) buffer << "</c>";
 		}
 		else
 		{
@@ -146,11 +122,47 @@ std::wstring GWAPI::ChatMgr::RemakeMessage(const wchar_t* format, ...)
 	return buffer.str();
 }
 
+DWORD GWAPI::ChatMgr::getChan(wchar_t* message)
+{
+	wchar_t* start = wcswcs(message, L"<a=1>c=");
+	wchar_t* end = wcswcs(message + sizeof("<a=1>c="), L"</a>");
+
+	if (!start || !end) return 0;
+
+	DWORD channel = 0;
+	start += strlen("<a=1>c=");
+	while (start < end)
+	{
+		channel *= 10;
+		channel += *start - '0';
+		start++;
+	}
+
+	return channel;
+}
+struct MessageInfo {
+	WCHAR *message;
+	DWORD size1;
+	DWORD size2;
+	DWORD unknow;
+};
+
+struct ChannelInfo {
+	DWORD unknow1;
+	DWORD channel;
+	DWORD isHandled; // seem to be 1 until he is handled
+	BYTE unknow2[12];
+	DWORD unknow3; // alway 6
+	DWORD unknow4;
+};
+
 void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless /* same as edx */)
 {
 	GWAPI::ChatMgr *chat = GWAPI::GWAPIMgr::instance()->Chat();
 	MessageInfo *mInfo = reinterpret_cast<MessageInfo*>(edx);
 	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
+
+	DWORD speChannel = chat->getChan(mInfo->message);
 	
 	chat->chatlog_result = chat->RemakeMessage(L"%C{[%2M:%2S]} %T", chat->timestamp_color, mInfo->message);
 
@@ -176,12 +188,12 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 		arguments = std::wstring(message + fPos + 2);
 	}
 
-	std::tuple<CallBack_t, bool> callback = chat->chatcmd_callbacks[key];
-	if (std::get<0>(callback) && channel == '/')
+	CallBack callback = chat->chatcmd_callbacks[key];
+	if (callback.callback && channel == '/')
 	{
-		std::get<0>(callback)(arguments);
+		callback.callback(arguments);
 
-		if (std::get<1>(callback))
+		if (callback.override)
 			return chat->ori_chatcmd((DWORD)L"");
 	}
 

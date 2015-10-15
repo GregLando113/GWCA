@@ -22,6 +22,8 @@
 
 GWAPI::GWAPIMgr* GWAPI::GWAPIMgr::instance_ = NULL;
 HANDLE GWAPI::GWCA::mutex_ = CreateMutexA(NULL, FALSE, NULL);
+const DWORD GWAPI::GWCA::API_NO_OWNERSHIP = 0;
+
 
 bool GWAPI::GWAPIMgr::init_sucessful_;
 
@@ -115,9 +117,11 @@ GWAPI::GWCA::GWCA()
 
 GWAPI::GWCA::GWCA(DWORD mutex_timeout)
 {
-	if (WaitForSingleObject(mutex_, mutex_timeout) != WAIT_OBJECT_0)
-	{
-		throw 1;
+	if (mutex_timeout > 0){
+		if (WaitForSingleObject(mutex_, mutex_timeout) != WAIT_OBJECT_0)
+		{
+			throw 1;
+		}
 	}
 	api_ = GWAPIMgr::instance();
 }

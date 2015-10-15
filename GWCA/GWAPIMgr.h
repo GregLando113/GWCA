@@ -108,6 +108,8 @@ namespace GWAPI {
 		inline static bool Initialize() { return GWAPIMgr::Initialize(); }
 		inline static void Destruct() { return GWAPIMgr::Destruct(); }
 
+
+		static const DWORD API_NO_OWNERSHIP;
 	private:
 		GWAPIMgr* api_;
 		static HANDLE mutex_;

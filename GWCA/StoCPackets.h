@@ -2065,8 +2065,8 @@ namespace GWAPI {
 		const DWORD Packet<P302>::STATIC_HEADER = 302;
 
 		struct P303 : Packet<P303> {
-			// DWORD
-			// DWORD
+			DWORD itemid;
+			DWORD quantity;
 		};
 		const DWORD Packet<P303>::STATIC_HEADER = 303;
 

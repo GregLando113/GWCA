@@ -14,13 +14,13 @@ namespace GWAPI {
 			DWORD current_size_;
 			DWORD unknown_;
 		public:
-			T index(DWORD _index)
+			T& index(DWORD _index)
 			{
 				if (_index > current_size_ || _index < 0) throw 1;
 				return array_[_index];
 			}
 
-			T operator[](DWORD _index)
+			T& operator[](DWORD _index)
 			{
 				return index(_index);
 			}

@@ -4,7 +4,6 @@
 #include <functional>
 #include <map>
 
-
 namespace GWAPI {
 
 	class ChatMgr{
@@ -13,7 +12,7 @@ namespace GWAPI {
 
 		typedef std::function<void(std::wstring)> CB_T;
 		struct CallBack {
-			CB_T callback; // 0, default
+			CB_T callback;
 			bool override;
 		};
 
@@ -25,7 +24,9 @@ namespace GWAPI {
 		};
 
 		struct Channel {
-			const DWORD id;
+			const DWORD id;  // 0, default
+
+			Channel* next;
 		};
 
 	public:

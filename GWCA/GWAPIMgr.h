@@ -9,13 +9,15 @@ namespace GWAPI {
 	const APIException_t API_EXCEPTION = 1;
 
 	class GWAPIMgr {
+		friend class GWCA;
+
 	public:
 
 		static bool Initialize();
-		static GWAPIMgr* instance();
 		static void Destruct();
 
 	private:
+		static GWAPIMgr* instance();
 
 		static bool init_sucessful_;
 		static GWAPIMgr* instance_;

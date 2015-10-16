@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <vector>
+#include <map>
 
 #include "StoCPackets.h"
 #include "APIMain.h"

@@ -34,7 +34,6 @@
     <ClInclude Include="GWCA\SkillbarMgr.h" />
     <ClInclude Include="GWCA\PatternScanner.h" />
     <ClInclude Include="GWCA\StoCMgr.h" />
-    <ClInclude Include="GWCA\ChatCommandMgr.h" />
     <ClInclude Include="GWCA\FriendListMgr.h" />
     <ClInclude Include="GWCA\CameraMgr.h" />
     <ClInclude Include="GWCA\StoCPackets.h" />
@@ -89,9 +88,6 @@
       <Filter>disasm</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\StoCMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\ChatCommandMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\FriendListMgr.cpp">

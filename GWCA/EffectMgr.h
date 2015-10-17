@@ -1,7 +1,10 @@
 #pragma once
 
 #include <Windows.h>
-#include "GWAPIMgr.h"
+
+#include "GWStructures.h"
+#include "GwConstants.h"
+#include "Hooker.h"
 
 
 namespace GWAPI {
@@ -36,12 +39,12 @@ namespace GWAPI {
 		
 	private:
 
-		EffectMgr(GWAPIMgr* obj);
-		~EffectMgr();
-
 		friend class GWAPIMgr;
 		typedef void(__fastcall *PPEFunc_t)(DWORD Intensity, DWORD Tint);
 		static void __fastcall AlcoholHandler(DWORD Intensity, DWORD Tint);
+
+		EffectMgr(GWAPIMgr* obj);
+		~EffectMgr();
 
 		static PPEFunc_t ppe_retour_func_;
 		static DWORD alcohol_level_;

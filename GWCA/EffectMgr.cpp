@@ -1,15 +1,12 @@
 #include "EffectMgr.h"
 
-#include "MemoryMgr.h"
-#include "GameThreadMgr.h"
-#include "CtoSMgr.h"
-#include "AgentMgr.h"
+#include "GWAPIMgr.h"
 
 DWORD GWAPI::EffectMgr::alcohol_level_ = NULL;
 GWAPI::EffectMgr::PPEFunc_t GWAPI::EffectMgr::ppe_retour_func_ = NULL;
 
 
-GWAPI::EffectMgr::EffectMgr(GWAPIMgr* obj) :parent_(obj)
+GWAPI::EffectMgr::EffectMgr(GWAPIMgr* obj) : parent_(obj)
 {
 	ppe_retour_func_ = (PPEFunc_t)hk_post_process_effect_.Detour(MemoryMgr::PostProcessEffectFunction, (BYTE*)AlcoholHandler, 6);
 }

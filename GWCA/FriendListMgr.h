@@ -1,14 +1,14 @@
 #pragma once
 
 #include <Windows.h>
-#include "GWAPIMgr.h"
+
+#include "GWStructures.h"
+#include "GwConstants.h"
 
 namespace GWAPI {
 
 	class FriendListMgr {
-
 	public:
-		FriendListMgr(GWAPIMgr* parent);
 
 		inline GWAPI::GW::Friend* get(DWORD index) { return fList_->friends[index + 1]; }
 		inline DWORD size() { return fList_->size(); }
@@ -26,6 +26,8 @@ namespace GWAPI {
 		
 		friend class GWAPIMgr;
 		const GWAPIMgr* parent_;
+
+		FriendListMgr(GWAPIMgr* parent);
 
 		SetOnlineStatus_t set_online_status_;
 		GWAPI::GW::FriendList* fList_;

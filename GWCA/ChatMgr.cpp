@@ -46,7 +46,7 @@ void GWAPI::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel)
 	parent_->CtoS()->SendPacket<P5E_SendChat>(chat);
 }
 
-void GWAPI::ChatMgr::WriteChatF(const wchar_t* format, ...)
+void GWAPI::ChatMgr::WriteWhisperF(const wchar_t* format, ...)
 {
 	static wchar_t* chat = NULL;
 
@@ -60,10 +60,10 @@ void GWAPI::ChatMgr::WriteChatF(const wchar_t* format, ...)
 	vswprintf_s(chat, szbuf, format, vl);
 	va_end(vl);
 
-	WriteChat(chat);
+	WriteWhisper(chat);
 }
 
-void GWAPI::ChatMgr::WriteChat(const wchar_t* msg, const wchar_t* from) {
+void GWAPI::ChatMgr::WriteWhisper(const wchar_t* msg, const wchar_t* from) {
 
 	((void(__fastcall *)(DWORD, const wchar_t*, const wchar_t*))
 		MemoryMgr::WriteChatFunction)

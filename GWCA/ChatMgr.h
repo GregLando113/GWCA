@@ -37,10 +37,10 @@ namespace GWAPI {
 		void SendChat(const wchar_t* msg, wchar_t channel);
 
 		// Write to chat as a PM with printf style arguments.
-		void WriteChatF(const wchar_t* format, ...);
+		void WriteWhisperF(const wchar_t* format, ...);
 		
 		// Simple write to chat as a PM
-		void WriteChat(const wchar_t* msg, const wchar_t* from = L"GWToolbox++");
+		void WriteWhisper(const wchar_t* msg, const wchar_t* from = L"GWToolbox++");
 
 		inline void SetColor(DWORD rgb_color) { timestamp_color = rgb_color; }
 		inline void RegisterKey(std::wstring key, 

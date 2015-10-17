@@ -35,22 +35,22 @@ GWAPI::GWAPIMgr* GWAPI::GWAPIMgr::instance()
 GWAPI::GWAPIMgr::GWAPIMgr()
 {
 	if (MemoryMgr::Scan()){
-		gamethread_ = new GameThreadMgr(this);
-		ctos_ = new CtoSMgr(this);
-		agents_ = new AgentMgr(this);
-		items_ = new ItemMgr(this);
+		gamethread_ = new GameThreadMgr(*this);
+		ctos_ = new CtoSMgr(*this);
+		agents_ = new AgentMgr(*this);
+		items_ = new ItemMgr(*this);
 #ifdef GWAPI_USEDIRECTX
-		directx_ = new DirectXMgr(this);
+		directx_ = new DirectXMgr(*this);
 #endif
-		skillbar_ = new SkillbarMgr(this);
-		effects_ = new EffectMgr(this);
-		map_ = new MapMgr(this);
-		chat_ = new ChatMgr(this);
-		merchant_ = new MerchantMgr(this);
-		guild_ = new GuildMgr(this);
-		fList_ = new FriendListMgr(this);
-		stoc_ = new StoCMgr(this);
-		camera_ = new CameraMgr(this);
+		skillbar_ = new SkillbarMgr(*this);
+		effects_ = new EffectMgr(*this);
+		map_ = new MapMgr(*this);
+		chat_ = new ChatMgr(*this);
+		merchant_ = new MerchantMgr(*this);
+		guild_ = new GuildMgr(*this);
+		fList_ = new FriendListMgr(*this);
+		stoc_ = new StoCMgr(*this);
+		camera_ = new CameraMgr(*this);
 		init_sucessful_ = true;
 	}
 	else{
@@ -65,7 +65,7 @@ GWAPI::GWAPIMgr::~GWAPIMgr()
 #endif
 	gamethread_->RestoreHooks();
 	merchant_->RestoreHooks();
-	agents_->RestoreHooks();
+	//agents_->RestoreHooks();
 	effects_->RestoreHooks();
 	chat_->RestoreHook();
 

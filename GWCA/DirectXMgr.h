@@ -9,10 +9,13 @@
 #pragma comment(lib, "d3dx9.lib")
 
 #include "Hooker.h"
+#include "GWCAManager.h"
 
 namespace GWAPI {
 
-	class DirectXMgr {
+	class DirectXMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 		typedef HRESULT(WINAPI *EndScene_t)(IDirect3DDevice9* pDevice);
 		typedef HRESULT(WINAPI *Reset_t)(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
@@ -20,17 +23,14 @@ namespace GWAPI {
 		void CreateRenderHooks(EndScene_t _endscene, Reset_t _reset);
 		void RestoreHooks();
 
-		EndScene_t EndsceneReturn();
-		Reset_t ResetReturn();
+		inline EndScene_t EndsceneReturn() { return endscene_; }
+		inline Reset_t ResetReturn() { return reset_; }
 
 
 	private:
-		friend class GWAPIMgr;
-
-		DirectXMgr(GWAPIMgr* obj);
+		DirectXMgr(GWAPIMgr& api);
 		~DirectXMgr();
 
-		GWAPIMgr* const parent_;
 		EndScene_t endscene_ = NULL;
 		Reset_t reset_ = NULL;
 

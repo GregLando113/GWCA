@@ -6,7 +6,7 @@ DWORD GWAPI::EffectMgr::alcohol_level_ = NULL;
 GWAPI::EffectMgr::PPEFunc_t GWAPI::EffectMgr::ppe_retour_func_ = NULL;
 
 
-GWAPI::EffectMgr::EffectMgr(GWAPIMgr* obj) : parent_(obj)
+GWAPI::EffectMgr::EffectMgr(GWAPIMgr& api) : GWCAManager(api)
 {
 	ppe_retour_func_ = (PPEFunc_t)hk_post_process_effect_.Detour(MemoryMgr::PostProcessEffectFunction, (BYTE*)AlcoholHandler, 6);
 }
@@ -70,7 +70,7 @@ GWAPI::EffectMgr::~EffectMgr()
 
 void GWAPI::EffectMgr::GetDrunkAf(DWORD Intensity,DWORD Tint)
 {
-	parent_->Gamethread()->Enqueue(ppe_retour_func_, Intensity, Tint);
+	api().Gamethread()->Enqueue(ppe_retour_func_, Intensity, Tint);
 }
 
 GWAPI::GW::AgentEffectsArray GWAPI::EffectMgr::GetPartyEffectArray()
@@ -93,7 +93,7 @@ GWAPI::GW::BuffArray GWAPI::EffectMgr::GetPlayerBuffArray()
 
 void GWAPI::EffectMgr::DropBuff(DWORD buffId) 
 {
-	parent_->CtoS()->SendPacket(0x8, 0x23, buffId);
+	api().CtoS()->SendPacket(0x8, 0x23, buffId);
 }
 
 void GWAPI::EffectMgr::RestoreHooks()

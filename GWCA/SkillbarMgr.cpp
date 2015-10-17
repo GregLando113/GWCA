@@ -10,10 +10,10 @@ GWAPI::GW::Skill GWAPI::SkillbarMgr::GetSkillConstantData(DWORD SkillID)
 
 void GWAPI::SkillbarMgr::UseSkill(DWORD Slot, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/)
 {
-	parent_->Gamethread()->Enqueue(UseSkill_, parent_->Agents()->GetPlayerId(), Slot, Target, CallTarget);
+	api().Gamethread()->Enqueue(UseSkill_, api().Agents()->GetPlayerId(), Slot, Target, CallTarget);
 }
 
-GWAPI::SkillbarMgr::SkillbarMgr(GWAPIMgr* obj) : parent_(obj)
+GWAPI::SkillbarMgr::SkillbarMgr(GWAPIMgr& api) : GWCAManager(api)
 {
 	SkillConstants_ = (GW::Skill*)MemoryMgr::SkillArray;
 	UseSkill_ = (UseSkill_t)MemoryMgr::UseSkillFunction;
@@ -35,7 +35,7 @@ GWAPI::GW::SkillbarArray GWAPI::SkillbarMgr::GetSkillbarArray()
 
 void GWAPI::SkillbarMgr::UseSkillByID(DWORD SkillID, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/)
 {
-	parent_->CtoS()->SendPacket(0x14, 0x40, SkillID, 0, Target, CallTarget);
+	api().CtoS()->SendPacket(0x14, 0x40, SkillID, 0, Target, CallTarget);
 }
 
 int GWAPI::SkillbarMgr::getSkillSlot(GwConstants::SkillID SkillID) {

@@ -4,11 +4,13 @@
 #include <vector>
 #include <map>
 
+#include "GWCAManager.h"
 #include "Hooker.h"
 
 namespace GWAPI {
 
-	class ChatMgr{
+	class ChatMgr : public GWCAManager {
+		friend class GWAPIMgr;
 
 		typedef std::function<void(std::vector<std::wstring>)> CB_T;
 		struct CallBack {
@@ -68,7 +70,6 @@ namespace GWAPI {
 		inline void RestoreHook() { EndHook(); }
 
 	private:
-		friend class GWAPIMgr;
 
 		std::wstring chatlog_result;
 		CHAT_COLOR timestamp_color;
@@ -81,7 +82,7 @@ namespace GWAPI {
 		typedef void(__fastcall *ChatLog_t)(DWORD, DWORD, DWORD);
 		typedef void(__fastcall *ChatCmd_t)(DWORD);
 
-		ChatMgr(GWAPIMgr* parent);
+		ChatMgr(GWAPIMgr& api);
 		void BeginHook(BYTE*, BYTE*);
 		void EndHook();
 		bool hooked_;
@@ -90,7 +91,6 @@ namespace GWAPI {
 		Hook hk_chatcmd_;
 		ChatLog_t ori_chatlog;
 		ChatCmd_t ori_chatcmd;
-		GWAPIMgr* const parent_;
 
 		static void __fastcall det_chatlog(DWORD, DWORD, DWORD);
 		static void __fastcall det_chatcmd(DWORD);

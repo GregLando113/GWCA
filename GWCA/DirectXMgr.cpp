@@ -7,19 +7,9 @@
 #include "GWAPIMgr.h"
 #include "PatternScanner.h"
 
-GWAPI::DirectXMgr::DirectXMgr(GWAPIMgr* obj) : parent_(obj)
+GWAPI::DirectXMgr::DirectXMgr(GWAPIMgr& api) : GWCAManager(api)
 {
 
-}
-
-GWAPI::DirectXMgr::EndScene_t GWAPI::DirectXMgr::EndsceneReturn()
-{
-	return endscene_;
-}
-
-GWAPI::DirectXMgr::Reset_t GWAPI::DirectXMgr::ResetReturn()
-{
-	return reset_;
 }
 
 void GWAPI::DirectXMgr::CreateRenderHooks(EndScene_t _endscene, Reset_t _reset)

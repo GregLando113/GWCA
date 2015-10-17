@@ -2,11 +2,13 @@
 
 #include <Windows.h>
 
+#include "GWCAManager.h"
 #include "GWStructures.h"
 
 namespace GWAPI {
 
-	class GuildMgr {
+	class GuildMgr : public GWCAManager {
+		friend class GWAPIMgr;
 
 	public:
 
@@ -23,8 +25,6 @@ namespace GWAPI {
 		wchar_t* GetPlayerGuildAnnouncer();
 
 	private:
-		friend class GWAPIMgr;
-		GWAPIMgr* const parent_;
-		GuildMgr(GWAPIMgr* obj) : parent_(obj) {}
+		GuildMgr(GWAPIMgr& api) : GWCAManager(api) {}
 	};
 }

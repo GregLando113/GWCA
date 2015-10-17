@@ -2,11 +2,14 @@
 
 #include <Windows.h>
 
+#include "GWCAManager.h"
 #include "GWStructures.h"
 
 namespace GWAPI {
 
-	class ItemMgr {
+	class ItemMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 
 		// Get full array of items sorted by ItemID.
@@ -54,12 +57,10 @@ namespace GWAPI {
 		void OpenLockedChest();
 
 	private:
-		friend class GWAPIMgr;
 		typedef void(__fastcall *OpenXunlai_t)(DWORD, DWORD*);
 
 		OpenXunlai_t open_xunlai_function_;
-		GWAPIMgr* const parent_;
 
-		ItemMgr(GWAPIMgr* obj);
+		ItemMgr(GWAPIMgr& api);
 	};
 }

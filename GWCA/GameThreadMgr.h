@@ -4,13 +4,16 @@
 #include <functional>
 #include <mutex>
 
+#include "GWCAManager.h"
 #include "Hooker.h"
 
-namespace GWAPI{
+namespace GWAPI {
 
 	// Shoutouts to DarthTon @ unknowncheats.me for this class.
 
-	class GameThreadMgr{
+	class GameThreadMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 
 		// For use only in gameloop hook.
@@ -37,10 +40,8 @@ namespace GWAPI{
 
 	private:
 
-		friend class GWAPIMgr;
-
 		void RestoreHooks();
-		GameThreadMgr(GWAPIMgr* obj);
+		GameThreadMgr(GWAPIMgr& obj);
 		~GameThreadMgr();
 
 		std::vector<std::function<void(void)> > calls_;
@@ -48,8 +49,5 @@ namespace GWAPI{
 		mutable std::mutex call_vector_mutex_;
 		bool render_state_;
 		Hook hk_game_thread_;
-		GWAPIMgr* const parent_;
 	};
-
 }
-

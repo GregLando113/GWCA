@@ -1,14 +1,12 @@
 #pragma once
 
-#include "GWAPIMgr.h"
+#include <Windows.h>
 
 namespace GWAPI {
 
 	class CtoSMgr {
-
 	public:
 
-		
 		// Send packet that uses only dword parameters, can copypaste most gwa2 sendpackets :D
 		void SendPacket(DWORD size, ...);
 
@@ -20,11 +18,10 @@ namespace GWAPI {
 			parent_->Gamethread()->Enqueue(gs_send_function_, MemoryMgr::GetGSObject(), size, (DWORD*)packet);
 		}
 
-
 	private:		
 		typedef void(__fastcall *SendCtoGSPacket_t)(DWORD ctogsobj, DWORD size, DWORD* packet);
 		friend class GWAPIMgr;
-		GWAPIMgr* parent_;
+		GWAPIMgr* const parent_;
 
 		static SendCtoGSPacket_t gs_send_function_;
 

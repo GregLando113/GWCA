@@ -1,14 +1,14 @@
 #pragma once
-#include "GWAPIMgr.h"
 #include <string>
 #include <functional>
+#include <vector>
 #include <map>
+
+#include "Hooker.h"
 
 namespace GWAPI {
 
 	class ChatMgr{
-
-		ChatMgr(GWAPIMgr* parent);
 
 		typedef std::function<void(std::vector<std::wstring>)> CB_T;
 		struct CallBack {
@@ -27,6 +27,22 @@ namespace GWAPI {
 			const DWORD id;  // 0, default
 
 			Channel* next;
+		};
+
+		struct MessageInfo {
+			WCHAR *message;
+			DWORD size1;
+			DWORD size2;
+			DWORD unknow;
+		};
+
+		struct ChannelInfo {
+			DWORD unknow1;
+			DWORD channel;
+			DWORD isHandled; // seem to be 1 until he is handled
+			BYTE unknow2[12];
+			DWORD unknow3; // alway 6
+			DWORD unknow4;
 		};
 
 	public:
@@ -53,7 +69,6 @@ namespace GWAPI {
 
 	private:
 		friend class GWAPIMgr;
-		GWAPIMgr* const parent_;
 
 		std::wstring chatlog_result;
 		CHAT_COLOR timestamp_color;
@@ -66,6 +81,7 @@ namespace GWAPI {
 		typedef void(__fastcall *ChatLog_t)(DWORD, DWORD, DWORD);
 		typedef void(__fastcall *ChatCmd_t)(DWORD);
 
+		ChatMgr(GWAPIMgr* parent);
 		void BeginHook(BYTE*, BYTE*);
 		void EndHook();
 		bool hooked_;
@@ -74,6 +90,7 @@ namespace GWAPI {
 		Hook hk_chatcmd_;
 		ChatLog_t ori_chatlog;
 		ChatCmd_t ori_chatcmd;
+		GWAPIMgr* const parent_;
 
 		static void __fastcall det_chatlog(DWORD, DWORD, DWORD);
 		static void __fastcall det_chatcmd(DWORD);

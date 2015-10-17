@@ -1,7 +1,8 @@
 #pragma once
 
-#include "APIMain.h"
 #include <Windows.h>
+
+#include "MemoryMgr.h"
 
 namespace GWAPI {
 

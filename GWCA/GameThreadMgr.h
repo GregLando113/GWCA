@@ -1,12 +1,10 @@
 #pragma once
 
-
-#include "GWAPIMgr.h"
-
 #include <vector>
 #include <functional>
 #include <mutex>
 
+#include "Hooker.h"
 
 namespace GWAPI{
 
@@ -41,20 +39,16 @@ namespace GWAPI{
 
 		friend class GWAPIMgr;
 
-		GWAPIMgr* const parent_;
-
-		bool render_state_;
-
-		Hook hk_game_thread_;
-
 		void RestoreHooks();
+		GameThreadMgr(GWAPIMgr* obj);
+		~GameThreadMgr();
 
 		std::vector<std::function<void(void)> > calls_;
 		std::vector<std::function<void(void)> > calls_permanent_;
 		mutable std::mutex call_vector_mutex_;
-
-		GameThreadMgr(GWAPIMgr* obj);
-		~GameThreadMgr();
+		bool render_state_;
+		Hook hk_game_thread_;
+		GWAPIMgr* const parent_;
 	};
 
 }

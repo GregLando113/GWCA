@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GWAPIMgr.h"
+#include "GWStructures.h"
 
 namespace GWAPI {
 
@@ -30,7 +30,9 @@ namespace GWAPI {
 
 	private:
 		friend class GWAPIMgr;
+
 		CameraMgr(GWAPIMgr* obj);
+
 		GWAPIMgr* const parent_;
 		GW::Camera* cam_class_;
 		float* projection_matrix_;

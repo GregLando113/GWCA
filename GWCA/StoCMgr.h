@@ -5,7 +5,7 @@
 #include <map>
 
 #include "StoCPackets.h"
-#include "APIMain.h"
+#include "GWStructures.h"
 
 namespace GWAPI {
 
@@ -40,7 +40,7 @@ namespace GWAPI {
 		}
 
 	private:
-
+		friend class GWAPIMgr;
 		typedef bool(__fastcall *StoCHandler_t)(StoC::PacketBase* pak, DWORD unk);
 
 		struct StoCHandler {
@@ -58,7 +58,7 @@ namespace GWAPI {
 		static StoCHandlerArray game_server_handler_;
 		static StoCHandler* original_functions_;
 		static std::map<DWORD,std::vector<Handler>> event_calls_;
-		friend class GWAPIMgr;
+
 		GWAPIMgr* const parent_;
 	};
 }

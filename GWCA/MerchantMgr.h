@@ -2,12 +2,15 @@
 
 #include <Windows.h>
 
+#include "GWCAManager.h"
 #include "Hooker.h"
 #include "GWStructures.h"
 
 namespace GWAPI {
 
-	class MerchantMgr {
+	class MerchantMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 
 		// Structure used for CraftItemArray creation.
@@ -54,8 +57,6 @@ namespace GWAPI {
 		void SellQuotedItem();
 
 	private:
-		friend class GWAPIMgr;
-		GWAPIMgr* const parent_;
 
 		static BYTE* trader_buy_class_hook_return_;
 		Hook hk_trader_buy_class_;
@@ -65,8 +66,7 @@ namespace GWAPI {
 
 		void RestoreHooks();
 
-		MerchantMgr(GWAPIMgr* obj);
-		~MerchantMgr();
+		MerchantMgr(GWAPIMgr& api);
 
 		static BYTE* trader_buy_class_;
 		static BYTE* trader_sell_class_;

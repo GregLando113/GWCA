@@ -2,12 +2,15 @@
 
 #include <Windows.h>
 
+#include "GWCAManager.h"
 #include "GWStructures.h"
 #include "GwConstants.h"
 
-namespace GWAPI{
+namespace GWAPI {
 
-	class SkillbarMgr{	
+	class SkillbarMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 
 		// Get array of skillbars, [0] = player [1-7] = heroes.
@@ -30,18 +33,12 @@ namespace GWAPI{
 		// Get skill structure of said id, houses pretty much everything you would want to know about the skill.
 		GW::Skill GetSkillConstantData(DWORD SkillID);
 
-
-		
 	private:
-	
-
 		typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
-		friend class GWAPIMgr;
 
-		SkillbarMgr(GWAPIMgr* obj);
+		SkillbarMgr(GWAPIMgr& api);
 
 		UseSkill_t UseSkill_;
-		GWAPIMgr* parent_;
 		GW::Skill* SkillConstants_;
 	};
 }

@@ -2,12 +2,15 @@
 
 #include <Windows.h>
 
+#include "GWCAManager.h"
 #include "GwConstants.h"
 #include "GWStructures.h"
 
 
-namespace GWAPI{
-	class MapMgr{
+namespace GWAPI {
+	class MapMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 		struct PAB_ZoneMap {
 			const DWORD header = 0xAB;
 			DWORD mapid;
@@ -41,11 +44,6 @@ namespace GWAPI{
 		GW::MissionMapIconArray GetMissionMapIconArray();
 
 	private:
-		
-		friend class GWAPIMgr;
-
-		MapMgr(GWAPIMgr* obj);
-
-		GWAPIMgr* const parent_;
+		MapMgr(GWAPIMgr& api) : GWCAManager(api) {}
 	};
 }

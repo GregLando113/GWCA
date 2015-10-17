@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 
+#include "GWCAManager.h"
 #include "GWStructures.h"
 #include "GwConstants.h"
 #include "Hooker.h"
@@ -9,7 +10,9 @@
 
 namespace GWAPI {
 
-	class EffectMgr {
+	class EffectMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 		
 		// Get full array of effects and buffs for player and heroes.
@@ -39,20 +42,16 @@ namespace GWAPI {
 		
 	private:
 
-		friend class GWAPIMgr;
 		typedef void(__fastcall *PPEFunc_t)(DWORD Intensity, DWORD Tint);
 		static void __fastcall AlcoholHandler(DWORD Intensity, DWORD Tint);
 
-		EffectMgr(GWAPIMgr* obj);
+		EffectMgr(GWAPIMgr& obj);
 		~EffectMgr();
 
 		static PPEFunc_t ppe_retour_func_;
 		static DWORD alcohol_level_;
 		Hook hk_post_process_effect_;
 
-		void RestoreHooks();
-		
-		GWAPIMgr* const parent_;
-		
+		void RestoreHooks();		
 	};
 }

@@ -1,7 +1,7 @@
 #include "CameraMgr.h"
 #include "PatternScanner.h"
 
-GWAPI::CameraMgr::CameraMgr(GWAPIMgr* obj) : parent_(obj)
+GWAPI::CameraMgr::CameraMgr(GWAPIMgr& api) : GWCAManager(api)
 {
 	PatternScanner scan(0x401000, 0x4FF000);
 	DWORD scancamclass = scan.FindPattern("\x75\x0B\x51\xB9", "xxxx", 4);

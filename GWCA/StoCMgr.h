@@ -4,18 +4,20 @@
 #include <vector>
 #include <map>
 
+#include "GWCAManager.h"
 #include "StoCPackets.h"
 #include "GWStructures.h"
 
 namespace GWAPI {
 
 	/*
-	
 		StoC Manager
 		See https://github.com/GameRevision/GWLP-R/wiki/GStoC for some already explored packets.
 	*/
 
-	class StoCMgr {
+	class StoCMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 
 		/* 
@@ -40,7 +42,6 @@ namespace GWAPI {
 		}
 
 	private:
-		friend class GWAPIMgr;
 		typedef bool(__fastcall *StoCHandler_t)(StoC::PacketBase* pak, DWORD unk);
 
 		struct StoCHandler {
@@ -50,7 +51,7 @@ namespace GWAPI {
 		};
 		typedef GW::gw_array<StoCHandler> StoCHandlerArray;
 
-		StoCMgr(GWAPIMgr* obj);
+		StoCMgr(GWAPIMgr& api);
 		~StoCMgr();
 
 		static bool __fastcall StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk);
@@ -58,7 +59,5 @@ namespace GWAPI {
 		static StoCHandlerArray game_server_handler_;
 		static StoCHandler* original_functions_;
 		static std::map<DWORD,std::vector<Handler>> event_calls_;
-
-		GWAPIMgr* const parent_;
 	};
 }

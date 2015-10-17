@@ -7,7 +7,7 @@
 #include "PatternScanner.h"
 
 
-GWAPI::ChatMgr::ChatMgr(GWAPIMgr* parent) : parent_(parent)
+GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 {
 	BeginHook((BYTE*)det_chatlog, (BYTE*)det_chatcmd);
 	SetColor(0xff00); // green
@@ -44,7 +44,7 @@ void GWAPI::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel)
 	chat->channel = channel;
 	wcscpy_s(chat->msg, msg);
 
-	parent_->CtoS()->SendPacket<P5E_SendChat>(chat);
+	api().CtoS()->SendPacket<P5E_SendChat>(chat);
 }
 
 void GWAPI::ChatMgr::WriteWhisperF(const wchar_t* format, ...)
@@ -82,7 +82,7 @@ std::wstring GWAPI::ChatMgr::RemakeMessage(const wchar_t* format, ...)
 	va_list args;
 	va_start(args, format);
 	std::wostringstream buffer;
-	DWORD time = parent_->Map()->GetInstanceTime() / 1000;
+	DWORD time = api().Map()->GetInstanceTime() / 1000;
 
 	while (*format)
 	{

@@ -72,7 +72,8 @@ void GWAPI::GameThreadMgr::ToggleRenderHook()
 	}
 }
 
-GWAPI::GameThreadMgr::GameThreadMgr(GWAPI::GWAPIMgr* obj) : parent_(obj), render_state_(false)
+GWAPI::GameThreadMgr::GameThreadMgr(GWAPI::GWAPIMgr& api) 
+	: GWCAManager(api), render_state_(false)
 {
 	MemoryMgr::GameLoopReturn = (BYTE*)hk_game_thread_.Detour(MemoryMgr::GameLoopLocation, (BYTE*)gameLoopHook, 5);
 }

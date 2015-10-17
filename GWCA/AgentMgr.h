@@ -3,13 +3,16 @@
 #include <Windows.h>
 #include <vector>
 
+#include "GWCAManager.h"
 #include "GWStructures.h"
 #include "GwConstants.h"
 #include "Hooker.h"
 
 namespace GWAPI {
 
-	class AgentMgr {
+	class AgentMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 
 		// Get AgentArray Structures of player or target.
@@ -100,8 +103,6 @@ namespace GWAPI {
 
 	private:
 		
-
-		friend class GWAPIMgr;
 		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID,DWORD smth);
 		struct MovePosition {
 			float X;
@@ -110,11 +111,9 @@ namespace GWAPI {
 		};
 		typedef void(__fastcall *Move_t)(MovePosition* Pos);
 
-		AgentMgr(GWAPIMgr* obj);
+		AgentMgr(GWAPIMgr& api);
 		~AgentMgr();
-		void RestoreHooks();
 
-		GWAPIMgr* const parent_;
 		ChangeTarget_t change_target_;
 		Move_t move_;
 		Hook hk_dialog_log_;
@@ -122,8 +121,5 @@ namespace GWAPI {
 		static BYTE* dialog_log_ret_;
 		static DWORD last_dialog_id_;
 		static void detourDialogLog();
-
-		
 	};
-
 }

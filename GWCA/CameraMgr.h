@@ -1,10 +1,13 @@
 #pragma once
 
+#include "GWCAManager.h"
 #include "GWStructures.h"
 
 namespace GWAPI {
 
-	class CameraMgr {
+	class CameraMgr : public GWCAManager {
+		friend class GWAPIMgr;
+
 	public:
 		
 		// X,Y,Z of camera in game world.
@@ -29,11 +32,9 @@ namespace GWAPI {
 		inline float* GetProjectionMatrix() { return projection_matrix_; }
 
 	private:
-		friend class GWAPIMgr;
 
-		CameraMgr(GWAPIMgr* obj);
+		CameraMgr(GWAPIMgr& obj);
 
-		GWAPIMgr* const parent_;
 		GW::Camera* cam_class_;
 		float* projection_matrix_;
 	};

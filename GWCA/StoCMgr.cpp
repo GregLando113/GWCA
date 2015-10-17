@@ -15,9 +15,8 @@ bool GWAPI::StoCMgr::StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk)
 	return original_functions_[pak->header].handlerfunc(pak, unk);
 }
 
-GWAPI::StoCMgr::StoCMgr(GWAPIMgr * obj) : parent_(obj) {
+GWAPI::StoCMgr::StoCMgr(GWAPIMgr& api) : GWCAManager(api) {
 	StoCHandlerArray* ptr = MemoryMgr::ReadPtrChain<StoCHandlerArray*>(*(DWORD*)MemoryMgr::GSObjectPtr, 2, 0x8, 0x2C);
-
 	
 	game_server_handler_ = *ptr;
 

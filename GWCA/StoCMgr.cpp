@@ -1,5 +1,7 @@
 #include "StoCMgr.h"
 
+#include "GWAPIMgr.h"
+
 GWAPI::StoCMgr::StoCHandlerArray GWAPI::StoCMgr::game_server_handler_;
 GWAPI::StoCMgr::StoCHandler* GWAPI::StoCMgr::original_functions_ = NULL;
 std::map<DWORD, std::vector<GWAPI::StoCMgr::Handler>> GWAPI::StoCMgr::event_calls_;

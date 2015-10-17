@@ -1,8 +1,6 @@
 #include "MerchantMgr.h"
 
-#include "MemoryMgr.h"
-#include "GameThreadMgr.h"
-#include "ItemMgr.h"
+#include "GWAPIMgr.h"
 
 BYTE* GWAPI::MerchantMgr::trader_sell_class_ = NULL;
 BYTE* GWAPI::MerchantMgr::trader_buy_class_ = NULL;

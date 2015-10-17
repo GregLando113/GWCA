@@ -1,9 +1,6 @@
 #include "AgentMgr.h"
 
-#include "MemoryMgr.h"
-#include "GameThreadMgr.h"
-#include "CtoSMgr.h"
-#include "MapMgr.h"
+#include "GWAPIMgr.h"
 
 
 BYTE* GWAPI::AgentMgr::dialog_log_ret_ = NULL;

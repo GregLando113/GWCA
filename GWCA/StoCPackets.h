@@ -36,14 +36,14 @@ namespace GWAPI {
 		};
 		const DWORD Packet<P000>::STATIC_HEADER = 0;
 
-		struct P001 : Packet<P001> {
+		struct P001_PingRequest : Packet<P001_PingRequest> {
 		};
-		const DWORD Packet<P001>::STATIC_HEADER = 1;
+		const DWORD Packet<P001_PingRequest>::STATIC_HEADER = 1;
 
-		struct P002 : Packet<P002> {
+		struct P002_PingReply : Packet<P002_PingReply> {
 			// DWORD
 		};
-		const DWORD Packet<P002>::STATIC_HEADER = 2;
+		const DWORD Packet<P002_PingReply>::STATIC_HEADER = 2;
 
 		struct P003 : Packet<P003> {
 			// DWORD

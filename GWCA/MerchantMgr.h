@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Windows.h>
-#include "ItemMgr.h"
-#include "GWAPIMgr.h"
 
+#include "Hooker.h"
+#include "GWStructures.h"
 
 namespace GWAPI {
 

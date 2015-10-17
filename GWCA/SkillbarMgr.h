@@ -1,7 +1,9 @@
 #pragma once
 
 #include <Windows.h>
-#include "GWAPIMgr.h"
+
+#include "GWStructures.h"
+#include "GwConstants.h"
 
 namespace GWAPI{
 
@@ -31,10 +33,12 @@ namespace GWAPI{
 
 		
 	private:
-		SkillbarMgr(GWAPIMgr* obj);
+	
 
 		typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
 		friend class GWAPIMgr;
+
+		SkillbarMgr(GWAPIMgr* obj);
 
 		UseSkill_t UseSkill_;
 		GWAPIMgr* parent_;

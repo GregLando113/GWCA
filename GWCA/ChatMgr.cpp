@@ -1,10 +1,11 @@
 #include "ChatMgr.h"
 
-#include "MemoryMgr.h"
-#include "CtoSMgr.h"
-#include "PatternScanner.h"
 #include <sstream>
 #include <iomanip>
+
+#include "GWAPIMgr.h"
+#include "PatternScanner.h"
+
 
 GWAPI::ChatMgr::ChatMgr(GWAPIMgr* parent) : parent_(parent)
 {
@@ -81,7 +82,7 @@ std::wstring GWAPI::ChatMgr::RemakeMessage(const wchar_t* format, ...)
 	va_list args;
 	va_start(args, format);
 	std::wostringstream buffer;
-	DWORD time = GWAPI::GWAPIMgr::instance()->Map()->GetInstanceTime() / 1000;
+	DWORD time = parent_->Map()->GetInstanceTime() / 1000;
 
 	while (*format)
 	{
@@ -140,21 +141,6 @@ DWORD GWAPI::ChatMgr::getChan(wchar_t* message)
 
 	return channel;
 }
-struct MessageInfo {
-	WCHAR *message;
-	DWORD size1;
-	DWORD size2;
-	DWORD unknow;
-};
-
-struct ChannelInfo {
-	DWORD unknow1;
-	DWORD channel;
-	DWORD isHandled; // seem to be 1 until he is handled
-	BYTE unknow2[12];
-	DWORD unknow3; // alway 6
-	DWORD unknow4;
-};
 
 void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless /* same as edx */)
 {

@@ -1,11 +1,21 @@
 #pragma once
 
 #include <Windows.h>
-#include "GWAPIMgr.h"
+
+#include "GwConstants.h"
+#include "GWStructures.h"
 
 
 namespace GWAPI{
 	class MapMgr{
+		struct PAB_ZoneMap {
+			const DWORD header = 0xAB;
+			DWORD mapid;
+			int region;
+			int district;
+			int language;
+			DWORD unk;
+		};
 	public:
 
 		// Get current map ID.
@@ -31,18 +41,11 @@ namespace GWAPI{
 		GW::MissionMapIconArray GetMissionMapIconArray();
 
 	private:
-		GWAPIMgr* const parent_;
+		
 		friend class GWAPIMgr;
-		struct PAB_ZoneMap {
-			const DWORD header = 0xAB;
-			DWORD mapid;
-			int region;
-			int district;
-			int language;
-			DWORD unk;
-		};
 
 		MapMgr(GWAPIMgr* obj);
 
+		GWAPIMgr* const parent_;
 	};
 }

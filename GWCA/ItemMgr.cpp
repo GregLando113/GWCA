@@ -1,8 +1,6 @@
 #include "ItemMgr.h"
 
-#include "MemoryMgr.h"
-#include "GameThreadMgr.h"
-#include "CtoSMgr.h"
+#include "GWAPIMgr.h"
 
 void GWAPI::ItemMgr::OpenXunlaiWindow()
 {

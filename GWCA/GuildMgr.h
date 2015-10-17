@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Windows.h>
-#include "GWAPIMgr.h"
+
+#include "GWStructures.h"
 
 namespace GWAPI {
 
@@ -22,8 +23,8 @@ namespace GWAPI {
 		wchar_t* GetPlayerGuildAnnouncer();
 
 	private:
-		GWAPIMgr* const parent_;
 		friend class GWAPIMgr;
+		GWAPIMgr* const parent_;
 		GuildMgr(GWAPIMgr* obj) : parent_(obj) {}
 	};
 }

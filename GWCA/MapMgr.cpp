@@ -1,7 +1,6 @@
 #include "MapMgr.h"
 
-#include "MemoryMgr.h"
-#include "CtoSMgr.h"
+#include "GWAPIMgr.h"
 
 void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, DWORD District /*= 0*/, int Region /*= 0*/, DWORD Language /*= 0*/)
 {

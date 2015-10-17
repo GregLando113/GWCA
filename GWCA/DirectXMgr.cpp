@@ -1,7 +1,10 @@
 #include "DirectXMgr.h"
+
 #include <Windows.h>
 #include <stdio.h>
 #include <Psapi.h>
+
+#include "GWAPIMgr.h"
 #include "PatternScanner.h"
 
 GWAPI::DirectXMgr::DirectXMgr(GWAPIMgr* obj) : parent_(obj)

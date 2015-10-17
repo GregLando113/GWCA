@@ -1,8 +1,11 @@
 #pragma once
 
 #include <Windows.h>
-#include "GWAPIMgr.h"
 #include <vector>
+
+#include "GWStructures.h"
+#include "GwConstants.h"
+#include "Hooker.h"
 
 namespace GWAPI {
 
@@ -96,8 +99,7 @@ namespace GWAPI {
 		const char* GetProfessionAcronym(GwConstants::Profession profession);
 
 	private:
-		AgentMgr(GWAPIMgr* obj);
-		~AgentMgr();
+		
 
 		friend class GWAPIMgr;
 		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID,DWORD smth);
@@ -108,20 +110,20 @@ namespace GWAPI {
 		};
 		typedef void(__fastcall *Move_t)(MovePosition* Pos);
 
-		GWAPIMgr* const parent_;
-
-		ChangeTarget_t change_target_;
-
-		
-		Hook hk_dialog_log_;
-
+		AgentMgr(GWAPIMgr* obj);
+		~AgentMgr();
 		void RestoreHooks();
+
+		GWAPIMgr* const parent_;
+		ChangeTarget_t change_target_;
+		Move_t move_;
+		Hook hk_dialog_log_;
 
 		static BYTE* dialog_log_ret_;
 		static DWORD last_dialog_id_;
 		static void detourDialogLog();
 
-		Move_t move_;
+		
 	};
 
 }

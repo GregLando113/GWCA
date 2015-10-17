@@ -191,7 +191,26 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 	CallBack callback = chat->chatcmd_callbacks[key];
 	if (callback.callback && channel == '/')
 	{
-		callback.callback(arguments);
+		std::vector<std::wstring> args;
+		size_t index = 0;
+		while (true) {
+			size_t pos = arguments.find(L' ', index);
+
+			std::wstring arg;
+			if (pos == std::wstring::npos) {
+				arg = arguments.substr(index);
+			} else {
+				arg = arguments.substr(index, pos - index);
+			}
+			if (!arg.empty()) {
+				args.push_back(arg);
+			}
+
+			if (pos == std::wstring::npos) break;
+			index = pos + 1;
+		}
+
+		callback.callback(args);
 
 		if (callback.override)
 			return chat->ori_chatcmd((DWORD)L"");

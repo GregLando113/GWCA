@@ -10,7 +10,7 @@ namespace GWAPI {
 
 		ChatMgr(GWAPIMgr* parent);
 
-		typedef std::function<void(std::wstring)> CB_T;
+		typedef std::function<void(std::vector<std::wstring>)> CB_T;
 		struct CallBack {
 			CB_T callback;
 			bool override;
@@ -43,7 +43,11 @@ namespace GWAPI {
 		void WriteChat(const wchar_t* msg, const wchar_t* from = L"GWToolbox++");
 
 		inline void SetColor(DWORD rgb_color) { timestamp_color = rgb_color; }
-		inline void RegisterKey(std::wstring key, CB_T callback, bool override = true) { chatcmd_callbacks[key] = { callback, override }; }
+		inline void RegisterKey(std::wstring key, 
+			std::function<void(std::vector<std::wstring>)> callback, 
+			bool override = true) { 
+			chatcmd_callbacks[key] = { callback, override };
+		}
 		inline void DeleteKey(std::wstring key) { chatcmd_callbacks.erase(key); }
 		inline void RestoreHook() { EndHook(); }
 

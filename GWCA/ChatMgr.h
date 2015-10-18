@@ -12,9 +12,11 @@ namespace GWAPI {
 	class ChatMgr : public GWCAManager {
 		friend class GWAPIMgr;
 
-		typedef std::function<void(std::vector<std::wstring>)> CB_T;
+		typedef DWORD Color_t;
+		typedef std::function<void(std::vector<std::wstring>)> Callback_t;
+		typedef std::function<std::wstring(std::wstring)> ParseMessage_t;
 		struct CallBack {
-			CB_T callback;
+			Callback_t callback;
 			bool override;
 		};
 
@@ -27,12 +29,11 @@ namespace GWAPI {
 
 		struct Channel {
 			const DWORD id;  // 0, default
-
 			Channel* next;
 		};
 
 		struct MessageInfo {
-			WCHAR *message;
+			const wchar_t* message;
 			DWORD size1;
 			DWORD size2;
 			DWORD unknow;
@@ -49,18 +50,22 @@ namespace GWAPI {
 
 	public:
 		
-		typedef unsigned int CHAT_COLOR;
-
-		// Sendchat, should be self explanatory. SendChat(L"I love gwtoolbox",L'!');
+		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(const wchar_t* msg, wchar_t channel);
 
+		std::wstring CreateChannel(ParseMessage_t parser);
+		std::wstring CreateChannel(std::wstring format_string);
+
 		// Write to chat as a PM with printf style arguments.
-		void WriteWhisperF(const wchar_t* format, ...);
+		void WriteChatF(const wchar_t* from, const wchar_t* format, ...);
 		
 		// Simple write to chat as a PM
-		void WriteWhisper(const wchar_t* msg, const wchar_t* from = L"GWToolbox++");
+		void WriteChat(const wchar_t* from, const wchar_t* msg);
 
-		inline void SetColor(DWORD rgb_color) { timestamp_color = rgb_color; }
+		inline void SetTimestampColor(DWORD xrgb_color) {
+			timestamp_color_ = xrgb_color && 0x00FFFFFF; // remove alpha
+		}
+
 		inline void RegisterKey(std::wstring key, 
 			std::function<void(std::vector<std::wstring>)> callback, 
 			bool override = true) { 
@@ -70,14 +75,15 @@ namespace GWAPI {
 		inline void RestoreHook() { EndHook(); }
 
 	private:
-
 		std::wstring chatlog_result;
-		CHAT_COLOR timestamp_color;
+		Color_t timestamp_color_;
 
 		std::map< std::wstring, CallBack > chatcmd_callbacks;
 
-		std::wstring RemakeMessage(const wchar_t* format, ...);
-		DWORD getChan(wchar_t* message);
+		std::vector<ParseMessage_t> parsers;
+
+		std::wstring RemakeMessage(const wchar_t* format, const wchar_t* message);
+		size_t getChan(const wchar_t* message);
 
 		typedef void(__fastcall *ChatLog_t)(DWORD, DWORD, DWORD);
 		typedef void(__fastcall *ChatCmd_t)(DWORD);

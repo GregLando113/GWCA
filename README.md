@@ -4,8 +4,6 @@ Another C++ API to interface with the Guild Wars client.
 
 by 4D 1 initially for use in GWToolbox++
 
-[Doxygen overview of project](https://dl.dropboxusercontent.com/u/21362121/GWCA%2B%2B%20Dox/html/index.html)
-
 Credits to:
 
 gigi (ggori) - For helping with the api significantly in terms of structure and higher level functionality.

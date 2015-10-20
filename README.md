@@ -4,7 +4,7 @@ Another C++ API to interface with the Guild Wars client.
 
 by 4D 1 initially for use in GWToolbox++
 
-Credits to:
+### Credits to: ###
 
 gigi (ggori) - For helping with the api significantly in terms of structure and higher level functionality.
 

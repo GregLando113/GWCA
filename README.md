@@ -2,11 +2,9 @@
 
 Another C++ API to interface with the Guild Wars client.
 
-by 4D 1 initially for use in GWToolbox++
+by GWCA++ team (4D 1,gigi,reduf) initially for use in GWToolbox++
 
 ### Credits to: ###
-
-gigi (ggori) - For helping with the api significantly in terms of structure and higher level functionality.
 
 ACB,Harboe - For their work in the original GWCA project, most agentarray and ctogs functions are derived from this work
 

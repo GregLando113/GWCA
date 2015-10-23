@@ -62,5 +62,6 @@ namespace GWAPI {
 		OpenXunlai_t open_xunlai_function_;
 
 		ItemMgr(GWAPIMgr& api);
+		void RestoreHooks() override {};
 	};
 }

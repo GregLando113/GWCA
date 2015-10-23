@@ -9,7 +9,6 @@
 
 GWAPI::DirectXMgr::DirectXMgr(GWAPIMgr& api) : GWCAManager(api)
 {
-
 }
 
 void GWAPI::DirectXMgr::CreateRenderHooks(EndScene_t _endscene, Reset_t _reset)
@@ -84,8 +83,4 @@ void GWAPI::DirectXMgr::RestoreHooks()
 	hk_reset_.Retour();
 
 	hooked_ = false;
-}
-
-GWAPI::DirectXMgr::~DirectXMgr()
-{
 }

@@ -1,6 +1,6 @@
 #include "GameThreadMgr.h"
 
-#include "GWAPIMgr.h"
+#include "GWCA.h"
 
 void __stdcall GWAPI::GameThreadMgr::CallFunctions()
 {
@@ -28,9 +28,9 @@ void __declspec(naked) GWAPI::GameThreadMgr::gameLoopHook()
 	_asm PUSHAD
 
 	if (inst == NULL)
-		inst = GWAPIMgr::instance();
+		inst = &GWCA::Api();
 	if (inst != NULL)
-		inst->Gamethread()->CallFunctions();
+		inst->Gamethread().CallFunctions();
 
 	_asm POPAD
 	_asm JMP MemoryMgr::GameLoopReturn
@@ -76,10 +76,6 @@ GWAPI::GameThreadMgr::GameThreadMgr(GWAPI::GWAPIMgr& api)
 	: GWCAManager(api), render_state_(false)
 {
 	MemoryMgr::GameLoopReturn = (BYTE*)hk_game_thread_.Detour(MemoryMgr::GameLoopLocation, (BYTE*)gameLoopHook, 5);
-}
-
-GWAPI::GameThreadMgr::~GameThreadMgr()
-{
 }
 
 void GWAPI::GameThreadMgr::RestoreHooks()

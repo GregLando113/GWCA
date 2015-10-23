@@ -45,5 +45,6 @@ namespace GWAPI {
 
 	private:
 		MapMgr(GWAPIMgr& api) : GWCAManager(api) {}
+		void RestoreHooks() override {}
 	};
 }

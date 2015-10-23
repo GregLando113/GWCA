@@ -23,6 +23,7 @@
     <ClInclude Include="GWCA\GameThreadMgr.h" />
     <ClInclude Include="GWCA\GuildMgr.h" />
     <ClInclude Include="GWCA\GWAPIMgr.h" />
+    <ClInclude Include="GWCA\GWCA.h" />
     <ClInclude Include="GWCA\GWCAManager.h" />
     <ClInclude Include="GWCA\GwConstants.h" />
     <ClInclude Include="GWCA\GwConstantsMaps.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="GWCA\GameThreadMgr.cpp" />
     <ClCompile Include="GWCA\GuildMgr.cpp" />
     <ClCompile Include="GWCA\GWAPIMgr.cpp" />
+    <ClCompile Include="GWCA\GWCA.cpp" />
     <ClCompile Include="GWCA\Hooker.cpp" />
     <ClCompile Include="GWCA\ItemMgr.cpp" />
     <ClCompile Include="GWCA\MapMgr.cpp" />

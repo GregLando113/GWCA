@@ -46,12 +46,10 @@ namespace GWAPI {
 		static void __fastcall AlcoholHandler(DWORD Intensity, DWORD Tint);
 
 		EffectMgr(GWAPIMgr& obj);
-		~EffectMgr();
+		void RestoreHooks() override;
 
 		static PPEFunc_t ppe_retour_func_;
 		static DWORD alcohol_level_;
 		Hook hk_post_process_effect_;
-
-		void RestoreHooks();		
 	};
 }

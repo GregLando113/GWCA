@@ -1,7 +1,4 @@
-#ifndef TOOLBOX_API_H // Did a classic guard here so we can detect if the api is included, might be useful i dunno.
-#define TOOLBOX_API_H
-
-#include <Windows.h>
+#pragma once
 
 /**********************************************************************************\
 
@@ -56,41 +53,4 @@
 // Comment out this #define to make the directx shit not compile into the project.
 #define GWAPI_USEDIRECTX
 
-#include "Hooker.h"
-
-#include "GwConstants.h"
-#include "GWAPIMgr.h"
-
-
-
-#include "MemoryMgr.h"
-#include "GameThreadMgr.h"
-
-#include "GWStructures.h"
-
-#include "CtoSMgr.h"
-#include "AgentMgr.h"
-#include "ItemMgr.h"
-
-#include "MerchantMgr.h"
-
-#ifdef GWAPI_USEDIRECTX
-#include "DirectXMgr.h"
-#endif
-
-#include "SkillbarMgr.h"
-#include "EffectMgr.h"
-
-#include "GuildMgr.h"
-#include "MapMgr.h"
-
-#include "ChatMgr.h"
-
-#include "StoCMgr.h"
-#include "StoCPackets.h"
-
-#include "FriendListMgr.h"
-
-#include "CameraMgr.h"
-
-#endif
+#include "GWCA.h"

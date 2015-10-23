@@ -3,17 +3,11 @@
 #include <sstream>
 #include <iomanip>
 
-#include "GWAPIMgr.h"
+#include "GWCA.h"
 #include "PatternScanner.h"
 
 
 GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
-{
-	BeginHook((BYTE*)det_chatlog, (BYTE*)det_chatcmd);
-	SetTimestampColor(0xff00); // green
-}
-
-void GWAPI::ChatMgr::BeginHook(BYTE* chatlog, BYTE* chatcmd)
 {
 	PatternScanner scanner(0x401000, 0x4FF000);
 	BYTE* chatlog_adr = (BYTE*)scanner.FindPattern("\x53\x56\x8B\xF1\x57\x8B\x56\x14\x8B\x4E\x0C\xE8", "xxxxxxxxxxxx", -6);
@@ -22,19 +16,15 @@ void GWAPI::ChatMgr::BeginHook(BYTE* chatlog, BYTE* chatcmd)
 	DWORD chatlog_length = Hook::CalculateDetourLength(chatlog_adr);
 	DWORD chatcmd_length = Hook::CalculateDetourLength(chatcmd_adr);
 
-	ori_chatlog = (ChatLog_t)hk_chatlog_.Detour(chatlog_adr, chatlog, chatlog_length);
-	ori_chatcmd = (ChatCmd_t)hk_chatcmd_.Detour(chatcmd_adr, chatcmd, chatcmd_length);
+	ori_chatlog = (ChatLog_t)hk_chatlog_.Detour(chatlog_adr, (BYTE*)det_chatlog, chatlog_length);
+	ori_chatcmd = (ChatCmd_t)hk_chatcmd_.Detour(chatcmd_adr, (BYTE*)det_chatcmd, chatcmd_length);
 
-	hooked_ = true;
+	SetTimestampColor(0xff00); // green
 }
 
-void GWAPI::ChatMgr::EndHook()
-{
-	if (!hooked_) return;
+void GWAPI::ChatMgr::RestoreHooks() {
 	hk_chatlog_.Retour();
 	hk_chatcmd_.Retour();
-
-	hooked_ = false;
 }
 
 void GWAPI::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel)
@@ -44,7 +34,7 @@ void GWAPI::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel)
 	chat->channel = channel;
 	wcscpy_s(chat->msg, msg);
 
-	api().CtoS()->SendPacket<P5E_SendChat>(chat);
+	api().CtoS().SendPacket<P5E_SendChat>(chat);
 }
 
 std::wstring GWAPI::ChatMgr::CreateChannel(ParseMessage_t parser) {
@@ -87,7 +77,7 @@ std::wstring GWAPI::ChatMgr::RemakeMessage(const wchar_t* format, const wchar_t*
 	%C{string} = color string, TODO fix or remove, probably remove (just have color as static format)
 	*/
 	std::wostringstream buffer;
-	DWORD time = GWAPI::GWAPIMgr::instance()->Map()->GetInstanceTime() / 1000;
+	DWORD time = api().Map().GetInstanceTime() / 1000;
 
 	while (*format) {
 		if (*format == '%') {
@@ -140,18 +130,19 @@ size_t GWAPI::ChatMgr::getChan(const wchar_t* message)
 
 void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless /* same as edx */)
 {
-	GWAPI::ChatMgr *chat = GWAPI::GWAPIMgr::instance()->Chat();
+
+	GWAPI::ChatMgr& chat = GWAPI::GWCA::Api().Chat();
 	MessageInfo *mInfo = reinterpret_cast<MessageInfo*>(edx);
 	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
 
-	DWORD speChannel = chat->getChan(mInfo->message);
+	DWORD speChannel = chat.getChan(mInfo->message);
 	const wchar_t* message = wcswcs(mInfo->message, L"<quote>") + sizeof("<quote>") - 1;
 
-	if (speChannel > 0 && speChannel <= chat->parsers.size()) {
-		chat->chatlog_result = chat->parsers[speChannel-1](message);
+	if (speChannel > 0 && speChannel <= chat.parsers.size()) {
+		chat.chatlog_result = chat.parsers[speChannel-1](message);
 
-		mInfo->message = chat->chatlog_result.c_str();
-		mInfo->size1 = mInfo->size2 = chat->chatlog_result.length() + 1;
+		mInfo->message = chat.chatlog_result.c_str();
+		mInfo->size1 = mInfo->size2 = chat.chatlog_result.length() + 1;
 	}
 	
 	// todo add timestamp ?
@@ -164,12 +155,12 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	//	chat->chatlog_result = chat->RemakeMessage(L"%C{[%2M:%2S]} %T", chat->timestamp_color_, mInfo->message);
 	//}
 
-	return chat->ori_chatlog(ecx, edx, useless);
+	return chat.ori_chatlog(ecx, edx, useless);
 }
 
 void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 {
-	ChatMgr* chat = GWAPI::GWAPIMgr::instance()->Chat();
+	ChatMgr& chat = GWAPI::GWCA::Api().Chat();
 	WCHAR* message = reinterpret_cast<WCHAR*>(ecx);
 	WCHAR channel = *message;
 
@@ -183,7 +174,7 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 		arguments = std::wstring(message + fPos + 2);
 	}
 
-	CallBack callback = chat->chatcmd_callbacks[key];
+	CallBack callback = chat.chatcmd_callbacks[key];
 	if (callback.callback && channel == '/')
 	{
 		std::vector<std::wstring> args;
@@ -208,8 +199,8 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 		callback.callback(args);
 
 		if (callback.override)
-			return chat->ori_chatcmd((DWORD)L"");
+			return chat.ori_chatcmd((DWORD)L"");
 	}
 
-	return chat->ori_chatcmd(ecx);
+	return chat.ori_chatcmd(ecx);
 }

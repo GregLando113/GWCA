@@ -28,6 +28,7 @@ namespace GWAPI {
 		typedef void(__fastcall *SetOnlineStatus_t)(DWORD status);
 		
 		FriendListMgr(GWAPIMgr& api);
+		void RestoreHooks() override {}
 
 		SetOnlineStatus_t set_online_status_;
 		GWAPI::GW::FriendList* fList_;

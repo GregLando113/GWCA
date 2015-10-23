@@ -23,7 +23,7 @@ void GWAPI::CtoSMgr::SendPacket(DWORD size, ...)
 	}
 	va_end(vl);
 
-	api().Gamethread()->Enqueue(packetsendintermediary, MemoryMgr::GetGSObject(), size, pak);
+	api().Gamethread().Enqueue(packetsendintermediary, MemoryMgr::GetGSObject(), size, pak);
 }
 
 

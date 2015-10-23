@@ -21,15 +21,13 @@ namespace GWAPI {
 		typedef HRESULT(WINAPI *Reset_t)(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 
 		void CreateRenderHooks(EndScene_t _endscene, Reset_t _reset);
-		void RestoreHooks();
 
 		inline EndScene_t EndsceneReturn() { return endscene_; }
 		inline Reset_t ResetReturn() { return reset_; }
 
-
 	private:
 		DirectXMgr(GWAPIMgr& api);
-		~DirectXMgr();
+		void RestoreHooks() override;
 
 		EndScene_t endscene_ = NULL;
 		Reset_t reset_ = NULL;

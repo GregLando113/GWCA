@@ -12,7 +12,7 @@ void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, DWORD District /*= 0*/, int
 	pak->language = Language;
 	pak->unk = 0;
 
-	api().CtoS()->SendPacket<PAB_ZoneMap>(pak);
+	api().CtoS().SendPacket<PAB_ZoneMap>(pak);
 }
 
 DWORD GWAPI::MapMgr::GetInstanceTime()

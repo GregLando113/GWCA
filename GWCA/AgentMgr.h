@@ -112,7 +112,8 @@ namespace GWAPI {
 		typedef void(__fastcall *Move_t)(MovePosition* Pos);
 
 		AgentMgr(GWAPIMgr& api);
-		~AgentMgr();
+
+		void RestoreHooks() override;
 
 		ChangeTarget_t change_target_;
 		Move_t move_;

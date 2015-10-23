@@ -13,6 +13,8 @@ namespace GWAPI {
 		inline GWAPIMgr& api() { return api_; }
 
 	private:
+		virtual void RestoreHooks() = 0;
+
 		GWAPIMgr& api_;
 	};
 }

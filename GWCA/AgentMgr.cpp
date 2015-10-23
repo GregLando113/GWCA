@@ -56,14 +56,13 @@ GWAPI::AgentMgr::AgentMgr(GWAPIMgr& api) : GWCAManager(api) {
 	dialog_log_ret_ = (BYTE*)hk_dialog_log_.Detour(MemoryMgr::DialogFunc, (BYTE*)AgentMgr::detourDialogLog, 9);
 }
 
-
-GWAPI::AgentMgr::~AgentMgr() {
+void GWAPI::AgentMgr::RestoreHooks() {
 	hk_dialog_log_.Retour();
 }
 
 void GWAPI::AgentMgr::ChangeTarget(GW::Agent* Agent)
 {
-	api().Gamethread()->Enqueue(change_target_, Agent->Id,0);
+	api().Gamethread().Enqueue(change_target_, Agent->Id,0);
 }
 
 void GWAPI::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/)
@@ -74,12 +73,12 @@ void GWAPI::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/)
 	pos->Y = Y;
 	pos->ZPlane = ZPlane;
 
-	api().Gamethread()->Enqueue(move_, pos);
+	api().Gamethread().Enqueue(move_, pos);
 }
 
 void GWAPI::AgentMgr::Dialog(DWORD id)
 {
-	api().CtoS()->SendPacket(0x8, 0x35, id);
+	api().CtoS().SendPacket(0x8, 0x35, id);
 }
 
 GWAPI::GW::PartyMemberArray GWAPI::AgentMgr::GetPartyMemberArray()
@@ -89,7 +88,7 @@ GWAPI::GW::PartyMemberArray GWAPI::AgentMgr::GetPartyMemberArray()
 
 bool GWAPI::AgentMgr::GetIsPartyLoaded()
 {
-	if (api().Map()->GetInstanceType() == GwConstants::InstanceType::Loading) return false;
+	if (api().Map().GetInstanceType() == GwConstants::InstanceType::Loading) return false;
 
 	GW::PartyMemberArray party = GetPartyMemberArray();
 	if (!party.valid()) return false;
@@ -128,22 +127,22 @@ GWAPI::GW::Agent* GWAPI::AgentMgr::GetTarget() {
 
 void GWAPI::AgentMgr::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/)
 {
-	api().CtoS()->SendPacket(0xC, 0x33, Agent->Id, CallTarget);
+	api().CtoS().SendPacket(0xC, 0x33, Agent->Id, CallTarget);
 }
 
 void GWAPI::AgentMgr::GoPlayer(GW::Agent* Agent)
 {
-	api().CtoS()->SendPacket(0x8, 0x2D, Agent->Id);
+	api().CtoS().SendPacket(0x8, 0x2D, Agent->Id);
 }
 
 void GWAPI::AgentMgr::GoSignpost(GW::Agent* Agent, BOOL CallTarget /*= 0*/)
 {
-	api().CtoS()->SendPacket(0xC, 0x4B, Agent->Id, CallTarget);
+	api().CtoS().SendPacket(0xC, 0x4B, Agent->Id, CallTarget);
 }
 
 void GWAPI::AgentMgr::CallTarget(GW::Agent* Agent)
 {
-	api().CtoS()->SendPacket(0xC, 0x1C, 0xA, Agent->Id);
+	api().CtoS().SendPacket(0xC, 0x1C, 0xA, Agent->Id);
 }
 
 void __declspec(naked) GWAPI::AgentMgr::detourDialogLog()
@@ -208,7 +207,7 @@ bool GWAPI::AgentMgr::GetTicked() {
 
 void GWAPI::AgentMgr::Tick(bool flag)
 {
-	api().CtoS()->SendPacket(0x8, 0xA9, flag);
+	api().CtoS().SendPacket(0x8, 0xA9, flag);
 }
 
 

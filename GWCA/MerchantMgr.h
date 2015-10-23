@@ -64,9 +64,8 @@ namespace GWAPI {
 		static BYTE* trader_sell_class_hook_return_;
 		Hook hk_trader_sell_class_;
 
-		void RestoreHooks();
-
 		MerchantMgr(GWAPIMgr& api);
+		void RestoreHooks() override;
 
 		static BYTE* trader_buy_class_;
 		static BYTE* trader_sell_class_;

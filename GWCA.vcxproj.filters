@@ -37,6 +37,7 @@
     <ClInclude Include="GWCA\CameraMgr.h" />
     <ClInclude Include="GWCA\StoCPackets.h" />
     <ClInclude Include="GWCA\GWCAManager.h" />
+    <ClInclude Include="GWCA\GWCA.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">
@@ -94,6 +95,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\CameraMgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\GWCA.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

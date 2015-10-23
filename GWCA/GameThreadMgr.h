@@ -40,9 +40,8 @@ namespace GWAPI {
 
 	private:
 
-		void RestoreHooks();
 		GameThreadMgr(GWAPIMgr& obj);
-		~GameThreadMgr();
+		void RestoreHooks() override;
 
 		std::vector<std::function<void(void)> > calls_;
 		std::vector<std::function<void(void)> > calls_permanent_;

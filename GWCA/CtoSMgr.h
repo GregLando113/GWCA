@@ -18,7 +18,7 @@ namespace GWAPI {
 		void SendPacket(T* packet)
 		{
 			DWORD size = sizeof(T);
-			api().Gamethread()->Enqueue(gs_send_function_, MemoryMgr::GetGSObject(), size, (DWORD*)packet);
+			api().Gamethread().Enqueue(gs_send_function_, MemoryMgr::GetGSObject(), size, (DWORD*)packet);
 		}
 
 	private:		
@@ -29,6 +29,7 @@ namespace GWAPI {
 		static void __fastcall packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet);
 
 		CtoSMgr(GWAPIMgr& api);
+		void RestoreHooks() override {}
 	};
 
 }

@@ -26,5 +26,6 @@ namespace GWAPI {
 
 	private:
 		GuildMgr(GWAPIMgr& api) : GWCAManager(api) {}
+		void RestoreHooks() override {}
 	};
 }

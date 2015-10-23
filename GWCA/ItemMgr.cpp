@@ -5,28 +5,28 @@
 void GWAPI::ItemMgr::OpenXunlaiWindow()
 {
 	static DWORD* xunlaibuf = new DWORD[2]{0, 1};
-	api().Gamethread()->Enqueue(open_xunlai_function_,
+	api().Gamethread().Enqueue(open_xunlai_function_,
 		*MemoryMgr::ReadPtrChain<DWORD*>((DWORD)MemoryMgr::XunlaiSession, 4, 0x118, 0x10, 0, 0x14), xunlaibuf);
 }
 
 void GWAPI::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/)
 {
-	api().CtoS()->SendPacket(0xC, 0x39, item->AgentId, CallTarget);
+	api().CtoS().SendPacket(0xC, 0x39, item->AgentId, CallTarget);
 }
 
 void GWAPI::ItemMgr::DropItem(GW::Item* item, DWORD quantity)
 {
-	api().CtoS()->SendPacket(0xC, 0x26, item->ItemId, quantity);
+	api().CtoS().SendPacket(0xC, 0x26, item->ItemId, quantity);
 }
 
 void GWAPI::ItemMgr::EquipItem(GW::Item* item)
 {
-	api().CtoS()->SendPacket(0x8, 0x2A, item->ItemId);
+	api().CtoS().SendPacket(0x8, 0x2A, item->ItemId);
 }
 
 void GWAPI::ItemMgr::UseItem(GW::Item* item)
 {
-	api().CtoS()->SendPacket(0x8, 0x78, item->ItemId);
+	api().CtoS().SendPacket(0x8, 0x78, item->ItemId);
 }
 
 GWAPI::GW::Bag** GWAPI::ItemMgr::GetBagArray()
@@ -47,7 +47,7 @@ GWAPI::ItemMgr::ItemMgr(GWAPIMgr& api) : GWCAManager(api)
 bool GWAPI::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/)
 {
 
-	if (api().Map()->GetInstanceType() == GwConstants::InstanceType::Loading) return false;
+	if (api().Map().GetInstanceType() == GwConstants::InstanceType::Loading) return false;
 
 	GW::Bag** bags = GetBagArray();
 	if (bags == NULL) return false;
@@ -77,7 +77,7 @@ bool GWAPI::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, cons
 
 void GWAPI::ItemMgr::DropGold(DWORD Amount /*= 1*/)
 {
-	api().CtoS()->SendPacket(0x8, 0x29, Amount);
+	api().CtoS().SendPacket(0x8, 0x29, Amount);
 }
 
 DWORD GWAPI::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/)
@@ -137,5 +137,5 @@ DWORD GWAPI::ItemMgr::GetGoldAmountInStorage()
 
 void GWAPI::ItemMgr::OpenLockedChest()
 {
-	return api().CtoS()->SendPacket(0x8, 0x4D, 0x2);
+	return api().CtoS().SendPacket(0x8, 0x4D, 0x2);
 }

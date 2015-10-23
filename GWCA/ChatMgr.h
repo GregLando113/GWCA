@@ -72,7 +72,6 @@ namespace GWAPI {
 			chatcmd_callbacks[key] = { callback, override };
 		}
 		inline void DeleteKey(std::wstring key) { chatcmd_callbacks.erase(key); }
-		inline void RestoreHook() { EndHook(); }
 
 	private:
 		std::wstring chatlog_result;
@@ -89,9 +88,7 @@ namespace GWAPI {
 		typedef void(__fastcall *ChatCmd_t)(DWORD);
 
 		ChatMgr(GWAPIMgr& api);
-		void BeginHook(BYTE*, BYTE*);
-		void EndHook();
-		bool hooked_;
+		void RestoreHooks() override;
 
 		Hook hk_chatlog_;
 		Hook hk_chatcmd_;

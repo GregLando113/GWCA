@@ -28,8 +28,7 @@ GWAPI::StoCMgr::StoCMgr(GWAPIMgr& api) : GWCAManager(api) {
 
 }
 
-GWAPI::StoCMgr::~StoCMgr() {
-
+void GWAPI::StoCMgr::RestoreHooks() {
 	for (DWORD i = 0; i < game_server_handler_.size(); ++i) {
 		game_server_handler_[i] = original_functions_[i];
 	}

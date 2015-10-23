@@ -52,7 +52,7 @@ namespace GWAPI {
 		typedef GW::gw_array<StoCHandler> StoCHandlerArray;
 
 		StoCMgr(GWAPIMgr& api);
-		~StoCMgr();
+		void RestoreHooks() override;
 
 		static bool __fastcall StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk);
 

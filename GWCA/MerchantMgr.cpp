@@ -190,7 +190,7 @@ long* GWAPI::MerchantMgr::GetCraftItemArray(long aQuantity, long aMatCount, Craf
 	long* retArr = 0;
 
 	for (int i = 0; i < aMatCount; i++){
-		TotalMats[i] = api().Items()->CountItemByModelId(mats[i].ModelID);
+		TotalMats[i] = api().Items().CountItemByModelId(mats[i].ModelID);
 		if (TotalMats[i] < mats[i].Quantity * aQuantity) return NULL;
 		TotalMats[i] = (long)((TotalMats[i] / 250) + 1);
 		retArrSize += TotalMats[i];
@@ -199,7 +199,7 @@ long* GWAPI::MerchantMgr::GetCraftItemArray(long aQuantity, long aMatCount, Craf
 	retArr = new long[retArrSize];
 	retArrSize = NULL;
 
-	GW::Bag** curBags = api().Items()->GetBagArray();
+	GW::Bag** curBags = api().Items().GetBagArray();
 	if (curBags == NULL) return NULL;
 
 	for (int i = 0; i < aMatCount; i++){
@@ -231,18 +231,18 @@ long* GWAPI::MerchantMgr::GetCraftItemArray(long aQuantity, long aMatCount, Craf
 
 void GWAPI::MerchantMgr::SellQuotedItem()
 {
-	api().Gamethread()->Enqueue(CommandTraderSell);
+	api().Gamethread().Enqueue(CommandTraderSell);
 }
 
 void GWAPI::MerchantMgr::BuyQuotedItem()
 {
-	api().Gamethread()->Enqueue(CommandTraderBuy);
+	api().Gamethread().Enqueue(CommandTraderBuy);
 }
 
 void GWAPI::MerchantMgr::RequestSellQuote(GW::Item* itemtorequest)
 {
 	if (!itemtorequest) return;
-	api().Gamethread()->Enqueue(CommandRequestTraderSellQuote, (long*)itemtorequest);
+	api().Gamethread().Enqueue(CommandRequestTraderSellQuote, (long*)itemtorequest);
 }
 
 void GWAPI::MerchantMgr::RequestBuyQuote(DWORD ModelIDToRequest)
@@ -250,37 +250,37 @@ void GWAPI::MerchantMgr::RequestBuyQuote(DWORD ModelIDToRequest)
 	GW::Item* itemtorequest = GetMerchantItemByModelId(ModelIDToRequest);
 	if (!itemtorequest) return;
 
-	api().Gamethread()->Enqueue(CommandRequestTraderBuyQuote, (long*)itemtorequest);
+	api().Gamethread().Enqueue(CommandRequestTraderBuyQuote, (long*)itemtorequest);
 }
 
 void GWAPI::MerchantMgr::SellItemToMerch(GW::Item* ItemToSell, DWORD AmountToSell /*= 1*/)
 {
 	long amount = AmountToSell * ItemToSell->value;
 
-	api().Gamethread()->Enqueue(CommandSellMerchantItem, (long*)ItemToSell, amount);
+	api().Gamethread().Enqueue(CommandSellMerchantItem, (long*)ItemToSell, amount);
 }
 
 void GWAPI::MerchantMgr::BuyMerchItem(DWORD ModelIdToBuy, DWORD AmountToBuy)
 {
-	GW::ItemArray items = api().Items()->GetItemArray();
+	GW::ItemArray items = api().Items().GetItemArray();
 	static long* amountptr = new long;
 	*amountptr = AmountToBuy;
 
 	GW::Item* itemidptr = GetMerchantItemByModelId(ModelIdToBuy);
 	if (!itemidptr) return;
 
-	api().Gamethread()->Enqueue(CommandBuyMerchantItem, (long*)itemidptr, amountptr, itemidptr->value);
+	api().Gamethread().Enqueue(CommandBuyMerchantItem, (long*)itemidptr, amountptr, itemidptr->value);
 }
 
 void GWAPI::MerchantMgr::CollectItem(int modelIDToGive, int AmountPerCollect, int modelIDtoRecieve)
 {
-	GW::Item* itemGiving = api().Items()->GetItemByModelId(modelIDToGive);
+	GW::Item* itemGiving = api().Items().GetItemByModelId(modelIDToGive);
 	if (!itemGiving || itemGiving->Quantity < AmountPerCollect) return;
 
 	GW::Item* itemidptr = GetMerchantItemByModelId(modelIDtoRecieve);
 	if (!itemidptr) return;
 
-	api().Gamethread()->Enqueue(CommandCollectItem, (long*)itemGiving, AmountPerCollect, (long*)itemidptr);
+	api().Gamethread().Enqueue(CommandCollectItem, (long*)itemGiving, AmountPerCollect, (long*)itemidptr);
 }
 
 void GWAPI::MerchantMgr::CraftGrail(int amount)
@@ -324,13 +324,13 @@ void GWAPI::MerchantMgr::CraftItem(long ModelId, long Quantity, long value, long
 
 	delete[] Materials;
 
-	api().Gamethread()->Enqueue(CommandCraftItem, (long*)itemtobuyptr, QuantityPtr, MaterialPtr, matcount, GoldTotal);
+	api().Gamethread().Enqueue(CommandCraftItem, (long*)itemtobuyptr, QuantityPtr, MaterialPtr, matcount, GoldTotal);
 }
 
 GWAPI::GW::Item* GWAPI::MerchantMgr::GetMerchantItemByModelId(DWORD modelid)
 {
 	try{
-		GW::ItemArray itemstructs = api().Items()->GetItemArray();
+		GW::ItemArray itemstructs = api().Items().GetItemArray();
 		if (!itemstructs.valid()) throw API_EXCEPTION;
 
 		GW::ItemRowArray merchitems = GetMerchantItemsArray();

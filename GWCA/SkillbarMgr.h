@@ -21,7 +21,7 @@ namespace GWAPI {
 
 		// Get the skill slot in the player bar of the player.
 		// Returns 0 if the skill is not there
-		int getSkillSlot(GwConstants::SkillID SkillID);
+		int GetSkillSlot(GwConstants::SkillID SkillID);
 		
 		// Use Skill in slot (Slot) on (Agent), optionally call that you are using said skill.
 		void UseSkill(DWORD Slot, DWORD Target = 0, DWORD CallTarget = 0);
@@ -37,6 +37,7 @@ namespace GWAPI {
 		typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
 
 		SkillbarMgr(GWAPIMgr& api);
+		void RestoreHooks() override {};
 
 		UseSkill_t UseSkill_;
 		GW::Skill* SkillConstants_;

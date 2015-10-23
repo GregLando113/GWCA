@@ -34,6 +34,7 @@ namespace GWAPI {
 	private:
 
 		CameraMgr(GWAPIMgr& obj);
+		void RestoreHooks() override {};
 
 		GW::Camera* cam_class_;
 		float* projection_matrix_;

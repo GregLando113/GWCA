@@ -421,5 +421,13 @@ namespace GWAPI {
 			float fieldofview2;
 			// ...
 		};
+
+		struct PathingTrapezoid {
+			DWORD ID;
+			PathingTrapezoid* Adjacent[4];
+			DWORD idekwhyisthisherebutok;
+			float XTL, XTR, YT, XBL, XBR, YB;
+		};
+
 	}
 }

@@ -43,6 +43,12 @@ namespace GWAPI {
 		// Look at MissionMapIcon struct for more info.
 		GW::MissionMapIconArray GetMissionMapIconArray();
 
+		// Rough count, unknown if this is accurate, does not match pmap files.
+		DWORD GetTrapezoidCount();
+
+		// Returns pointer of collision trapezoid array.
+		GW::PathingTrapezoid* GetPathingTrapezoids();
+
 	private:
 		MapMgr(GWAPIMgr& api) : GWCAManager(api) {}
 		void RestoreHooks() override {}

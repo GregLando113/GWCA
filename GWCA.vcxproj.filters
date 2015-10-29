@@ -38,6 +38,7 @@
     <ClInclude Include="GWCA\StoCPackets.h" />
     <ClInclude Include="GWCA\GWCAManager.h" />
     <ClInclude Include="GWCA\GWCA.h" />
+    <ClInclude Include="GWCA\GWStructPositions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">

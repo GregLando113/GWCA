@@ -11,10 +11,10 @@ namespace GWAPI {
 	public:
 		
 		// X,Y,Z of camera in game world.
-		inline GW::Vector3D GetCameraPosition(){ return cam_class_->camerapos; }
+		inline Vector3D GetCameraPosition(){ return cam_class_->camerapos; }
 
 		// LookAt Target (players head if not modified) of camera.
-		inline GW::Vector3D GetLookAtTarget(){ return cam_class_->LookAtTarget; }
+		inline Vector3D GetLookAtTarget(){ return cam_class_->LookAtTarget; }
 
 		// camera yaw in radians from east
 		inline float GetYaw() { return cam_class_->yaw; }

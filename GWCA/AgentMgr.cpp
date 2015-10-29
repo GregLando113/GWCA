@@ -67,13 +67,22 @@ void GWAPI::AgentMgr::ChangeTarget(GW::Agent* Agent)
 
 void GWAPI::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/)
 {
-	static MovePosition* pos = new MovePosition();
+	static GW::GamePos* buf = new GW::GamePos();
 
-	pos->X = X;
-	pos->Y = Y;
-	pos->ZPlane = ZPlane;
+	buf->x = X;
+	buf->y = Y;
+	buf->zplane = ZPlane;
 
-	api().Gamethread().Enqueue(move_, pos);
+	api().Gamethread().Enqueue(move_, buf);
+}
+
+void GWAPI::AgentMgr::Move(const GW::GamePos& pos)
+{
+	static GW::GamePos* buf = new GW::GamePos();
+
+	*buf = pos;
+
+	api().Gamethread().Enqueue(move_, buf);
 }
 
 void GWAPI::AgentMgr::Dialog(DWORD id)

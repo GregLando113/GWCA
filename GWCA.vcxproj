@@ -28,6 +28,7 @@
     <ClInclude Include="GWCA\GwConstants.h" />
     <ClInclude Include="GWCA\GwConstantsMaps.h" />
     <ClInclude Include="GWCA\GwConstantsSkills.h" />
+    <ClInclude Include="GWCA\GWStructPositions.h" />
     <ClInclude Include="GWCA\GWStructures.h" />
     <ClInclude Include="GWCA\Hooker.h" />
     <ClInclude Include="GWCA\ItemMgr.h" />

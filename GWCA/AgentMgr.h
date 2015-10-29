@@ -70,6 +70,8 @@ namespace GWAPI {
 		// Move to specified coordinates.
 		void Move(float X, float Y, DWORD ZPlane = 0);
 
+		void Move(const GW::GamePos& pos);
+
 		// Same as pressing button (id) while talking to an NPC.
 		void Dialog(DWORD id);
 
@@ -104,12 +106,8 @@ namespace GWAPI {
 	private:
 		
 		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID,DWORD smth);
-		struct MovePosition {
-			float X;
-			float Y;
-			DWORD ZPlane; // Ground in gwapi.
-		};
-		typedef void(__fastcall *Move_t)(MovePosition* Pos);
+
+		typedef void(__fastcall *Move_t)(GW::GamePos* Pos);
 
 		AgentMgr(GWAPIMgr& api);
 

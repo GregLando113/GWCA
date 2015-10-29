@@ -4,6 +4,8 @@
 
 #include "MemoryMgr.h"
 
+#include "GWStructPositions.h"
+
 namespace GWAPI {
 
 	namespace GW {
@@ -48,9 +50,16 @@ namespace GWAPI {
 			BYTE unknown6[8];
 			long NameProperties; //Bitmap basically telling what the agent is
 			BYTE unknown7[24];
-			float X; //X coord in float
-			float Y; //Y coord in float
-			DWORD Ground;
+			union {
+				struct {
+					float X; //X coord in float
+					float Y; //Y coord in float
+					DWORD Ground;
+				};
+				struct {
+					GamePos pos;
+				};
+			};
 			BYTE unknown8[4];
 			float NameTagX; //Exactly the same as X above
 			float NameTagY; //Exactly the same aswell
@@ -378,12 +387,6 @@ namespace GWAPI {
 			DWORD myStatus;
 
 			inline DWORD size() { return (nFriend + nIgnore + nPlayed + nTrade); };
-		};
-
-		struct Vector3D{
-			float x;
-			float y;
-			float z;
 		};
 
 		struct Camera {

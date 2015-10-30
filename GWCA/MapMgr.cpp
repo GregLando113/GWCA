@@ -36,7 +36,7 @@ GWAPI::GW::MissionMapIconArray GWAPI::MapMgr::GetMissionMapIconArray()
 
 DWORD GWAPI::MapMgr::GetTrapezoidCount()
 {
-	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 4, 0x14, 0x74, 0x0, 0x84);
+	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 5, 0x14, 0x74, 0x0, 0x18, 0x1C);
 }
 
 GWAPI::GW::PathingTrapezoid* GWAPI::MapMgr::GetPathingTrapezoids()

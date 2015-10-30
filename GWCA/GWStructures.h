@@ -429,7 +429,12 @@ namespace GWAPI {
 			DWORD ID;
 			PathingTrapezoid* Adjacent[4];
 			DWORD idekwhyisthisherebutok;
-			float XTL, XTR, YT, XBL, XBR, YB;
+			float XTL;
+			float XTR;
+			float YT; 
+			float XBL; 
+			float XBR; 
+			float YB;
 		};
 
 	}

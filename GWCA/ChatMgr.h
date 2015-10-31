@@ -13,8 +13,8 @@ namespace GWAPI {
 		friend class GWAPIMgr;
 
 		typedef DWORD Color_t;
-		typedef std::function<void(std::vector<std::wstring>)> Callback_t;
-		typedef std::function<std::wstring(std::wstring)> ParseMessage_t;
+		typedef std::function<const void(std::vector<std::wstring>&)> Callback_t;
+		typedef std::function<std::wstring(std::wstring)> ParseMessage_t; // unused
 
 		struct CallBack {
 			Callback_t callback;
@@ -56,23 +56,20 @@ namespace GWAPI {
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(const wchar_t* msg, wchar_t channel);
 
-		std::wstring CreateChannel(ParseMessage_t parser);
-		std::wstring CreateChannel(std::wstring format_string);
-
 		// Write to chat as a PM with printf style arguments.
 		void WriteChatF(const wchar_t* from, const wchar_t* format, ...);
 
 		// Simple write to chat as a PM
 		void WriteChat(const wchar_t* from, const wchar_t* msg);
 
+		inline void SetTimestampColor(DWORD xrgb_color) {
+			timestamp_color_ = xrgb_color && 0x00FFFFFF; // remove alpha
+		}
+
 		inline void RegisterChannel(std::wstring sender, Color_t col_sender, Color_t col_message, DWORD channel = 0) {
 			chatlog_channel[sender] = { channel, sender, col_sender, col_message };
 		}
 		inline void DeleteChannel(std::wstring sender) { chatlog_channel.erase(sender); };
-
-		inline void SetTimestampColor(DWORD xrgb_color) {
-			timestamp_color_ = xrgb_color && 0x00FFFFFF; // remove alpha
-		}
 
 		inline void RegisterCommand(std::wstring command, Callback_t callback, bool override = true) {
 			chatcmd_callbacks[command] = { callback, override };

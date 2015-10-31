@@ -37,22 +37,11 @@ void GWAPI::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel)
 	api().CtoS().SendPacket<P5E_SendChat>(chat);
 }
 
-std::wstring GWAPI::ChatMgr::CreateChannel(ParseMessage_t parser) {
-	parsers.push_back(parser);
-	return std::wstring(L"c=") + std::to_wstring(parsers.size());
-}
-
-std::wstring GWAPI::ChatMgr::CreateChannel(std::wstring format_string) {
-	return CreateChannel([this, format_string](std::wstring message) {
-		return RemakeMessage(format_string.c_str(), message.c_str());
-	});
-}
-
 void GWAPI::ChatMgr::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
 	va_list vl;
 	va_start(vl, format);
 	size_t szbuf = _vscwprintf(format, vl) + 1;
-    wchar_t* chat = new wchar_t[szbuf];
+	wchar_t* chat = new wchar_t[szbuf];
 	vswprintf_s(chat, szbuf, format, vl);
 	va_end(vl);
 
@@ -68,92 +57,39 @@ void GWAPI::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 		(0, from, msg);
 }
 
-std::wstring GWAPI::ChatMgr::RemakeMessage(const wchar_t* format, const wchar_t* message)
-{
-	/*
-	%xH, %xM, %xS = hours, minutes, secondes where x is a digit
-	%N = name of the sender (unimplemented)
-	%T = Text
-	%C{string} = color string, TODO fix or remove, probably remove (just have color as static format)
-	*/
-	std::wostringstream buffer;
-	DWORD time = api().Map().GetInstanceTime() / 1000;
-
-	while (*format) {
-		if (*format == '%') {
-			format++;
-			DWORD width = 0;
-			while (*format > '0' && *format <= '9') {
-				width *= 10;
-				width = *format - '0';
-				format++;
-			}
-			if (!width) width = 1;
-
-			switch (*format) {
-			case 'H': buffer << std::dec << std::setw(width) << std::setfill(L'0') << (time / 3600) % 60;	break;
-			case 'M': buffer << std::dec << std::setw(width) << std::setfill(L'0') << (time / 60) % 60;		break;
-			case 'S': buffer << std::dec << std::setw(width) << std::setfill(L'0') << time % 60;			break;
-			//case 'C': buffer << "<c=#" << std::hex << std::setw(6) << std::setfill(L'0') << va_arg(args, Color_t) << ">"; format++; break;
-			case 'N': break;
-			case 'T': buffer << message;
-			}
-		} else if (*format == '}') {
-			if (format[1]) buffer << "</c>";
-		} else {
-			buffer << *format;
-		}
-		format++;
-	}
-
-	return buffer.str();
-}
-
-size_t GWAPI::ChatMgr::getChan(const wchar_t* message)
-{
-	const wchar_t* start = wcswcs(message, L"<a=1>c=");
-	const wchar_t* end = wcswcs(message + sizeof("<a=1>c="), L"</a>");
-
-	if (!start || !end) return 0;
-
-	DWORD channel = 0;
-	start += strlen("<a=1>c=");
-	while (start < end)
-	{
-		channel *= 10;
-		channel += *start - '0';
-		start++;
-	}
-
-	return channel;
-}
-
 void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless /* same as edx */)
 {
-
 	GWAPI::ChatMgr& chat = GWAPI::GWCA::Api().Chat();
 	MessageInfo *mInfo = reinterpret_cast<MessageInfo*>(edx);
 	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
 
-	DWORD speChannel = chat.getChan(mInfo->message);
-	const wchar_t* message = wcswcs(mInfo->message, L"<quote>") + sizeof("<quote>") - 1;
+	std::wstring message(mInfo->message), sender;
+	std::string::size_type start, end, quote, length = message.length();
 
-	if (speChannel > 0 && speChannel <= chat.parsers.size()) {
-		chat.chatlog_result = chat.parsers[speChannel-1](message);
-
-		mInfo->message = chat.chatlog_result.c_str();
-		mInfo->size1 = mInfo->size2 = chat.chatlog_result.length() + 1;
+	start = message.find(L"<a=1>");
+	if (start != std::string::npos)
+	{
+		end = message.find(L"</a>", start + 5);
+		if (end != std::string::npos)
+			sender = message.substr(start + 5, end - start - 5);
 	}
-	
-	// todo add timestamp ?
 
-	//if (speChannel == 1) {
-	//	chat->chatlog_result = chat->RemakeMessage(L"<c=#1EBAFF>GwToolBox++ Time</c>: %C{%2H:%2M:%2S}.", chat->timestamp_color_);
-	//} else if (speChannel == 2) {
-	//	chat->chatlog_result = chat->RemakeMessage(L"<c=#1EBAFF>GwToolBox++ Message</c>: %C{%T}.", chat->timestamp_color_, message);
-	//} else {
-	//	chat->chatlog_result = chat->RemakeMessage(L"%C{[%2M:%2S]} %T", chat->timestamp_color_, mInfo->message);
-	//}
+	quote = message.find(L"<quote>");
+	if (quote != std::string::npos)
+		message = message.substr(quote);
+
+	Channel chan;
+	if (!sender.empty())
+		chan = chat.chatlog_channel[sender];
+
+	if (!chan.name.empty())
+	{
+		wchar_t *buffer = new wchar_t[length + 26 + 1];
+		wsprintf(buffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
+		chat.chatlog_result = buffer;
+		delete[] buffer;
+		mInfo->message = chat.chatlog_result.c_str();
+	}
 
 	return chat.ori_chatlog(ecx, edx, useless);
 }
@@ -185,7 +121,8 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 			std::wstring arg;
 			if (pos == std::wstring::npos) {
 				arg = arguments.substr(index);
-			} else {
+			}
+			else {
 				arg = arguments.substr(index, pos - index);
 			}
 			if (!arg.empty()) {

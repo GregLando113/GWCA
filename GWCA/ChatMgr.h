@@ -15,6 +15,7 @@ namespace GWAPI {
 		typedef DWORD Color_t;
 		typedef std::function<void(std::vector<std::wstring>)> Callback_t;
 		typedef std::function<std::wstring(std::wstring)> ParseMessage_t;
+
 		struct CallBack {
 			Callback_t callback;
 			bool override;
@@ -28,8 +29,10 @@ namespace GWAPI {
 		};
 
 		struct Channel {
-			const DWORD id;  // 0, default
-			Channel* next;
+			DWORD id; // unused
+			std::wstring name;
+			Color_t col_sender;
+			Color_t col_message;
 		};
 
 		struct MessageInfo {
@@ -49,7 +52,7 @@ namespace GWAPI {
 		};
 
 	public:
-		
+
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(const wchar_t* msg, wchar_t channel);
 
@@ -58,32 +61,32 @@ namespace GWAPI {
 
 		// Write to chat as a PM with printf style arguments.
 		void WriteChatF(const wchar_t* from, const wchar_t* format, ...);
-		
+
 		// Simple write to chat as a PM
 		void WriteChat(const wchar_t* from, const wchar_t* msg);
+
+		inline void RegisterChannel(std::wstring sender, Color_t col_sender, Color_t col_message, DWORD channel = 0) {
+			chatlog_channel[sender] = { channel, sender, col_sender, col_message };
+		}
+		inline void DeleteChannel(std::wstring sender) { chatlog_channel.erase(sender); };
 
 		inline void SetTimestampColor(DWORD xrgb_color) {
 			timestamp_color_ = xrgb_color && 0x00FFFFFF; // remove alpha
 		}
 
-		inline void RegisterKey(std::wstring key, 
-			std::function<void(std::vector<std::wstring>)> callback, 
-			bool override = true) { 
-			chatcmd_callbacks[key] = { callback, override };
+		inline void RegisterCommand(std::wstring command, Callback_t callback, bool override = true) {
+			chatcmd_callbacks[command] = { callback, override };
 		}
-		inline void DeleteKey(std::wstring key) { chatcmd_callbacks.erase(key); }
+		inline void DeleteCommand(std::wstring command) { chatcmd_callbacks.erase(command); }
 
 	private:
 		std::wstring chatlog_result;
 		Color_t timestamp_color_;
 
+		std::map< std::wstring, Channel > chatlog_channel;
 		std::map< std::wstring, CallBack > chatcmd_callbacks;
 
-		std::vector<ParseMessage_t> parsers;
-
-		std::wstring RemakeMessage(const wchar_t* format, const wchar_t* message);
-		size_t getChan(const wchar_t* message);
-
+		/* Hook stuff */
 		typedef void(__fastcall *ChatLog_t)(DWORD, DWORD, DWORD);
 		typedef void(__fastcall *ChatCmd_t)(DWORD);
 

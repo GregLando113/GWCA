@@ -6,6 +6,7 @@
 #include "GWCA.h"
 #include "PatternScanner.h"
 
+static wchar_t* wcssep(wchar_t* str, wchar_t sep);
 
 GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 {
@@ -82,9 +83,9 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	if (!sender.empty())
 		chan = chat.chatlog_channel[sender];
 
-	if (!chan.name.empty())
+	if (!chan.name.empty()) // definitly have to improve this if
 	{
-		wchar_t *buffer = new wchar_t[length + 26 + 1];
+		wchar_t *buffer = new wchar_t[length + 26 + 1]; // 26 = len(<c=#xxxxxx></c><c=#xxxxxx>)
 		wsprintf(buffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
 		chat.chatlog_result = buffer;
 		delete[] buffer;
@@ -97,47 +98,44 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 {
 	ChatMgr& chat = GWAPI::GWCA::Api().Chat();
-	WCHAR* message = reinterpret_cast<WCHAR*>(ecx);
-	WCHAR channel = *message;
+	wchar_t* message = reinterpret_cast<wchar_t*>(ecx);
+	std::vector<std::wstring> args;
 
-	std::wstring key(message + 1);
-	std::wstring arguments(L"");
-
-	DWORD fPos = key.find_first_of(' ');
-	if (fPos != std::wstring::npos)
+	if (*message == '/')
 	{
-		key = key.substr(0, fPos);
-		arguments = std::wstring(message + fPos + 2);
-	}
+		wchar_t* cmd = wcssep(message + 1, '\x20'); // \x20 is space
+		CallBack cb = chat.chatcmd_callbacks[std::wstring(cmd)];
 
-	CallBack callback = chat.chatcmd_callbacks[key];
-	if (callback.callback && channel == '/')
-	{
-		std::vector<std::wstring> args;
-		size_t index = 0;
-		while (true) {
-			size_t pos = arguments.find(L' ', index);
+		if (cb.callback)
+		{
+			wchar_t* arg = NULL;
+			while (arg = wcssep(NULL, '\x20'))
+				args.push_back(std::wstring(arg));
 
-			std::wstring arg;
-			if (pos == std::wstring::npos) {
-				arg = arguments.substr(index);
-			}
-			else {
-				arg = arguments.substr(index, pos - index);
-			}
-			if (!arg.empty()) {
-				args.push_back(arg);
-			}
+			cb.callback(args);
 
-			if (pos == std::wstring::npos) break;
-			index = pos + 1;
+			if (cb.override)
+				return chat.ori_chatcmd((DWORD)L"");
 		}
-
-		callback.callback(args);
-
-		if (callback.override)
-			return chat.ori_chatcmd((DWORD)L"");
 	}
-
 	return chat.ori_chatcmd(ecx);
+}
+
+static wchar_t* wcssep(wchar_t* str, wchar_t sep)
+{
+	static wchar_t* next = NULL;
+	if (str) next = str;
+	if (!next) return NULL;
+
+	while (*next == sep) next++;
+	if (*next == '\0') return NULL;
+	str = next;
+	while (*next != sep && *next != '\0') next++;
+
+	if (*next == '\0')
+		next = NULL;
+	else
+		*next++ = '\0';
+
+	return str;
 }

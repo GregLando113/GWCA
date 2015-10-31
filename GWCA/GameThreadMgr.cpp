@@ -5,21 +5,24 @@
 void __stdcall GWAPI::GameThreadMgr::CallFunctions()
 {
 	std::unique_lock<std::mutex> VecLock(call_vector_mutex_);
-	if (calls_.empty()) return;
-
-	for (const auto& Call : calls_)
+	if (!calls_.empty())
 	{
-		Call();
+		for (const auto& Call : calls_)
+		{
+			Call();
+		}
+
+		calls_.clear();
 	}
-
-	calls_.clear();
-
-	if (calls_permanent_.empty()) return;
-
-	for (const auto& Call : calls_permanent_)
+	
+	if (!calls_permanent_.empty())
 	{
-		Call();
+		for (const auto& Call : calls_permanent_)
+		{
+			Call();
+		}
 	}
+	
 }
 
 void __declspec(naked) GWAPI::GameThreadMgr::gameLoopHook()

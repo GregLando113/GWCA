@@ -1,3 +1,5 @@
+#ifdef GWAPI_USEDIRECTX
+
 #include "DirectXMgr.h"
 
 #include <Windows.h>
@@ -84,3 +86,5 @@ void GWAPI::DirectXMgr::RestoreHooks()
 
 	hooked_ = false;
 }
+
+#endif

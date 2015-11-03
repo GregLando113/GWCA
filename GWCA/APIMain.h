@@ -50,6 +50,4 @@
 
 \**********************************************************************************/
 
-// use '#define GWAPI_USEDIRECTX' to make the directx shit compile into the project.
-
 #include "GWCA.h"

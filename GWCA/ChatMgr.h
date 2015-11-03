@@ -13,7 +13,7 @@ namespace GWAPI {
 		friend class GWAPIMgr;
 
 		typedef DWORD Color_t;
-		typedef std::function<const void(std::vector<std::wstring>&)> Callback_t;
+		typedef std::function<const void(std::wstring, std::vector<std::wstring>)> Callback_t;
 		typedef std::function<std::wstring(std::wstring)> ParseMessage_t; // unused
 
 		struct CallBack {

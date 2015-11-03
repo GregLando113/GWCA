@@ -1,5 +1,12 @@
 #pragma once
 
+// this file is used to provide solution-specific defines to the library, 
+// add it to your solution directory and leave it empty or define stuff in it (e.g. GWAPI_USEDIRECTX)
+// it is included here to force inclusion by other projects 
+// (it is already a forced global include in GWCA project)
+#include "GWCA_defines.h"
+
+
 /*
 Class used for GWCA initialization, access and destruction
 

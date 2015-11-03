@@ -2,8 +2,6 @@
 #include <Windows.h>
 #include <exception>
 
-#define GWAPI_USEDIRECTX
-
 #include "MemoryMgr.h"
 #include "GameThreadMgr.h"
 #include "CtoSMgr.h"

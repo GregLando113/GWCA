@@ -50,7 +50,6 @@
 
 \**********************************************************************************/
 
-// Comment out this #define to make the directx shit not compile into the project.
-#define GWAPI_USEDIRECTX
+// use '#define GWAPI_USEDIRECTX' to make the directx shit compile into the project.
 
 #include "GWCA.h"

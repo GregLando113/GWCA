@@ -1,4 +1,5 @@
 #pragma once
+#ifdef GWAPI_USEDIRECTX
 
 #include <Windows.h>
 
@@ -41,3 +42,5 @@ namespace GWAPI {
 	};
 
 }
+
+#endif

@@ -98,11 +98,10 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 {
 	ChatMgr& chat = GWAPI::GWCA::Api().Chat();
-	wchar_t* _message = reinterpret_cast<wchar_t*>(ecx);
-	std::vector<std::wstring> args;
-	
-	wchar_t* message = new wchar_t[wcslen(_message) + 1];
-	wcscpy(message, _message);
+	wchar_t* _message = reinterpret_cast<wchar_t*>(ecx);	
+	unsigned int length = wcslen(_message);
+	wchar_t* message = new wchar_t[length + 1];
+	wcscpy_s(message, length + 1, _message);
 
 	if (*message == '/')
 	{
@@ -111,11 +110,13 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 
 		if (cb.callback)
 		{
+			std::vector<std::wstring> args;
+
 			wchar_t* arg = NULL;
 			while (arg = wcssep(NULL, '\x20'))
 				args.push_back(std::wstring(arg));
 
-			cb.callback(args);
+			cb.callback(std::wstring(cmd), args);
 
 			if (cb.override)
 				return chat.ori_chatcmd((DWORD)L"");

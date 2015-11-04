@@ -59,7 +59,7 @@ void printCoords(){
    GWAPI::GW::Agent* player = api().Agents().GetPlayer();
 
    // Print coords.
-   printf("Player: %f %f",player->X,player->Y);
+   printf("Player: %f %f",player->pos.x,player->pos.y);
 }
 ```
 

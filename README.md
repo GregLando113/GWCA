@@ -56,7 +56,7 @@ void printCoords(){
    GWAPI::GWCA api;
 
    // Get Player Agent Structure.
-   GWAPI::GW::Agent* player = api->Agents()->GetPlayer();
+   GWAPI::GW::Agent* player = api().Agents().GetPlayer();
 
    // Print coords.
    printf("Player: %f %f",player->X,player->Y);
@@ -89,7 +89,7 @@ void init(HMODULE hModule){
 
 	GWCA api;
 
-	api->StoC()->AddGameServerEvent<P147_UpdateGenericValue> (
+	api().StoC().AddGameServerEvent<P147_UpdateGenericValue> (
 		[](P147_UpdateGenericValue* pak) {
 			if (pak->type == 27) {
 				pak->value = 12;

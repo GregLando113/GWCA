@@ -215,6 +215,11 @@ namespace GwConstants {
 			const int FoundryBreakout = 743;
 			const int FoundryOfFailedCreations = 744;
 		}
+
+		namespace Camera {
+			const float FIRST_PERSON_DIST = 2.f;
+			const float DEFAULT_DIST = 750.f;
+		}
 	}
 }
 

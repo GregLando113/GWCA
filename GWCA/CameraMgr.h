@@ -49,8 +49,8 @@ namespace GWAPI {
 		}
 
 		// Unlock camera
-		inline bool UnlockCam() {
-			patch_camupdate_enable = TooglePatch16(patch_camupdate_addr, 8, true);
+		inline bool UnlockCam(bool enable) {
+			patch_camupdate_enable = TooglePatch16(patch_camupdate_addr, 8, enable);
 			return patch_camupdate_enable;
 		}
 

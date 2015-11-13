@@ -44,16 +44,6 @@ BYTE* GWAPI::MemoryMgr::MoveFunction = NULL;
 
 BYTE* GWAPI::MemoryMgr::WinHandlePtr = NULL;
 
-// Merchant functions/object pointers
-BYTE* GWAPI::MemoryMgr::CraftitemObj = NULL;
-BYTE* GWAPI::MemoryMgr::TraderFunction = NULL;
-BYTE* GWAPI::MemoryMgr::TraderBuyClassHook = NULL;
-BYTE* GWAPI::MemoryMgr::TraderSellClassHook = NULL;
-BYTE* GWAPI::MemoryMgr::RequestQuoteFunction = NULL;
-BYTE* GWAPI::MemoryMgr::SellItemFunction = NULL;
-BYTE* GWAPI::MemoryMgr::BuyItemFunction = NULL;
-
-
 BYTE* GWAPI::MemoryMgr::MapInfoPtr = NULL;
 
 BYTE* GWAPI::MemoryMgr::DialogFunc = NULL;
@@ -225,69 +215,6 @@ bool GWAPI::MemoryMgr::Scan()
 		}
 		else{
 			printf("WinHandlePtr = ERR\n");
-			return false;
-		}
-
-		BuyItemFunction = (BYTE*)scan.FindPattern("\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C);
-		if (BuyItemFunction){
-			printf("BuyItemFunction = %X\n", BuyItemFunction);
-		}
-		else{
-			printf("BuyItemFunction = ERR\n");
-			return false;
-		}
-		SellItemFunction = (BYTE*)scan.FindPattern("\x8B\x4D\x20\x85\xC9\x0F\x85\x8E", "xxxxxxxx", -0x56);
-		if (SellItemFunction){
-			printf("SellItemFunction = %X\n", SellItemFunction);
-		}
-		else{
-			printf("SellItemFunction = ERR\n");
-			return false;
-		}
-
-		TraderBuyClassHook = (BYTE*)scan.FindPattern("\x81\x7B\x10\x01\x01\x00\x00", "xxxxxxx", -0x42);
-		if (TraderBuyClassHook){
-			printf("TraderBuyClassHook = %X\n", TraderBuyClassHook);
-		}
-		else{
-			printf("TraderBuyClassHook = ERR\n");
-			return false;
-		}
-
-		TraderSellClassHook = (BYTE*)scan.FindPattern("\x8B\x1F\x83\x3B\x0D", "xxxxx", -0x27);
-		if (TraderSellClassHook){
-			printf("TraderSellClassHook = %X\n", TraderSellClassHook);
-		}
-		else{
-			printf("TraderSellClassHook = ERR\n");
-			return false;
-		}
-
-		TraderFunction = (BYTE*)scan.FindPattern("\x8B\x45\x18\x8B\x55\x10\x85", "xxxxxxx", -0x48);
-		if (TraderFunction){
-			printf("TraderFunction = %X\n", TraderFunction);
-		}
-		else{
-			printf("TraderFunction = ERR\n");
-			return false;
-		}
-
-		RequestQuoteFunction = (BYTE*)scan.FindPattern("\x81\xEC\x9C\x00\x00\x00\x53\x56\x8B", "xxxxxxxxx", -3);
-		if (RequestQuoteFunction){
-			printf("RequestQuoteFunction = %X\n", RequestQuoteFunction);
-		}
-		else{
-			printf("RequestQuoteFunction = ERR\n");
-			return false;
-		}
-
-		CraftitemObj = (BYTE*)scan.FindPattern("\x85\xC0\x59\x74\x3C\x83\x05", "xxxxxxx", 0);
-		if (CraftitemObj){
-			printf("CraftitemObj = %X\n", CraftitemObj);
-			CraftitemObj = *(BYTE**)(CraftitemObj - 0xE);
-		}
-		else{
-			printf("CraftitemObj = ERR\n");
 			return false;
 		}
 

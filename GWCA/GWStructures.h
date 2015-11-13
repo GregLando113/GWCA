@@ -17,6 +17,14 @@ namespace GWAPI {
 			DWORD current_size_;
 			DWORD unknown_;
 		public:
+			typedef T* iterator;
+			typedef const T* const_iterator;
+
+			iterator begin() { return &array_[0]; }
+			const_iterator begin() const { return &array_[0]; }
+			iterator end() { return &array_[current_size_]; }
+			const_iterator end() const { return &array_[current_size_]; }
+
 			T& index(DWORD _index)
 			{
 				if (_index > current_size_ || _index < 0) throw 1;
@@ -363,7 +371,7 @@ namespace GWAPI {
 
 		typedef gw_array<MissionMapIcon> MissionMapIconArray;
 
-		typedef gw_array<DWORD> ItemRowArray;
+		typedef gw_array<DWORD> MerchItemArray;
 
 		struct Friend {
 			DWORD type;				// 0 = Friend, 1 = Ignore, 2 = Played, 3 = Trade

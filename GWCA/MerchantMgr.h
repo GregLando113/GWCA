@@ -12,78 +12,66 @@ namespace GWAPI {
 		friend class GWAPIMgr;
 
 	public:
+		enum class TransactionType : DWORD {
+			MERCHANT_BUY = 0x1,
+			COLLECTOR_BUY,
+			CRAFTER_BUY,
+			WEAPONSMITH_CUSTOMIZE,
 
-		// Structure used for CraftItemArray creation.
-		struct CraftMaterial {
-			CraftMaterial() {}
-			CraftMaterial(long aMid, long aQuantity) :
-				ModelID(aMid), Quantity(aQuantity) {}
+			MERCHANT_SELL = 0xB,
+			TRADER_BUY,
+			TRADER_SELL,
 
-			long ModelID;
-			long Quantity;
+			BALTH_PRIEST_UNLOCK_RUNE = 0xF
 		};
 
-		// Returns the merchant array in memory, holds ItemID's that can be used to grab structs from.
-		GW::ItemRowArray GetMerchantItemsArray();
+		class TransactionPacket {
+		protected:
+			DWORD gold_amount_;
+			DWORD itemid_count_;
+			DWORD* item_array_;
+			DWORD* item_quantity_array_;
+		public:
 
-		GW::Item* GetMerchantItemByModelId(DWORD modelid);
+			// Use for an empty buy or sell operation, or if gold is only involved.
+			TransactionPacket();
 
-		// Craft Item, use this to create items that require materials (Cons,Armor,etc.)
-		void CraftItem(long ModelId, long Quantity, long value, long matcount, CraftMaterial* Materials);
+			// Use if items are involved in this transaction.
+			TransactionPacket(size_t itemmaxcount);
 
-		// Prebuilt functions using craftitem for consets, Essence is commented to explain how to make your own calls in cpp.
-		void CraftEssence(int amount);
-		void CraftArmor(int amount);
-		void CraftGrail(int amount);
+			~TransactionPacket();
 
-		// Used for collectors (people who want 3 of that for this)
-		// Modelid of item the guy wants, amount needed for one collect (big ass number in window), item modelid you want.
-		void CollectItem(int modelIDToGive, int AmountPerCollect, int modelIDtoRecieve);
+			// Set gold of packet.
+			void SetGold(DWORD amount);
 
-		// Buy from general merchant.
-		void BuyMerchItem(DWORD ModelIdToBuy, DWORD AmountToBuy);
+			// Add an item to the packet, do not add more then stated in constructor.
+			void AddItem(DWORD itemid, DWORD quantity);;
 
-		// Sell to general merchant.
-		void SellItemToMerch(GW::Item* ItemToSell, DWORD AmountToSell = 1);
+		};
 
-		// Request quote of item from a trader.
-		void RequestBuyQuote(DWORD ModelIDToRequest);
+		GW::MerchItemArray GetMerchantItemsArray();
 
-		// Request quote to sell one of your items to a trader.
-		void RequestSellQuote(GW::Item* itemtorequest);
+		GW::Item* GetMerchantItemByModelID(DWORD modelid);
 
-		// These are pretty self explanatory.
-		void BuyQuotedItem();
-		void SellQuotedItem();
+		void EnqueueTransaction(TransactionType type, TransactionPacket give = TransactionPacket(), TransactionPacket recieve = TransactionPacket());
+
+		void BuyMerchantItem(DWORD modelid,DWORD quantity = 1);
+
+		void SellMerchantItem(GW::Item* itemtosell, DWORD sellquantity = NULL);
 
 	private:
+		typedef void(__fastcall *Transaction_t)
+		(
+			TransactionType type,
+			TransactionPacket give,
+			TransactionPacket recieve
+		);
 
-		static BYTE* trader_buy_class_hook_return_;
-		Hook hk_trader_buy_class_;
 
-		static BYTE* trader_sell_class_hook_return_;
-		Hook hk_trader_sell_class_;
 
 		MerchantMgr(GWAPIMgr& api);
 		void RestoreHooks() override;
 
-		static BYTE* trader_buy_class_;
-		static BYTE* trader_sell_class_;
-
-		static void TraderBuyClassHook();
-		static void TraderSellClassHook();
-
-		// Static asm calls to be used within gameloop.
-		static void CommandBuyMerchantItem(long* idptr, long* quantityptr, long value);
-		static void CommandSellMerchantItem(long* itemIdPtr, long itemValue);
-		static void CommandRequestTraderBuyQuote(long* itemptr);
-		static void CommandRequestTraderSellQuote(long* itemptr);
-		static void CommandCraftItem(long* ItemRowPtr, long* QuantityPtr, long* MaterialPtr, long MaterialCount, long GoldTotal);
-		static void CommandCollectItem(long* ItemtoGivePtr, long AmountPerCollect, long* ItemtoRecvPtr);
-		static void CommandTraderBuy();
-		static void CommandTraderSell();
-
-		// Internal use for CraftItem.
-		long* GetCraftItemArray(long aQuantity, long aMatCount, CraftMaterial* mats);
+		Transaction_t transaction_function_;
 	};
 }

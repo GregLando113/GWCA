@@ -292,19 +292,26 @@ namespace GWAPI {
 			}
 		};
 
+		struct SkillbarSkill {
+			long AdrenalineA;				// 0000					
+			long AdrenalineB;				// 0004					
+			DWORD Recharge;					// 0008					
+			DWORD SkillId;					// 000C						see GWConst::SkillIds
+			DWORD Event;					// 0010	s
+			long GetRecharge() const {			// returns recharge time remaining in milliseconds, or 0 if recharged
+				if (Recharge == 0) return 0;
+				return Recharge - MemoryMgr::GetSkillTimer();
+			}
+		};
 		struct Skillbar {						// total : BC BYTEs
+			Skillbar() : AgentId(0) {}
 			DWORD AgentId;						// 0000						id of the agent whose skillbar this is
-			struct {
-				long AdrenalineA;					// 0000					
-				long AdrenalineB;					// 0004					
-				DWORD Recharge;						// 0008					
-				DWORD SkillId;						// 000C						see GWConst::SkillIds
-				DWORD Event;						// 0010	s
-			}Skills[8];			// 0004
+			SkillbarSkill Skills[8];						// 0004
 			DWORD Disabled;
 			BYTE unknown1[8];					// 00A8	|--8 BYTEs--|
 			DWORD Casting;						// 00B0
 			BYTE unknown2[8];					// 00B4	|--8 BYTEs--|
+			static Skillbar Nil() { return Skillbar(); }
 		};
 
 		typedef gw_array<Skillbar> SkillbarArray;

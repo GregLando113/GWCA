@@ -19,13 +19,14 @@ GWAPI::SkillbarMgr::SkillbarMgr(GWAPIMgr& api) : GWCAManager(api)
 	UseSkill_ = (UseSkill_t)MemoryMgr::UseSkillFunction;
 }
 
-GWAPI::GW::Skillbar GWAPI::SkillbarMgr::GetPlayerSkillbar()
+GWAPI::GW::Skillbar GWAPI::SkillbarMgr::GetPlayerSkillbar() 
 {
 	GW::SkillbarArray sb = GetSkillbarArray();
-
-	if (!sb.valid()) throw API_EXCEPTION;
-
-	return sb[0];
+	if (sb.valid()) {
+		return sb[0];
+	} else {
+		return GW::Skillbar::Nil();
+	}
 }
 
 GWAPI::GW::SkillbarArray GWAPI::SkillbarMgr::GetSkillbarArray()

@@ -34,11 +34,11 @@ void GWAPI::CameraMgr::RestoreHooks()
 		patch_fog_enable = SetFog(true);
 }
 
-GWAPI::Vector3D GWAPI::CameraMgr::ComputeCamPos(float dist)
+GWAPI::Vector3f GWAPI::CameraMgr::ComputeCamPos(float dist)
 {
 	if (dist == 0) dist = GetCameraZoom();
 
-	Vector3D newPos = GetLookAtTarget();
+	Vector3f newPos = GetLookAtTarget();
 
 	float pitchX = sqrt(1.f - cam_class_->pitch*cam_class_->pitch);
 	newPos.x -= dist * pitchX * cos(cam_class_->yaw);

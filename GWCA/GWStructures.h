@@ -429,12 +429,12 @@ namespace GWAPI {
 			float dist_togo;
 			float maxdistance2;
 			float unk5[2];
-			Vector3D camerapos;
-			Vector3D camerapos_togo;
-			Vector3D campos_inverted;
-			Vector3D campos_inverted_togo;
-			Vector3D LookAtTarget;
-			Vector3D LookAt_togo;
+			Vector3f camerapos;
+			Vector3f camerapos_togo;
+			Vector3f campos_inverted;
+			Vector3f campos_inverted_togo;
+			Vector3f LookAtTarget;
+			Vector3f LookAt_togo;
 			float fieldofview;
 			float fieldofview2;
 			// ...

@@ -11,10 +11,10 @@ namespace GWAPI {
 	public:
 
 		// X,Y,Z of camera in game world.
-		inline Vector3D GetCameraPosition(){ return cam_class_->camerapos; }
+		inline Vector3f GetCameraPosition(){ return cam_class_->camerapos; }
 
 		// LookAt Target (players head if not modified) of camera.
-		inline Vector3D GetLookAtTarget(){ return cam_class_->LookAtTarget; }
+		inline Vector3f GetLookAtTarget(){ return cam_class_->LookAtTarget; }
 
 		// camera yaw in radians from east
 		inline float GetYaw() { return cam_class_->yaw; }
@@ -38,7 +38,7 @@ namespace GWAPI {
 		inline void SetPitch(float pitch) { cam_class_->pitch_togo = pitch; }
 
 		// Manual computation of the position of the Camera. (As close as possible to the original)
-		Vector3D ComputeCamPos(float dist = 0);
+		Vector3f ComputeCamPos(float dist = 0);
 
 		// Change max zoom dist
 		inline bool SetMaxDist(float dist) {

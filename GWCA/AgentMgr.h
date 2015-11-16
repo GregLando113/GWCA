@@ -68,6 +68,7 @@ namespace GWAPI {
 		void ChangeTarget(GW::Agent* Agent);
 
 		// Move to specified coordinates.
+		// Note: will do nothing if coordinate is outside the map!
 		void Move(float X, float Y, DWORD ZPlane = 0);
 
 		void Move(const GW::GamePos& pos);

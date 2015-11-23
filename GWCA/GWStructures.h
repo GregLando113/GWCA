@@ -15,7 +15,7 @@ namespace GWAPI {
 			T* array_;
 			DWORD allocated_size_;
 			DWORD current_size_;
-			DWORD unknown_;
+			DWORD default_size_;
 		public:
 			typedef T* iterator;
 			typedef const T* const_iterator;

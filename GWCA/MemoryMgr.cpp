@@ -6,6 +6,7 @@
 BYTE* GWAPI::MemoryMgr::agArrayPtr = NULL;
 BYTE* GWAPI::MemoryMgr::PlayerAgentIDPtr = NULL;
 BYTE* GWAPI::MemoryMgr::TargetAgentIDPtr = NULL;
+BYTE* GWAPI::MemoryMgr::MouseOverAgentIDPtr = NULL;
 
 // Map ID
 BYTE* GWAPI::MemoryMgr::MapIDPtr = NULL;
@@ -61,6 +62,7 @@ bool GWAPI::MemoryMgr::Scan()
 			agArrayPtr = *(BYTE**)agArrayPtr;
 			PlayerAgentIDPtr = (BYTE*)(agArrayPtr - 0x54);
 			TargetAgentIDPtr = (BYTE*)(agArrayPtr - 0x500);
+			MouseOverAgentIDPtr = (BYTE*)(agArrayPtr - 0x4F4);
 		}
 		else{
 			printf("agArrayPtr = ERR\n");

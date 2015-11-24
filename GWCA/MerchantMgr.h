@@ -27,7 +27,6 @@ namespace GWAPI {
 
 		class TransactionPacket {
 		protected:
-			DWORD gold_amount_;
 			DWORD itemid_count_;
 			DWORD* item_array_;
 			DWORD* item_quantity_array_;
@@ -41,9 +40,6 @@ namespace GWAPI {
 
 			~TransactionPacket();
 
-			// Set gold of packet.
-			void SetGold(DWORD amount);
-
 			// Add an item to the packet, do not add more then stated in constructor.
 			void AddItem(DWORD itemid, DWORD quantity);;
 
@@ -53,7 +49,13 @@ namespace GWAPI {
 
 		GW::Item* GetMerchantItemByModelID(DWORD modelid);
 
-		void EnqueueTransaction(TransactionType type, TransactionPacket give = TransactionPacket(), TransactionPacket recieve = TransactionPacket());
+		void EnqueueTransaction(
+			TransactionType type,
+			DWORD gold_give = 0, 
+			TransactionPacket give = TransactionPacket(),
+			DWORD gold_recieve = 0, 
+			TransactionPacket recieve = TransactionPacket()
+			);
 
 		void BuyMerchantItem(DWORD modelid,DWORD quantity = 1);
 
@@ -63,7 +65,9 @@ namespace GWAPI {
 		typedef void(__fastcall *Transaction_t)
 		(
 			TransactionType type,
+			DWORD gold_give,
 			TransactionPacket give,
+			DWORD gold_recieve,
 			TransactionPacket recieve
 		);
 

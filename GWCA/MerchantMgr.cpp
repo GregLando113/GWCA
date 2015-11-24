@@ -29,27 +29,26 @@ void GWAPI::MerchantMgr::SellMerchantItem(GW::Item* itemtosell, DWORD sellquanti
 	give.AddItem(itemtosell->ItemId, sellquantity);
 
 	TransactionPacket recv = TransactionPacket();
-	recv.SetGold(sellquantity * itemtosell->value);
 
-	EnqueueTransaction(TransactionType::MERCHANT_SELL, give, recv);
+	EnqueueTransaction(TransactionType::MERCHANT_SELL,0, give, sellquantity * itemtosell->value, recv);
 }
 
 void GWAPI::MerchantMgr::BuyMerchantItem(DWORD modelid, DWORD quantity /*= 1*/)
 {
 	GW::Item* itemrecv = GetMerchantItemByModelID(modelid);
+	if (!itemrecv) return;
 
 	TransactionPacket give = TransactionPacket();
-	give.SetGold(quantity * itemrecv->value);
 
 	TransactionPacket recv = TransactionPacket(1);
 	recv.AddItem(itemrecv->ItemId, quantity);
 
-	EnqueueTransaction(TransactionType::MERCHANT_BUY, give, recv);
+	EnqueueTransaction(TransactionType::MERCHANT_BUY, 2 * quantity * itemrecv->value, give, 0, recv);
 }
 
-void GWAPI::MerchantMgr::EnqueueTransaction(TransactionType type, TransactionPacket give /*= TransactionPacket()*/, TransactionPacket recieve /*= TransactionPacket()*/)
+void GWAPI::MerchantMgr::EnqueueTransaction(TransactionType type, DWORD gold_give, TransactionPacket give /*= TransactionPacket()*/, DWORD gold_recieve, TransactionPacket recieve /*= TransactionPacket()*/)
 {
-	api().Gamethread().Enqueue(transaction_function_, type, give, recieve);
+	api().Gamethread().Enqueue(transaction_function_, type, gold_give, give, gold_recieve, recieve);
 }
 
 GWAPI::GW::Item* GWAPI::MerchantMgr::GetMerchantItemByModelID(DWORD modelid)
@@ -57,11 +56,11 @@ GWAPI::GW::Item* GWAPI::MerchantMgr::GetMerchantItemByModelID(DWORD modelid)
 	GW::MerchItemArray merchitems = GetMerchantItemsArray();
 	GW::ItemArray items = api().Items().GetItemArray();
 
-	for (DWORD merchitem : merchitems)
+	for (DWORD i = 0; i < merchitems.size_allocated(); ++i)
 	{
-		if (items[merchitem]->ModelId == modelid)
+		if (items[merchitems[i]]->ModelId == modelid)
 		{
-			return items[merchitem];
+			return items[merchitems[i]];
 		}
 	}
 	return NULL;
@@ -72,11 +71,6 @@ GWAPI::GW::MerchItemArray GWAPI::MerchantMgr::GetMerchantItemsArray()
 	return *MemoryMgr::ReadPtrChain<GW::MerchItemArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x24);
 }
 
-void GWAPI::MerchantMgr::TransactionPacket::SetGold(DWORD amount)
-{
-	gold_amount_ = amount;
-}
-
 void GWAPI::MerchantMgr::TransactionPacket::AddItem(DWORD itemid, DWORD quantity)
 {
 	if (item_array_) item_array_[itemid_count_] = itemid;
@@ -85,7 +79,6 @@ void GWAPI::MerchantMgr::TransactionPacket::AddItem(DWORD itemid, DWORD quantity
 }
 
 GWAPI::MerchantMgr::TransactionPacket::TransactionPacket(size_t itemmaxcount) :
-gold_amount_(0),
 itemid_count_(0),
 item_array_(new DWORD[itemmaxcount]),
 item_quantity_array_(new DWORD[itemmaxcount])
@@ -94,7 +87,6 @@ item_quantity_array_(new DWORD[itemmaxcount])
 }
 
 GWAPI::MerchantMgr::TransactionPacket::TransactionPacket() :
-gold_amount_(0),
 itemid_count_(0),
 item_array_(NULL),
 item_quantity_array_(NULL)

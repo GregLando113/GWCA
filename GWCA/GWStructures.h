@@ -40,6 +40,7 @@ namespace GWAPI {
 			}
 
 			DWORD size() const { return current_size_; }
+			DWORD size_allocated() const { return allocated_size_; }
 		};
 
 		struct Agent {

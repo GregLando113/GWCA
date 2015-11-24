@@ -11,6 +11,7 @@ namespace GWAPI{
 		static BYTE* agArrayPtr;
 		static BYTE* PlayerAgentIDPtr;
 		static BYTE* TargetAgentIDPtr;
+		static BYTE* MouseOverAgentIDPtr;
 
 		// Map Id
 		static BYTE* MapIDPtr;

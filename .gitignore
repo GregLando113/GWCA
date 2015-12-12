@@ -24,3 +24,4 @@ Release/
 *.pdb
 dox/
 GWCA_d.lib
+*.opendb

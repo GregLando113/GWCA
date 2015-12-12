@@ -44,6 +44,7 @@ void init(HMODULE hModule) {
 
 	main();
 
+	GWAPI::GWCA::Destruct();
 	FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
 }
 

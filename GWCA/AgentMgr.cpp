@@ -235,3 +235,8 @@ const char* GWAPI::AgentMgr::GetProfessionAcronym(GwConstants::Profession profes
 	default: return "";
 	}
 }
+
+GWAPI::GW::PlayerArray GWAPI::AgentMgr::GetPlayerArray()
+{
+	return *MemoryMgr::ReadPtrChain<GW::PlayerArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x80C);
+}

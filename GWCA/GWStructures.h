@@ -394,7 +394,7 @@ namespace GWAPI {
 
 			inline DWORD& factioncount() const { return *(DWORD*)(this + 0x78); }
 
-			inline DWORD& rating() const { return *(DWORD*)(this + 0x78); }
+			inline DWORD& rating() const { return *(DWORD*)(this + 0x70); }
 			inline DWORD& rank() const { return *(DWORD*)(this + 0x28); }
 			inline DWORD& qualifierpoints() const { return *(DWORD*)(this + 0x7C); }
 		};

@@ -33,6 +33,8 @@ namespace GWAPI {
 		// Returns the party member array, used in GetIsPartyLoaded().
 		GW::PartyMemberArray GetPartyMemberArray();
 
+		GW::PlayerArray GetPlayerArray();
+
 		// Returns whether your party is loaded currently.
 		bool GetIsPartyLoaded();
 

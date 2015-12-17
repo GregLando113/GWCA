@@ -89,7 +89,7 @@ namespace GWAPI{
 
 		// Memory Reads.
 		inline static DWORD GetContextPtr(){ return (*(DWORD*)BasePointerLocation) + 0x18; }
-		inline static DWORD GetSkillTimer(){ return *(DWORD*)SkillTimerPtr; }
+		inline static DWORD GetSkillTimer(){ return GetTickCount() + *(DWORD*)SkillTimerPtr; }
 		inline static HWND GetGWWindowHandle(){ return *(HWND*)WinHandlePtr; }
 		inline static DWORD GetGSObject() { return **(DWORD**)MemoryMgr::GSObjectPtr; }
 	};

@@ -190,7 +190,43 @@ namespace GWAPI {
 			DWORD isLoaded;
 		};
 
+		
 
+		struct Player
+		{
+		public:
+			DWORD AgentID; //0x0000 
+		private:
+			char pad_0x0004[0x14]; //0x0004
+		public:
+			DWORD Primary; //0x0018 
+			DWORD Secondary; //0x001C 
+		private:
+			char pad_0x0020[0x4]; //0x0020
+		public:
+			class NameMod
+			{
+			
+				char pad_0x0000[0x4]; //0x0000
+			public:
+				wchar_t Name[20]; //0x0004 
+
+			} *Name1; //Size=0x002C
+			wchar_t* Name; //0x0028 
+		private:
+			char pad_0x002C[0x4]; //0x002C
+		public:
+			DWORD ActiveTitle; //0x0030 
+		private:
+			char pad_0x0034[0x4]; //0x0034
+		public:
+			DWORD PartySize; //0x0038 
+		private:
+			char pad_0x003C[0x10]; //0x003C
+
+		};//Size=0x004C
+
+		typedef gw_array<Player> PlayerArray;
 		typedef gw_array<MapAgent> MapAgentArray;
 		typedef gw_array<PartyMember> PartyMemberArray;
 
@@ -350,16 +386,17 @@ namespace GWAPI {
 
 		typedef gw_array<AgentEffects> AgentEffectsArray;
 
-
-		struct GHKey{
-			DWORD key[4];
-		};
-
 		struct Guild {
-			GHKey GuildHallKey;
+			DWORD GuildHallKey[4];
 
-			inline wchar_t* GetGuildName(){ return (wchar_t*)(this + 0x30); }
-			inline wchar_t* GetGuildTag(){ return (wchar_t*)(this + 0x80); }
+			inline wchar_t* name() const { return (wchar_t*)(this + 0x30); }
+			inline wchar_t* tag() const { return (wchar_t*)(this + 0x80); }
+
+			inline DWORD& factioncount() const { return *(DWORD*)(this + 0x78); }
+
+			inline DWORD& rating() const { return *(DWORD*)(this + 0x70); }
+			inline DWORD& rank() const { return *(DWORD*)(this + 0x28); }
+			inline DWORD& qualifierpoints() const { return *(DWORD*)(this + 0x7C); }
 		};
 
 		typedef gw_array<Guild*> GuildArray;

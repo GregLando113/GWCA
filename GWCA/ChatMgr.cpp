@@ -85,10 +85,9 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 
 	if (!chan.name.empty()) // definitly have to improve this if
 	{
-		wchar_t *buffer = new wchar_t[length + 26 + 1]; // 26 = len(<c=#xxxxxx></c><c=#xxxxxx>)
+		static wchar_t buffer[125 + 26 + 1]; // 26 = len(<c=#xxxxxx></c><c=#xxxxxx>) (125 = max size ?)
 		wsprintf(buffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
 		chat.chatlog_result = buffer;
-		delete[] buffer;
 		mInfo->message = chat.chatlog_result.c_str();
 	}
 

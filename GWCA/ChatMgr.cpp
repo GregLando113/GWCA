@@ -79,7 +79,7 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	if (quote != std::string::npos)
 		message = message.substr(quote);
 
-	Channel chan;
+	Channel chan = {};
 	if (!sender.empty())
 		chan = chat.chatlog_channel[sender];
 

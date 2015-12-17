@@ -24,6 +24,12 @@ namespace GWAPI {
 		// Name of player who last edited the announcement.
 		wchar_t* GetPlayerGuildAnnouncer();
 
+		void TravelGH();
+		
+		void TravelGH(DWORD* key);
+
+		void LeaveGH();
+
 	private:
 		GuildMgr(GWAPIMgr& api) : GWCAManager(api) {}
 		void RestoreHooks() override {}

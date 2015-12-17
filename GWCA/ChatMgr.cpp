@@ -83,9 +83,9 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	if (!sender.empty())
 		chan = chat.chatlog_channel[sender];
 
+	wchar_t buffer[125 + 26 + 1]; // 26 = len(<c=#xxxxxx></c><c=#xxxxxx>) (125 = maxsize ?)
 	if (!chan.name.empty()) // definitly have to improve this if
 	{
-		wchar_t buffer[125 + 26 + 1]; // 26 = len(<c=#xxxxxx></c><c=#xxxxxx>) (125 = maxsize ?)
 		wsprintf(buffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
 		mInfo->message = buffer;
 	}

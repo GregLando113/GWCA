@@ -37,7 +37,7 @@ namespace GwConstants {
 					Storage_3,Storage_4,Storage_5,Storage_6,Storage_7,
 					Storage_8,Storage_9,Equipped_Items};
 
-	enum class AgentType{
+	enum class AgentType {
 		Living = 0xDB,Chest_Signpost = 0x200,Item = 0x400
 	};
 
@@ -49,6 +49,51 @@ namespace GwConstants {
 	};
 
 	enum class Tick { NOT_READY, READY };
+
+	enum class InterfaceSize { SMALL = -1, NORMAL, LARGE, VERYLARGE };
+	namespace HealthbarHeight {
+		const int Small = 25;
+		const int Normal = 22;
+		const int Large = 28;
+		const int VeryLarge = 31;
+	}
+
+	// travel, region, districts
+	namespace Region { // in-game region code
+		const int International = -2;
+		const int America = 0;
+		const int Korea = 1;
+		const int Europe = 2;
+		const int China = 3;
+		const int Japan = 4;
+	};
+
+	namespace EuropeLanguage { // in-game language code for the european region
+		const int English = 0;
+		const int French = 2;
+		const int German = 3;
+		const int Italian = 4;
+		const int Spanish = 5;
+		const int Polish = 9;
+		const int Russian = 10;
+	};
+
+	enum class District { // arbitrary enum for game district
+		Current,
+		International,
+		American,
+		EuropeEnglish,
+		EuropeFrench,
+		EuropeGerman,
+		EuropeItalian,
+		EuropeSpanish,
+		EuropePolish,
+		EuropeRussian,
+		AsiaKorean,
+		AsiaChinese,
+		AsiaJapanese,
+	};
+	
 
 	namespace Range {
 		const int Adjacent = 156;

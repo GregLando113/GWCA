@@ -3,8 +3,6 @@
 #include "GWCAManager.h"
 #include "GWStructures.h"
 
-#include <cmath>
-
 namespace GWAPI {
 
 	class CameraMgr : public GWCAManager {
@@ -62,15 +60,15 @@ namespace GWAPI {
 			cam_class_->LookAtTarget.z = newPos.z;
 		}
 
-		void ForwardMovement(float dist) {
+		void ForwardMovement(float amount) {
 			float pitchX = sqrt(1.f - cam_class_->pitch*cam_class_->pitch);
-			cam_class_->LookAtTarget.x += dist * pitchX * cos(cam_class_->yaw);
-			cam_class_->LookAtTarget.y += dist * pitchX * sin(cam_class_->yaw);
-			cam_class_->LookAtTarget.z += dist * cam_class_->pitch;
+			cam_class_->LookAtTarget.x += amount * pitchX * cos(cam_class_->yaw);
+			cam_class_->LookAtTarget.y += amount * pitchX * sin(cam_class_->yaw);
+			cam_class_->LookAtTarget.z += amount * cam_class_->pitch;
 		}
 		void SideMovement(float amount) {
-			cam_class_->LookAtTarget.x += amount * cos(cam_class_->yaw + static_cast<float>(M_PI_2));
-			cam_class_->LookAtTarget.y += amount * sin(cam_class_->yaw + static_cast<float>(M_PI_2));
+			cam_class_->LookAtTarget.x += amount * -sin(cam_class_->yaw);
+			cam_class_->LookAtTarget.y += amount * cos(cam_class_->yaw);
 		}
 		void VerticalMovement(float amount) {
 			cam_class_->LookAtTarget.z += amount;

@@ -29,7 +29,7 @@ void GWAPI::CameraMgr::RestoreHooks()
 	if (patch_maxdist_enable)
 		SetMaxDist(750); // We should restore the patch instead, will change that
 	if (patch_camupdate_enable)
-		UnlockCam(false);
+		patch_camupdate_enable = UnlockCam(false);
 	if (patch_fog_enable)
 		patch_fog_enable = SetFog(true);
 }
@@ -59,6 +59,8 @@ bool GWAPI::CameraMgr::UnlockCam(bool enable)
 		*(WORD*)patch_camupdate_addr = (WORD)0x0E89;
 
 	VirtualProtect(patch_camupdate_addr, 2, oldProt, NULL);
+
+	patch_camupdate_enable = enable;
 	return enable;
 }
 

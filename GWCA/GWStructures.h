@@ -184,6 +184,22 @@ namespace GWAPI {
 			inline bool GetIsWeaponSpelled() { return (Effects & 32768) != 0; }
 		};
 
+		struct AgentMovement {
+			BYTE* vtable;
+			BYTE unknown1[12];
+			long AgentId;
+			BYTE unknown2[40];
+			long Moving1; //tells if you are stuck even if your client doesn't know
+			BYTE unknown3[8];
+			long Moving2; //exactly same as Moving1
+			BYTE unknown4[28];
+			float X2;
+			float Y2;
+			byte unknown5[8];
+			float X;
+			float Y;
+		};
+
 		struct PartyMember{
 			DWORD loginnumber;
 			DWORD unk1;

@@ -38,6 +38,11 @@ namespace GWAPI {
 
 		// Manual computation of the position of the Camera. (As close as possible to the original)
 		Vector3f ComputeCamPos(float dist = 750.f); // 2.f is the first person dist (const by gw)
+		inline void SetCameraPos(Vector3f const& newPos) {
+			cam_class_->camerapos.x = newPos.x;
+			cam_class_->camerapos.y = newPos.y;
+			cam_class_->camerapos.z = newPos.z;
+		}
 
 		// Change max zoom dist
 		void SetMaxDist(float dist);
@@ -50,6 +55,13 @@ namespace GWAPI {
 			cam_class_->LookAtTarget.x = newPos.x;
 			cam_class_->LookAtTarget.y = newPos.y;
 			cam_class_->LookAtTarget.z = newPos.z;
+		}
+
+		inline void LinearMove(float dist) { // probably the worst name ever but no idea
+			float pitchX = sqrt(1.f - cam_class_->pitch*cam_class_->pitch);
+			cam_class_->LookAtTarget.x += dist * pitchX * cos(cam_class_->yaw);
+			cam_class_->LookAtTarget.y += dist * pitchX * sin(cam_class_->yaw);
+			cam_class_->LookAtTarget.z += dist * cam_class_->pitch;
 		}
 
 		// Enable or Disable the fog & return the state of it

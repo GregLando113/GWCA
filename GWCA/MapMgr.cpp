@@ -2,7 +2,7 @@
 
 #include "GWAPIMgr.h"
 
-void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, DWORD District /*= 0*/, int Region /*= 0*/, DWORD Language /*= 0*/)
+void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/)
 {
 	static PAB_ZoneMap* pak = new PAB_ZoneMap();
 
@@ -13,6 +13,50 @@ void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, DWORD District /*= 0*/, int
 	pak->unk = 0;
 
 	api().CtoS().SendPacket<PAB_ZoneMap>(pak);
+}
+
+void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, GwConstants::District district, int district_number) {
+	switch (district) {
+	case GwConstants::District::Current:
+		Travel(MapID, district_number, GetRegion(), GetLanguage());
+		break;
+	case GwConstants::District::International:
+		Travel(MapID, district_number, GwConstants::Region::International, 0);
+		break;
+	case GwConstants::District::American:
+		Travel(MapID, district_number, GwConstants::Region::America, 0);
+		break;
+	case GwConstants::District::EuropeEnglish:
+		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::English);
+		break;
+	case GwConstants::District::EuropeFrench:
+		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::French);
+		break;
+	case GwConstants::District::EuropeGerman:
+		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::German);
+		break;
+	case GwConstants::District::EuropeItalian:
+		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::Italian);
+		break;
+	case GwConstants::District::EuropeSpanish:
+		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::Spanish);
+		break;
+	case GwConstants::District::EuropePolish:
+		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::Polish);
+		break;
+	case GwConstants::District::EuropeRussian:
+		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::Russian);
+		break;
+	case GwConstants::District::AsiaKorean:
+		Travel(MapID, district_number, GwConstants::Region::Korea, 0);
+		break;
+	case GwConstants::District::AsiaChinese:
+		Travel(MapID, district_number, GwConstants::Region::China, 0);
+		break;
+	case GwConstants::District::AsiaJapanese:
+		Travel(MapID, district_number, GwConstants::Region::Japan, 0);
+		break;
+	}
 }
 
 DWORD GWAPI::MapMgr::GetInstanceTime()

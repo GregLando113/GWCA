@@ -77,7 +77,6 @@ namespace GWAPI {
 		inline void DeleteCommand(std::wstring command) { chatcmd_callbacks.erase(command); }
 
 	private:
-		std::wstring chatlog_result;
 		Color_t timestamp_color_;
 
 		std::map< std::wstring, Channel > chatlog_channel;

@@ -79,20 +79,18 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	if (quote != std::string::npos)
 		message = message.substr(quote);
 
-	Channel chan;
+	Channel chan = {};
 	if (!sender.empty())
 		chan = chat.chatlog_channel[sender];
 
+	wchar_t buffer[125 + 26 + 1]; // 26 = len(<c=#xxxxxx></c><c=#xxxxxx>) (125 = maxsize ?)
 	if (!chan.name.empty()) // definitly have to improve this if
 	{
-		wchar_t *buffer = new wchar_t[length + 26 + 1]; // 26 = len(<c=#xxxxxx></c><c=#xxxxxx>)
 		wsprintf(buffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
-		chat.chatlog_result = buffer;
-		delete[] buffer;
-		mInfo->message = chat.chatlog_result.c_str();
+		mInfo->message = buffer;
 	}
 
-	return chat.ori_chatlog(ecx, edx, useless);
+	chat.ori_chatlog(ecx, edx, useless);
 }
 
 void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)

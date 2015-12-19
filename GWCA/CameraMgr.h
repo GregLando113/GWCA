@@ -3,6 +3,8 @@
 #include "GWCAManager.h"
 #include "GWStructures.h"
 
+#include <cmath>
+
 namespace GWAPI {
 
 	class CameraMgr : public GWCAManager {
@@ -37,8 +39,11 @@ namespace GWAPI {
 		inline void SetPitch(float pitch) { cam_class_->pitch_togo = pitch; }
 
 		// Manual computation of the position of the Camera. (As close as possible to the original)
+		void UpdateCameraPos() {
+			SetCameraPos(ComputeCamPos());
+		}
 		Vector3f ComputeCamPos(float dist = 750.f); // 2.f is the first person dist (const by gw)
-		inline void SetCameraPos(Vector3f const& newPos) {
+		void SetCameraPos(Vector3f const& newPos) {
 			cam_class_->camerapos.x = newPos.x;
 			cam_class_->camerapos.y = newPos.y;
 			cam_class_->camerapos.z = newPos.z;
@@ -51,21 +56,28 @@ namespace GWAPI {
 		bool UnlockCam(bool enable);
 		inline bool GetCameraUnlock() { return patch_camupdate_enable; }
 
-		inline void SetLookAtTarget(Vector3f const& newPos) {
+		void SetLookAtTarget(Vector3f const& newPos) {
 			cam_class_->LookAtTarget.x = newPos.x;
 			cam_class_->LookAtTarget.y = newPos.y;
 			cam_class_->LookAtTarget.z = newPos.z;
 		}
 
-		inline void LinearMove(float dist) { // probably the worst name ever but no idea
+		void ForwardMovement(float dist) {
 			float pitchX = sqrt(1.f - cam_class_->pitch*cam_class_->pitch);
 			cam_class_->LookAtTarget.x += dist * pitchX * cos(cam_class_->yaw);
 			cam_class_->LookAtTarget.y += dist * pitchX * sin(cam_class_->yaw);
 			cam_class_->LookAtTarget.z += dist * cam_class_->pitch;
 		}
+		void SideMovement(float amount) {
+			cam_class_->LookAtTarget.x += amount * cos(cam_class_->yaw + static_cast<float>(M_PI_2));
+			cam_class_->LookAtTarget.y += amount * sin(cam_class_->yaw + static_cast<float>(M_PI_2));
+		}
+		void VerticalMovement(float amount) {
+			cam_class_->LookAtTarget.z += amount;
+		}
 
 		// Enable or Disable the fog & return the state of it
-		inline bool SetFog(bool enable) {
+		bool SetFog(bool enable) {
 			DWORD oldProt;
 			VirtualProtect(patch_fog_addr, 1, PAGE_READWRITE, &oldProt);
 

@@ -1083,11 +1083,24 @@ namespace GWAPI {
 		};
 		const DWORD Packet<P150>::STATIC_HEADER = 150;
 
+		// damage or healing done packet, but also has other purposes.
+		// to be investigated further.
+		// all types have their value in the float field 'value'.
+		// in all types the value is in percentage, unless otherwise specified.
+		// the value can be negative (e.g. damage, sacrifice) 
+		// or positive (e.g. heal, lifesteal).
+		namespace P151_Type {
+			const DWORD damage = 16; // non-armor-ignoring attack, spells
+			const DWORD critical = 17; // critical hit on autoattack
+			const DWORD energygain = 52; // for example from Critical Strikes or energy tap
+			const DWORD armorignoring = 55; // all armor ignoring damage and heals
+			const DWORD casttime = 61; // non-standard cast time, value in seconds
+		}
 		struct P151 : Packet<P151> {
-			// DWORD
-			// DWORD agent_id;
-			// DWORD agent_id;
-			// DWORD
+			DWORD type;			// type as specified above in P151_Type
+			DWORD target_id;	// agent id of who is affected by the change
+			DWORD cause_id;		// agent id of who caused the change
+			float value;		// value, often in percentage (e.g. %hp)
 		};
 		const DWORD Packet<P151>::STATIC_HEADER = 151;
 

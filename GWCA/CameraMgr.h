@@ -41,18 +41,10 @@ namespace GWAPI {
 		Vector3f ComputeCamPos(float dist = 0);
 
 		// Change max zoom dist
-		inline bool SetMaxDist(float dist) {
-			if (!patch_maxdist_enable)
-				patch_maxdist_enable = TooglePatch16(patch_maxdist_addr, 3, true);
-			cam_class_->maxdistance2 = dist;
-			return patch_maxdist_enable;
-		}
+		void SetMaxDist(float dist);
 
 		// Unlock camera
-		inline bool UnlockCam(bool enable) {
-			patch_camupdate_enable = TooglePatch16(patch_camupdate_addr, 8, enable);
-			return patch_camupdate_enable;
-		}
+		bool UnlockCam(bool enable);
 
 		// Enable or Disable the fog & return the state of it
 		inline bool SetFog(bool enable) {
@@ -80,8 +72,6 @@ namespace GWAPI {
 		bool patch_maxdist_enable = false;
 		bool patch_camupdate_enable = false;
 		bool patch_fog_enable = false;
-
-		bool TooglePatch16(LPVOID addr, WORD patchOrSize, bool enable);
 	};
 
 }

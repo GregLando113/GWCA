@@ -9,7 +9,6 @@ namespace GWAPI {
 		friend class GWAPIMgr;
 
 	public:
-
 		// X,Y,Z of camera in game world.
 		inline Vector3f GetCameraPosition(){ return cam_class_->camerapos; }
 
@@ -38,13 +37,20 @@ namespace GWAPI {
 		inline void SetPitch(float pitch) { cam_class_->pitch_togo = pitch; }
 
 		// Manual computation of the position of the Camera. (As close as possible to the original)
-		Vector3f ComputeCamPos(float dist = 0);
+		Vector3f ComputeCamPos(float dist = 750.f); // 2.f is the first person dist (const by gw)
 
 		// Change max zoom dist
 		void SetMaxDist(float dist);
 
-		// Unlock camera
+		// Unlock camera & return the new state of it
 		bool UnlockCam(bool enable);
+		inline bool GetCameraUnlock() { return patch_camupdate_enable; }
+
+		inline void SetLookAtTarget(Vector3f const& newPos) {
+			cam_class_->LookAtTarget.x = newPos.x;
+			cam_class_->LookAtTarget.y = newPos.y;
+			cam_class_->LookAtTarget.z = newPos.z;
+		}
 
 		// Enable or Disable the fog & return the state of it
 		inline bool SetFog(bool enable) {

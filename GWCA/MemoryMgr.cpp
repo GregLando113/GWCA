@@ -133,7 +133,7 @@ bool GWAPI::MemoryMgr::Scan()
 		}
 
 		// Skill timer to use for exact effect times.
-		SkillTimerPtr = (BYTE*)scan.FindPattern("\x56\x85\xC0\x8B\xF1\x75\x05", "xxxxxxx", -4);
+		SkillTimerPtr = (BYTE*)scan.FindPattern("\x85\xC0\x74\x11\x6A\x76\xBA", "xxxxxxx", -4);
 		if (SkillTimerPtr){
 			printf("SkillTimerPtr = %X\n", SkillTimerPtr);
 			SkillTimerPtr = *(BYTE**)SkillTimerPtr;

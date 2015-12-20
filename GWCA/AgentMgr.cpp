@@ -134,6 +134,14 @@ GWAPI::GW::Agent* GWAPI::AgentMgr::GetTarget() {
 	}
 }
 
+GWAPI::GW::Agent* GWAPI::AgentMgr::GetAgentByID(DWORD id) {
+	GW::AgentArray agents = GetAgentArray();
+	if (!agents.valid()) return nullptr;
+	if (id < 0) return nullptr;
+	if (id >= agents.size()) return nullptr;
+	return agents[id];
+}
+
 void GWAPI::AgentMgr::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/)
 {
 	api().CtoS().SendPacket(0xC, 0x33, Agent->Id, CallTarget);

@@ -86,10 +86,14 @@ namespace GWAPI {
 			return enable;
 		}
 
+		void SetFieldOfView(float fov);
+
 	private:
 
 		CameraMgr(GWAPIMgr& obj);
 		void RestoreHooks() override;
+
+		void PatchFov(bool enable);
 
 		GW::Camera* cam_class_;
 		float* projection_matrix_;
@@ -97,9 +101,11 @@ namespace GWAPI {
 		LPVOID patch_maxdist_addr;
 		LPVOID patch_camupdate_addr;
 		LPVOID patch_fog_addr;
+		LPVOID patch_fov_addr;
 		bool patch_maxdist_enable = false;
 		bool patch_camupdate_enable = false;
 		bool patch_fog_enable = false;
+		bool patch_fov_enable = false;
 	};
 
 }

@@ -82,7 +82,7 @@ namespace GWAPI {
 			*(BYTE*)patch_fog_addr = enable ? 1 : 0;
 			patch_fog_enable = !enable;
 
-			VirtualProtect(patch_fog_addr, 1, oldProt, NULL);
+			VirtualProtect(patch_fog_addr, 1, oldProt, &oldProt);
 			return enable;
 		}
 

@@ -58,7 +58,7 @@ bool GWAPI::CameraMgr::UnlockCam(bool enable)
 	else
 		*(WORD*)patch_camupdate_addr = (WORD)0x0E89;
 
-	VirtualProtect(patch_camupdate_addr, 2, oldProt, NULL);
+	VirtualProtect(patch_camupdate_addr, 2, oldProt, &oldProt);
 
 	patch_camupdate_enable = enable;
 	return enable;
@@ -70,7 +70,7 @@ void GWAPI::CameraMgr::SetMaxDist(float newDist)
 		DWORD oldProt;
 		VirtualProtect(patch_maxdist_addr, 2, PAGE_READWRITE, &oldProt);
 		*(WORD*)patch_maxdist_addr = (WORD)0x01EB;
-		VirtualProtect(patch_maxdist_addr, 2, oldProt, NULL);
+		VirtualProtect(patch_maxdist_addr, 2, oldProt, &oldProt);
 		patch_maxdist_enable = true;
 	}
 

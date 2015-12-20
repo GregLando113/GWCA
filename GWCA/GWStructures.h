@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <assert.h>
 
 #include "MemoryMgr.h"
 
@@ -25,15 +26,14 @@ namespace GWAPI {
 			iterator end() { return &array_[current_size_]; }
 			const_iterator end() const { return &array_[current_size_]; }
 
-			T& index(DWORD _index)
-			{
-				if (_index > current_size_ || _index < 0) throw 1;
+			T& index(DWORD _index) {
+				assert(_index >= 0 && _index < current_size_);
 				return array_[_index];
 			}
 
-			T& operator[](DWORD _index)
-			{
-				return index(_index);
+			T& operator[](DWORD _index) {
+				assert(_index >= 0 && _index < current_size_);
+				return array_[_index];
 			}
 			bool valid() {
 				return array_ != NULL;
@@ -252,8 +252,13 @@ namespace GWAPI {
 			Agent* GetTarget() { return index(GetTargetId()); }
 			inline DWORD GetPlayerId() { return *(DWORD*)MemoryMgr::PlayerAgentIDPtr; }
 			inline DWORD GetTargetId() { return *(DWORD*)MemoryMgr::TargetAgentIDPtr; }
+			Agent* operator[] (DWORD index) {
+				if (!valid()) return nullptr;
+				if (index < 0) return nullptr;
+				if (index >= current_size_) return nullptr;
+				return array_[index];
+			}
 		};
-
 
 
 		struct Bag;

@@ -18,7 +18,7 @@ namespace GWAPI {
 		// Get AgentArray Structures of player or target.
 		GW::Agent* GetPlayer();
 		GW::Agent* GetTarget();
-		GW::Agent* GetAgentByID(DWORD id);
+		inline GW::Agent* GetAgentByID(DWORD id) { return GetAgentArray()[id]; }
 
 		// Get Current AgentID's of player or target.
 		inline DWORD GetPlayerId() { return *(DWORD*)MemoryMgr::PlayerAgentIDPtr; }

@@ -7,11 +7,8 @@ BYTE* GWAPI::AgentMgr::dialog_log_ret_ = NULL;
 DWORD GWAPI::AgentMgr::last_dialog_id_ = 0;
 
 
-GWAPI::GW::AgentArray GWAPI::AgentMgr::GetAgentArray()
-{
-	GW::AgentArray* agRet = (GW::AgentArray*)MemoryMgr::agArrayPtr;
-	//if (agRet->size() == 0) throw API_EXCEPTION;
-	return *agRet;
+GWAPI::GW::AgentArray GWAPI::AgentMgr::GetAgentArray() {
+	return *(GW::AgentArray*)MemoryMgr::agArrayPtr;
 }
 
 std::vector<GWAPI::GW::Agent*> * GWAPI::AgentMgr::GetParty() {
@@ -132,14 +129,6 @@ GWAPI::GW::Agent* GWAPI::AgentMgr::GetTarget() {
 	} else {
 		return nullptr;
 	}
-}
-
-GWAPI::GW::Agent* GWAPI::AgentMgr::GetAgentByID(DWORD id) {
-	GW::AgentArray agents = GetAgentArray();
-	if (!agents.valid()) return nullptr;
-	if (id < 0) return nullptr;
-	if (id >= agents.size()) return nullptr;
-	return agents[id];
 }
 
 void GWAPI::AgentMgr::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/)

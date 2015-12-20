@@ -22,6 +22,7 @@ GWAPI::CameraMgr::CameraMgr(GWAPIMgr& api) : GWCAManager(api)
 	patch_maxdist_addr = (LPVOID)scan.FindPattern("\x8B\x45\x08\x89\x41\x68\x5D", "xxxxxxx", 3);
 	patch_camupdate_addr = (LPVOID)scan.FindPattern("\x89\x0E\x89\x56\x04\x89\x7E\x08", "xxxxxxxx", 0);
 	patch_fog_addr = (LPVOID)scan.FindPattern("\x83\xE2\x01\x52\x6A\x1C\x50", "xxxxxxx", 2);
+	patch_fov_addr = (LPVOID)scan.FindPattern("\x8B\x45\x0C\x89\x41\x04\xD9", "xxxxxxx", -0xC);
 }
 
 void GWAPI::CameraMgr::RestoreHooks()
@@ -75,4 +76,24 @@ void GWAPI::CameraMgr::SetMaxDist(float newDist)
 	}
 
 	cam_class_->maxdistance2 = newDist;
+}
+
+void GWAPI::CameraMgr::PatchFov(bool enable)
+{
+	DWORD oldprot;
+	VirtualProtect(patch_fov_addr, 1, PAGE_EXECUTE_READWRITE, &oldprot);
+	*(BYTE*)patch_fov_addr = enable ? 0xC3 : 0x55;
+	VirtualProtect(patch_fov_addr, 1, oldprot, &oldprot);
+}
+
+void GWAPI::CameraMgr::SetFieldOfView(float fov)
+{
+	if (fov == 1.308997f){
+		PatchFov(false);
+		return;
+	}
+	if (!patch_fog_enable){
+		PatchFov(true);
+	}
+	cam_class_->fieldofview = fov;
 }

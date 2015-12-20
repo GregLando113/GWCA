@@ -55,7 +55,7 @@ void __declspec(naked) GWAPI::GameThreadMgr::renderHook()
 void GWAPI::GameThreadMgr::ToggleRenderHook()
 {
 	static BYTE restorebuf[5];
-	static DWORD dwProt;
+	DWORD dwProt;
 
 	render_state_ = !render_state_;
 
@@ -66,12 +66,12 @@ void GWAPI::GameThreadMgr::ToggleRenderHook()
 		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, PAGE_EXECUTE_READWRITE, &dwProt);
 		memset(MemoryMgr::RenderLoopLocation, 0xE9, 1);
 		*(DWORD*)(MemoryMgr::RenderLoopLocation + 1) = (DWORD)((BYTE*)renderHook - MemoryMgr::RenderLoopLocation) - 5;
-		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, dwProt, NULL);
+		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, dwProt, &dwProt);
 	}
 	else{
 		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, PAGE_EXECUTE_READWRITE, &dwProt);
 		memcpy(MemoryMgr::RenderLoopLocation, restorebuf, 5);
-		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, dwProt, NULL);
+		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, dwProt, &dwProt);
 	}
 }
 

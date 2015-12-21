@@ -1,7 +1,6 @@
-#ifndef __GWCONSTANTS_H
-#define __GWCONSTANTS_H
-
 #pragma once
+
+#include <string>
 
 #include "GwConstantsSkills.h"
 #include "GwConstantsMaps.h"
@@ -12,8 +11,26 @@ namespace GwConstants {
 
 	enum class InstanceType { Outpost, Explorable, Loading };
 
-	enum class Profession { None, Warrior, Ranger, Monk, Necromancer, Mesmer, 
-		Elementalist, Assassin, Ritualist, Paragon, Dervish };
+	enum class Profession {
+		None, Warrior, Ranger, Monk, Necromancer, Mesmer,
+		Elementalist, Assassin, Ritualist, Paragon, Dervish
+	};
+	static std::wstring to_wstring(Profession prof) {
+		switch (prof) {
+		case GwConstants::Profession::None: return L"X";
+		case GwConstants::Profession::Warrior: return L"W";
+		case GwConstants::Profession::Ranger: return L"R";
+		case GwConstants::Profession::Monk: return L"Mo";
+		case GwConstants::Profession::Necromancer: return L"N";
+		case GwConstants::Profession::Mesmer: return L"Me";
+		case GwConstants::Profession::Elementalist: return L"E";
+		case GwConstants::Profession::Assassin: return L"A";
+		case GwConstants::Profession::Ritualist: return L"Rt";
+		case GwConstants::Profession::Paragon: return L"P";
+		case GwConstants::Profession::Dervish: return L"D";
+		default: return L"";
+		}
+	}
 
 	enum class Attribute {			
 		FastCasting, IllusionMagic, DominationMagic, InspirationMagic,		// mesmer
@@ -269,7 +286,3 @@ namespace GwConstants {
 	}
 }
 
-
-
-
-#endif

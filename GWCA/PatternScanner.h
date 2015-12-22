@@ -4,10 +4,6 @@
 
 namespace GWAPI {
 
-	// class PatternScanner
-	// 32 bit pattern scanner for x86 programs.
-	// Credits to Zat & Midi12 @ unknowncheats.me for the functionality of this class.
-
 	class PatternScanner {
 	public:
 
@@ -17,10 +13,10 @@ namespace GWAPI {
 		PatternScanner(HMODULE _module);
 
 		// Actual pattern finder.
-		DWORD FindPattern(char* pattern, char* mask, DWORD offset);
+		const void* FindPattern(const char* pattern,const char* mask, DWORD offset);
 
 	private:
-		DWORD base_;
+		const BYTE* base_;
 		DWORD size_;
 	};
 

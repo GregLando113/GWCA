@@ -54,7 +54,7 @@ void GWAPI::DirectXMgr::CreateRenderHooks(EndScene_t _endscene, Reset_t _reset)
 
 		PatternScanner dx_scan(start, scan_size);
 
-		pA1 = dx_scan.FindPattern(
+		pA1 = (DWORD)dx_scan.FindPattern(
 			"\xC7\x06\x00\x00\x00\x00\x89\x86\x00\x00\x00\x00\x89\x86", "xx????xx????xx", 2);
 		if (pA1 != NULL) {
 			printf("Vtable scan found! Addr: %X\n", pA1);

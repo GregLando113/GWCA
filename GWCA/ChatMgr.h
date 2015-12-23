@@ -55,6 +55,14 @@ namespace GWAPI {
 
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(const wchar_t* msg, wchar_t channel);
+		// Like SendChat but make sure that cmd goes through det_chatcmd
+		inline void SendChatCmd(const wchar_t* msg, wchar_t channel) {
+			DWORD len = wcslen(msg);
+			wchar_t *newMes = new wchar_t[len + 2];
+			newMes[0] = channel;
+			wcscpy_s(&newMes[1], len + 1, msg);
+			det_chatcmd(newMes);
+		}
 
 		// Write to chat as a PM with printf style arguments.
 		void WriteChatF(const wchar_t* from, const wchar_t* format, ...);
@@ -84,7 +92,7 @@ namespace GWAPI {
 
 		/* Hook stuff */
 		typedef void(__fastcall *ChatLog_t)(DWORD, DWORD, DWORD);
-		typedef void(__fastcall *ChatCmd_t)(DWORD);
+		typedef void(__fastcall *ChatCmd_t)(wchar_t*);
 
 		ChatMgr(GWAPIMgr& api);
 		void RestoreHooks() override;
@@ -95,7 +103,7 @@ namespace GWAPI {
 		ChatCmd_t ori_chatcmd;
 
 		static void __fastcall det_chatlog(DWORD, DWORD, DWORD);
-		static void __fastcall det_chatcmd(DWORD);
+		static void __fastcall det_chatcmd(wchar_t *_message);
 	};
 
 }

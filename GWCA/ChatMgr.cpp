@@ -116,7 +116,7 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(wchar_t *_message)
 			cb.callback(std::wstring(cmd), args);
 
 			if (cb.override)
-				return chat.ori_chatcmd(L"");
+				return;
 		}
 	}
 	return chat.ori_chatcmd(_message);

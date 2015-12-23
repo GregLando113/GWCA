@@ -93,10 +93,9 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	chat.ori_chatlog(ecx, edx, useless);
 }
 
-void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
+void __fastcall GWAPI::ChatMgr::det_chatcmd(wchar_t *_message)
 {
-	ChatMgr& chat = GWAPI::GWCA::Api().Chat();
-	wchar_t* _message = reinterpret_cast<wchar_t*>(ecx);	
+	ChatMgr& chat = GWAPI::GWCA::Api().Chat();	
 	unsigned int length = wcslen(_message);
 	wchar_t* message = new wchar_t[length + 1];
 	wcscpy_s(message, length + 1, _message);
@@ -117,10 +116,10 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(DWORD ecx)
 			cb.callback(std::wstring(cmd), args);
 
 			if (cb.override)
-				return chat.ori_chatcmd((DWORD)L"");
+				return chat.ori_chatcmd(L"");
 		}
 	}
-	return chat.ori_chatcmd(ecx);
+	return chat.ori_chatcmd(_message);
 }
 
 static wchar_t* wcssep(wchar_t* str, wchar_t sep)

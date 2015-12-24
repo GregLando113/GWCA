@@ -62,6 +62,7 @@ namespace GWAPI {
 			newMes[0] = channel;
 			wcscpy_s(&newMes[1], len + 1, msg);
 			det_chatcmd(newMes);
+			delete[] newMes;
 		}
 
 		// Write to chat as a PM with printf style arguments.

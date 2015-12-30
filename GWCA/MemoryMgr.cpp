@@ -51,7 +51,7 @@ BYTE* GWAPI::MemoryMgr::DialogFunc = NULL;
 
 bool GWAPI::MemoryMgr::Scan()
 {
-	PatternScanner scan(0x401000, 0x4FF000);
+	PatternScanner scan("Gw.exe");
 	printf("[------------------ API SCAN START ------------------]\n");
 
 		// Agent Array

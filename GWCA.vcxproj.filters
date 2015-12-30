@@ -39,6 +39,7 @@
     <ClInclude Include="GWCA\GWCAManager.h" />
     <ClInclude Include="GWCA\GWCA.h" />
     <ClInclude Include="GWCA\GWStructPositions.h" />
+    <ClInclude Include="GWCA\MemoryPatcher.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">
@@ -99,6 +100,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\GWCA.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\MemoryPatcher.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

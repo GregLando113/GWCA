@@ -20,8 +20,8 @@ GWAPI::MemoryPatcher::MemoryPatcher(LPVOID addr, BYTE *patch, UINT size)
 GWAPI::MemoryPatcher::~MemoryPatcher()
 {
 	TooglePatch(false);
-	delete[] this->patch;
-	delete[] this->backup;
+	delete[] patch;
+	delete[] backup;
 }
 
 bool GWAPI::MemoryPatcher::TooglePatch(bool enable)
@@ -30,13 +30,13 @@ bool GWAPI::MemoryPatcher::TooglePatch(bool enable)
 		return enable;
 
 	DWORD oldProt;
-	VirtualProtect(this->addr, this->size, PAGE_EXECUTE_READWRITE, &oldProt);
+	VirtualProtect(addr, size, PAGE_EXECUTE_READWRITE, &oldProt);
 	if (enable) {
-		memcpy(this->addr, this->patch, this->size);
+		memcpy(addr, patch, size);
 	} else {
-		memcpy(this->addr, this->backup, this->size);
+		memcpy(addr, backup, size);
 	}
-	VirtualProtect(this->addr, this->size, oldProt, &oldProt);
+	VirtualProtect(addr, size, oldProt, &oldProt);
 
 	this->enable = enable;
 	return enable;

@@ -11,6 +11,8 @@ namespace GWAPI {
 
 		bool TooglePatch(bool enable);
 		bool TooglePatch() { TooglePatch(!enable); };
+
+		bool GetPatchState() { return enable; };
 	private:
 		LPVOID addr;
 

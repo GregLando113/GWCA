@@ -3,7 +3,7 @@
 
 GWAPI::CameraMgr::CameraMgr(GWAPIMgr& api) : GWCAManager(api)
 {
-	PatternScanner scan(0x401000, 0x4FF000);
+	PatternScanner scan("Gw.exe");
 	DWORD scancamclass = scan.FindPattern("\x75\x0B\x51\xB9", "xxxx", 4);
 	if (scancamclass) {
 		cam_class_ = *(GW::Camera**)scancamclass;

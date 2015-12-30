@@ -34,6 +34,7 @@
     <ClInclude Include="GWCA\ItemMgr.h" />
     <ClInclude Include="GWCA\MapMgr.h" />
     <ClInclude Include="GWCA\MemoryMgr.h" />
+    <ClInclude Include="GWCA\MemoryPatcher.h" />
     <ClInclude Include="GWCA\MerchantMgr.h" />
     <ClInclude Include="GWCA\PatternScanner.h" />
     <ClInclude Include="GWCA\SkillbarMgr.h" />
@@ -57,6 +58,7 @@
     <ClCompile Include="GWCA\ItemMgr.cpp" />
     <ClCompile Include="GWCA\MapMgr.cpp" />
     <ClCompile Include="GWCA\MemoryMgr.cpp" />
+    <ClCompile Include="GWCA\MemoryPatcher.cpp" />
     <ClCompile Include="GWCA\MerchantMgr.cpp" />
     <ClCompile Include="GWCA\PatternScanner.cpp" />
     <ClCompile Include="GWCA\SkillbarMgr.cpp" />

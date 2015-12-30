@@ -45,12 +45,17 @@ GWAPI::PatternScanner::PatternScanner(HMODULE _module)
 
 GWAPI::PatternScanner::PatternScanner(char* moduleName /*= NULL*/)
 {
-	MODULEINFO info;
-	if (!GetModuleInformation(GetCurrentProcess(), GetModuleHandleA(moduleName), &info, sizeof(MODULEINFO)))
-		throw 1;
+	HMODULE mod = GetModuleHandleA(moduleName);
+	LPVOID textSection = (LPVOID)((DWORD)mod + 0x1000);
 
-	base_ = (DWORD)info.lpBaseOfDll;
-	size_ = (DWORD)info.SizeOfImage;
+	MEMORY_BASIC_INFORMATION info = { 0 };
+
+	if (VirtualQuery(textSection, &info, sizeof(MEMORY_BASIC_INFORMATION))) {
+		base_ = (DWORD)textSection;
+		size_ = (DWORD)info.RegionSize;
+	} else {
+		throw 1;
+	}
 }
 
 GWAPI::PatternScanner::PatternScanner(DWORD _start, DWORD _size) : base_(_start), size_(_size)

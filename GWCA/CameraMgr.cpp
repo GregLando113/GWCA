@@ -19,20 +19,27 @@ GWAPI::CameraMgr::CameraMgr(GWAPIMgr& api) : GWCAManager(api)
 		projection_matrix_ = NULL;
 	}
 
-	patch_maxdist_addr = (LPVOID)scan.FindPattern("\x8B\x45\x08\x89\x41\x68\x5D", "xxxxxxx", 3);
-	patch_camupdate_addr = (LPVOID)scan.FindPattern("\x89\x0E\x89\x56\x04\x89\x7E\x08", "xxxxxxxx", 0);
-	patch_fog_addr = (LPVOID)scan.FindPattern("\x83\xE2\x01\x52\x6A\x1C\x50", "xxxxxxx", 2);
-	patch_fov_addr = (LPVOID)scan.FindPattern("\x8B\x45\x0C\x89\x41\x04\xD9", "xxxxxxx", -0xC);
+	LPVOID patch_maxdist_addr = (LPVOID)scan.FindPattern("\x8B\x45\x08\x89\x41\x68\x5D", "xxxxxxx", 3);
+	patch_maxdist = new MemoryPatcher(patch_maxdist_addr, (BYTE*)"\xEB\x01", 2);
+	patch_maxdist->TooglePatch(true);
+
+	LPVOID patch_camupdate_addr = (LPVOID)scan.FindPattern("\x89\x0E\x89\x56\x04\x89\x7E\x08", "xxxxxxxx", 0);
+	patch_camupdate = new MemoryPatcher(patch_camupdate_addr, (BYTE*)"\xEB\x06", 2);
+
+	LPVOID patch_fog_addr = (LPVOID)scan.FindPattern("\x83\xE2\x01\x52\x6A\x1C\x50", "xxxxxxx", 2);
+	patch_fog = new MemoryPatcher(patch_fog_addr, (BYTE*)"\x00", 1);
+
+	LPVOID patch_fov_addr = (LPVOID)scan.FindPattern("\x8B\x45\x0C\x89\x41\x04\xD9", "xxxxxxx", -0xC);
+	patch_fov = new MemoryPatcher(patch_fov_addr, (BYTE*)"\xC3", 1);
+	patch_fov->TooglePatch(true);
 }
 
 void GWAPI::CameraMgr::RestoreHooks()
 {
-	if (patch_maxdist_enable)
-		SetMaxDist(750); // We should restore the patch instead, will change that
-	if (patch_camupdate_enable)
-		patch_camupdate_enable = UnlockCam(false);
-	if (patch_fog_enable)
-		patch_fog_enable = SetFog(true);
+	delete patch_maxdist;
+	delete patch_camupdate;
+	delete patch_fog;
+	delete patch_fov;
 }
 
 GWAPI::Vector3f GWAPI::CameraMgr::ComputeCamPos(float dist)
@@ -47,53 +54,4 @@ GWAPI::Vector3f GWAPI::CameraMgr::ComputeCamPos(float dist)
 	newPos.z -= dist * 0.95f * cam_class_->pitch; // 0.95 is the max pitch, not 1.0
 
 	return newPos;
-}
-
-bool GWAPI::CameraMgr::UnlockCam(bool enable)
-{
-	DWORD oldProt;
-	VirtualProtect(patch_camupdate_addr, 2, PAGE_READWRITE, &oldProt);
-
-	if (enable)
-		*(WORD*)patch_camupdate_addr = (WORD)0x06EB;
-	else
-		*(WORD*)patch_camupdate_addr = (WORD)0x0E89;
-
-	VirtualProtect(patch_camupdate_addr, 2, oldProt, &oldProt);
-
-	patch_camupdate_enable = enable;
-	return enable;
-}
-
-void GWAPI::CameraMgr::SetMaxDist(float newDist)
-{
-	if (!patch_maxdist_enable) {
-		DWORD oldProt;
-		VirtualProtect(patch_maxdist_addr, 2, PAGE_READWRITE, &oldProt);
-		*(WORD*)patch_maxdist_addr = (WORD)0x01EB;
-		VirtualProtect(patch_maxdist_addr, 2, oldProt, &oldProt);
-		patch_maxdist_enable = true;
-	}
-
-	cam_class_->maxdistance2 = newDist;
-}
-
-void GWAPI::CameraMgr::PatchFov(bool enable)
-{
-	DWORD oldprot;
-	VirtualProtect(patch_fov_addr, 1, PAGE_EXECUTE_READWRITE, &oldprot);
-	*(BYTE*)patch_fov_addr = enable ? 0xC3 : 0x55;
-	VirtualProtect(patch_fov_addr, 1, oldprot, &oldprot);
-}
-
-void GWAPI::CameraMgr::SetFieldOfView(float fov)
-{
-	if (fov == 1.308997f){
-		PatchFov(false);
-		return;
-	}
-	if (!patch_fog_enable){
-		PatchFov(true);
-	}
-	cam_class_->fieldofview = fov;
 }

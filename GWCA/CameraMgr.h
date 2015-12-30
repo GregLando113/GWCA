@@ -41,7 +41,7 @@ namespace GWAPI {
 		void UpdateCameraPos() {
 			SetCameraPos(ComputeCamPos());
 		}
-		Vector3f ComputeCamPos(float dist = 750.f); // 2.f is the first person dist (const by gw)
+		Vector3f ComputeCamPos(float dist = 0); // 2.f is the first person dist (const by gw)
 		void SetCameraPos(Vector3f const& newPos) {
 			cam_class_->camerapos.x = newPos.x;
 			cam_class_->camerapos.y = newPos.y;

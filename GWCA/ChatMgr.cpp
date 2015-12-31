@@ -164,7 +164,9 @@ void __fastcall GWAPI::ChatMgr::det_writebuf(wchar_t *HMessage, DWORD channel)
 	ChatBuffer *chatBuf = chat.GetChatBuffer();
 
 	// Save timestamp of all messages that are actually save (they are the only one to get reprint on a ChatReload)
-	chat.timestamp[chatBuf->current] = GWAPI::GWCA::Api().Map().GetInstanceTime();
+	SYSTEMTIME time;
+	GetLocalTime(&time);
+	chat.timestamp[chatBuf->current] = (((time.wHour * 60) + time.wMinute) * 60 + time.wSecond) * 1000;
 
 	chat.ori_writebuf(HMessage, channel);
 }

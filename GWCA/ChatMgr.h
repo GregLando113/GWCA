@@ -75,8 +75,11 @@ namespace GWAPI {
 		void WriteChat(const wchar_t* from, const wchar_t* msg);
 
 		inline void SetTimestampColor(DWORD xrgb_color) {
-			timestamp_color_ = xrgb_color && 0x00FFFFFF; // remove alpha
+			timestamp_color_ = xrgb_color & 0x00FFFFFF; // remove alpha
 		}
+
+		inline bool ToggleTimeStamp(bool enable) { return (timestamp_enable_ = enable); };
+		inline bool ToggleTimeStamp() { return (timestamp_enable_ = !timestamp_enable_); };
 
 		inline void RegisterChannel(std::wstring sender, Color_t col_sender, Color_t col_message, DWORD channel = 0) {
 			chatlog_channel[sender] = { channel, sender, col_sender, col_message };
@@ -93,8 +96,11 @@ namespace GWAPI {
 	private:
 		ChatBuffer **ChatBufferLoca;
 		DWORD messageId;
+		// The hash are unique to the message & unique to the "chat reload"
+		std::map < DWORD, DWORD > hashArray;
 
 		Color_t timestamp_color_;
+		bool timestamp_enable_;
 
 		std::map< std::wstring, Channel > chatlog_channel;
 		std::map< std::wstring, CallBack > chatcmd_callbacks;

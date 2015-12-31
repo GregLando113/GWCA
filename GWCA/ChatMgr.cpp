@@ -28,6 +28,7 @@ GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 	ori_writebuf = (WriteBuf_t)hk_writebuf_.Detour(writebuf_addr, (BYTE*)det_writebuf, writebuf_length);
 	ori_reloadchat = (ReloadChat_t)hk_reloadchat_.Detour(reloadchat_addr, (BYTE*)det_realoadchat, reloadchat_length);
 
+	ZeroMemory(timestamp, 0x100 * sizeof(DWORD));
 	messageId = GetChatBuffer()->current;
 	ToggleTimeStamp(false);
 	SetTimestampColor(0x00ff00); // green
@@ -106,7 +107,7 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 	DWORD time = chat.timestamp[mIndex] / 1000;
 	DWORD second = time % 60;
 	DWORD minute = (time / 60) % 60;
-	DWORD hour = (time / 3600) % 60;
+	DWORD hour = time / 3600;
 	// In theory we now have the hour/minute/seconde when the message was receive
 
 	wchar_t timeBuffer[50] = L"";

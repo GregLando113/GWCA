@@ -14,7 +14,7 @@ GWAPI::FriendListMgr::FriendListMgr(GWAPIMgr& api) : GWCAManager(api)
 	fList_ = &(*(GWAPI::GW::FriendList*)*(DWORD*)call);
 }
 
-inline void GWAPI::FriendListMgr::SetFriendListStatus(GwConstants::OnlineStatus status)
+void GWAPI::FriendListMgr::SetFriendListStatus(GwConstants::OnlineStatus status)
 {
 	set_online_status_((DWORD)status);
 }

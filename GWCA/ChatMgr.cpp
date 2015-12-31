@@ -28,6 +28,7 @@ GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 	ori_writebuf = (WriteBuf_t)hk_writebuf_.Detour(writebuf_addr, (BYTE*)det_writebuf, writebuf_length);
 	ori_reloadchat = (ReloadChat_t)hk_reloadchat_.Detour(reloadchat_addr, (BYTE*)det_realoadchat, reloadchat_length);
 
+	ZeroMemory(timestamp, 0x100 * sizeof(DWORD));
 	messageId = GetChatBuffer()->current;
 	ToggleTimeStamp(false);
 	SetTimestampColor(0x00ff00); // green

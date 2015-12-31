@@ -29,7 +29,8 @@ GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 	ori_reloadchat = (ReloadChat_t)hk_reloadchat_.Detour(reloadchat_addr, (BYTE*)det_realoadchat, reloadchat_length);
 
 	messageId = GetChatBuffer()->current;
-	SetTimestampColor(0xff00); // green
+	ToggleTimeStamp(false);
+	SetTimestampColor(0x00ff00); // green
 }
 
 void GWAPI::ChatMgr::RestoreHooks() {
@@ -91,13 +92,39 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 	Channel chan = {};
 	if (!sender.empty())
 		chan = chat.chatlog_channel[sender];
+	/* END MESSAGE PARSING, We have seperatly the sender, the message & the special channel data if there is one */
 
-	wchar_t buffer[0x400]; // Cost nothing to overalloc but improvement required
-	if (!chan.name.empty())
-	{
-		wsprintf(buffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
-		mInfo->message = buffer;
+	DWORD mIndex = chat.messageId;
+	if (!cInfo->isHandled) {
+		chat.hashArray[cInfo->hash] = mIndex;
+		chat.messageId = (chat.messageId + 1) % 100;
+	} else {
+		mIndex = chat.hashArray[cInfo->hash];
 	}
+
+	// Now we should have the index of the message inside the ChatBuffer & his timestamp is at same index in timestamp array
+	DWORD time = chat.timestamp[mIndex] / 1000;
+	DWORD second = time % 60;
+	DWORD minute = (time / 60) % 60;
+	DWORD hour = (time / 3600) % 60;
+	// In theory we now have the hour/minute/seconde when the message was receive
+
+	wchar_t timeBuffer[50] = L"";
+	if (chat.timestamp_enable_) {
+		wsprintfW(timeBuffer, L"<c=#%06x>[%02u:%02u:%02u]</c>", chat.timestamp_color_, hour, minute, second);
+	}
+
+	wchar_t mesBuffer[0x200] = L"";
+	if (!chan.name.empty()) {
+		wsprintfW(mesBuffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
+	} else {
+		wcscpy_s(mesBuffer, mInfo->message);
+	}
+
+	wchar_t finalMessage[0x400]; // Cost nothing to overalloc but improvement required
+	wsprintfW(finalMessage, L"%s %s", timeBuffer, mesBuffer);
+
+	mInfo->message = finalMessage;
 
 	chat.ori_chatlog(cInfo, mInfo, useless);
 }
@@ -151,6 +178,8 @@ void __fastcall GWAPI::ChatMgr::det_realoadchat(DWORD ecx, DWORD edx, DWORD unus
 	chat.messageId = (chatBuf->current + 1) % 0x100;
 	if (!chatBuf->HMessage[chat.messageId])
 		chat.messageId = 0;
+	
+	chat.hashArray.clear();
 
 	chat.ori_reloadchat(ecx, edx, unused);
 }

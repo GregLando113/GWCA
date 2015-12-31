@@ -10,22 +10,33 @@ static wchar_t* wcssep(wchar_t* str, wchar_t sep);
 
 GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 {
-	PatternScanner scanner(0x401000, 0x4FF000);
-	BYTE* chatlog_adr = (BYTE*)scanner.FindPattern("\x53\x56\x8B\xF1\x57\x8B\x56\x14\x8B\x4E\x0C\xE8", "xxxxxxxxxxxx", -6);
-	BYTE* chatcmd_adr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
+	PatternScanner scanner("Gw.exe");
+	BYTE* chatlog_addr = (BYTE*)scanner.FindPattern("\x53\x56\x8B\xF1\x57\x8B\x56\x14\x8B\x4E\x0C\xE8", "xxxxxxxxxxxx", -6);
+	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
+	BYTE* writebuf_addr = (BYTE*)scanner.FindPattern("\x57\x8B\xFA\x85\xC0\x8B\xF1\x74", "xxxxxxxx", -6);
+	BYTE* reloadchat_addr = (BYTE*)scanner.FindPattern("\x83\xEC\x08\x56\x8B\xF1\x57\x6A\xFF", "xxxxxxxxx", -3);
 
-	DWORD chatlog_length = Hook::CalculateDetourLength(chatlog_adr);
-	DWORD chatcmd_length = Hook::CalculateDetourLength(chatcmd_adr);
+	ChatBufferLoca = (ChatBuffer**)(*(DWORD*)(writebuf_addr + 1));
 
-	ori_chatlog = (ChatLog_t)hk_chatlog_.Detour(chatlog_adr, (BYTE*)det_chatlog, chatlog_length);
-	ori_chatcmd = (ChatCmd_t)hk_chatcmd_.Detour(chatcmd_adr, (BYTE*)det_chatcmd, chatcmd_length);
+	DWORD chatlog_length = Hook::CalculateDetourLength(chatlog_addr);
+	DWORD chatcmd_length = Hook::CalculateDetourLength(chatcmd_addr);
+	DWORD writebuf_length = Hook::CalculateDetourLength(writebuf_addr);
+	DWORD reloadchat_length = Hook::CalculateDetourLength(reloadchat_addr);
 
+	ori_chatlog = (ChatLog_t)hk_chatlog_.Detour(chatlog_addr, (BYTE*)det_chatlog, chatlog_length);
+	ori_chatcmd = (ChatCmd_t)hk_chatcmd_.Detour(chatcmd_addr, (BYTE*)det_chatcmd, chatcmd_length);
+	ori_writebuf = (WriteBuf_t)hk_writebuf_.Detour(writebuf_addr, (BYTE*)det_writebuf, writebuf_length);
+	ori_reloadchat = (ReloadChat_t)hk_reloadchat_.Detour(reloadchat_addr, (BYTE*)det_realoadchat, reloadchat_length);
+
+	messageId = GetChatBuffer()->current;
 	SetTimestampColor(0xff00); // green
 }
 
 void GWAPI::ChatMgr::RestoreHooks() {
 	hk_chatlog_.Retour();
 	hk_chatcmd_.Retour();
+	hk_writebuf_.Retour();
+	hk_reloadchat_.Retour();
 }
 
 void GWAPI::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel)
@@ -58,11 +69,9 @@ void GWAPI::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 		(0, from, msg);
 }
 
-void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless /* same as edx */)
+void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mInfo, DWORD useless /* same as edx */)
 {
 	GWAPI::ChatMgr& chat = GWAPI::GWCA::Api().Chat();
-	MessageInfo *mInfo = reinterpret_cast<MessageInfo*>(edx);
-	ChannelInfo *cInfo = reinterpret_cast<ChannelInfo*>(ecx);
 
 	std::wstring message(mInfo->message), sender;
 	std::string::size_type start, end, quote, length = message.length();
@@ -83,19 +92,19 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(DWORD ecx, DWORD edx, DWORD useless 
 	if (!sender.empty())
 		chan = chat.chatlog_channel[sender];
 
-	wchar_t buffer[125 + 26 + 1]; // 26 = len(<c=#xxxxxx></c><c=#xxxxxx>) (125 = maxsize ?)
-	if (!chan.name.empty()) // definitly have to improve this if
+	wchar_t buffer[0x400]; // Cost nothing to overalloc but improvement required
+	if (!chan.name.empty())
 	{
 		wsprintf(buffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
 		mInfo->message = buffer;
 	}
 
-	chat.ori_chatlog(ecx, edx, useless);
+	chat.ori_chatlog(cInfo, mInfo, useless);
 }
 
 void __fastcall GWAPI::ChatMgr::det_chatcmd(wchar_t *_message)
 {
-	ChatMgr& chat = GWAPI::GWCA::Api().Chat();	
+	ChatMgr& chat = GWAPI::GWCA::Api().Chat();
 	unsigned int length = wcslen(_message);
 	wchar_t* message = new wchar_t[length + 1];
 	wcscpy_s(message, length + 1, _message);
@@ -119,7 +128,31 @@ void __fastcall GWAPI::ChatMgr::det_chatcmd(wchar_t *_message)
 				return;
 		}
 	}
-	return chat.ori_chatcmd(_message);
+	chat.ori_chatcmd(_message);
+}
+
+void __fastcall GWAPI::ChatMgr::det_writebuf(wchar_t *HMessage, DWORD channel)
+{
+	ChatMgr& chat = GWAPI::GWCA::Api().Chat();
+	ChatBuffer *chatBuf = chat.GetChatBuffer();
+
+	// Save timestamp of all messages that are actually save (they are the only one to get reprint on a ChatReload)
+	chat.timestamp[chatBuf->current] = GWAPI::GWCA::Api().Map().GetInstanceTime();
+
+	chat.ori_writebuf(HMessage, channel);
+}
+
+void __fastcall GWAPI::ChatMgr::det_realoadchat(DWORD ecx, DWORD edx, DWORD unused)
+{
+	ChatMgr& chat = GWAPI::GWCA::Api().Chat();
+	ChatBuffer *chatBuf = chat.GetChatBuffer();
+
+	// On a reload of the chat we create internal counter for all reloaded message
+	chat.messageId = (chatBuf->current + 1) % 0x100;
+	if (!chatBuf->HMessage[chat.messageId])
+		chat.messageId = 0;
+
+	chat.ori_reloadchat(ecx, edx, unused);
 }
 
 static wchar_t* wcssep(wchar_t* str, wchar_t sep)

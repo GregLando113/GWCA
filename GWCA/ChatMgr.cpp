@@ -107,7 +107,7 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 	DWORD time = chat.timestamp[mIndex] / 1000;
 	DWORD second = time % 60;
 	DWORD minute = (time / 60) % 60;
-	DWORD hour = (time / 3600) % 60;
+	DWORD hour = time / 3600;
 	// In theory we now have the hour/minute/seconde when the message was receive
 
 	wchar_t timeBuffer[50] = L"";

@@ -97,10 +97,11 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 	/* END MESSAGE PARSING, We have seperatly the sender, the message & the special channel data if there is one */
 
 	DWORD mIndex = chat.messageId;
-	if (!cInfo->isHandled) {
+	if (chat.hashArray.find(cInfo->hash) == chat.hashArray.end()) {
 		chat.hashArray[cInfo->hash] = mIndex;
 		chat.messageId = (chat.messageId + 1) % 100;
-	} else {
+	}
+	else {
 		mIndex = chat.hashArray[cInfo->hash];
 	}
 
@@ -171,7 +172,7 @@ void __fastcall GWAPI::ChatMgr::det_writebuf(wchar_t *HMessage, DWORD channel)
 	// Save timestamp of all messages that are actually save (they are the only one to get reprint on a ChatReload)
 	SYSTEMTIME time;
 	GetLocalTime(&time);
-	chat.timestamp[chatBuf->current] = (((time.wHour * 60) + time.wMinute) * 60 + time.wSecond);
+	chat.timestamp[chatBuf->current] = ((time.wHour * 60) + time.wMinute) * 60 + time.wSecond;
 
 	chat.ori_writebuf(HMessage, channel);
 }

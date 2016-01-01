@@ -72,11 +72,11 @@ void GWAPI::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 		(0, from, msg);
 }
 
-void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mInfo, DWORD useless /* same as edx */)
+void __fastcall GWAPI::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWORD useless /* same as edx */)
 {
 	GWAPI::ChatMgr& chat = GWAPI::GWCA::Api().Chat();
 
-	std::wstring message(mInfo->message), sender;
+	std::wstring message(mes->message), sender;
 	std::string::size_type start, end, quote, length = message.length();
 
 	start = message.find(L"<a=1>");
@@ -97,12 +97,12 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 	/* END MESSAGE PARSING, We have seperatly the sender, the message & the special channel data if there is one */
 
 	DWORD mIndex = chat.messageId;
-	if (chat.hashArray.find(cInfo->hash) == chat.hashArray.end()) {
-		chat.hashArray[cInfo->hash] = mIndex;
+	if (chat.hashArray.find(info->hash) == chat.hashArray.end()) {
+		chat.hashArray[info->hash] = mIndex;
 		chat.messageId = (chat.messageId + 1) % 100;
 	}
 	else {
-		mIndex = chat.hashArray[cInfo->hash];
+		mIndex = chat.hashArray[info->hash];
 	}
 
 	// Now we should have the index of the message inside the ChatBuffer & his timestamp is at same index in timestamp array
@@ -124,15 +124,15 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 	if (!chan.name.empty()) {
 		wsprintfW(mesBuffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
 	} else {
-		wcscpy_s(mesBuffer, mInfo->message);
+		wcscpy_s(mesBuffer, mes->message);
 	}
 
 	wchar_t finalMessage[0x400]; // Cost nothing to overalloc but improvement required
 	wsprintfW(finalMessage, L"%s %s", timeBuffer, mesBuffer);
-	mInfo->message = finalMessage;
-	mInfo->size1 = (mInfo->size2 = wcslen(mInfo->message));
+	mes->message = finalMessage;
+	mes->size1 = (mes->size2 = wcslen(mes->message));
 
-	chat.ori_chatlog(cInfo, mInfo, useless);
+	chat.ori_chatlog(info, mes, useless);
 }
 
 void __fastcall GWAPI::ChatMgr::det_chatcmd(wchar_t *_message)

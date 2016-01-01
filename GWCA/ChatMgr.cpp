@@ -16,6 +16,7 @@ GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
 	BYTE* writebuf_addr = (BYTE*)scanner.FindPattern("\x57\x8B\xFA\x85\xC0\x8B\xF1\x74", "xxxxxxxx", -6);
 	BYTE* reloadchat_addr = (BYTE*)scanner.FindPattern("\x83\xEC\x08\x56\x8B\xF1\x57\x6A\xFF", "xxxxxxxxx", -3);
+	BYTE* opentemplate_addr = (BYTE*)0x0457E50;
 
 	ChatBufferLoca = (ChatBuffer**)(*(DWORD*)(writebuf_addr + 1));
 
@@ -23,11 +24,13 @@ GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 	DWORD chatcmd_length = Hook::CalculateDetourLength(chatcmd_addr);
 	DWORD writebuf_length = Hook::CalculateDetourLength(writebuf_addr);
 	DWORD reloadchat_length = Hook::CalculateDetourLength(reloadchat_addr);
+	DWORD opentemplate_length = Hook::CalculateDetourLength(opentemplate_addr);
 
 	ori_chatlog = (ChatLog_t)hk_chatlog_.Detour(chatlog_addr, (BYTE*)det_chatlog, chatlog_length);
 	ori_chatcmd = (ChatCmd_t)hk_chatcmd_.Detour(chatcmd_addr, (BYTE*)det_chatcmd, chatcmd_length);
 	ori_writebuf = (WriteBuf_t)hk_writebuf_.Detour(writebuf_addr, (BYTE*)det_writebuf, writebuf_length);
 	ori_reloadchat = (ReloadChat_t)hk_reloadchat_.Detour(reloadchat_addr, (BYTE*)det_realoadchat, reloadchat_length);
+	ori_opentemplate = (OpenTemplate_t)hk_opentemplate_.Detour(opentemplate_addr, (BYTE*)det_opentemplate, opentemplate_length);
 
 	memset(timestamp, UNKNOW_TIMESTAMP, 0x100 * sizeof(DWORD));
 	messageId = GetChatBuffer()->current;
@@ -190,6 +193,15 @@ void __fastcall GWAPI::ChatMgr::det_realoadchat(DWORD ecx, DWORD edx, DWORD unus
 	chat.hashArray.clear();
 
 	chat.ori_reloadchat(ecx, edx, unused);
+}
+
+void __fastcall GWAPI::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
+	if (!memcmp(info->template_name, L"http://", 7 * sizeof(wchar_t))
+		|| !memcmp(info->template_name, L"https://", 8 * sizeof(wchar_t))) {
+		ShellExecute(NULL, L"open", info->template_name, NULL, NULL, SW_SHOWNORMAL);
+	} else {
+		GWAPI::GWCA::Api().Chat().ori_opentemplate(unk, info);
+	}
 }
 
 static wchar_t* wcssep(wchar_t* str, wchar_t sep)

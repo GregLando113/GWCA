@@ -10,6 +10,7 @@
 namespace GWAPI {
 
 	class ChatMgr : public GWCAManager {
+
 		friend class GWAPIMgr;
 
 		typedef DWORD Color_t;
@@ -55,6 +56,7 @@ namespace GWAPI {
 		};
 
 	public:
+		const DWORD UNKNOW_TIMESTAMP = -1;
 
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(const wchar_t* msg, wchar_t channel);

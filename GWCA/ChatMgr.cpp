@@ -16,7 +16,7 @@ GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
 	BYTE* writebuf_addr = (BYTE*)scanner.FindPattern("\x57\x8B\xFA\x85\xC0\x8B\xF1\x74", "xxxxxxxx", -6);
 	BYTE* reloadchat_addr = (BYTE*)scanner.FindPattern("\x83\xEC\x08\x56\x8B\xF1\x57\x6A\xFF", "xxxxxxxxx", -3);
-	BYTE* opentemplate_addr = (BYTE*)0x0457E50;
+	BYTE* opentemplate_addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43","xxxxxxxx",0);
 
 	ChatBufferLoca = (ChatBuffer**)(*(DWORD*)(writebuf_addr + 1));
 

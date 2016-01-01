@@ -119,9 +119,9 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWO
 	wchar_t timeBuffer[50] = L"";
 	if (chat.timestamp_enable_) {
 		if (time != chat.UNKNOW_TIMESTAMP)
-			wsprintfW(timeBuffer, L"<c=#%06x>[%02u:%02u:%02u]</c>", chat.timestamp_color_, hour, minute, second);
+			wsprintfW(timeBuffer, L"<c=#%06x>[%02u:%02u]</c>", chat.timestamp_color_, hour, minute);
 		else
-			wsprintfW(timeBuffer, L"<c=#%06x>[--:--:--]</c>", chat.timestamp_color_);
+			wsprintfW(timeBuffer, L"<c=#%06x>[--:--]</c>", chat.timestamp_color_);
 	}
 
 	wchar_t mesBuffer[0x200] = L"";

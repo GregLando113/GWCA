@@ -36,17 +36,17 @@ namespace GWAPI {
 			Color_t col_message;
 		};
 
-		struct MessageInfo {
+		struct Message { // a gw_array
 			const wchar_t* message;
 			DWORD size1;
 			DWORD size2;
 			DWORD unknow;
 		};
 
-		struct ChannelInfo {
+		struct MessageInfo {
 			DWORD hash;
 			DWORD channel;
-			DWORD isHandled; // seem to be 1 until he is handled
+			DWORD isHandled;
 		};
 
 		struct ChatBuffer { // May want to put it in GwStructure
@@ -110,7 +110,7 @@ namespace GWAPI {
 		DWORD timestamp[0x100];
 
 		/* Hook stuff */
-		typedef void(__fastcall *ChatLog_t)(ChannelInfo*, MessageInfo*, DWORD);
+		typedef void(__fastcall *ChatLog_t)(MessageInfo*, Message*, DWORD);
 		typedef void(__fastcall *ChatCmd_t)(wchar_t*);
 		typedef void(__fastcall *WriteBuf_t)(wchar_t*, DWORD);
 		typedef void(__fastcall *ReloadChat_t)(DWORD, DWORD, DWORD);
@@ -127,7 +127,7 @@ namespace GWAPI {
 		WriteBuf_t ori_writebuf;
 		ReloadChat_t ori_reloadchat;
 
-		static void __fastcall det_chatlog(ChannelInfo*, MessageInfo*, DWORD);
+		static void __fastcall det_chatlog(MessageInfo*, Message*, DWORD);
 		static void __fastcall det_chatcmd(wchar_t *_message);
 		static void __fastcall det_writebuf(wchar_t *HMessage, DWORD channel);
 		static void __fastcall det_realoadchat(DWORD ecx, DWORD edx, DWORD unused);

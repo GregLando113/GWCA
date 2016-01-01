@@ -43,6 +43,7 @@ void GWAPI::ChatMgr::RestoreHooks() {
 	hk_chatcmd_.Retour();
 	hk_writebuf_.Retour();
 	hk_reloadchat_.Retour();
+	hk_opentemplate_.Retour();
 }
 
 void GWAPI::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel)

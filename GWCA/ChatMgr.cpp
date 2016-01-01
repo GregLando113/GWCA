@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <ctime>
 
 #include "GWCA.h"
 #include "PatternScanner.h"
@@ -28,7 +29,7 @@ GWAPI::ChatMgr::ChatMgr(GWAPIMgr& api) : GWCAManager(api)
 	ori_writebuf = (WriteBuf_t)hk_writebuf_.Detour(writebuf_addr, (BYTE*)det_writebuf, writebuf_length);
 	ori_reloadchat = (ReloadChat_t)hk_reloadchat_.Detour(reloadchat_addr, (BYTE*)det_realoadchat, reloadchat_length);
 
-	ZeroMemory(timestamp, 0x100 * sizeof(DWORD));
+	memset(timestamp, UNKNOW_TIMESTAMP, 0x100 * sizeof(DWORD));
 	messageId = GetChatBuffer()->current;
 	ToggleTimeStamp(false);
 	SetTimestampColor(0x00ff00); // green
@@ -104,7 +105,7 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 	}
 
 	// Now we should have the index of the message inside the ChatBuffer & his timestamp is at same index in timestamp array
-	DWORD time = chat.timestamp[mIndex] / 1000;
+	DWORD time = chat.timestamp[mIndex];
 	DWORD second = time % 60;
 	DWORD minute = (time / 60) % 60;
 	DWORD hour = time / 3600;
@@ -112,7 +113,10 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 
 	wchar_t timeBuffer[50] = L"";
 	if (chat.timestamp_enable_) {
-		wsprintfW(timeBuffer, L"<c=#%06x>[%02u:%02u:%02u]</c>", chat.timestamp_color_, hour, minute, second);
+		if (time != chat.UNKNOW_TIMESTAMP)
+			wsprintfW(timeBuffer, L"<c=#%06x>[%02u:%02u:%02u]</c>", chat.timestamp_color_, hour, minute, second);
+		else
+			wsprintfW(timeBuffer, L"<c=#%06x>[--:--:--]</c>", chat.timestamp_color_);
 	}
 
 	wchar_t mesBuffer[0x200] = L"";
@@ -124,8 +128,8 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(ChannelInfo *cInfo, MessageInfo *mIn
 
 	wchar_t finalMessage[0x400]; // Cost nothing to overalloc but improvement required
 	wsprintfW(finalMessage, L"%s %s", timeBuffer, mesBuffer);
-
 	mInfo->message = finalMessage;
+	mInfo->size1 = (mInfo->size2 = wcslen(mInfo->message));
 
 	chat.ori_chatlog(cInfo, mInfo, useless);
 }
@@ -165,7 +169,12 @@ void __fastcall GWAPI::ChatMgr::det_writebuf(wchar_t *HMessage, DWORD channel)
 	ChatBuffer *chatBuf = chat.GetChatBuffer();
 
 	// Save timestamp of all messages that are actually save (they are the only one to get reprint on a ChatReload)
-	chat.timestamp[chatBuf->current] = GWAPI::GWCA::Api().Map().GetInstanceTime();
+	//chat.timestamp[chatBuf->current] = GWAPI::GWCA::Api().Map().GetInstanceTime();
+
+	time_t rawtime = time(NULL);
+	struct tm info = {};
+	localtime_s(&info, &rawtime);
+	chat.timestamp[chatBuf->current] = (info.tm_hour * 3600) + (info.tm_min * 60) + info.tm_sec;
 
 	chat.ori_writebuf(HMessage, channel);
 }

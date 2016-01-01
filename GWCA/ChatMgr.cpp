@@ -99,7 +99,7 @@ void __fastcall GWAPI::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWO
 	DWORD mIndex = chat.messageId;
 	if (chat.hashArray.find(info->hash) == chat.hashArray.end()) {
 		chat.hashArray[info->hash] = mIndex;
-		chat.messageId = (chat.messageId + 1) % 100;
+		chat.messageId = (chat.messageId + 1) % 0x100;
 	}
 	else {
 		mIndex = chat.hashArray[info->hash];

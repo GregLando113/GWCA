@@ -55,6 +55,15 @@ namespace GWAPI {
 			WCHAR *HMessage[0x100];
 		};
 
+		struct ChatTemplate {
+			DWORD unk1[2];
+			wchar_t* template_code; // Is actually part of a gw_array<wchar_t>
+			DWORD templatecode_sizealloc; // Is actually part of a gw_array<wchar_t>
+			DWORD templatecode_size; // Is actually part of a gw_array<wchar_t>
+			DWORD unk_identifier; // Is actually part of a gw_array<wchar_t>
+			wchar_t* template_name;
+		};
+
 	public:
 		const DWORD UNKNOW_TIMESTAMP = -1;
 
@@ -114,6 +123,8 @@ namespace GWAPI {
 		typedef void(__fastcall *ChatCmd_t)(wchar_t*);
 		typedef void(__fastcall *WriteBuf_t)(wchar_t*, DWORD);
 		typedef void(__fastcall *ReloadChat_t)(DWORD, DWORD, DWORD);
+		typedef void(__fastcall *OpenTemplate_t)(DWORD unk, ChatTemplate* info);
+
 
 		ChatMgr(GWAPIMgr& api);
 		void RestoreHooks() override;
@@ -122,15 +133,19 @@ namespace GWAPI {
 		Hook hk_chatcmd_;
 		Hook hk_writebuf_;
 		Hook hk_reloadchat_;
+		Hook hk_opentemplate_;
+
 		ChatLog_t ori_chatlog;
 		ChatCmd_t ori_chatcmd;
 		WriteBuf_t ori_writebuf;
 		ReloadChat_t ori_reloadchat;
+		OpenTemplate_t ori_opentemplate;
 
 		static void __fastcall det_chatlog(MessageInfo*, Message*, DWORD);
 		static void __fastcall det_chatcmd(wchar_t *_message);
 		static void __fastcall det_writebuf(wchar_t *HMessage, DWORD channel);
 		static void __fastcall det_realoadchat(DWORD ecx, DWORD edx, DWORD unused);
+		static void __fastcall det_opentemplate(DWORD unk, ChatTemplate* info);
 	};
 
 }

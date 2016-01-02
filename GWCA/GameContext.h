@@ -221,7 +221,7 @@ namespace GWAPI {
 			if (baseptr == nullptr)
 			{
 				PatternScanner scan = PatternScanner(0x401000,0x4FF000);
-				baseptr = (BYTE*)scan.FindPattern("\x85\xC0\x75\x0F\x8B\xCE", "xxxxxx", -4);
+				baseptr = *(BYTE**)scan.FindPattern("\x85\xC0\x75\x0F\x8B\xCE", "xxxxxx", -4);
 			}
 
 			return *(GameContext**)((*(BYTE**)baseptr) + 0x18);

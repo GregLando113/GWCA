@@ -81,7 +81,7 @@ namespace GwConstants {
 		Hero,TyrianCarto,CanthanCarto,Gladiator,Kurzick = 0x5,
 		Luxon,Drunkard,Survivor = 0x9,KoaBD,ProtectorTyria = 0xD,
 		ProtectorCantha,Lucky,Unlucky,Sunspear,ElonianCarto,
-		ProtectorElona,Lightbringer = 0x14,Commander = 0x16,Gamer,
+		ProtectorElona,Lightbringer,LDoA,Commander,Gamer,
 		SkillHunterTyria,VanquisherTyria,SkillHunterCantha,
 		VanquisherCantha,SkillHunterElona,VanquisherElona,
 		LegendaryCarto,LegendaryGuardian,LegendarySkillHunter,

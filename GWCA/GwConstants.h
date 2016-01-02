@@ -65,6 +65,31 @@ namespace GwConstants {
 		Kit=29,Trophy,Scroll,Daggers,Minipet,Scythe,Spear,Costume=45
 	};
 
+	enum HeroID : DWORD {
+		Norgu = 1,Goren,Tahlkora,MasterOfWhispers,AcolyteJin,Koss,
+		Dunkoro,AcolyteSousuke,Melonni,ZhedShadowhoof,GeneralMorgahn,
+		MargridTheSly,Zenmai,Olias,Razah,MOX,Jora = 18,PyreFierceshot,
+		Anton,Livia,Hayda,Kahmu,Gwen,Xandra,Vekk,Ogden,Merc1,Merc2,Merc3,
+		Merc4,Merc5,Merc6,Merc7,Merc8,Miku,ZeiRi
+	};
+
+	enum HeroState : DWORD {
+		Fight,Guard,AvoidCombat
+	};
+
+	enum TitleID : DWORD {
+		Hero,TyrianCarto,CanthanCarto,Gladiator,Kurzick = 0x5,
+		Luxon,Drunkard,Survivor = 0x9,KoaBD,ProtectorTyria = 0xD,
+		ProtectorCantha,Lucky,Unlucky,Sunspear,ElonianCarto,
+		ProtectorElona,Lightbringer = 0x14,Commander = 0x16,Gamer,
+		SkillHunterTyria,VanquisherTyria,SkillHunterCantha,
+		VanquisherCantha,SkillHunterElona,VanquisherElona,
+		LegendaryCarto,LegendaryGuardian,LegendarySkillHunter,
+		LegendaryVanquisher,Sweets,GuardianTyria,GuardianCantha,
+		GuardianElona,Asuran,Deldrimor,Vanguard,Norn,MasterOfTheNorth,
+		Party,Zaishen,TreasureHunter,Wisdom,Codex
+	};
+
 	enum class Tick { NOT_READY, READY };
 
 	enum class InterfaceSize { SMALL = -1, NORMAL, LARGE, VERYLARGE };

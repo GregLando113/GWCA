@@ -5,6 +5,7 @@
 
 #include "MemoryMgr.h"
 
+#include "GwConstants.h"
 #include "GWStructPositions.h"
 
 namespace GWAPI {
@@ -42,6 +43,10 @@ namespace GWAPI {
 			DWORD size() const { return current_size_; }
 			DWORD size_allocated() const { return allocated_size_; }
 		};
+
+
+		using AgentID = DWORD;
+		using ItemID  = DWORD;
 
 		struct Agent {
 			DWORD* vtable;
@@ -242,9 +247,9 @@ namespace GWAPI {
 
 		};//Size=0x004C
 
-		typedef gw_array<Player> PlayerArray;
-		typedef gw_array<MapAgent> MapAgentArray;
-		typedef gw_array<PartyMember> PartyMemberArray;
+		using PlayerArray = gw_array<Player>;
+		using MapAgentArray = gw_array<MapAgent>;
+		using PartyMemberArray = gw_array<PartyMember>;
 
 		class AgentArray : public gw_array < Agent* > {
 		public:
@@ -264,7 +269,7 @@ namespace GWAPI {
 		struct Bag;
 		struct Item;
 
-		typedef gw_array<Item*> ItemArray;
+		using ItemArray = gw_array<Item*>;
 
 		struct Bag{							// total : 24 BYTEs
 			BYTE unknown1[4];					// 0000	|--4 BYTEs--|
@@ -395,8 +400,8 @@ namespace GWAPI {
 			static Buff Nil() { return Buff{ 0, 0, 0, 0 }; }
 		};
 
-		typedef gw_array<Effect> EffectArray;
-		typedef gw_array<Buff> BuffArray;
+		using EffectArray = gw_array<Effect>;
+		using BuffArray = gw_array<Buff>;
 
 
 		struct AgentEffects {
@@ -405,7 +410,7 @@ namespace GWAPI {
 			EffectArray Effects;
 		};
 
-		typedef gw_array<AgentEffects> AgentEffectsArray;
+		using AgentEffectsArray = gw_array<AgentEffects>;
 
 		struct Guild {
 			DWORD GuildHallKey[4];
@@ -420,7 +425,7 @@ namespace GWAPI {
 			inline DWORD& qualifierpoints() const { return *(DWORD*)(this + 0x7C); }
 		};
 
-		typedef gw_array<Guild*> GuildArray;
+		using GuildArray = gw_array<Guild*>;
 
 		struct MissionMapIcon { // MapOverlay from GWCA
 			long index;
@@ -435,9 +440,9 @@ namespace GWAPI {
 			void* unknown5; // May concern the name
 		};
 
-		typedef gw_array<MissionMapIcon> MissionMapIconArray;
+		using MissionMapIconArray = gw_array<MissionMapIcon>;
 
-		typedef gw_array<DWORD> MerchItemArray;
+		using MerchItemArray = gw_array<DWORD>;
 
 		struct Friend {
 			DWORD type;				// 0 = Friend, 1 = Ignore, 2 = Played, 3 = Trade
@@ -523,7 +528,63 @@ namespace GWAPI {
 			DWORD restunknown[0xD];
 		};
 
-		typedef gw_array<PathingMap> PathingMapArray;
+		using PathingMapArray = gw_array<PathingMap>;
+
+
+		struct Attribute {
+			DWORD ID; // ID of attribute
+			DWORD level_base; // Level of attribute without modifiers (runes,pcons,etc)
+			DWORD level; // Level with modifiers
+			DWORD decrement_points; // Points that you will recieve back if you decrement level.
+			DWORD increment_points; // Points you will need to increment level.
+		};
+
+		struct PartyAttribute {
+			DWORD AgentID;
+			Attribute Attribute[49];
+		};
+
+		using PartyAttributeArray = gw_array<PartyAttribute>;
+
+
+		struct Quest {
+			DWORD questid;
+			int logstate;
+			void* unk1[3];
+			DWORD mapfrom;
+			GamePos marker;
+			DWORD unk2;
+			DWORD mapto;
+			void* unk3[2];
+		};
+
+		using QuestLog = gw_array<Quest>;
+
+		struct HeroFlag {
+			GwConstants::HeroID hero;
+			AgentID heroid;
+			DWORD unk1;
+			GwConstants::HeroState state;
+			GamePos flag;
+			DWORD unk2;
+			AgentID lockedtargetid;
+		};
+
+		using HeroFlagArray = gw_array<HeroFlag>;
+
+		struct Title {
+			DWORD unk1;
+			DWORD currentpoints;
+			DWORD unk2;
+			DWORD pointsneeded_currentrank;
+			DWORD unk3;
+			DWORD pointsneeded_nextrank;
+			DWORD maxtitlerank;
+			DWORD unk4;
+			void* unk5[2]; // Pretty sure these are ptrs to title hash strings
+		}; // size = 0x28
+
+		using TitleArray = gw_array<Title>;
 
 	}
 }

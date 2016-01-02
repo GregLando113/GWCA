@@ -39,6 +39,7 @@
     <ClInclude Include="GWCA\GWCAManager.h" />
     <ClInclude Include="GWCA\GWCA.h" />
     <ClInclude Include="GWCA\GWStructPositions.h" />
+    <ClInclude Include="GWCA\GameContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">

@@ -20,6 +20,7 @@
     <ClInclude Include="Dependencies\disasm\ld32.h" />
     <ClInclude Include="GWCA\EffectMgr.h" />
     <ClInclude Include="GWCA\FriendListMgr.h" />
+    <ClInclude Include="GWCA\GameContext.h" />
     <ClInclude Include="GWCA\GameThreadMgr.h" />
     <ClInclude Include="GWCA\GuildMgr.h" />
     <ClInclude Include="GWCA\GWAPIMgr.h" />

@@ -106,12 +106,12 @@ namespace GWAPI {
 		gw_array<void*> unk15_array; // 0x6BC
 		gw_array<void*> unk16_array; // 0x6CC
 		DWORD unk5; // 0x6DC
-		gw_array<void*> unk16_array; // 0x6E0
+		gw_array<void*> unk17_array; // 0x6E0
 		SkillbarArray skillbar; // 0x6F0
-		gw_array<void*> unk17_array; // 0x700
-		gw_array<void*> unk18_array; // 0x710
-		gw_array<void*> unk19_array; // 0x720
-		gw_array<void*> unk20_array; // 0x730
+		gw_array<void*> unk18_array; // 0x700
+		gw_array<void*> unk19_array; // 0x710
+		gw_array<void*> unk20_array; // 0x720
+		gw_array<void*> unk21_array; // 0x730
 		DWORD experience; // 0x740
 		DWORD experience_dupe; // 0x744
 		DWORD currentkurzick; // 0x748
@@ -147,10 +147,10 @@ namespace GWAPI {
 		DWORD maxbalth; // 0x7C0
 		DWORD maximperial; // 0x7C4
 		DWORD unk6; // 0x7C8
-		gw_array<void*> unk21_array; // 0x7CC
-		gw_array<void*> unk22_array; // 0x7DC
-		gw_array<void*> unk23_array; // 0x7EC
-		gw_array<void*> unk24_array; // 0x7FC
+		gw_array<void*> unk22_array; // 0x7CC
+		gw_array<void*> unk23_array; // 0x7DC
+		gw_array<void*> unk24_array; // 0x7EC
+		gw_array<void*> unk25_array; // 0x7FC
 		PlayerArray players;
 		TitleArray titles;
 		//... couple more arrays after this

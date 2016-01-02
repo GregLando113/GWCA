@@ -2,6 +2,7 @@
 
 #include "GWCAManager.h"
 #include "GWStructures.h"
+#include "MemoryPatcher.h"
 
 namespace GWAPI {
 
@@ -40,7 +41,7 @@ namespace GWAPI {
 		void UpdateCameraPos() {
 			SetCameraPos(ComputeCamPos());
 		}
-		Vector3f ComputeCamPos(float dist = 750.f); // 2.f is the first person dist (const by gw)
+		Vector3f ComputeCamPos(float dist = 0); // 2.f is the first person dist (const by gw)
 		void SetCameraPos(Vector3f const& newPos) {
 			cam_class_->camerapos.x = newPos.x;
 			cam_class_->camerapos.y = newPos.y;
@@ -48,11 +49,11 @@ namespace GWAPI {
 		}
 
 		// Change max zoom dist
-		void SetMaxDist(float dist);
+		void SetMaxDist(float dist) { cam_class_->maxdistance2 = dist; }
 
 		// Unlock camera & return the new state of it
-		bool UnlockCam(bool enable);
-		inline bool GetCameraUnlock() { return patch_camupdate_enable; }
+		bool UnlockCam(bool enable) { return patch_camupdate->TooglePatch(enable); }
+		bool GetCameraUnlock() { return patch_camupdate->GetPatchState(); }
 
 		void SetLookAtTarget(Vector3f const& newPos) {
 			cam_class_->LookAtTarget.x = newPos.x;
@@ -75,37 +76,22 @@ namespace GWAPI {
 		}
 
 		// Enable or Disable the fog & return the state of it
-		bool SetFog(bool enable) {
-			DWORD oldProt;
-			VirtualProtect(patch_fog_addr, 1, PAGE_READWRITE, &oldProt);
+		bool SetFog(bool enable) { return patch_fog->TooglePatch(!enable); }
 
-			*(BYTE*)patch_fog_addr = enable ? 1 : 0;
-			patch_fog_enable = !enable;
-
-			VirtualProtect(patch_fog_addr, 1, oldProt, &oldProt);
-			return enable;
-		}
-
-		void SetFieldOfView(float fov);
+		void SetFieldOfView(float fov) { cam_class_->fieldofview = fov; };
 
 	private:
 
 		CameraMgr(GWAPIMgr& obj);
 		void RestoreHooks() override;
 
-		void PatchFov(bool enable);
-
 		GW::Camera* cam_class_;
 		float* projection_matrix_;
 
-		LPVOID patch_maxdist_addr;
-		LPVOID patch_camupdate_addr;
-		LPVOID patch_fog_addr;
-		LPVOID patch_fov_addr;
-		bool patch_maxdist_enable = false;
-		bool patch_camupdate_enable = false;
-		bool patch_fog_enable = false;
-		bool patch_fov_enable = false;
+		MemoryPatcher *patch_maxdist;
+		MemoryPatcher *patch_camupdate;
+		MemoryPatcher *patch_fog;
+		MemoryPatcher *patch_fov;
 	};
 
 }

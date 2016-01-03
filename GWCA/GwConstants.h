@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <Windows.h>
 
 #include "GwConstantsSkills.h"
 #include "GwConstantsMaps.h"
@@ -78,7 +79,7 @@ namespace GwConstants {
 	};
 
 	enum TitleID : DWORD {
-		Hero,TyrianCarto,CanthanCarto,Gladiator,Kurzick = 0x5,
+		Hero,TyrianCarto,CanthanCarto,Gladiator,Champion,Kurzick,
 		Luxon,Drunkard,Survivor = 0x9,KoaBD,ProtectorTyria = 0xD,
 		ProtectorCantha,Lucky,Unlucky,Sunspear,ElonianCarto,
 		ProtectorElona,Lightbringer,LDoA,Commander,Gamer,

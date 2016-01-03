@@ -10,6 +10,9 @@ namespace GWAPI {
 
 	class AgentContext
 	{
+		AgentContext(){}
+		AgentContext(const AgentContext&){}
+	public:
 		gw_array<void*> unk1_array;
 		DWORD pad1[5];
 		void* function1;
@@ -42,6 +45,9 @@ namespace GWAPI {
 
 	class MapContext
 	{
+		MapContext(){}
+		MapContext(const MapContext&){}
+	public:
 		float mapboundaries[5];
 		BYTE pad1[0x18];
 		gw_array<void*> spawns1; // Seem to be arena spawns. struct is X,Y,unk 4 byte value,unk 4 byte value.
@@ -60,6 +66,9 @@ namespace GWAPI {
 
 	class WorldContext 
 	{
+		WorldContext(){}
+		WorldContext(const WorldContext&){}
+	public:
 		struct sub1 {
 			wchar_t* name;
 			//...
@@ -151,16 +160,46 @@ namespace GWAPI {
 		gw_array<void*> unk23_array; // 0x7DC
 		gw_array<void*> unk24_array; // 0x7EC
 		gw_array<void*> unk25_array; // 0x7FC
-		PlayerArray players;
-		TitleArray titles;
+		PlayerArray players; // 0x80C
+		TitleArray titles; // 0x81C
 		//... couple more arrays after this
 	};
-	
 
 	class GuildContext
 	{
 	private:
-
+		void* unk1_ptr; // 0
+		DWORD unk1; // 4
+		void* unk2_ptr; // 8
+		void* unk3_ptr; // c
+		DWORD unk2; // 10
+		void* unk4_ptr; // 14
+		void* unk5_ptr; // 18
+		DWORD unk3; // 1c
+		gw_array<void*> unk1_arr; // 20 - wierd fucking graph/binary tree i think
+		DWORD unk4; // 30
+		wchar_t playername[20]; // 34
+		DWORD unk5; // 5c
+		DWORD playerguildindex; // 60
+		GHKey playerghkey; // 64
+		DWORD unk6; // 74
+		wchar_t guildannouncement[256]; // 78
+		wchar_t lastannouncementwriter[20]; // 278
+		DWORD unk7; // 2A0
+		void* unk6_ptr; // 2A4
+		gw_array<void*> unk2_arr; // 2A8
+		gw_array<void*> unk3_arr; // 2B8
+		DWORD unk8; //2C8
+		GuildHistory playerguildhistory; // 2CC
+		BYTE pad1[0x1C]; // 2DC
+		GuildArray guilds; // 2F8
+		DWORD unk9[4]; // 308
+		gw_array<void*> unk4_arr; // 318 - some binary tree pointing to guilds
+		DWORD unk10; // 328
+		gw_array<void*> unk5_arr; // 32C
+		BYTE pad2[0x1C]; // 33C
+		GuildRoster playerroster; // 358
+		//... end of what i care about
 	};
 
 	class ItemContext
@@ -180,6 +219,9 @@ namespace GWAPI {
 
 	class TradeContext
 	{
+		TradeContext(){}
+		TradeContext(const TradeContext&){}
+
 	public:
 		enum State : DWORD { NO_TRADE, TRADE_INITIATED, OFFER_ACCEPTED = 3 };
 
@@ -193,15 +235,10 @@ namespace GWAPI {
 			gw_array<Item> items;
 		};
 
-		inline State state() const { return state_; }
-		inline Trader player() const { return player_; }
-		inline Trader partner() const { return partner_; }
-
-	private:
 		State state_;
-		DWORD pad1_[3]; // Seemingly 3 null dwords
-		Trader player_;
-		Trader partner_;
+		DWORD pad1[3]; // Seemingly 3 null dwords
+		Trader player;
+		Trader partner;
 	};
 
 
@@ -227,39 +264,29 @@ namespace GWAPI {
 			return *(GameContext**)((*(BYTE**)baseptr) + 0x18);
 		}
 
-		AgentContext* Agent() const { return agent_; }
-		MapContext* Map() const { return map_; }
-		WorldContext* World() const { return world_; }
-		GuildContext* Guild() const { return guild_; }
-		ItemContext* Items() const { return items_; }
-		CharContext* Character() const { return character_; }
-		PartyContext* Party() const { return party_; }
-		TradeContext* Trade() const { return trade_; }
-
-	private:
 		void* unkcontext1;
 		void* unkcontext2;
-		AgentContext* agent_; // Most functions that access are prefixed with Agent.
+		AgentContext* agent; // Most functions that access are prefixed with Agent.
 		void* unkcontext4;
 		void* nullcontext1;
-		MapContext* map_; // Static object/collision data
+		MapContext* map; // Static object/collision data
 		void* unkcontext5;
 		void* nullcontext2;
 		DWORD somenumber; // 0x30 for me at the moment.
 		void* unkcontext6;
 		void* unkcontext7;
-		WorldContext* world_; // Best name to fit it that I can think of.
+		WorldContext* world; // Best name to fit it that I can think of.
 		void* unkcontext8;
 		void* nullcontext3;
 		void* unkcontext9;
-		GuildContext* guild_;
-		ItemContext* items_;
-		CharContext* character_;
+		GuildContext* guild;
+		ItemContext* items;
+		CharContext* character;
 		void* nullcontext4;
-		PartyContext* party_;
+		PartyContext* party;
 		void* nullcontext5;
 		void* nullcontext6;
-		TradeContext* trade_;
+		TradeContext* trade;
 	};
 
 

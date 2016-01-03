@@ -306,6 +306,12 @@ namespace GWAPI {
 			BYTE slot;						// 004F
 		};
 
+		struct Inventory {
+			Bag bags[0x1F];
+			DWORD gold_character;
+			DWORD gold_storage;
+		};
+
 
 		struct Skill{							// total : A0 BYTEs
 			DWORD SkillId;						// 0000
@@ -413,7 +419,7 @@ namespace GWAPI {
 		using AgentEffectsArray = gw_array<AgentEffects>;
 
 
-		struct GHKey { DWORD key[4]; };
+		struct GHKey { DWORD k[4]; };
 
 		struct GuildPlayer {
 			void* vtable;
@@ -465,7 +471,7 @@ namespace GWAPI {
 
 		using MissionMapIconArray = gw_array<MissionMapIcon>;
 
-		using MerchItemArray = gw_array<DWORD>;
+		using MerchItemArray = gw_array<ItemID>;
 
 		struct Friend {
 			DWORD type;				// 0 = Friend, 1 = Ignore, 2 = Played, 3 = Trade

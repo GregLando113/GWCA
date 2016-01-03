@@ -66,9 +66,10 @@ namespace GWAPI {
 
 	class WorldContext 
 	{
+	public:
 		WorldContext(){}
 		WorldContext(const WorldContext&){}
-	public:
+	 
 		struct sub1 {
 			wchar_t* name;
 			//...
@@ -167,45 +168,58 @@ namespace GWAPI {
 
 	class GuildContext
 	{
-	private:
-		void* unk1_ptr; // 0
-		DWORD unk1; // 4
-		void* unk2_ptr; // 8
-		void* unk3_ptr; // c
-		DWORD unk2; // 10
-		void* unk4_ptr; // 14
-		void* unk5_ptr; // 18
-		DWORD unk3; // 1c
-		gw_array<void*> unk1_arr; // 20 - wierd fucking graph/binary tree i think
-		DWORD unk4; // 30
-		wchar_t playername[20]; // 34
-		DWORD unk5; // 5c
-		DWORD playerguildindex; // 60
-		GHKey playerghkey; // 64
-		DWORD unk6; // 74
-		wchar_t guildannouncement[256]; // 78
-		wchar_t lastannouncementwriter[20]; // 278
-		DWORD unk7; // 2A0
-		void* unk6_ptr; // 2A4
-		gw_array<void*> unk2_arr; // 2A8
-		gw_array<void*> unk3_arr; // 2B8
-		DWORD unk8; //2C8
-		GuildHistory playerguildhistory; // 2CC
-		BYTE pad1[0x1C]; // 2DC
-		GuildArray guilds; // 2F8
-		DWORD unk9[4]; // 308
-		gw_array<void*> unk4_arr; // 318 - some binary tree pointing to guilds
-		DWORD unk10; // 328
-		gw_array<void*> unk5_arr; // 32C
-		BYTE pad2[0x1C]; // 33C
-		GuildRoster playerroster; // 358
+	public:
+	  void* unk1_ptr; // 0
+	  DWORD unk1; // 4
+	  void* unk2_ptr; // 8
+	  void* unk3_ptr; // c
+	  DWORD unk2; // 10
+	  void* unk4_ptr; // 14
+	  void* unk5_ptr; // 18
+	  DWORD unk3; // 1c
+	  gw_array<void*> unk1_arr; // 20 - wierd fucking graph/binary tree i think
+	  DWORD unk4; // 30
+	  wchar_t playername[20]; // 34
+	  DWORD unk5; // 5c
+	  DWORD playerguildindex; // 60
+	  GHKey playerghkey; // 64
+	  DWORD unk6; // 74
+	  wchar_t guildannouncement[256]; // 78
+	  wchar_t lastannouncementwriter[20]; // 278
+	  DWORD unk7; // 2A0
+	  void* unk6_ptr; // 2A4
+	  gw_array<void*> unk2_arr; // 2A8
+	  gw_array<void*> unk3_arr; // 2B8
+	  DWORD unk8; //2C8
+	  GuildHistory playerguildhistory; // 2CC
+	  BYTE pad1[0x1C]; // 2DC
+	  GuildArray guilds; // 2F8
+	  DWORD unk9[4]; // 308
+	  gw_array<void*> unk4_arr; // 318 - some binary tree pointing to guilds
+	  DWORD unk10; // 328
+	  gw_array<void*> unk5_arr; // 32C
+	  BYTE pad2[0x1C]; // 33C
+	  GuildRoster playerroster; // 358
 		//... end of what i care about
 	};
 
 	class ItemContext
 	{
+	public:
+		char pad_0x0000[0x10]; //0x0000
+		gw_array<void*> unk1_arr; //0x0010 
+		char pad_0x0020[0x4]; //0x0020
+		gw_array<Bag*> bagarray; //0x0024 
+		char pad_0x0034[0xC]; //0x0034
+		gw_array<void*> unk3_arr; //0x0040 
+		gw_array<void*> unk4_arr; //0x0050 
+		char pad_0x0060[0x58]; //0x0060
+		gw_array<Item*> itemarray; //0x00B8 
+		char pad_0x00C8[0x30]; //0x00C8
+		Inventory* inventory; //0x00F8 
+		gw_array<void*> unk5_arr; //0x00FC 
 
-	};
+	};//Size=0x010C
 
 	class CharContext
 	{
@@ -264,29 +278,29 @@ namespace GWAPI {
 			return *(GameContext**)((*(BYTE**)baseptr) + 0x18);
 		}
 
-		void* unkcontext1;
-		void* unkcontext2;
-		AgentContext* agent; // Most functions that access are prefixed with Agent.
-		void* unkcontext4;
-		void* nullcontext1;
-		MapContext* map; // Static object/collision data
-		void* unkcontext5;
-		void* nullcontext2;
-		DWORD somenumber; // 0x30 for me at the moment.
-		void* unkcontext6;
-		void* unkcontext7;
-		WorldContext* world; // Best name to fit it that I can think of.
-		void* unkcontext8;
-		void* nullcontext3;
-		void* unkcontext9;
-		GuildContext* guild;
-		ItemContext* items;
-		CharContext* character;
-		void* nullcontext4;
-		PartyContext* party;
-		void* nullcontext5;
-		void* nullcontext6;
-		TradeContext* trade;
+	  void* unkcontext1;
+	  void* unkcontext2;
+	   AgentContext* agent; // Most functions that access are prefixed with Agent.
+	  void* unkcontext4;
+	  void* nullcontext1;
+	   MapContext* map; // Static object/collision data
+	  void* unkcontext5;
+	  void* nullcontext2;
+	  DWORD somenumber; // 0x30 for me at the moment.
+	  void* unkcontext6;
+	  void* unkcontext7;
+	   WorldContext* world; // Best name to fit it that I can think of.
+	  void* unkcontext8;
+	  void* nullcontext3;
+	  void* unkcontext9;
+	   GuildContext* guild;
+	   ItemContext* items;
+	   CharContext* character;
+	  void* nullcontext4;
+	   PartyContext* party;
+	  void* nullcontext5;
+	  void* nullcontext6;
+	   TradeContext* trade;
 	};
 
 

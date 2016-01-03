@@ -1,6 +1,7 @@
 #include "GuildMgr.h"
 
 #include "GWAPIMgr.h"
+#include "GameContext.h"
 
 wchar_t* GWAPI::GuildMgr::GetPlayerGuildAnnouncer()
 {
@@ -24,14 +25,14 @@ GWAPI::GW::GuildArray GWAPI::GuildMgr::GetGuildArray()
 
 void GWAPI::GuildMgr::TravelGH()
 {
-	GW::Guild* playerguild = GetGuildArray()[GetPlayerGuildIndex()];
+	GW::GHKey playerguild = GameContext::instance()->guild->playerghkey;
 
-	api().CtoS().SendPacket(0x18, 0xAA, playerguild->GuildHallKey[0], playerguild->GuildHallKey[1], playerguild->GuildHallKey[2], playerguild->GuildHallKey[3]);
+	api().CtoS().SendPacket(0x18, 0xAA, playerguild.k[0], playerguild.k[1], playerguild.k[2], playerguild.k[3]);
 }
 
-void GWAPI::GuildMgr::TravelGH(DWORD* key)
+void GWAPI::GuildMgr::TravelGH(GW::GHKey key)
 {
-	api().CtoS().SendPacket(0x18, 0xAA, key[0], key[1], key[2], key[3]);
+	api().CtoS().SendPacket(0x18, 0xAA, key.k[0], key.k[1], key.k[2], key.k[3]);
 }
 
 void GWAPI::GuildMgr::LeaveGH()

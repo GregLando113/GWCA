@@ -26,7 +26,7 @@ namespace GWAPI {
 
 		void TravelGH();
 		
-		void TravelGH(DWORD* key);
+		void TravelGH(GW::GHKey key);
 
 		void LeaveGH();
 

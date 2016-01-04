@@ -1,6 +1,7 @@
 #include "StoCMgr.h"
 
 #include "GWAPIMgr.h"
+#include "PatternScanner.h"
 
 GWAPI::StoCMgr::StoCHandlerArray GWAPI::StoCMgr::game_server_handler_;
 GWAPI::StoCMgr::StoCHandler* GWAPI::StoCMgr::original_functions_ = NULL;
@@ -16,9 +17,28 @@ bool GWAPI::StoCMgr::StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk)
 }
 
 GWAPI::StoCMgr::StoCMgr(GWAPIMgr& api) : GWCAManager(api) {
-	StoCHandlerArray* ptr = MemoryMgr::ReadPtrChain<StoCHandlerArray*>(*(DWORD*)MemoryMgr::GSObjectPtr, 2, 0x8, 0x2C);
+	PatternScanner scan(0x401000, 0x49A000);
 	
-	game_server_handler_ = *ptr;
+	// inb4 has rages at this
+	struct LSObjPtrChain {
+		struct {
+			struct {
+				BYTE pad[0x14];
+				struct {
+					BYTE pad[0x8];
+					struct {
+						BYTE pad[0x8];
+						struct {
+							BYTE pad[0x24];
+							StoCHandlerArray gshandlers;
+						} *sub4;
+					} *sub3;
+				} *sub2;
+			};
+		}*sub1;
+	} *lsobjbase = *(LSObjPtrChain**)scan.FindPattern("\x8B\x56\x04\x85\xC0\x89\x57\x18", "xxxxxxxx", -4);
+
+	game_server_handler_ = lsobjbase->sub1->sub2->sub3->sub4->gshandlers;
 
 	original_functions_ = new StoCHandler[game_server_handler_.size()];
 

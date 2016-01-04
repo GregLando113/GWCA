@@ -49,7 +49,7 @@ namespace GWAPI {
 			int templatesize;
 			StoCHandler_t handlerfunc;
 		};
-		typedef GW::gw_array<StoCHandler> StoCHandlerArray;
+		using StoCHandlerArray = GW::gw_array<StoCHandler>;
 
 		StoCMgr(GWAPIMgr& api);
 		void RestoreHooks() override;

@@ -25,24 +25,24 @@ namespace GWAPI {
 			Inherit this, then ignore added header, just all other fields of packet in your definitions.
 		*/
 
-		typedef std::function<void(StoC::PacketBase*)> Handler;
+		typedef std::function<bool(StoC::PacketBase*)> Handler;
 
 		template <typename T>
-		using CallbackFunc = std::function<void(T*)>;
+		using CallbackFunc = std::function<bool(T*)>;
 
 
 		/* Use this to add handlers to the stocmgr, primary function. */
 		template <typename T>
 		void AddGameServerEvent(CallbackFunc<T> handler) {
 			DWORD header = StoC::Packet<T>::STATIC_HEADER;
-			event_calls_[header].push_back([handler](StoC::PacketBase* pak) {
-				handler((T*)pak);
+			event_calls_[header].push_back([handler](StoC::PacketBase* pak) -> bool {
+				return handler((T*)pak);
 			});
 			game_server_handler_[header].handlerfunc = StoCHandlerFunc;
 		}
 
 	private:
-		typedef bool(__fastcall *StoCHandler_t)(StoC::PacketBase* pak, DWORD unk);
+		using StoCHandler_t = bool(__fastcall *)(StoC::PacketBase* pak);
 
 		struct StoCHandler {
 			DWORD* packettemplate;
@@ -54,7 +54,7 @@ namespace GWAPI {
 		StoCMgr(GWAPIMgr& api);
 		void RestoreHooks() override;
 
-		static bool __fastcall StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk);
+		static bool __fastcall StoCHandlerFunc(StoC::PacketBase* pak);
 
 		static StoCHandlerArray game_server_handler_;
 		static StoCHandler* original_functions_;

@@ -37,7 +37,9 @@
     <ClInclude Include="GWCA\MemoryMgr.h" />
     <ClInclude Include="GWCA\MemoryPatcher.h" />
     <ClInclude Include="GWCA\MerchantMgr.h" />
+    <ClInclude Include="GWCA\PartyMgr.h" />
     <ClInclude Include="GWCA\PatternScanner.h" />
+    <ClInclude Include="GWCA\PlayerMgr.h" />
     <ClInclude Include="GWCA\SkillbarMgr.h" />
     <ClInclude Include="GWCA\StoCMgr.h" />
     <ClInclude Include="GWCA\StoCPackets.h" />

@@ -22,10 +22,10 @@ namespace GWAPI {
 			typedef T* iterator;
 			typedef const T* const_iterator;
 
-			iterator begin() { return &array_[0]; }
-			const_iterator begin() const { return &array_[0]; }
-			iterator end() { return &array_[current_size_]; }
-			const_iterator end() const { return &array_[current_size_]; }
+			iterator begin() { return array_; }
+			const_iterator begin() const { return array_; }
+			iterator end() { return array_ + current_size_; }
+			const_iterator end() const { return array_ + current_size_; }
 
 			T& index(DWORD _index) {
 				assert(_index >= 0 && _index < current_size_);
@@ -45,8 +45,9 @@ namespace GWAPI {
 		};
 
 
-		using AgentID = DWORD;
-		using ItemID  = DWORD;
+		using AgentID	= DWORD;
+		using ItemID	= DWORD;
+		using PlayerID	= DWORD;
 
 		struct Agent {
 			DWORD* vtable;
@@ -54,7 +55,7 @@ namespace GWAPI {
 			BYTE unknown2[4]; //This actually points to the agent before but with a small offset
 			Agent* NextAgent; //Pointer to the next agent (by id)
 			BYTE unknown3[8];
-			long Id; //AgentId
+			AgentID Id; //AgentId
 			float Z; //Z coord in float
 			BYTE unknown4[8];
 			float BoxHoverWidth; //Width of the model's box
@@ -85,7 +86,8 @@ namespace GWAPI {
 			//BYTE unknown10[68];
 			BYTE unknown10[28];
 			long Owner;
-			BYTE unknown24[8];
+			ItemID itemid; // Only valid if agent is type 0x400 (item)
+			BYTE unknown24[4];
 			long ExtraType;
 			BYTE unknown11[24];
 			float WeaponAttackSpeed; //The base attack speed in float of last attacks weapon. 1.33 = axe, sWORD, daggers etc.
@@ -116,7 +118,7 @@ namespace GWAPI {
 			BYTE unknown19[16];
 			long InSpiritRange; //Tells if agent is within spirit range of you. Doesn't work anymore?
 			BYTE unknown20[16];
-			long LoginNumber; //Unique number in instance that only works for players
+			PlayerID LoginNumber; //Unique number in instance that only works for players
 			float ModelMode; //Float for the current mode the agent is in. Varies a lot
 			BYTE unknown21[4];
 			long ModelAnimation; //Id of the current animation
@@ -206,50 +208,64 @@ namespace GWAPI {
 		};
 
 		struct PartyMember{
-			DWORD loginnumber;
+			PlayerID loginnumber;
 			DWORD unk1;
-			DWORD isLoaded;
+			DWORD state;
+
+			inline bool connected() { return (state & 1) > 0; }
+			inline bool ticked() { return (state & 2) > 0; }
 		};
 
-		
+		struct HeroPartyMember {
+			AgentID id;
+			PlayerID ownerplayerid;
+			GwConstants::HeroID heroid;
+			DWORD unk1;
+			DWORD unk2;
+			DWORD level;
+		};
 
-		struct Player
+		struct HenchmanPartyMember {
+			AgentID id;
+			DWORD unk[11];
+			DWORD profession;
+			DWORD level;
+		};
+
+		using PartyMemberArray = gw_array<PartyMember>;
+		using HeroPartyMemberArray = gw_array<HeroPartyMember>;
+		using HenchmanPartyMemberArray = gw_array<HenchmanPartyMember>;
+
+		class PartyInfo
 		{
 		public:
+			char pad_0x0000[0x4]; //0x0000
+			gw_array<PartyMember> players; //0x0004 
+			gw_array<HenchmanPartyMember> henchmen; //0x0014 
+			gw_array<HeroPartyMember> heroes; //0x0024 
+			gw_array<void*> unk1_arr; //0x0034 
+		};
+
+		struct Player {
 			DWORD AgentID; //0x0000 
-		private:
 			char pad_0x0004[0x14]; //0x0004
-		public:
 			DWORD Primary; //0x0018 
 			DWORD Secondary; //0x001C 
-		private:
 			char pad_0x0020[0x4]; //0x0020
-		public:
-			class NameMod
-			{
-			
+			struct NameMod {
 				char pad_0x0000[0x4]; //0x0000
-			public:
 				wchar_t Name[20]; //0x0004 
-
 			} *Name1; //Size=0x002C
 			wchar_t* Name; //0x0028 
-		private:
 			char pad_0x002C[0x4]; //0x002C
-		public:
 			DWORD ActiveTitle; //0x0030 
-		private:
 			char pad_0x0034[0x4]; //0x0034
-		public:
 			DWORD PartySize; //0x0038 
-		private:
 			char pad_0x003C[0x10]; //0x003C
-
 		};//Size=0x004C
 
 		using PlayerArray = gw_array<Player>;
 		using MapAgentArray = gw_array<MapAgent>;
-		using PartyMemberArray = gw_array<PartyMember>;
 
 		class AgentArray : public gw_array < Agent* > {
 		public:

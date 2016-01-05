@@ -100,7 +100,7 @@ bool GWAPI::AgentMgr::GetIsPartyLoaded()
 	if (!party.valid()) return false;
 
 	for (DWORD i = 0; i < party.size(); i++){
-		if ((party[i].isLoaded & 1) == 0) return false;
+		if ((party[i].state & 1) == 0) return false;
 	}
 
 	return true;
@@ -177,7 +177,7 @@ bool GWAPI::AgentMgr::GetPartyTicked() {
 	GW::PartyMemberArray party = GetPartyMemberArray();
 	if (party.valid()) {
 		for (size_t i = 0; i < party.size(); ++i) {
-			if ((party[i].isLoaded & 2) == 0) {
+			if ((party[i].state & 2) == 0) {
 				return false;
 			}
 		}
@@ -190,7 +190,7 @@ bool GWAPI::AgentMgr::GetPartyTicked() {
 bool GWAPI::AgentMgr::GetTicked(DWORD index) {
 	GW::PartyMemberArray party = GetPartyMemberArray();
 	if (party.valid()) {
-		return (party[index].isLoaded & 2) != 0;
+		return (party[index].state & 2) != 0;
 	} else {
 		return false;
 	}
@@ -202,7 +202,7 @@ bool GWAPI::AgentMgr::GetTicked() {
 	if (party.valid() && me) {
 		for (DWORD i = 0; i < party.size();i++){
 			if (party[i].loginnumber == me->LoginNumber){
-				return (party[i].isLoaded & 2) != 0;
+				return (party[i].state & 2) != 0;
 			}
 		}
 		return false;

@@ -41,6 +41,8 @@
     <ClInclude Include="GWCA\GWStructPositions.h" />
     <ClInclude Include="GWCA\GameContext.h" />
     <ClInclude Include="GWCA\MemoryPatcher.h" />
+    <ClInclude Include="GWCA\PlayerMgr.h" />
+    <ClInclude Include="GWCA\PartyMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\AgentMgr.cpp">

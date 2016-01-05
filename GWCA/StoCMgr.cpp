@@ -7,13 +7,14 @@ GWAPI::StoCMgr::StoCHandlerArray GWAPI::StoCMgr::game_server_handler_;
 GWAPI::StoCMgr::StoCHandler* GWAPI::StoCMgr::original_functions_ = NULL;
 std::map<DWORD, std::vector<GWAPI::StoCMgr::Handler>> GWAPI::StoCMgr::event_calls_;
 
-bool GWAPI::StoCMgr::StoCHandlerFunc(StoC::PacketBase* pak, DWORD unk)
+bool GWAPI::StoCMgr::StoCHandlerFunc(StoC::PacketBase* pak)
 {
+	bool do_not_process = false;
 	for (auto call : event_calls_[pak->header])
 	{
-		call(pak);
+		if (!call(pak)) do_not_process = true;
 	}
-	return original_functions_[pak->header].handlerfunc(pak, unk);
+	return do_not_process ? true : original_functions_[pak->header].handlerfunc(pak);
 }
 
 GWAPI::StoCMgr::StoCMgr(GWAPIMgr& api) : GWCAManager(api) {

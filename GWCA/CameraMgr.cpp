@@ -1,8 +1,7 @@
 #include "CameraMgr.h"
 #include "PatternScanner.h"
 
-GWAPI::CameraMgr::CameraMgr(GWAPIMgr& api) : GWCAManager(api)
-{
+GWCA::CameraMgr::CameraMgr() {
 	PatternScanner scan("Gw.exe");
 	DWORD scancamclass = scan.FindPattern("\x75\x0B\x51\xB9", "xxxx", 4);
 	if (scancamclass) {
@@ -34,16 +33,14 @@ GWAPI::CameraMgr::CameraMgr(GWAPIMgr& api) : GWCAManager(api)
 	patch_fov->TooglePatch(true);
 }
 
-void GWAPI::CameraMgr::RestoreHooks()
-{
+void GWCA::CameraMgr::RestoreHooks() {
 	delete patch_maxdist;
 	delete patch_camupdate;
 	delete patch_fog;
 	delete patch_fov;
 }
 
-GWAPI::Vector3f GWAPI::CameraMgr::ComputeCamPos(float dist)
-{
+GWCA::Vector3f GWCA::CameraMgr::ComputeCamPos(float dist) {
 	if (dist == 0) dist = GetCameraZoom();
 
 	Vector3f newPos = GetLookAtTarget();

@@ -3,9 +3,9 @@
 #include "GWCAManager.h"
 #include "GameContext.h"
 
-namespace GWAPI {
-	class PlayerMgr : public GWCAManager {
-		friend class GWAPIMgr;
+namespace GWCA {
+	class PlayerMgr : public GWCAManager<PlayerMgr> {
+		friend class GWCAManager<PlayerMgr>;
 	public:
 
 		GW::PlayerArray& GetPlayerArray() const {
@@ -25,6 +25,6 @@ namespace GWAPI {
 		}
 
 	private:
-		PlayerMgr(GWAPIMgr& mgr) : GWCAManager(mgr) {}
+		PlayerMgr() {}
 	};
 }

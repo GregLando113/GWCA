@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 
-namespace GWAPI {
+namespace GWCA {
 
 	// v1 hooker by 4D 1
 

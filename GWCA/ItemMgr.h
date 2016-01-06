@@ -5,10 +5,10 @@
 #include "GWCAManager.h"
 #include "GWStructures.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class ItemMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class ItemMgr : public GWCAManager<ItemMgr> {
+		friend class GWCAManager<ItemMgr>;
 
 	public:
 
@@ -61,7 +61,7 @@ namespace GWAPI {
 
 		OpenXunlai_t open_xunlai_function_;
 
-		ItemMgr(GWAPIMgr& api);
+		ItemMgr();
 		void RestoreHooks() override {};
 	};
 }

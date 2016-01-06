@@ -2,11 +2,12 @@
 
 #include <Windows.h>
 #include "GWCAManager.h"
+#include "GameThreadMgr.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class CtoSMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class CtoSMgr : public GWCAManager<CtoSMgr> {
+		friend class GWCAManager<CtoSMgr>;
 
 	public:
 
@@ -18,7 +19,8 @@ namespace GWAPI {
 		void SendPacket(T* packet)
 		{
 			DWORD size = sizeof(T);
-			api().Gamethread().Enqueue(gs_send_function_, MemoryMgr::GetGSObject(), size, (DWORD*)packet);
+			GameThreadMgr::Instance().Enqueue(gs_send_function_, 
+				MemoryMgr::GetGSObject(), size, (DWORD*)packet);
 		}
 
 	private:		
@@ -28,7 +30,7 @@ namespace GWAPI {
 
 		static void __fastcall packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet);
 
-		CtoSMgr(GWAPIMgr& api);
+		CtoSMgr();
 		void RestoreHooks() override {}
 	};
 

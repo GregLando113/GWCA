@@ -1,20 +1,35 @@
 #pragma once
 
-namespace GWAPI {
+#include <vector>
 
-	class GWCAManager {
-		friend class GWAPIMgr;
+namespace GWCA {
 
-	public:
+	class GWCABaseManager {
+		friend class Api;
 
 	protected:
-		GWCAManager(GWAPIMgr& api) : api_(api) {}
-
-		inline GWAPIMgr& api() { return api_; }
+		GWCABaseManager();
 
 	private:
-		virtual void RestoreHooks(){};
-
-		GWAPIMgr& api_;
+		virtual void RestoreHooks() {};
 	};
+
+	template <class T>
+	class GWCAManager : GWCABaseManager {
+	public:
+		inline static T& Instance() { return *InstancePtr(); }
+		static T* InstancePtr() {
+			if (instance_ == nullptr) {
+				instance_ = new T();
+			}
+			return instance_;
+		}
+
+	private:
+		static T* instance_;
+	};
+
+	template <class T>
+	T* GWCAManager<T>::instance_ = nullptr;
 }
+

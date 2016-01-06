@@ -1,53 +1,46 @@
 #include "ItemMgr.h"
 
-#include "GWAPIMgr.h"
+#include "GameThreadMgr.h"
+#include "CtoSMgr.h"
+#include "MapMgr.h"
 
-void GWAPI::ItemMgr::OpenXunlaiWindow()
-{
+void GWCA::ItemMgr::OpenXunlaiWindow() {
 	static DWORD* xunlaibuf = new DWORD[2]{0, 1};
-	api().Gamethread().Enqueue(open_xunlai_function_,
+	GameThreadMgr::Instance().Enqueue(open_xunlai_function_,
 		*MemoryMgr::ReadPtrChain<DWORD*>((DWORD)MemoryMgr::XunlaiSession, 4, 0x118, 0x10, 0, 0x14), xunlaibuf);
 }
 
-void GWAPI::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/)
-{
-	api().CtoS().SendPacket(0xC, 0x39, item->AgentId, CallTarget);
+void GWCA::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
+	CtoSMgr::Instance().SendPacket(0xC, 0x39, item->AgentId, CallTarget);
 }
 
-void GWAPI::ItemMgr::DropItem(GW::Item* item, DWORD quantity)
-{
-	api().CtoS().SendPacket(0xC, 0x26, item->ItemId, quantity);
+void GWCA::ItemMgr::DropItem(GW::Item* item, DWORD quantity) {
+	CtoSMgr::Instance().SendPacket(0xC, 0x26, item->ItemId, quantity);
 }
 
-void GWAPI::ItemMgr::EquipItem(GW::Item* item)
-{
-	api().CtoS().SendPacket(0x8, 0x2A, item->ItemId);
+void GWCA::ItemMgr::EquipItem(GW::Item* item) {
+	CtoSMgr::Instance().SendPacket(0x8, 0x2A, item->ItemId);
 }
 
-void GWAPI::ItemMgr::UseItem(GW::Item* item)
-{
-	api().CtoS().SendPacket(0x8, 0x78, item->ItemId);
+void GWCA::ItemMgr::UseItem(GW::Item* item) {
+	CtoSMgr::Instance().SendPacket(0x8, 0x78, item->ItemId);
 }
 
-GWAPI::GW::Bag** GWAPI::ItemMgr::GetBagArray()
-{
+GWCA::GW::Bag** GWCA::ItemMgr::GetBagArray() {
 	return *MemoryMgr::ReadPtrChain<GW::Bag***>(MemoryMgr::GetContextPtr(), 2, 0x40, 0xF8);
 }
 
-GWAPI::GW::ItemArray GWAPI::ItemMgr::GetItemArray()
-{
+GWCA::GW::ItemArray GWCA::ItemMgr::GetItemArray() {
 	return *MemoryMgr::ReadPtrChain<GW::ItemArray*>(MemoryMgr::GetContextPtr(), 2, 0x40, 0xB8);
 }
 
-GWAPI::ItemMgr::ItemMgr(GWAPIMgr& api) : GWCAManager(api)
-{
+GWCA::ItemMgr::ItemMgr() {
 	open_xunlai_function_ = (OpenXunlai_t)MemoryMgr::OpenXunlaiFunction;
 }
 
-bool GWAPI::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/)
-{
+bool GWCA::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 
-	if (api().Map().GetInstanceType() == GwConstants::InstanceType::Loading) return false;
+	if (MapMgr::Instance().GetInstanceType() == GwConstants::InstanceType::Loading) return false;
 
 	GW::Bag** bags = GetBagArray();
 	if (bags == NULL) return false;
@@ -75,13 +68,11 @@ bool GWAPI::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, cons
 	return false;
 }
 
-void GWAPI::ItemMgr::DropGold(DWORD Amount /*= 1*/)
-{
-	api().CtoS().SendPacket(0x8, 0x29, Amount);
+void GWCA::ItemMgr::DropGold(DWORD Amount /*= 1*/) {
+	CtoSMgr::Instance().SendPacket(0x8, 0x29, Amount);
 }
 
-DWORD GWAPI::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/)
-{
+DWORD GWCA::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 	DWORD itemcount = 0;
 	GW::Bag** bags = GetBagArray();
 	GW::Bag* bag = NULL;
@@ -103,8 +94,7 @@ DWORD GWAPI::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, c
 	return itemcount;
 }
 
-GWAPI::GW::Item* GWAPI::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/)
-{
+GWCA::GW::Item* GWCA::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 	GW::Bag** bags = GetBagArray();
 	GW::Bag* bag = NULL;
 
@@ -125,17 +115,14 @@ GWAPI::GW::Item* GWAPI::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /
 	return NULL;
 }
 
-DWORD GWAPI::ItemMgr::GetGoldAmountOnCharacter()
-{
+DWORD GWCA::ItemMgr::GetGoldAmountOnCharacter() {
 	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 3, 0x40, 0xF8, 0x7C);
 }
 
-DWORD GWAPI::ItemMgr::GetGoldAmountInStorage()
-{
+DWORD GWCA::ItemMgr::GetGoldAmountInStorage() {
 	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 3, 0x40, 0xF8, 0x80);
 }
 
-void GWAPI::ItemMgr::OpenLockedChest()
-{
-	return api().CtoS().SendPacket(0x8, 0x4D, 0x2);
+void GWCA::ItemMgr::OpenLockedChest() {
+	return CtoSMgr::Instance().SendPacket(0x8, 0x4D, 0x2);
 }

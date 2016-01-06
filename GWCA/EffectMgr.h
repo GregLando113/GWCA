@@ -8,10 +8,10 @@
 #include "Hooker.h"
 
 
-namespace GWAPI {
+namespace GWCA {
 
-	class EffectMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class EffectMgr : public GWCAManager<EffectMgr> {
+		friend class GWCAManager<EffectMgr>;
 
 	public:
 		
@@ -45,7 +45,7 @@ namespace GWAPI {
 		typedef void(__fastcall *PPEFunc_t)(DWORD Intensity, DWORD Tint);
 		static void __fastcall AlcoholHandler(DWORD Intensity, DWORD Tint);
 
-		EffectMgr(GWAPIMgr& obj);
+		EffectMgr();
 		void RestoreHooks() override;
 
 		static PPEFunc_t ppe_retour_func_;

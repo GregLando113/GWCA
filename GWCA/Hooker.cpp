@@ -4,8 +4,7 @@ extern "C"{
 #include "disasm/ld32.h"
 }
 
-void GWAPI::Hook::Retour()
-{
+void GWCA::Hook::Retour() {
 	DWORD old_protection;
 
 	VirtualProtect(source_, length_, PAGE_READWRITE, &old_protection);
@@ -17,8 +16,7 @@ void GWAPI::Hook::Retour()
 	delete[] retour_func_;
 }
 
-BYTE* GWAPI::Hook::Detour(BYTE* _source, BYTE* _detour, const DWORD _length)
-{
+BYTE* GWCA::Hook::Detour(BYTE* _source, BYTE* _detour, const DWORD _length) {
 	DWORD old_protection;
 
 	source_ = _source;
@@ -49,8 +47,7 @@ BYTE* GWAPI::Hook::Detour(BYTE* _source, BYTE* _detour, const DWORD _length)
 	return retour_func_;
 }
 
-DWORD GWAPI::Hook::CalculateDetourLength(BYTE* _source)
-{
+DWORD GWCA::Hook::CalculateDetourLength(BYTE* _source) {
 	
 	DWORD len = 0;
 	DWORD current_op;

@@ -3,54 +3,53 @@
 #include "PatternScanner.h"
 
 // Agent Array
-BYTE* GWAPI::MemoryMgr::agArrayPtr = NULL;
-BYTE* GWAPI::MemoryMgr::PlayerAgentIDPtr = NULL;
-BYTE* GWAPI::MemoryMgr::TargetAgentIDPtr = NULL;
-BYTE* GWAPI::MemoryMgr::MouseOverAgentIDPtr = NULL;
+BYTE* GWCA::MemoryMgr::agArrayPtr = NULL;
+BYTE* GWCA::MemoryMgr::PlayerAgentIDPtr = NULL;
+BYTE* GWCA::MemoryMgr::TargetAgentIDPtr = NULL;
+BYTE* GWCA::MemoryMgr::MouseOverAgentIDPtr = NULL;
 
 // Map ID
-BYTE* GWAPI::MemoryMgr::MapIDPtr = NULL;
+BYTE* GWCA::MemoryMgr::MapIDPtr = NULL;
 
 // Gameserver PacketSend Addresses
-BYTE* GWAPI::MemoryMgr::GSObjectPtr = NULL;
-BYTE* GWAPI::MemoryMgr::CtoGSSendFunction = NULL;
+BYTE* GWCA::MemoryMgr::GSObjectPtr = NULL;
+BYTE* GWCA::MemoryMgr::CtoGSSendFunction = NULL;
 
 // Base ptr to get context pointer, which houses basically
-BYTE* GWAPI::MemoryMgr::BasePointerLocation = NULL;
+BYTE* GWCA::MemoryMgr::BasePointerLocation = NULL;
 
 // Renderloop / Main Gameloop
-BYTE* GWAPI::MemoryMgr::RenderLoopLocation = NULL;
-BYTE* GWAPI::MemoryMgr::GameLoopLocation = NULL;
-BYTE* GWAPI::MemoryMgr::GameLoopReturn = NULL;
-BYTE* GWAPI::MemoryMgr::GameLoopRestore = NULL;
+BYTE* GWCA::MemoryMgr::RenderLoopLocation = NULL;
+BYTE* GWCA::MemoryMgr::GameLoopLocation = NULL;
+BYTE* GWCA::MemoryMgr::GameLoopReturn = NULL;
+BYTE* GWCA::MemoryMgr::GameLoopRestore = NULL;
 
 // Chat function for simple debug/notifications
-BYTE* GWAPI::MemoryMgr::WriteChatFunction = NULL;
+BYTE* GWCA::MemoryMgr::WriteChatFunction = NULL;
 
 // Used to get precise skill recharge times.
-BYTE* GWAPI::MemoryMgr::SkillTimerPtr = NULL;
+BYTE* GWCA::MemoryMgr::SkillTimerPtr = NULL;
 
-BYTE* GWAPI::MemoryMgr::PostProcessEffectFunction = NULL;
+BYTE* GWCA::MemoryMgr::PostProcessEffectFunction = NULL;
 
 // Used to get skill information.
-BYTE* GWAPI::MemoryMgr::SkillArray = NULL;
-BYTE* GWAPI::MemoryMgr::UseSkillFunction = NULL;
+BYTE* GWCA::MemoryMgr::SkillArray = NULL;
+BYTE* GWCA::MemoryMgr::UseSkillFunction = NULL;
 
-BYTE* GWAPI::MemoryMgr::ChangeTargetFunction = NULL;
+BYTE* GWCA::MemoryMgr::ChangeTargetFunction = NULL;
 
-BYTE* GWAPI::MemoryMgr::XunlaiSession = NULL;
-BYTE* GWAPI::MemoryMgr::OpenXunlaiFunction = NULL;
+BYTE* GWCA::MemoryMgr::XunlaiSession = NULL;
+BYTE* GWCA::MemoryMgr::OpenXunlaiFunction = NULL;
 
-BYTE* GWAPI::MemoryMgr::MoveFunction = NULL;
+BYTE* GWCA::MemoryMgr::MoveFunction = NULL;
 
-BYTE* GWAPI::MemoryMgr::WinHandlePtr = NULL;
+BYTE* GWCA::MemoryMgr::WinHandlePtr = NULL;
 
-BYTE* GWAPI::MemoryMgr::MapInfoPtr = NULL;
+BYTE* GWCA::MemoryMgr::MapInfoPtr = NULL;
 
-BYTE* GWAPI::MemoryMgr::DialogFunc = NULL;
+BYTE* GWCA::MemoryMgr::DialogFunc = NULL;
 
-bool GWAPI::MemoryMgr::Scan()
-{
+bool GWCA::MemoryMgr::Scan() {
 	PatternScanner scan("Gw.exe");
 	printf("[------------------ API SCAN START ------------------]\n");
 

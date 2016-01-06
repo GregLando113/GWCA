@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <stdio.h>
 
-namespace GWAPI{
+namespace GWCA {
 
 	struct MemoryMgr{
 

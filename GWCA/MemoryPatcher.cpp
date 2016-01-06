@@ -1,7 +1,6 @@
 #include "MemoryPatcher.h"
 
-GWAPI::MemoryPatcher::MemoryPatcher(LPVOID addr, BYTE *patch, UINT size)
-{
+GWCA::MemoryPatcher::MemoryPatcher(LPVOID addr, BYTE *patch, UINT size) {
 	this->addr = addr;
 	this->size = size;
 	this->enable = false;
@@ -17,15 +16,13 @@ GWAPI::MemoryPatcher::MemoryPatcher(LPVOID addr, BYTE *patch, UINT size)
 	VirtualProtect(addr, size, oldProt, &oldProt);
 }
 
-GWAPI::MemoryPatcher::~MemoryPatcher()
-{
+GWCA::MemoryPatcher::~MemoryPatcher() {
 	TooglePatch(false);
 	delete[] patch;
 	delete[] backup;
 }
 
-bool GWAPI::MemoryPatcher::TooglePatch(bool enable)
-{
+bool GWCA::MemoryPatcher::TooglePatch(bool enable) {
 	if (this->enable == enable)
 		return enable;
 

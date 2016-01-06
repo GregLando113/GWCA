@@ -6,10 +6,10 @@
 #include "GWStructures.h"
 #include "GwConstants.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class SkillbarMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class SkillbarMgr : public GWCAManager<SkillbarMgr> {
+		friend class GWCAManager<SkillbarMgr>;
 
 	public:
 
@@ -36,7 +36,7 @@ namespace GWAPI {
 	private:
 		typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
 
-		SkillbarMgr(GWAPIMgr& api);
+		SkillbarMgr();
 		void RestoreHooks() override {};
 
 		UseSkill_t UseSkill_;

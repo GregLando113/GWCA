@@ -7,9 +7,9 @@
 #include "GWStructures.h"
 
 
-namespace GWAPI {
-	class MapMgr : public GWCAManager {
-		friend class GWAPIMgr;
+namespace GWCA {
+	class MapMgr : public GWCAManager<MapMgr> {
+		friend class GWCAManager<MapMgr>;
 
 		struct PAB_ZoneMap {
 			const DWORD header = 0xAB;
@@ -48,7 +48,7 @@ namespace GWAPI {
 		GW::PathingMapArray GetPathingMap();
 
 	private:
-		MapMgr(GWAPIMgr& api) : GWCAManager(api) {}
+		MapMgr() {}
 		void RestoreHooks() override {}
 	};
 }

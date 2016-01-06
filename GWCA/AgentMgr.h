@@ -8,13 +8,12 @@
 #include "GwConstants.h"
 #include "Hooker.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class AgentMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class AgentMgr : public GWCAManager<AgentMgr> {
+		friend class GWCAManager<AgentMgr>;
 
 	public:
-
 		// Get AgentArray Structures of player or target.
 		GW::Agent* GetPlayer();
 		GW::Agent* GetTarget();
@@ -113,7 +112,7 @@ namespace GWAPI {
 
 		typedef void(__fastcall *Move_t)(GW::GamePos* Pos);
 
-		AgentMgr(GWAPIMgr& api);
+		AgentMgr();
 
 		void RestoreHooks() override;
 

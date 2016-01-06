@@ -3,9 +3,9 @@
 #include "GWCAManager.h"
 #include "GameContext.h"
 
-namespace GWAPI {
-	class PartyMgr : public GWCAManager {
-		friend class GWAPIMgr;
+namespace GWCA {
+	class PartyMgr : public GWCAManager<PartyMgr> {
+		friend class GWCAManager<PartyMgr>;
 		
 	public:
 		GW::PartyInfo* GetPartyInfo() { 
@@ -55,6 +55,6 @@ namespace GWAPI {
 		}
 
 	private:
-		PartyMgr(GWAPIMgr& mgr) : GWCAManager(mgr) {}
+		PartyMgr() : GWCAManager() {}
 	};
 }

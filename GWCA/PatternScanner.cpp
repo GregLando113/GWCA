@@ -1,8 +1,7 @@
 #include "PatternScanner.h"
 #include <Psapi.h>
 
-DWORD GWAPI::PatternScanner::FindPattern(char* pattern, char* mask, DWORD offset)
-{
+DWORD GWCA::PatternScanner::FindPattern(char* pattern, char* mask, DWORD offset) {
 	BYTE first = pattern[0];
 	int patternLength = strlen(mask);
 	bool found = false;
@@ -33,8 +32,7 @@ DWORD GWAPI::PatternScanner::FindPattern(char* pattern, char* mask, DWORD offset
 	return NULL;
 }
 
-GWAPI::PatternScanner::PatternScanner(HMODULE _module)
-{
+GWCA::PatternScanner::PatternScanner(HMODULE _module) {
 	MODULEINFO info;
 	if (!GetModuleInformation(GetCurrentProcess(), _module, &info, sizeof(MODULEINFO)))
 		throw 1;
@@ -43,8 +41,7 @@ GWAPI::PatternScanner::PatternScanner(HMODULE _module)
 	size_ = (DWORD)info.SizeOfImage;
 }
 
-GWAPI::PatternScanner::PatternScanner(char* moduleName /*= NULL*/)
-{
+GWCA::PatternScanner::PatternScanner(char* moduleName /*= NULL*/) {
 	HMODULE mod = GetModuleHandleA(moduleName);
 	LPVOID textSection = (LPVOID)((DWORD)mod + 0x1000);
 
@@ -58,7 +55,5 @@ GWAPI::PatternScanner::PatternScanner(char* moduleName /*= NULL*/)
 	}
 }
 
-GWAPI::PatternScanner::PatternScanner(DWORD _start, DWORD _size) : base_(_start), size_(_size)
-{
-
+GWCA::PatternScanner::PatternScanner(DWORD _start, DWORD _size) : base_(_start), size_(_size) {
 }

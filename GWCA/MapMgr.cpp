@@ -1,9 +1,10 @@
 #include "MapMgr.h"
 
-#include "GWAPIMgr.h"
+#include "CtoSMgr.h"
 
-void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/)
-{
+void GWCA::MapMgr::Travel(GwConstants::MapID MapID,
+	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
+
 	static PAB_ZoneMap* pak = new PAB_ZoneMap();
 
 	pak->mapid = static_cast<DWORD>(MapID);
@@ -12,10 +13,10 @@ void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, int District /*= 0*/, int R
 	pak->language = Language;
 	pak->unk = 0;
 
-	api().CtoS().SendPacket<PAB_ZoneMap>(pak);
+	CtoSMgr::Instance().SendPacket<PAB_ZoneMap>(pak);
 }
 
-void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, GwConstants::District district, int district_number) {
+void GWCA::MapMgr::Travel(GwConstants::MapID MapID, GwConstants::District district, int district_number) {
 	switch (district) {
 	case GwConstants::District::Current:
 		Travel(MapID, district_number, GetRegion(), GetLanguage());
@@ -59,26 +60,22 @@ void GWAPI::MapMgr::Travel(GwConstants::MapID MapID, GwConstants::District distr
 	}
 }
 
-DWORD GWAPI::MapMgr::GetInstanceTime()
-{
+DWORD GWCA::MapMgr::GetInstanceTime() {
 	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 2, 0x8, 0x1AC);
 }
 
-GwConstants::MapID GWAPI::MapMgr::GetMapID()
-{
+GwConstants::MapID GWCA::MapMgr::GetMapID() {
 	return static_cast<GwConstants::MapID>(*(DWORD*)MemoryMgr::MapIDPtr);
 }
 
-GwConstants::InstanceType GWAPI::MapMgr::GetInstanceType() {
+GwConstants::InstanceType GWCA::MapMgr::GetInstanceType() {
 	return *(GwConstants::InstanceType*)(MemoryMgr::agArrayPtr - 0xF0);
 }
 
-GWAPI::GW::MissionMapIconArray GWAPI::MapMgr::GetMissionMapIconArray()
-{
+GWCA::GW::MissionMapIconArray GWCA::MapMgr::GetMissionMapIconArray() {
 	return *MemoryMgr::ReadPtrChain<GW::MissionMapIconArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x7EC);
 }
 
-GWAPI::GW::PathingMapArray GWAPI::MapMgr::GetPathingMap()
-{
+GWCA::GW::PathingMapArray GWCA::MapMgr::GetPathingMap() {
 	return *MemoryMgr::ReadPtrChain<GW::PathingMapArray*>(MemoryMgr::GetContextPtr(), 4, 0x14, 0x74, 0x0, 0x18);
 }

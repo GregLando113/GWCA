@@ -12,10 +12,10 @@
 #include "Hooker.h"
 #include "GWCAManager.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class DirectXMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class DirectXMgr : public GWCAManager<DirectXMgr> {
+		friend class GWCAManager<DirectXMgr>;
 
 	public:
 		typedef HRESULT(WINAPI *EndScene_t)(IDirect3DDevice9* pDevice);
@@ -27,7 +27,7 @@ namespace GWAPI {
 		inline Reset_t ResetReturn() { return reset_; }
 
 	private:
-		DirectXMgr(GWAPIMgr& api);
+		DirectXMgr();
 		void RestoreHooks() override;
 
 		EndScene_t endscene_ = NULL;

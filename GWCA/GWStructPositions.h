@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace GWAPI {
+namespace GWCA {
 	// Simple 2D cartesian coordinate vector with associated operations available.
 	struct Vector2f {
 		float x;

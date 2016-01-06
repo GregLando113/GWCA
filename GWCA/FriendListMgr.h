@@ -6,14 +6,14 @@
 #include "GWStructures.h"
 #include "GwConstants.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class FriendListMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class FriendListMgr : public GWCAManager<FriendListMgr> {
+		friend class GWCAManager<FriendListMgr>;
 
 	public:
 
-		inline GWAPI::GW::Friend* get(DWORD index) { return fList_->friends[index + 1]; }
+		inline GW::Friend* get(DWORD index) { return fList_->friends[index + 1]; }
 		inline DWORD size() { return fList_->size(); }
 		inline DWORD getNumberOfFriends() { return fList_->nFriend; }
 		inline DWORD getNumberOfIgnores() { return fList_->nIgnore; }
@@ -27,11 +27,11 @@ namespace GWAPI {
 	private:
 		typedef void(__fastcall *SetOnlineStatus_t)(DWORD status);
 		
-		FriendListMgr(GWAPIMgr& api);
+		FriendListMgr();
 		void RestoreHooks() override {}
 
 		SetOnlineStatus_t set_online_status_;
-		GWAPI::GW::FriendList* fList_;
+		GW::FriendList* fList_;
 
 	};
 }

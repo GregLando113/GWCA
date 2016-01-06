@@ -6,15 +6,12 @@
 #include <stdio.h>
 #include <Psapi.h>
 
-#include "GWAPIMgr.h"
 #include "PatternScanner.h"
 
-GWAPI::DirectXMgr::DirectXMgr(GWAPIMgr& api) : GWCAManager(api)
-{
+GWCA::DirectXMgr::DirectXMgr() {
 }
 
-void GWAPI::DirectXMgr::CreateRenderHooks(EndScene_t _endscene, Reset_t _reset)
-{
+void GWCA::DirectXMgr::CreateRenderHooks(EndScene_t _endscene, Reset_t _reset) {
 	if (hooked_) return;
 
 	printf("DX Start\n");
@@ -77,8 +74,7 @@ void GWAPI::DirectXMgr::CreateRenderHooks(EndScene_t _endscene, Reset_t _reset)
 	hooked_ = true;
 }
 
-void GWAPI::DirectXMgr::RestoreHooks()
-{
+void GWCA::DirectXMgr::RestoreHooks() {
 	if (!hooked_) return;
 
 	hk_endscene_.Retour();

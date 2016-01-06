@@ -6,10 +6,10 @@
 #include "Hooker.h"
 #include "GWStructures.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class MerchantMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class MerchantMgr : public GWCAManager<MerchantMgr> {
+		friend class GWCAManager<MerchantMgr>;
 
 	public:
 		enum class TransactionType : DWORD {
@@ -72,8 +72,7 @@ namespace GWAPI {
 		);
 
 
-
-		MerchantMgr(GWAPIMgr& api);
+		MerchantMgr();
 		void RestoreHooks() override;
 
 		Transaction_t transaction_function_;

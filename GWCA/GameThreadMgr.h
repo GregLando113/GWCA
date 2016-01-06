@@ -7,12 +7,13 @@
 #include "GWCAManager.h"
 #include "Hooker.h"
 
-namespace GWAPI {
+namespace GWCA {
 
 	// Shoutouts to DarthTon @ unknowncheats.me for this class.
 
-	class GameThreadMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class GameThreadMgr : public GWCAManager<GameThreadMgr> {
+		friend class GWCAManager<GameThreadMgr>;
+		friend class Api;
 
 	public:
 
@@ -40,7 +41,7 @@ namespace GWAPI {
 
 	private:
 
-		GameThreadMgr(GWAPIMgr& obj);
+		GameThreadMgr();
 		void RestoreHooks() override;
 
 		std::vector<std::function<void(void)> > calls_;

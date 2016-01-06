@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include "GWStructPositions.h"
 
 /*
 Server to client packets, sorted by header
@@ -12,14 +13,9 @@ feel free to fill packets, and you can also add a suffix to
 the packet name, e.g. P391 -> P391_InstanceLoadMap
 */
 
-struct Vector2f {
-	float x;
-	float y;
-};
+namespace GWCA {
 
-namespace GWAPI {
-
-	namespace StoC {
+	namespace StoC_Pak {
 		struct PacketBase {
 			DWORD header;
 		};

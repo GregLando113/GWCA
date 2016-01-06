@@ -1,14 +1,12 @@
 #include "StoCMgr.h"
 
-#include "GWAPIMgr.h"
 #include "PatternScanner.h"
 
-GWAPI::StoCMgr::StoCHandlerArray GWAPI::StoCMgr::game_server_handler_;
-GWAPI::StoCMgr::StoCHandler* GWAPI::StoCMgr::original_functions_ = NULL;
-std::map<DWORD, std::vector<GWAPI::StoCMgr::Handler>> GWAPI::StoCMgr::event_calls_;
+GWCA::StoCMgr::StoCHandlerArray GWCA::StoCMgr::game_server_handler_;
+GWCA::StoCMgr::StoCHandler* GWCA::StoCMgr::original_functions_ = NULL;
+std::map<DWORD, std::vector<GWCA::StoCMgr::Handler>> GWCA::StoCMgr::event_calls_;
 
-bool GWAPI::StoCMgr::StoCHandlerFunc(StoC::PacketBase* pak)
-{
+bool GWCA::StoCMgr::StoCHandlerFunc(StoC_Pak::PacketBase* pak) {
 	bool do_not_process = false;
 	for (auto call : event_calls_[pak->header])
 	{
@@ -17,7 +15,7 @@ bool GWAPI::StoCMgr::StoCHandlerFunc(StoC::PacketBase* pak)
 	return do_not_process ? true : original_functions_[pak->header].handlerfunc(pak);
 }
 
-GWAPI::StoCMgr::StoCMgr(GWAPIMgr& api) : GWCAManager(api) {
+GWCA::StoCMgr::StoCMgr() : GWCAManager() {
 	PatternScanner scan(0x401000, 0x49A000);
 	
 	// inb4 has rages at this
@@ -49,7 +47,7 @@ GWAPI::StoCMgr::StoCMgr(GWAPIMgr& api) : GWCAManager(api) {
 
 }
 
-void GWAPI::StoCMgr::RestoreHooks() {
+void GWCA::StoCMgr::RestoreHooks() {
 	for (DWORD i = 0; i < game_server_handler_.size(); ++i) {
 		game_server_handler_[i] = original_functions_[i];
 	}

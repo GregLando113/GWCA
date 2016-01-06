@@ -5,10 +5,10 @@
 #include "GWCAManager.h"
 #include "GWStructures.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class GuildMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class GuildMgr : public GWCAManager<GuildMgr> {
+		friend class GWCAManager<GuildMgr>;
 
 	public:
 
@@ -31,7 +31,7 @@ namespace GWAPI {
 		void LeaveGH();
 
 	private:
-		GuildMgr(GWAPIMgr& api) : GWCAManager(api) {}
+		GuildMgr() {}
 		void RestoreHooks() override {}
 	};
 }

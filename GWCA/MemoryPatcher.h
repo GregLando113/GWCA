@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-namespace GWAPI {
+namespace GWCA {
 	
 	class MemoryPatcher {
 	public:

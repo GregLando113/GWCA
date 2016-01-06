@@ -1,9 +1,9 @@
 #include "GameThreadMgr.h"
 
 #include "GWCA.h"
+#include "MemoryMgr.h"
 
-void __stdcall GWAPI::GameThreadMgr::CallFunctions()
-{
+void __stdcall GWCA::GameThreadMgr::CallFunctions() {
 	std::unique_lock<std::mutex> VecLock(call_vector_mutex_);
 	if (!calls_.empty())
 	{
@@ -25,22 +25,16 @@ void __stdcall GWAPI::GameThreadMgr::CallFunctions()
 	
 }
 
-void __declspec(naked) GWAPI::GameThreadMgr::gameLoopHook()
-{
-	static GWAPIMgr* inst;
+void __declspec(naked) GWCA::GameThreadMgr::gameLoopHook() {
 	_asm PUSHAD
 
-	if (inst == NULL)
-		inst = &GWCA::Api();
-	if (inst != NULL)
-		inst->Gamethread().CallFunctions();
+	GameThreadMgr::Instance().CallFunctions();
 
 	_asm POPAD
 	_asm JMP MemoryMgr::GameLoopReturn
 }
 
-void __declspec(naked) GWAPI::GameThreadMgr::renderHook()
-{
+void __declspec(naked) GWCA::GameThreadMgr::renderHook() {
 	Sleep(1);
 	_asm {
 		POP ESI
@@ -52,8 +46,7 @@ void __declspec(naked) GWAPI::GameThreadMgr::renderHook()
 	}
 }
 
-void GWAPI::GameThreadMgr::ToggleRenderHook()
-{
+void GWCA::GameThreadMgr::ToggleRenderHook() {
 	static BYTE restorebuf[5];
 	DWORD dwProt;
 
@@ -75,14 +68,11 @@ void GWAPI::GameThreadMgr::ToggleRenderHook()
 	}
 }
 
-GWAPI::GameThreadMgr::GameThreadMgr(GWAPI::GWAPIMgr& api) 
-	: GWCAManager(api), render_state_(false)
-{
+GWCA::GameThreadMgr::GameThreadMgr() : render_state_(false) {
 	MemoryMgr::GameLoopReturn = (BYTE*)hk_game_thread_.Detour(MemoryMgr::GameLoopLocation, (BYTE*)gameLoopHook, 5);
 }
 
-void GWAPI::GameThreadMgr::RestoreHooks()
-{
+void GWCA::GameThreadMgr::RestoreHooks() {
 	if (render_state_) ToggleRenderHook();
 	hk_game_thread_.Retour();
 }

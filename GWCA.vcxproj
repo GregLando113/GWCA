@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GWCA\AgentMgr.h" />
-    <ClInclude Include="GWCA\APIMain.h" />
     <ClInclude Include="GWCA\CameraMgr.h" />
     <ClInclude Include="GWCA\ChatMgr.h" />
     <ClInclude Include="GWCA\CtoSMgr.h" />
@@ -23,7 +22,6 @@
     <ClInclude Include="GWCA\GameContext.h" />
     <ClInclude Include="GWCA\GameThreadMgr.h" />
     <ClInclude Include="GWCA\GuildMgr.h" />
-    <ClInclude Include="GWCA\GWAPIMgr.h" />
     <ClInclude Include="GWCA\GWCA.h" />
     <ClInclude Include="GWCA\GWCAManager.h" />
     <ClInclude Include="GWCA\GwConstants.h" />
@@ -55,8 +53,8 @@
     <ClCompile Include="GWCA\FriendListMgr.cpp" />
     <ClCompile Include="GWCA\GameThreadMgr.cpp" />
     <ClCompile Include="GWCA\GuildMgr.cpp" />
-    <ClCompile Include="GWCA\GWAPIMgr.cpp" />
     <ClCompile Include="GWCA\GWCA.cpp" />
+    <ClCompile Include="GWCA\GWCAManager.cpp" />
     <ClCompile Include="GWCA\Hooker.cpp" />
     <ClCompile Include="GWCA\ItemMgr.cpp" />
     <ClCompile Include="GWCA\MapMgr.cpp" />

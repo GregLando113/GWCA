@@ -4,10 +4,10 @@
 #include "GWStructures.h"
 #include "MemoryPatcher.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class CameraMgr : public GWCAManager {
-		friend class GWAPIMgr;
+	class CameraMgr : public GWCAManager<CameraMgr> {
+		friend class GWCAManager<CameraMgr>;
 
 	public:
 		// X,Y,Z of camera in game world.
@@ -82,7 +82,7 @@ namespace GWAPI {
 
 	private:
 
-		CameraMgr(GWAPIMgr& obj);
+		CameraMgr();
 		void RestoreHooks() override;
 
 		GW::Camera* cam_class_;

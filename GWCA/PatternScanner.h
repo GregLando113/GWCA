@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-namespace GWAPI {
+namespace GWCA {
 
 	// class PatternScanner
 	// 32 bit pattern scanner for x86 programs.

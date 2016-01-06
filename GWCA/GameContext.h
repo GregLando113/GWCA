@@ -4,7 +4,7 @@
 #include "GWStructures.h"
 #include "PatternScanner.h"
 
-namespace GWAPI {
+namespace GWCA {
 
 	using namespace GW;
 

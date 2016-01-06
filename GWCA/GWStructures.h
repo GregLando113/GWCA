@@ -8,7 +8,7 @@
 #include "GwConstants.h"
 #include "GWStructPositions.h"
 
-namespace GWAPI {
+namespace GWCA {
 
 	namespace GW {
 		template <typename T>

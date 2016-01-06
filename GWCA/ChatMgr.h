@@ -7,11 +7,10 @@
 #include "GWCAManager.h"
 #include "Hooker.h"
 
-namespace GWAPI {
+namespace GWCA {
 
-	class ChatMgr : public GWCAManager {
-
-		friend class GWAPIMgr;
+	class ChatMgr : public GWCAManager<ChatMgr> {
+		friend class GWCAManager<ChatMgr>;
 
 		typedef DWORD Color_t;
 		typedef std::function<const void(std::wstring, std::vector<std::wstring>)> Callback_t;
@@ -104,6 +103,9 @@ namespace GWAPI {
 
 		inline ChatBuffer* GetChatBuffer() { return *(ChatBufferLoca); }
 
+	protected:
+		ChatMgr();
+
 	private:
 		ChatBuffer **ChatBufferLoca;
 		DWORD messageId;
@@ -125,8 +127,6 @@ namespace GWAPI {
 		typedef void(__fastcall *ReloadChat_t)(DWORD, DWORD, DWORD);
 		typedef void(__fastcall *OpenTemplate_t)(DWORD unk, ChatTemplate* info);
 
-
-		ChatMgr(GWAPIMgr& api);
 		void RestoreHooks() override;
 
 		Hook hk_chatlog_;

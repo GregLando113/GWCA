@@ -10,7 +10,7 @@ bool GWCA::StoCMgr::StoCHandlerFunc(StoC_Pak::PacketBase* pak) {
 	bool do_not_process = false;
 	for (auto call : event_calls_[pak->header])
 	{
-		if (!call(pak)) do_not_process = true;
+		if (call(pak)) do_not_process = true;
 	}
 	return do_not_process ? true : original_functions_[pak->header].handlerfunc(pak);
 }

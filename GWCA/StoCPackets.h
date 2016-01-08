@@ -37,7 +37,7 @@ namespace GWCA {
 		const DWORD Packet<P001_PingRequest>::STATIC_HEADER = 1;
 
 		struct P002_PingReply : Packet<P002_PingReply> {
-			// DWORD
+			DWORD data;
 		};
 		const DWORD Packet<P002_PingReply>::STATIC_HEADER = 2;
 
@@ -138,6 +138,7 @@ namespace GWCA {
 		};
 		const DWORD Packet<P018>::STATIC_HEADER = 18;
 
+		// Heartbeat
 		struct P019 : Packet<P019> {
 			// DWORD
 		};
@@ -148,30 +149,31 @@ namespace GWCA {
 		};
 		const DWORD Packet<P020>::STATIC_HEADER = 20;
 
+		// spawn object
 		struct P021 : Packet<P021> {
-			// DWORD
-			// DWORD
-			// BYTE
-			// BYTE
-			// Vector2f
-			// WORD
-			// Vector2f
-			// BYTE
-			// float
-			// float
-			// DWORD
-			// DWORD
-			// DWORD
-			// DWORD
-			// DWORD
-			// DWORD
-			// DWORD
-			// Vector2f
-			// Vector2f
-			// WORD
-			// DWORD
-			// Vector2f
-			// WORD
+			DWORD agent_id;
+			DWORD data1;	// for agents, this most likely pointer to the 3d file ID
+							// for items, this is a "Local ID" that was sent by P343 or P344
+			DWORD data2;		// 1 moving agents, 2 signposts, 3 chests [?], 4 items
+			DWORD data3;		// 0 items, 1 signposts, 9 agents
+			GW::GamePos pos;
+			float rotation1;//0x0020 those 2 values are both between -1 and 1, and look like 
+			float rotation2;//0x0024 rotations. Maybe cos/sin? Idk, but one of them is definitely rotation.
+			DWORD unk2;		//0x0028 
+			float speed;	//0x002C 
+			float unk3;		//0x0030 
+			float unk4;		//0x0034 0 items, agents 12, signposts 20
+			DWORD unk5;		//0x0038 zero for items, weird big value for agents
+			DWORD unk6;		//0x003C 
+			DWORD unk7;		//0x0040 
+			DWORD unk8;		//0x0044 
+			DWORD unk9;		//0x0048 
+			DWORD unk10;	//0x004C 
+			float unk11;	//0x0050 a value between -100 and 100 for agents, Inf for items
+			float unk12;	//0x0054 a value between -100 and 100 for agents, Inf for items
+			GW::GamePos pos1; // similar to position, maybe patrol destination? {Inf, Inf, 0} for items
+			DWORD unk16;	//0x0064 always zero
+			GW::GamePos pos2; // same as pos1
 		};
 		const DWORD Packet<P021>::STATIC_HEADER = 21;
 
@@ -222,11 +224,11 @@ namespace GWCA {
 		};
 		const DWORD Packet<P029>::STATIC_HEADER = 29;
 
+		// Movement aim
 		struct P030 : Packet<P030> {
-			// DWORD
-			// Vector2f
-			// WORD
-			// WORD
+			DWORD agent_id;
+			GW::GamePos pos;
+			// there might be another unk field
 		};
 		const DWORD Packet<P030>::STATIC_HEADER = 30;
 
@@ -239,10 +241,11 @@ namespace GWCA {
 		};
 		const DWORD Packet<P031>::STATIC_HEADER = 31;
 
+		// Movement speed modifier
 		struct P032 : Packet<P032> {
-			// DWORD
-			// float
-			// BYTE
+			DWORD agent_id;
+			float speed;
+			BYTE move_type; // ?
 		};
 		const DWORD Packet<P032>::STATIC_HEADER = 32;
 
@@ -1216,7 +1219,7 @@ namespace GWCA {
 			// <Field occurs="256" prefixType="int16" type="int8"/>
 		};
 		const DWORD Packet<P169>::STATIC_HEADER = 169;
-
+		
 		struct P170 : Packet<P170> {
 			// DWORD agent_id;
 			// DWORD

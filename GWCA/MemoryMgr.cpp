@@ -38,9 +38,6 @@ BYTE* GWCA::MemoryMgr::UseSkillFunction = NULL;
 
 BYTE* GWCA::MemoryMgr::ChangeTargetFunction = NULL;
 
-BYTE* GWCA::MemoryMgr::XunlaiSession = NULL;
-BYTE* GWCA::MemoryMgr::OpenXunlaiFunction = NULL;
-
 BYTE* GWCA::MemoryMgr::MoveFunction = NULL;
 
 BYTE* GWCA::MemoryMgr::WinHandlePtr = NULL;
@@ -179,24 +176,6 @@ bool GWCA::MemoryMgr::Scan() {
 		}
 		else{
 			printf("ChangeTargetFunction = ERR\n");
-			return false;
-		}
-
-		OpenXunlaiFunction = (BYTE*)scan.FindPattern("\x8B\xF1\x6A\x00\xBA\x12", "xxxxxx", -6);
-		if (OpenXunlaiFunction){
-			printf("OpenXunlaiFunction = %X\n", OpenXunlaiFunction);
-		}
-		else{
-			printf("OpenXunlaiFunction = ERR\n");
-			return false;
-		}
-		XunlaiSession = (BYTE*)scan.FindPattern("\x8D\x14\x76\x8D\x14\x90\x8B\x42\x08\xA8\x01\x75\x41", "xxxxxxxxxxxxx", 0);
-		if (XunlaiSession){
-			printf("XunlaiSession = %X\n", XunlaiSession);
-			XunlaiSession = *(BYTE**)(XunlaiSession - 4);
-		}
-		else{
-			printf("XunlaiSession = ERR\n");
 			return false;
 		}
 

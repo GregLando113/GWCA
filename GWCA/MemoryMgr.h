@@ -50,10 +50,6 @@ namespace GWCA {
 		static BYTE* SkillArray;
 		static BYTE* UseSkillFunction;
 
-		// Addresses used for opening xunlai window.
-		static BYTE* OpenXunlaiFunction;
-		static BYTE* XunlaiSession;
-
 		// For move calls that dont glitch your char around.
 		static BYTE* MoveFunction;
 

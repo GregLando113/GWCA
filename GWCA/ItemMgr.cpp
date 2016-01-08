@@ -1,13 +1,13 @@
 #include "ItemMgr.h"
 
 #include "GameThreadMgr.h"
+#include "StoCMgr.h"
 #include "CtoSMgr.h"
 #include "MapMgr.h"
 
 void GWCA::ItemMgr::OpenXunlaiWindow() {
-	static DWORD* xunlaibuf = new DWORD[2]{0, 1};
-	GameThreadMgr::Instance().Enqueue(open_xunlai_function_,
-		*MemoryMgr::ReadPtrChain<DWORD*>((DWORD)MemoryMgr::XunlaiSession, 4, 0x118, 0x10, 0, 0x14), xunlaibuf);
+	static DWORD ecxbuf[4] = { 119, 0, 0, 3 };
+	StoCMgr::Instance().EmulatePacket((StoC_Pak::PacketBase*)ecxbuf);
 }
 
 void GWCA::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
@@ -35,7 +35,6 @@ GWCA::GW::ItemArray GWCA::ItemMgr::GetItemArray() {
 }
 
 GWCA::ItemMgr::ItemMgr() {
-	open_xunlai_function_ = (OpenXunlai_t)MemoryMgr::OpenXunlaiFunction;
 }
 
 bool GWCA::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {

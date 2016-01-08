@@ -47,16 +47,11 @@ From there you can retrieve different submodules such as Agents,Items,Skillbar,E
 void printCoords(){
 
    // Initialize API, exit out if it failed.
-   if(!GWAPI::GWCA::Initialize())
+   if(!GWCA::Api::Initialize())
          return 0;
 
-   // Grab API object. Always statically allocate this as a local variable.
-   // While this object is allocated, you have ownership of the api.
-   // All other threads will wait for this function to complete if trying to access GWCA
-   GWAPI::GWCA api;
-
    // Get Player Agent Structure.
-   GWAPI::GW::Agent* player = api().Agents().GetPlayer();
+   GWAPI::GW::Agent* player = GWCA::Api::Agents().GetPlayer();
 
    // Print coords.
    printf("Player: %f %f",player->pos.x,player->pos.y);
@@ -87,13 +82,12 @@ void init(HMODULE hModule){
 
 	GWCA::Initialize();
 
-	GWCA api;
-
-	api().StoC().AddGameServerEvent<P147_UpdateGenericValue> (
-		[](P147_UpdateGenericValue* pak) {
+	GWCA::Api::StoC().AddGameServerEvent<P147_UpdateGenericValue> (
+		[](P147_UpdateGenericValue* pak) -> bool {
 			if (pak->type == 27) {
 				pak->value = 12;
 			}
+                        return false;
 		}
 	);
 

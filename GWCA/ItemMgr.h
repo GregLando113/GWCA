@@ -57,9 +57,6 @@ namespace GWCA {
 		void OpenLockedChest();
 
 	private:
-		typedef void(__fastcall *OpenXunlai_t)(DWORD, DWORD*);
-
-		OpenXunlai_t open_xunlai_function_;
 
 		ItemMgr();
 		void RestoreHooks() override {};

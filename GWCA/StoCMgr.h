@@ -43,8 +43,12 @@ namespace GWCA {
 		}
 
 		template <typename T>
-		void ReceiveFakePacket(T* packet) {
+		void EmulatePacket(T* packet) {
 			packet->header = StoC_Pak::Packet<T>::STATIC_HEADER;
+			GameThreadMgr::Instance().Enqueue(VoidOriginalHandler, packet);
+		}
+
+		void EmulatePacket(StoC_Pak::PacketBase* packet) {
 			GameThreadMgr::Instance().Enqueue(VoidOriginalHandler, packet);
 		}
 

@@ -852,12 +852,12 @@ namespace GWCA {
 		};
 		const DWORD Packet<P118>::STATIC_HEADER = 118;
 
-		struct P119 : Packet<P119> {
-			// DWORD agent_id;
-			// BYTE
-			// DWORD
+		struct P119_OpenDataWindow : Packet<P119_OpenDataWindow> {
+			 DWORD agent_id;
+			 DWORD windowtype;
+			 DWORD val;
 		};
-		const DWORD Packet<P119>::STATIC_HEADER = 119;
+		const DWORD Packet<P119_OpenDataWindow>::STATIC_HEADER = 119;
 
 		struct P120 : Packet<P120> {
 			// int[16] // prefixType="int16"

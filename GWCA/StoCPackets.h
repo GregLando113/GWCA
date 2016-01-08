@@ -178,7 +178,7 @@ namespace GWCA {
 		const DWORD Packet<P021>::STATIC_HEADER = 21;
 
 		struct P022 : Packet<P022> {
-			// DWORD
+			DWORD agent_id;
 		};
 		const DWORD Packet<P022>::STATIC_HEADER = 22;
 

@@ -2359,18 +2359,41 @@ namespace GWCA {
 		};
 		const DWORD Packet<P342>::STATIC_HEADER = 342;
 
+		// About P343 and P344: They look exactly the same. 
+		// P343 is used first, for a while, then P344 is used. 
+		enum ItemType : DWORD {
+			// note: not all are tested but all I tested were correct
+			Salvage = 0, LeadHand, Axe, Bag, Feet, Bow, Bundle, Chest, Rune, Consumable,
+			Dye, Material, Focus, Arms, Sigil, Hammer, Head, SalvageItem, Key, Legs,
+			Coins, QuestItem, Wand, Shield, Staff, Sword, Kit, Trophy, Scroll, Daggers,
+			Present, Minipet, Scythe, Spear, Handbook, CostumeBody, CostumeHead,
+		};
+		namespace ItemFlags {
+			// note: untested
+			// all flags from 0x1 to 0x8000000. Most are to be discovered.
+			const DWORD RarityUnique = 0x10; // green item
+			const DWORD CannotBeDropped = 0x100;
+			const DWORD RarityRare = 0x20000; // gold item
+			const DWORD TwoHanded = 0x200000;
+			const DWORD RarityUncommon = 0x400000; // purple item
+			const DWORD Inscribable = 0x8000000;
+			const DWORD Dyeable = 0x20000000;
+			const DWORD Dedicated = 0x40000000;
+			const DWORD Pvp = 0x1000000;
+		}
 		struct P343 : Packet<P343> {
-			// DWORD
-			// DWORD
-			// BYTE
-			// BYTE
-			// WORD
-			// WORD
-			// BYTE
-			// DWORD
-			// DWORD
-			// DWORD
-			// DWORD
+			DWORD local_id; // this will be referenced by P021 just after
+			DWORD file_id; // id of the 3d model in the dat ?
+			ItemType item_type; // see above
+			DWORD unk1;
+			DWORD dye_color; // untested
+			DWORD material; // untested
+			DWORD unk2; 
+			DWORD item_flags; // see above
+			DWORD price; // 0 if cannot be sold
+			DWORD item_id;
+			DWORD quantity;
+			// then there should be the item name.. I think.
 			// wchar_t array[64] // prefixType="int16"
 			// <Field occurs="64" prefixType="int8" type="nested">
 			// DWORD
@@ -2378,17 +2401,18 @@ namespace GWCA {
 		const DWORD Packet<P343>::STATIC_HEADER = 343;
 
 		struct P344 : Packet<P344> {
-			// DWORD
-			// DWORD
-			// BYTE
-			// BYTE
-			// WORD
-			// WORD
-			// BYTE
-			// DWORD
-			// DWORD
-			// DWORD
-			// DWORD
+			DWORD local_id; // this will be referenced by P021 just after
+			DWORD file_id; // id of the 3d model in the dat ?
+			ItemType item_type; // see above
+			DWORD unk1;
+			DWORD dye_color; // untested
+			DWORD material; // untested
+			DWORD unk2;
+			DWORD item_flags; // see above
+			DWORD price; // 0 if cannot be sold
+			DWORD item_id;
+			DWORD quantity;
+			// then there should be the item name.. I think.
 			// wchar_t array[64] // prefixType="int16"
 			// <Field occurs="64" prefixType="int8" type="nested">
 			// DWORD

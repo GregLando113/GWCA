@@ -246,10 +246,10 @@ namespace GWCA {
 		};
 		const DWORD Packet<P032>::STATIC_HEADER = 32;
 
+		// Update Agent Position packet
 		struct P033 : Packet<P033> {
-			// DWORD
-			// Vector2f
-			// WORD
+			DWORD agent_id;
+			GW::GamePos pos;
 		};
 		const DWORD Packet<P033>::STATIC_HEADER = 33;
 
@@ -1015,8 +1015,8 @@ namespace GWCA {
 		const DWORD Packet<P141>::STATIC_HEADER = 141;
 
 		struct P142 : Packet<P142> {
-			// DWORD agent_id;
-			// DWORD
+			 DWORD agent_id;
+			 DWORD scale;
 		};
 		const DWORD Packet<P142>::STATIC_HEADER = 142;
 
@@ -1167,9 +1167,10 @@ namespace GWCA {
 		};
 		const DWORD Packet<P161>::STATIC_HEADER = 161;
 
+		// agent change model
 		struct P162 : Packet<P162> {
-			// DWORD agent_id;
-			// DWORD
+			 DWORD agent_id;
+			 DWORD model_id;
 		};
 		const DWORD Packet<P162>::STATIC_HEADER = 162;
 

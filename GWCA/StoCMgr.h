@@ -7,6 +7,7 @@
 #include "GWCAManager.h"
 #include "StoCPackets.h"
 #include "GWStructures.h"
+#include "GameThreadMgr.h"
 
 namespace GWCA {
 
@@ -41,6 +42,12 @@ namespace GWCA {
 			game_server_handler_[header].handlerfunc = StoCHandlerFunc;
 		}
 
+		template <typename T>
+		void ReceiveFakePacket(T* packet) {
+			packet->header = StoC_Pak::Packet<T>::STATIC_HEADER;
+			GameThreadMgr::Instance().Enqueue(VoidOriginalHandler, packet);
+		}
+
 	private:
 		using StoCHandler_t = bool(__fastcall *)(StoC_Pak::PacketBase* pak);
 
@@ -55,6 +62,10 @@ namespace GWCA {
 		void RestoreHooks() override;
 
 		static bool __fastcall StoCHandlerFunc(StoC_Pak::PacketBase* pak);
+
+		static void VoidOriginalHandler(StoC_Pak::PacketBase* packet) {
+			original_functions_[packet->header].handlerfunc(packet);
+		}
 
 		static StoCHandlerArray game_server_handler_;
 		static StoCHandler* original_functions_;

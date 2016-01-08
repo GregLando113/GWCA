@@ -51,7 +51,7 @@ void printCoords(){
          return 0;
 
    // Get Player Agent Structure.
-   GWAPI::GW::Agent* player = GWCA::Api::Agents().GetPlayer();
+   GWCA::GW::Agent* player = GWCA::Agents().GetPlayer();
 
    // Print coords.
    printf("Player: %f %f",player->pos.x,player->pos.y);
@@ -65,9 +65,10 @@ void printCoords(){
 #!c++
 
 #include <Windows.h>
-#include "GWCA\GWCA\APIMain.h"
+#include "GWCA\GWCA\GWCA.h"
+#include "GWCA\GWCA\StoCMgr.h"
 
-using namespace GWAPI;
+using namespace GWCA;
 
 struct P147_UpdateGenericValue : public StoC::Packet<P147_UpdateGenericValue> {
 	DWORD type;
@@ -80,9 +81,9 @@ const DWORD StoC::Packet<P147_UpdateGenericValue>::STATIC_HEADER = 147;
 void init(HMODULE hModule){
 
 
-	GWCA::Initialize();
+	GWCA::Api::Initialize();
 
-	GWCA::Api::StoC().AddGameServerEvent<P147_UpdateGenericValue> (
+	GWCA::StoC().AddGameServerEvent<P147_UpdateGenericValue> (
 		[](P147_UpdateGenericValue* pak) -> bool {
 			if (pak->type == 27) {
 				pak->value = 12;
@@ -94,7 +95,7 @@ void init(HMODULE hModule){
 	while (1) {
 		Sleep(100);
 		if (GetAsyncKeyState(VK_END) & 1) {
-			GWCA::Destruct();
+			GWCA::Api::Destruct();
 			FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
 		}
 	}

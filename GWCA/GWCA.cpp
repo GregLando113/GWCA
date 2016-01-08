@@ -35,7 +35,7 @@ bool GWCA::Api::Initialize() {
 }
 
 void GWCA::Api::Destruct() {
-	Gamethread().calls_.clear();
+	GWCA::Gamethread().calls_.clear();
 	for (GWCABaseManager* manager : managers) {
 		manager->RestoreHooks();
 	}
@@ -45,20 +45,20 @@ void GWCA::Api::Destruct() {
 	}
 }
 
-// Module Accessors.
-GWCA::GameThreadMgr&	GWCA::Api::Gamethread()	{ return GameThreadMgr::Instance(); }
-GWCA::CtoSMgr&			GWCA::Api::CtoS()		{ return CtoSMgr::Instance(); }
-GWCA::StoCMgr&			GWCA::Api::StoC()		{ return StoCMgr::Instance(); }
-GWCA::AgentMgr&			GWCA::Api::Agents()		{ return AgentMgr::Instance(); }
-GWCA::ItemMgr&			GWCA::Api::Items()		{ return ItemMgr::Instance(); }
-GWCA::SkillbarMgr&		GWCA::Api::Skillbar()	{ return SkillbarMgr::Instance(); }
-GWCA::EffectMgr&		GWCA::Api::Effects()	{ return EffectMgr::Instance(); }
-GWCA::ChatMgr&			GWCA::Api::Chat()		{ return ChatMgr::Instance(); }
-GWCA::MerchantMgr&		GWCA::Api::Merchant()	{ return MerchantMgr::Instance(); }
-GWCA::GuildMgr&			GWCA::Api::Guild()		{ return GuildMgr::Instance(); }
-GWCA::MapMgr&			GWCA::Api::Map()		{ return MapMgr::Instance(); }
-GWCA::FriendListMgr&	GWCA::Api::FriendList()	{ return FriendListMgr::Instance(); }
-GWCA::CameraMgr&		GWCA::Api::Camera()		{ return CameraMgr::Instance(); }
+// GWCA Module Accessors.
+GWCA::GameThreadMgr&	GWCA::Gamethread()	{ return GameThreadMgr::Instance(); }
+GWCA::CtoSMgr&			GWCA::CtoS()		{ return CtoSMgr::Instance(); }
+GWCA::StoCMgr&			GWCA::StoC()		{ return StoCMgr::Instance(); }
+GWCA::AgentMgr&			GWCA::Agents()		{ return AgentMgr::Instance(); }
+GWCA::ItemMgr&			GWCA::Items()		{ return ItemMgr::Instance(); }
+GWCA::SkillbarMgr&		GWCA::Skillbar()	{ return SkillbarMgr::Instance(); }
+GWCA::EffectMgr&		GWCA::Effects()		{ return EffectMgr::Instance(); }
+GWCA::ChatMgr&			GWCA::Chat()		{ return ChatMgr::Instance(); }
+GWCA::MerchantMgr&		GWCA::Merchant()	{ return MerchantMgr::Instance(); }
+GWCA::GuildMgr&			GWCA::Guild()		{ return GuildMgr::Instance(); }
+GWCA::MapMgr&			GWCA::Map()			{ return MapMgr::Instance(); }
+GWCA::FriendListMgr&	GWCA::FriendList()	{ return FriendListMgr::Instance(); }
+GWCA::CameraMgr&		GWCA::Camera()		{ return CameraMgr::Instance(); }
 #ifdef GWAPI_USEDIRECTX
-GWCA::DirectXMgr&		GWCA::Api::DirectX()	{ return DirectXMgr::Instance(); }
+GWCA::DirectXMgr&		GWCA::DirectX()		{ return DirectXMgr::Instance(); }
 #endif

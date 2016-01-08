@@ -7,6 +7,9 @@ namespace GWCA {
 	class GWCABaseManager {
 		friend class Api;
 
+	public:
+		virtual ~GWCABaseManager() {}
+
 	protected:
 		GWCABaseManager();
 

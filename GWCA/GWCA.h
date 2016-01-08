@@ -78,9 +78,13 @@ GWCA::Destruct()
 #include <Windows.h>
 #include <vector>
 
+// included memorymgr, gamethread and ctos since 
+// they are needed by most other managers
 #include "MemoryMgr.h"
 #include "GameThreadMgr.h"
 #include "CtoSMgr.h"
+
+// include agentmgr and mapmgr by default since they are used by most applications
 #include "AgentMgr.h"
 #include "MapMgr.h"
 
@@ -103,30 +107,30 @@ namespace GWCA {
 	class DirectXMgr;
 #endif
 
+	// GWCA Module Accessors.
+	GameThreadMgr& Gamethread();
+	CtoSMgr& CtoS();
+	StoCMgr& StoC();
+	AgentMgr& Agents();
+	ItemMgr& Items();
+	SkillbarMgr& Skillbar();
+	EffectMgr& Effects();
+	ChatMgr& Chat();
+	MerchantMgr& Merchant();
+	GuildMgr& Guild();
+	MapMgr& Map();
+	FriendListMgr& FriendList();
+	CameraMgr& Camera();
+#ifdef GWAPI_USEDIRECTX
+	DirectXMgr& DirectX();
+#endif
+
 	class Api {
 		friend class GWCABaseManager;
 
 	public:
 		static bool Initialize();
 		static void Destruct();
-
-		// Module Accessors.
-		static GameThreadMgr& Gamethread();
-		static CtoSMgr& CtoS();
-		static StoCMgr& StoC();
-		static AgentMgr& Agents();
-		static ItemMgr& Items();
-		static SkillbarMgr& Skillbar();
-		static EffectMgr& Effects();
-		static ChatMgr& Chat();
-		static MerchantMgr& Merchant();
-		static GuildMgr& Guild();
-		static MapMgr& Map();
-		static FriendListMgr& FriendList();
-		static CameraMgr& Camera();
-#ifdef GWAPI_USEDIRECTX
-		static DirectXMgr& DirectX();
-#endif
 
 	private:
 		static std::vector<GWCABaseManager*> managers;

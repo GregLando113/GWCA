@@ -78,61 +78,66 @@ void GWCA::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 void __fastcall GWCA::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWORD useless /* same as edx */) {
 	ChatMgr& chat = ChatMgr::Instance();
 
-	std::wstring message(mes->message), sender;
-	std::string::size_type start, end, quote, length = message.length();
 
-	start = message.find(L"<a=1>");
-	if (start != std::string::npos)
-	{
-		end = message.find(L"</a>", start + 5);
-		if (end != std::string::npos)
-			sender = message.substr(start + 5, end - start - 5);
+	bool changed_message = false;
+	wchar_t mesBuffer[0x200] = L"";
+	std::wstring message(mes->message);
+	const std::wstring::size_type start = message.find(L"<a=1>");
+	if (start != std::string::npos) {
+		const std::wstring::size_type end = message.find(L"</a>", start + 5);
+		if (end != std::string::npos) {
+			std::wstring sender = message.substr(start + 5, end - start - 5);
+			const Channel chan = chat.chatlog_channel[sender];
+
+			const std::wstring::size_type quote = message.find(L"<quote>");
+			if (quote != std::string::npos) {
+				message = message.substr(quote);
+			}
+
+			if (!chan.name.empty()) {
+				wsprintfW(mesBuffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
+				changed_message = true;
+			}
+		}
 	}
-
-	quote = message.find(L"<quote>");
-	if (quote != std::string::npos)
-		message = message.substr(quote);
-
-	Channel chan = {};
-	if (!sender.empty())
-		chan = chat.chatlog_channel[sender];
+	
 	/* END MESSAGE PARSING, We have seperatly the sender, the message & the special channel data if there is one */
-
-	DWORD mIndex = chat.messageId;
-	if (chat.hashArray.find(info->hash) == chat.hashArray.end()) {
-		chat.hashArray[info->hash] = mIndex;
-		chat.messageId = (chat.messageId + 1) % 0x100;
-	}
-	else {
-		mIndex = chat.hashArray[info->hash];
-	}
-
-	// Now we should have the index of the message inside the ChatBuffer & his timestamp is at same index in timestamp array
-	DWORD time = chat.timestamp[mIndex];
-	DWORD second = time % 60;
-	DWORD minute = (time / 60) % 60;
-	DWORD hour = time / 3600;
-	// In theory we now have the hour/minute/seconde when the message was receive
 
 	wchar_t timeBuffer[50] = L"";
 	if (chat.timestamp_enable_) {
+		DWORD mIndex = chat.messageId;
+		if (chat.hashArray.find(info->hash) == chat.hashArray.end()) {
+			chat.hashArray[info->hash] = mIndex;
+			chat.messageId = (chat.messageId + 1) % 0x100;
+		} else {
+			mIndex = chat.hashArray[info->hash];
+		}
+		// Now we should have the index of the message inside the ChatBuffer & his timestamp is at same index in timestamp array
+
+		DWORD time = chat.timestamp[mIndex];
+		DWORD second = time % 60;
+		DWORD minute = (time / 60) % 60;
+		DWORD hour = time / 3600;
+		// In theory we now have the hour/minute/seconde when the message was receive
 		if (time != chat.UNKNOW_TIMESTAMP)
 			wsprintfW(timeBuffer, L"<c=#%06x>[%02u:%02u]</c>", chat.timestamp_color_, hour, minute);
 		else
 			wsprintfW(timeBuffer, L"<c=#%06x>[--:--]</c>", chat.timestamp_color_);
 	}
 
-	wchar_t mesBuffer[0x200] = L"";
-	if (!chan.name.empty()) {
-		wsprintfW(mesBuffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
-	} else {
-		wcscpy_s(mesBuffer, mes->message);
-	}
-
 	wchar_t finalMessage[0x400]; // Cost nothing to overalloc but improvement required
-	wsprintfW(finalMessage, L"%s %s", timeBuffer, mesBuffer);
-	mes->message = finalMessage;
-	mes->size1 = (mes->size2 = wcslen(mes->message));
+	if (chat.timestamp_enable_ && changed_message) {
+		wsprintfW(finalMessage, L"%s %s", timeBuffer, mesBuffer);
+		mes->message = finalMessage;
+		mes->size1 = (mes->size2 = wcslen(mes->message));
+	} else if (chat.timestamp_enable_) {
+		wsprintfW(finalMessage, L"%s %s", timeBuffer, mes->message);
+		mes->message = finalMessage;
+		mes->size1 = (mes->size2 = wcslen(mes->message));
+	} else if (changed_message) {
+		mes->message = mesBuffer;
+		mes->size1 = (mes->size2 = wcslen(mes->message));
+	}
 
 	chat.ori_chatlog(info, mes, useless);
 }

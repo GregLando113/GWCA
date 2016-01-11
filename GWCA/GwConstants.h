@@ -228,8 +228,10 @@ namespace GwConstants {
 	namespace ModelID { // this is actually agent->PlayerNumber for NPCs
 		const int SkeletonOfDhuum = 2338;
 		const int Boo = 7445;
-		const int GuildLord = 347;
-		const int GhostlyPriest = 349;
+		const int MiniatureGuildLord = 347;
+		const int MiniatureHighPriestZhang = 348;
+		const int MiniatureGhostlyPriest = 349;
+		const int MiniatureRiftWarden = 350;
 	}
 
 	namespace DialogID {

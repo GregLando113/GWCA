@@ -84,18 +84,19 @@ void GWCA::AgentMgr::Dialog(DWORD id) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x35, id);
 }
 
-GWCA::GW::PartyMemberArray GWCA::AgentMgr::GetPartyMemberArray() {
-	return *MemoryMgr::ReadPtrChain<GW::PartyMemberArray*>(MemoryMgr::GetContextPtr(), 3, 0x4C, 0x54, 0x4);
+GWCA::GW::PartyMemberArray* GWCA::AgentMgr::GetPartyMemberArray() {
+	return MemoryMgr::ReadPtrChain<GW::PartyMemberArray*>(MemoryMgr::GetContextPtr(), 3, 0x4C, 0x54, 0x4);
 }
 
 bool GWCA::AgentMgr::GetIsPartyLoaded() {
 	if (MapMgr::Instance().GetInstanceType() == GwConstants::InstanceType::Loading) return false;
 
-	GW::PartyMemberArray party = GetPartyMemberArray();
-	if (!party.valid()) return false;
+	GW::PartyMemberArray* party = GetPartyMemberArray();
+	if (party == nullptr) return false;
+	if (!party->valid()) return false;
 
-	for (DWORD i = 0; i < party.size(); i++){
-		if ((party[i].state & 1) == 0) return false;
+	for (DWORD i = 0; i < party->size(); i++){
+		if (((*party)[i].state & 1) == 0) return false;
 	}
 
 	return true;
@@ -160,10 +161,10 @@ DWORD GWCA::AgentMgr::GetAgentIdByLoginNumber(DWORD loginnumber) {
 }
 
 bool GWCA::AgentMgr::GetPartyTicked() {
-	GW::PartyMemberArray party = GetPartyMemberArray();
-	if (party.valid()) {
-		for (size_t i = 0; i < party.size(); ++i) {
-			if ((party[i].state & 2) == 0) {
+	GW::PartyMemberArray* party = GetPartyMemberArray();
+	if (party && party->valid()) {
+		for (size_t i = 0; i < party->size(); ++i) {
+			if (((*party)[i].state & 2) == 0) {
 				return false;
 			}
 		}
@@ -174,21 +175,21 @@ bool GWCA::AgentMgr::GetPartyTicked() {
 }
 
 bool GWCA::AgentMgr::GetTicked(DWORD index) {
-	GW::PartyMemberArray party = GetPartyMemberArray();
-	if (party.valid()) {
-		return (party[index].state & 2) != 0;
+	GW::PartyMemberArray* party = GetPartyMemberArray();
+	if (party && party->valid()) {
+		return ((*party)[index].state & 2) != 0;
 	} else {
 		return false;
 	}
 }
 
 bool GWCA::AgentMgr::GetTicked() {
-	GW::PartyMemberArray party = GetPartyMemberArray();
+	GW::PartyMemberArray* party = GetPartyMemberArray();
 	GW::Agent* me = GetPlayer();
-	if (party.valid() && me) {
-		for (DWORD i = 0; i < party.size();i++){
-			if (party[i].loginnumber == me->LoginNumber){
-				return (party[i].state & 2) != 0;
+	if (party && party->valid() && me) {
+		for (DWORD i = 0; i < party->size();i++){
+			if ((*party)[i].loginnumber == me->LoginNumber){
+				return ((*party)[i].state & 2) != 0;
 			}
 		}
 		return false;

@@ -31,7 +31,7 @@ namespace GWCA {
 		GW::AgentArray GetAgentArray();
 
 		// Returns the party member array, used in GetIsPartyLoaded().
-		GW::PartyMemberArray GetPartyMemberArray();
+		GW::PartyMemberArray* GetPartyMemberArray();
 
 		GW::PlayerArray GetPlayerArray();
 

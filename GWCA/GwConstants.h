@@ -225,7 +225,7 @@ namespace GwConstants {
 		const int KrytanBrandy = 35124;
 	}
 
-	namespace ModelID { // this is actually agent->PlayerNumber for NPCs
+	namespace ModelID { // this is actually agent->PlayerNumber for agents
 		const int SkeletonOfDhuum = 2338;
 		const int Boo = 7445;
 		const int MiniatureGuildLord = 347;

@@ -14,40 +14,42 @@ void GWCA::PartyMgr::RestoreHooks() {
 }
 
 bool GWCA::PartyMgr::GetIsPartyTicked() {
-	GW::PlayerPartyMemberArray& party = GetPlayerPartyArray();
-	if (!party.valid()) return false;
-	for (GW::PlayerPartyMember member : party) {
-		if (!member.ticked()) return false;
+	GW::PartyInfo* info = GetPartyInfo();
+	if (info == nullptr) return false;
+	if (!info->players.valid()) return false;
+	for (GW::PlayerPartyMember player : info->players) {
+		if (!player.ticked()) return false;
 	}
 	return true;
 }
 
 bool GWCA::PartyMgr::GetIsPartyLoaded() {
-	GW::PlayerPartyMemberArray& party = GetPlayerPartyArray();
-	if (!party.valid()) return false;
-	for (GW::PlayerPartyMember member : party) {
-		if (!member.connected()) return false;
+	GW::PartyInfo* info = GetPartyInfo();
+	if (info == nullptr) return false;
+	if (!info->players.valid()) return false;
+	for (GW::PlayerPartyMember player : info->players) {
+		if (!player.connected()) return false;
 	}
 	return true;
 }
 
 bool GWCA::PartyMgr::GetIsTicked(DWORD player_index) {
-	GW::PlayerPartyMemberArray& party = GetPlayerPartyArray();
-	if (party.valid()) {
-		return (party[player_index].ticked());
-	} else {
-		return false;
-	}
+	GW::PartyInfo* info = GetPartyInfo();
+	if (info == nullptr) return false;
+	if (!info->players.valid()) return false;
+	if (player_index >= info->players.size()) return false;
+	return (info->players[player_index].ticked());
 }
 
 bool GWCA::PartyMgr::GetIsPlayerTicked() {
-	GW::PlayerPartyMemberArray& party = GetPlayerPartyArray();
-	if (!party.valid()) return false;
+	GW::PartyInfo* info = GetPartyInfo();
+	if (info == nullptr) return false;
+	if (!info->players.valid()) return false;
 	GW::Agent* me = AgentMgr::Instance().GetPlayer();
 	if (me == nullptr) return false;
-	for (DWORD i = 0; i < party.size(); i++) {
-		if (party[i].loginnumber == me->LoginNumber) {
-			return party[i].ticked();
+	for (DWORD i = 0; i < info->players.size(); i++) {
+		if (info->players[i].loginnumber == me->LoginNumber) {
+			return info->players[i].ticked();
 		}
 	}
 	return false;

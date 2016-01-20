@@ -13,29 +13,32 @@ namespace GWCA {
 			return GameContext::instance()->party->partyinfo;
 		}
 
-		GW::PlayerPartyMemberArray& GetPlayerPartyArray() {
-			return GetPartyInfo()->players;
-		}
-		GW::HeroPartyMemberArray& GetHeroPartyArray() {
-			return GetPartyInfo()->heroes;
-		}
-		GW::HenchmanPartyMemberArray& GetHenchPartyArray() {
-			return GetPartyInfo()->henchmen;
-		}
-
 		DWORD GetPartySize() {
 			GW::PartyInfo* info = GetPartyInfo();
+			if (info == nullptr) return 0;
 			return info->players.size() + info->heroes.size() + info->henchmen.size();
 		}
 
 		DWORD GetPartyPlayerCount() {
-			return GetPlayerPartyArray().size();
+			if (GetPartyInfo()) {
+				return GetPartyInfo()->players.size();
+			} else {
+				return 0;
+			}
 		}
 		DWORD GetPartyHeroCount() {
-			return GetHeroPartyArray().size();
+			if (GetPartyInfo()) {
+				return GetPartyInfo()->heroes.size();
+			} else {
+				return 0;
+			}
 		}
 		DWORD GetPartyHenchmanCount() {
-			return GetHenchPartyArray().size();
+			if (GetPartyInfo()) {
+				return GetPartyInfo()->henchmen.size();
+			} else {
+				return 0;
+			}
 		}
 
 		bool GetIsPartyInHardMode(){

@@ -30,35 +30,7 @@ namespace GWCA {
 		// Returns Agentstruct Array of agents in compass range, full structs.
 		GW::AgentArray GetAgentArray();
 
-		// Returns the party member array, used in GetIsPartyLoaded().
-		GW::PartyMemberArray* GetPartyMemberArray();
-
 		GW::PlayerArray GetPlayerArray();
-
-		// Returns whether your party is loaded currently.
-		bool GetIsPartyLoaded();
-
-		// Checks if the whole party is ticked
-		bool GetPartyTicked();
-
-		// Get party member ready status
-		bool GetTicked(DWORD index);
-
-		// Get player ready status
-		bool GetTicked();
-
-		// Set party ready status.
-		void Tick(bool flag);
-
-		// Ticks
-		inline void Tick() { Tick(true); }
-
-		// Returns a vector of agents in the party. 
-		// YOU SHALL DELETE THIS VECTOR AFTER YOU'RE DONE.
-		std::vector<GW::Agent*>* GetParty();
-
-		// Returns the size of the party
-		size_t GetPartySize();
 
 		// Computes distance between the two agents in game units
 		DWORD GetDistance(GW::Agent* a, GW::Agent* b);
@@ -111,8 +83,6 @@ namespace GWCA {
 		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID,DWORD smth);
 
 		typedef void(__fastcall *Move_t)(GW::GamePos* Pos);
-		
-		typedef DWORD(__stdcall *Tick_t)(DWORD unk1);
 
 		AgentMgr();
 
@@ -120,17 +90,12 @@ namespace GWCA {
 
 		ChangeTarget_t change_target_;
 		Move_t move_;
-		Tick_t ori_tick_;
 
 		Hook hk_dialog_log_;
-		Hook hk_tick_;
 
 		static BYTE* dialog_log_ret_;
 		static DWORD last_dialog_id_;
 
 		static void detourDialogLog();
-
-		// Parameter is always 1 or 2 creating "Ready" or "Not ready"
-		static DWORD __stdcall DetourTick(DWORD unk1);
 	};
 }

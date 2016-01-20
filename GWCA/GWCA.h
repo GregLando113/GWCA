@@ -94,6 +94,7 @@ namespace GWCA {
 	class CtoSMgr;
 	class StoCMgr;
 	class AgentMgr;
+	class PartyMgr;
 	class ItemMgr;
 	class SkillbarMgr;
 	class EffectMgr;
@@ -112,6 +113,7 @@ namespace GWCA {
 	CtoSMgr& CtoS();
 	StoCMgr& StoC();
 	AgentMgr& Agents();
+	PartyMgr& Party();
 	ItemMgr& Items();
 	SkillbarMgr& Skillbar();
 	EffectMgr& Effects();

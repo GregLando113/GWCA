@@ -4,6 +4,7 @@
 #include "GameThreadMgr.h"
 #include "CtoSMgr.h"
 #include "AgentMgr.h"
+#include "PartyMgr.h"
 #include "ItemMgr.h"
 #ifdef GWAPI_USEDIRECTX
 #include "DirectXMgr.h"
@@ -50,6 +51,7 @@ GWCA::GameThreadMgr&	GWCA::Gamethread()	{ return GameThreadMgr::Instance(); }
 GWCA::CtoSMgr&			GWCA::CtoS()		{ return CtoSMgr::Instance(); }
 GWCA::StoCMgr&			GWCA::StoC()		{ return StoCMgr::Instance(); }
 GWCA::AgentMgr&			GWCA::Agents()		{ return AgentMgr::Instance(); }
+GWCA::PartyMgr&			GWCA::Party()		{ return PartyMgr::Instance(); }
 GWCA::ItemMgr&			GWCA::Items()		{ return ItemMgr::Instance(); }
 GWCA::SkillbarMgr&		GWCA::Skillbar()	{ return SkillbarMgr::Instance(); }
 GWCA::EffectMgr&		GWCA::Effects()		{ return EffectMgr::Instance(); }

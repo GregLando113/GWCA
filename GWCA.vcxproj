@@ -61,6 +61,7 @@
     <ClCompile Include="GWCA\MemoryMgr.cpp" />
     <ClCompile Include="GWCA\MemoryPatcher.cpp" />
     <ClCompile Include="GWCA\MerchantMgr.cpp" />
+    <ClCompile Include="GWCA\PartyMgr.cpp" />
     <ClCompile Include="GWCA\PatternScanner.cpp" />
     <ClCompile Include="GWCA\SkillbarMgr.cpp" />
     <ClCompile Include="GWCA\StoCMgr.cpp" />

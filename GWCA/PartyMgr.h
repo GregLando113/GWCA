@@ -2,6 +2,7 @@
 
 #include "GWCAManager.h"
 #include "GameContext.h"
+#include "Hooker.h"
 
 namespace GWCA {
 	class PartyMgr : public GWCAManager<PartyMgr> {
@@ -12,7 +13,7 @@ namespace GWCA {
 			return GameContext::instance()->party->partyinfo;
 		}
 
-		GW::PartyMemberArray& GetPlayerPartyArray() {
+		GW::PlayerPartyMemberArray& GetPlayerPartyArray() {
 			return GetPartyInfo()->players;
 		}
 		GW::HeroPartyMemberArray& GetHeroPartyArray() {
@@ -22,18 +23,18 @@ namespace GWCA {
 			return GetPartyInfo()->henchmen;
 		}
 
-		DWORD GetPartyMemberCount() {
+		DWORD GetPartySize() {
 			GW::PartyInfo* info = GetPartyInfo();
 			return info->players.size() + info->heroes.size() + info->henchmen.size();
 		}
 
-		DWORD GetPlayerCountInParty() {
+		DWORD GetPartyPlayerCount() {
 			return GetPlayerPartyArray().size();
 		}
-		DWORD GetHeroCountInParty() {
+		DWORD GetPartyHeroCount() {
 			return GetHeroPartyArray().size();
 		}
-		DWORD GetHenchmanCountInParty() {
+		DWORD GetPartyHenchmanCount() {
 			return GetHenchPartyArray().size();
 		}
 
@@ -44,17 +45,36 @@ namespace GWCA {
 			return GameContext::instance()->party->partystate.IsDefeated();
 		}
 
-		bool GetPartyIsTicked(){
-			GW::PartyMemberArray& party = GetPlayerPartyArray();
-			bool ticked = true;
-			for (GW::PartyMember member : party)
-			{
-				if (!member.ticked()) ticked = false;
-			}
-			return ticked;
-		}
+		// Set party ready status.
+		void Tick(bool flag);
+
+		// Ticks
+		inline void Tick() { Tick(true); }
+
+		// check if the whole party is ticked
+		bool GetIsPartyTicked();
+
+		// check if selected party member is ticked
+		bool GetIsTicked(DWORD player_index);
+
+		// check if the player is ticked
+		bool GetIsPlayerTicked();
+
+		// check if the whole party is loaded
+		bool GetIsPartyLoaded();
 
 	private:
-		PartyMgr() : GWCAManager() {}
+		PartyMgr();
+
+		void RestoreHooks() override;
+
+		typedef DWORD(__stdcall *Tick_t)(DWORD unk1);
+
+		Tick_t ori_tick_;
+
+		Hook hk_tick_;
+
+		// Parameter is always 1 or 2 creating "Ready" or "Not ready"
+		static DWORD __stdcall DetourTick(DWORD unk1);
 	};
 }

@@ -7,37 +7,18 @@
 BYTE* GWCA::AgentMgr::dialog_log_ret_ = NULL;
 DWORD GWCA::AgentMgr::last_dialog_id_ = 0;
 
+GWCA::AgentMgr::AgentMgr() : GWCAManager() {
+	change_target_ = (ChangeTarget_t)MemoryMgr::ChangeTargetFunction;
+	move_ = (Move_t)MemoryMgr::MoveFunction;
+	dialog_log_ret_ = (BYTE*)hk_dialog_log_.Detour(MemoryMgr::DialogFunc, (BYTE*)AgentMgr::detourDialogLog, 9);
+}
+
+void GWCA::AgentMgr::RestoreHooks() {
+	hk_dialog_log_.Retour();
+}
 
 GWCA::GW::AgentArray GWCA::AgentMgr::GetAgentArray() {
 	return *(GW::AgentArray*)MemoryMgr::agArrayPtr;
-}
-
-std::vector<GWCA::GW::Agent*> * GWCA::AgentMgr::GetParty() {
-	std::vector<GW::Agent*>* party = new std::vector<GW::Agent*>(GetPartySize());
-	GW::AgentArray agents = GetAgentArray();
-
-	for (size_t i = 0; i < agents.size(); ++i) {
-		if (agents[i]->Allegiance == 1
-			&& (agents[i]->TypeMap & 0x20000)) {
-
-			party->push_back(agents[i]);
-		}
-	}
-
-	return party;
-}
-
-size_t GWCA::AgentMgr::GetPartySize() {
-	size_t ret = 0;
-	size_t* retptr = NULL;
-	for (BYTE i = 0; i < 3; ++i) {
-		retptr = MemoryMgr::ReadPtrChain<size_t*>(MemoryMgr::GetContextPtr(), 3, 0x4C, 0x54, 0x0C + 0x10 * i);
-		if (retptr == NULL)
-			return NULL;
-		else
-			ret += *retptr;
-	}
-	return ret;
 }
 
 DWORD GWCA::AgentMgr::GetDistance(GW::Agent* a, GW::Agent* b) {
@@ -46,21 +27,6 @@ DWORD GWCA::AgentMgr::GetDistance(GW::Agent* a, GW::Agent* b) {
 
 DWORD GWCA::AgentMgr::GetSqrDistance(GW::Agent* a, GW::Agent* b) {
 	return (DWORD)(a->X - b->X) * (DWORD)(a->X - b->X) + (DWORD)(a->Y - b->Y) * (DWORD)(a->Y - b->Y);
-}
-
-GWCA::AgentMgr::AgentMgr() : GWCAManager() {
-	change_target_ = (ChangeTarget_t)MemoryMgr::ChangeTargetFunction;
-	move_ = (Move_t)MemoryMgr::MoveFunction;
-	dialog_log_ret_ = (BYTE*)hk_dialog_log_.Detour(MemoryMgr::DialogFunc, (BYTE*)AgentMgr::detourDialogLog, 9);
-
-	BYTE* addr_tick = (BYTE*)0x0054E6B0;
-	DWORD tick_length = GWCA::Hook::CalculateDetourLength(addr_tick);
-	ori_tick_ = (Tick_t)hk_tick_.Detour(addr_tick, (BYTE*)DetourTick, tick_length);
-}
-
-void GWCA::AgentMgr::RestoreHooks() {
-	hk_dialog_log_.Retour();
-	hk_tick_.Retour();
 }
 
 void GWCA::AgentMgr::ChangeTarget(GW::Agent* Agent) {
@@ -87,24 +53,6 @@ void GWCA::AgentMgr::Move(const GW::GamePos& pos) {
 
 void GWCA::AgentMgr::Dialog(DWORD id) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x35, id);
-}
-
-GWCA::GW::PartyMemberArray* GWCA::AgentMgr::GetPartyMemberArray() {
-	return MemoryMgr::ReadPtrChain<GW::PartyMemberArray*>(MemoryMgr::GetContextPtr(), 3, 0x4C, 0x54, 0x4);
-}
-
-bool GWCA::AgentMgr::GetIsPartyLoaded() {
-	if (MapMgr::Instance().GetInstanceType() == GwConstants::InstanceType::Loading) return false;
-
-	GW::PartyMemberArray* party = GetPartyMemberArray();
-	if (party == nullptr) return false;
-	if (!party->valid()) return false;
-
-	for (DWORD i = 0; i < party->size(); i++){
-		if (((*party)[i].state & 1) == 0) return false;
-	}
-
-	return true;
 }
 
 GWCA::GW::MapAgentArray GWCA::AgentMgr::GetMapAgentArray() {
@@ -152,16 +100,6 @@ void __declspec(naked) GWCA::AgentMgr::detourDialogLog() {
 	_asm JMP AgentMgr::dialog_log_ret_
 }
 
-DWORD __stdcall GWCA::AgentMgr::DetourTick(DWORD unk1) {
-	// this func is always called twice so use this hack to tick only once
-	static bool toggle = true;
-	toggle = !toggle;
-	if (toggle) return 4;
-
-	AgentMgr::Instance().Tick(!AgentMgr::Instance().GetTicked());
-	return 4;
-}
-
 DWORD GWCA::AgentMgr::GetAmountOfPlayersInInstance() {
 	// -1 because the 1st array element is nil
 	return MemoryMgr::ReadPtrChain<DWORD>(MemoryMgr::GetContextPtr(), 3, 0x2C, 0x814, 0) - 1;
@@ -173,48 +111,6 @@ wchar_t* GWCA::AgentMgr::GetPlayerNameByLoginNumber(DWORD loginnumber) {
 
 DWORD GWCA::AgentMgr::GetAgentIdByLoginNumber(DWORD loginnumber) {
 	return MemoryMgr::ReadPtrChain<DWORD>(MemoryMgr::GetContextPtr(), 4, 0x2C, 0x80C, 0x4C * loginnumber, 0);
-}
-
-bool GWCA::AgentMgr::GetPartyTicked() {
-	GW::PartyMemberArray* party = GetPartyMemberArray();
-	if (party && party->valid()) {
-		for (size_t i = 0; i < party->size(); ++i) {
-			if (((*party)[i].state & 2) == 0) {
-				return false;
-			}
-		}
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool GWCA::AgentMgr::GetTicked(DWORD index) {
-	GW::PartyMemberArray* party = GetPartyMemberArray();
-	if (party && party->valid()) {
-		return ((*party)[index].state & 2) != 0;
-	} else {
-		return false;
-	}
-}
-
-bool GWCA::AgentMgr::GetTicked() {
-	GW::PartyMemberArray* party = GetPartyMemberArray();
-	GW::Agent* me = GetPlayer();
-	if (party && party->valid() && me) {
-		for (DWORD i = 0; i < party->size();i++){
-			if ((*party)[i].loginnumber == me->LoginNumber){
-				return ((*party)[i].state & 2) != 0;
-			}
-		}
-		return false;
-	} else {
-		return false;
-	}
-}
-
-void GWCA::AgentMgr::Tick(bool flag) {
-	CtoSMgr::Instance().SendPacket(0x8, 0xA9, flag);
 }
 
 const char* GWCA::AgentMgr::GetProfessionAcronym(GwConstants::Profession profession) {

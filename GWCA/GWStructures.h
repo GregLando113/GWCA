@@ -207,7 +207,7 @@ namespace GWCA {
 			float Y;
 		};
 
-		struct PartyMember{
+		struct PlayerPartyMember {
 			PlayerID loginnumber;
 			DWORD unk1;
 			DWORD state;
@@ -232,7 +232,7 @@ namespace GWCA {
 			DWORD level;
 		};
 
-		using PartyMemberArray = gw_array<PartyMember>;
+		using PlayerPartyMemberArray = gw_array<PlayerPartyMember>;
 		using HeroPartyMemberArray = gw_array<HeroPartyMember>;
 		using HenchmanPartyMemberArray = gw_array<HenchmanPartyMember>;
 
@@ -240,7 +240,7 @@ namespace GWCA {
 		{
 		public:
 			char pad_0x0000[0x4]; //0x0000
-			gw_array<PartyMember> players; //0x0004 
+			gw_array<PlayerPartyMember> players; //0x0004 
 			gw_array<HenchmanPartyMember> henchmen; //0x0014 
 			gw_array<HeroPartyMember> heroes; //0x0024 
 			gw_array<void*> unk1_arr; //0x0034 

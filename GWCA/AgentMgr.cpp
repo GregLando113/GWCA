@@ -52,10 +52,15 @@ GWCA::AgentMgr::AgentMgr() : GWCAManager() {
 	change_target_ = (ChangeTarget_t)MemoryMgr::ChangeTargetFunction;
 	move_ = (Move_t)MemoryMgr::MoveFunction;
 	dialog_log_ret_ = (BYTE*)hk_dialog_log_.Detour(MemoryMgr::DialogFunc, (BYTE*)AgentMgr::detourDialogLog, 9);
+
+	BYTE* addr_tick = (BYTE*)0x0054E6B0;
+	DWORD tick_length = GWCA::Hook::CalculateDetourLength(addr_tick);
+	ori_tick_ = (Tick_t)hk_tick_.Detour(addr_tick, (BYTE*)DetourTick, tick_length);
 }
 
 void GWCA::AgentMgr::RestoreHooks() {
 	hk_dialog_log_.Retour();
+	hk_tick_.Retour();
 }
 
 void GWCA::AgentMgr::ChangeTarget(GW::Agent* Agent) {
@@ -145,6 +150,16 @@ void GWCA::AgentMgr::CallTarget(GW::Agent* Agent) {
 void __declspec(naked) GWCA::AgentMgr::detourDialogLog() {
 	_asm MOV AgentMgr::last_dialog_id_, ESI
 	_asm JMP AgentMgr::dialog_log_ret_
+}
+
+DWORD __stdcall GWCA::AgentMgr::DetourTick(DWORD unk1) {
+	// this func is always called twice so use this hack to tick only once
+	static bool toggle = true;
+	toggle = !toggle;
+	if (toggle) return 4;
+
+	AgentMgr::Instance().Tick(!AgentMgr::Instance().GetTicked());
+	return 4;
 }
 
 DWORD GWCA::AgentMgr::GetAmountOfPlayersInInstance() {

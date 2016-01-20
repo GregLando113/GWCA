@@ -111,6 +111,8 @@ namespace GWCA {
 		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID,DWORD smth);
 
 		typedef void(__fastcall *Move_t)(GW::GamePos* Pos);
+		
+		typedef DWORD(__stdcall *Tick_t)(DWORD unk1);
 
 		AgentMgr();
 
@@ -118,10 +120,17 @@ namespace GWCA {
 
 		ChangeTarget_t change_target_;
 		Move_t move_;
+		Tick_t ori_tick_;
+
 		Hook hk_dialog_log_;
+		Hook hk_tick_;
 
 		static BYTE* dialog_log_ret_;
 		static DWORD last_dialog_id_;
+
 		static void detourDialogLog();
+
+		// Parameter is always 1 or 2 creating "Ready" or "Not ready"
+		static DWORD __stdcall DetourTick(DWORD unk1);
 	};
 }

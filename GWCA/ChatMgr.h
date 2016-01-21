@@ -85,12 +85,16 @@ namespace GWCA {
 		}
 		inline void DeleteCommand(std::wstring command) { chatcmd_callbacks.erase(command); }
 
+		inline void SetOpenLinks(bool b) { open_links_ = b; }
+
 	protected:
 		ChatMgr();
 
 	private:
 		std::map< std::wstring, Color_t > chatlog_channel;
 		std::map< std::wstring, CallBack > chatcmd_callbacks;
+
+		bool open_links_;
 
 		/* Hook stuff */
 		typedef void(__fastcall *ChatLog_t)(MessageInfo*, Message*, DWORD);

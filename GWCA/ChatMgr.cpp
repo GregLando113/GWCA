@@ -11,54 +11,24 @@
 static wchar_t* wcssep(wchar_t* str, wchar_t sep);
 
 GWCA::ChatMgr::ChatMgr() {
-	// allocate memory to store timestamps and edited messages
-	timestamp = new DWORD[MESSAGE_COUNT];
-	msg_buff_index = 0;
-	msg_buff = new wchar_t*[MESSAGE_COUNT];
-	for (int i = 0; i < MESSAGE_COUNT; ++i) {
-		timestamp[i] = UNKNOW_TIMESTAMP;
-		msg_buff[i] = new wchar_t[MESSAGE_SIZE];
-	}
-
 	PatternScanner scanner("Gw.exe");
 	BYTE* chatlog_addr = (BYTE*)scanner.FindPattern("\x53\x56\x8B\xF1\x57\x8B\x56\x14\x8B\x4E\x0C\xE8", "xxxxxxxxxxxx", -6);
 	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
-	BYTE* writebuf_addr = (BYTE*)scanner.FindPattern("\x57\x8B\xFA\x85\xC0\x8B\xF1\x74", "xxxxxxxx", -6);
-	BYTE* reloadchat_addr = (BYTE*)scanner.FindPattern("\x83\xEC\x08\x56\x8B\xF1\x57\x6A\xFF", "xxxxxxxxx", -3);
 	BYTE* opentemplate_addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43","xxxxxxxx",0);
-
-	ChatBufferLoca = (ChatBuffer**)(*(DWORD*)(writebuf_addr + 1));
 
 	DWORD chatlog_length = Hook::CalculateDetourLength(chatlog_addr);
 	DWORD chatcmd_length = Hook::CalculateDetourLength(chatcmd_addr);
-	DWORD writebuf_length = Hook::CalculateDetourLength(writebuf_addr);
-	DWORD reloadchat_length = Hook::CalculateDetourLength(reloadchat_addr);
 	DWORD opentemplate_length = Hook::CalculateDetourLength(opentemplate_addr);
 
 	ori_chatlog = (ChatLog_t)hk_chatlog_.Detour(chatlog_addr, (BYTE*)det_chatlog, chatlog_length);
 	ori_chatcmd = (ChatCmd_t)hk_chatcmd_.Detour(chatcmd_addr, (BYTE*)det_chatcmd, chatcmd_length);
-	ori_writebuf = (WriteBuf_t)hk_writebuf_.Detour(writebuf_addr, (BYTE*)det_writebuf, writebuf_length);
-	ori_reloadchat = (ReloadChat_t)hk_reloadchat_.Detour(reloadchat_addr, (BYTE*)det_realoadchat, reloadchat_length);
 	ori_opentemplate = (OpenTemplate_t)hk_opentemplate_.Detour(opentemplate_addr, (BYTE*)det_opentemplate, opentemplate_length);
-
-	messageId = GetChatBuffer()->current;
-	ToggleTimeStamp(false);
-	SetTimestampColor(0x00ff00); // green
 }
 
 void GWCA::ChatMgr::RestoreHooks() {
 	hk_chatlog_.Retour();
 	hk_chatcmd_.Retour();
-	hk_writebuf_.Retour();
-	hk_reloadchat_.Retour();
 	hk_opentemplate_.Retour();
-
-	delete[] timestamp;
-	for (int i = 0; i < MESSAGE_COUNT; ++i) {
-		delete[] msg_buff[i];
-	}
-	delete[] msg_buff;
-	
 }
 
 void GWCA::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel) {
@@ -93,67 +63,26 @@ void GWCA::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 void __fastcall GWCA::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWORD useless /* same as edx */) {
 	ChatMgr& chat = ChatMgr::Instance();
 
-	bool changed_message = false;
-	wchar_t mesBuffer[0x200] = L"";
+
 	std::wstring message(mes->message);
 	const std::wstring::size_type start = message.find(L"<a=1>");
-	if (start != std::string::npos) {
+	if (start != std::wstring::npos) {
 		const std::wstring::size_type end = message.find(L"</a>", start + 5);
-		if (end != std::string::npos) {
+		if (end != std::wstring::npos) {
 			std::wstring sender = message.substr(start + 5, end - start - 5);
-			const Channel chan = chat.chatlog_channel[sender];
 
-			const std::wstring::size_type quote = message.find(L"<quote>");
-			if (quote != std::string::npos) {
-				message = message.substr(quote);
-			}
+			auto it = chat.chatlog_channel.find(sender);
+			if (it != chat.chatlog_channel.end()) {
+				const Color_t color = it->second;
+				const std::wstring::size_type quote = message.find(L"<quote>");
+				if (quote != std::wstring::npos) {
+					message = message.substr(quote + 7);
 
-			if (!chan.name.empty()) {
-				wsprintfW(mesBuffer, L"<c=#%06x>%s</c>: <c=#%06x>%s", chan.col_sender, chan.name.c_str(), chan.col_message, message.c_str());
-				changed_message = true;
+					wsprintf(mes->message, L"<c=#%06x>%ls</c>: %ls  ", 
+						color, sender.c_str(), message.c_str());
+				}
 			}
 		}
-	}
-	
-	/* END MESSAGE PARSING, We have seperatly the sender, the message & the special channel data if there is one */
-	wchar_t timeBuffer[50] = L"";
-	if (chat.timestamp_enable_) {
-		DWORD mIndex = chat.messageId;
-		if (chat.hashArray.find(info->hash) == chat.hashArray.end()) {
-			chat.hashArray[info->hash] = mIndex;
-			chat.messageId = (chat.messageId + 1) % 0x100;
-		} else {
-			mIndex = chat.hashArray[info->hash];
-		}
-		// Now we should have the index of the message inside the ChatBuffer & his timestamp is at same index in timestamp array
-
-		DWORD time = chat.timestamp[mIndex];
-		DWORD second = time % 60;
-		DWORD minute = (time / 60) % 60;
-		DWORD hour = time / 3600;
-		// In theory we now have the hour/minute/seconde when the message was receive
-		if (time != chat.UNKNOW_TIMESTAMP)
-			wsprintfW(timeBuffer, L"<c=#%06x>[%02u:%02u]</c>", chat.timestamp_color_, hour, minute);
-		else
-			wsprintfW(timeBuffer, L"<c=#%06x>[--:--]</c>", chat.timestamp_color_);
-	}
-
-	wchar_t* final_message = chat.msg_buff[chat.msg_buff_index];
-	if (chat.timestamp_enable_ && changed_message) {
-		wsprintfW(final_message, L"%s %s", timeBuffer, mesBuffer);
-		mes->message = final_message;
-		mes->size1 = (mes->size2 = wcslen(mes->message));
-		chat.msg_buff_index = (chat.msg_buff_index + 1) % MESSAGE_COUNT;
-	} else if (chat.timestamp_enable_) {
-		wsprintfW(final_message, L"%s %s", timeBuffer, mes->message);
-		mes->message = final_message;
-		mes->size1 = (mes->size2 = wcslen(mes->message));
-		chat.msg_buff_index = (chat.msg_buff_index + 1) % MESSAGE_COUNT;
-	} else if (changed_message) {
-		wsprintfW(final_message, L"%s", mesBuffer);
-		mes->message = final_message;
-		mes->size1 = (mes->size2 = wcslen(mes->message));
-		chat.msg_buff_index = (chat.msg_buff_index + 1) % MESSAGE_COUNT;
 	}
 
 	chat.ori_chatlog(info, mes, useless);
@@ -185,32 +114,6 @@ void __fastcall GWCA::ChatMgr::det_chatcmd(wchar_t *_message) {
 		}
 	}
 	chat.ori_chatcmd(_message);
-}
-
-void __fastcall GWCA::ChatMgr::det_writebuf(wchar_t *HMessage, DWORD channel) {
-	ChatMgr& chat = ChatMgr::Instance();
-	ChatBuffer *chatBuf = chat.GetChatBuffer();
-
-	// Save timestamp of all messages that are actually save (they are the only one to get reprint on a ChatReload)
-	SYSTEMTIME time;
-	GetLocalTime(&time);
-	chat.timestamp[chatBuf->current] = ((time.wHour * 60) + time.wMinute) * 60 + time.wSecond;
-
-	chat.ori_writebuf(HMessage, channel);
-}
-
-void __fastcall GWCA::ChatMgr::det_realoadchat(DWORD ecx, DWORD edx, DWORD unused) {
-	ChatMgr& chat = ChatMgr::Instance();
-	ChatBuffer *chatBuf = chat.GetChatBuffer();
-
-	// On a reload of the chat we create internal counter for all reloaded message
-	chat.messageId = (chatBuf->current + 1) % 0x100;
-	if (!chatBuf->HMessage[chat.messageId])
-		chat.messageId = 0;
-	
-	chat.hashArray.clear();
-
-	chat.ori_reloadchat(ecx, edx, unused);
 }
 
 void __fastcall GWCA::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {

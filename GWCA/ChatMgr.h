@@ -107,6 +107,9 @@ namespace GWCA {
 		ChatMgr();
 
 	private:
+		static const DWORD MESSAGE_COUNT = 0x100;
+		static const DWORD MESSAGE_SIZE = 0x120;
+
 		ChatBuffer **ChatBufferLoca;
 		DWORD messageId;
 		// The hash are unique to the message & unique to the "chat reload"
@@ -118,7 +121,9 @@ namespace GWCA {
 		std::map< std::wstring, Channel > chatlog_channel;
 		std::map< std::wstring, CallBack > chatcmd_callbacks;
 
-		DWORD timestamp[0x100];
+		DWORD* timestamp;
+		DWORD msg_buff_index;
+		wchar_t** msg_buff;
 
 		/* Hook stuff */
 		typedef void(__fastcall *ChatLog_t)(MessageInfo*, Message*, DWORD);

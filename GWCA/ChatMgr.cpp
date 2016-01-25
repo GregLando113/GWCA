@@ -118,6 +118,7 @@ void __fastcall GWCA::ChatMgr::det_chatcmd(wchar_t *_message) {
 
 void __fastcall GWCA::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
 	if (ChatMgr::Instance().open_links_
+		&& info->template_name != nullptr
 		&& (!memcmp(info->template_name, L"http://", 7 * sizeof(wchar_t))
 		|| !memcmp(info->template_name, L"https://", 8 * sizeof(wchar_t)))) {
 		ShellExecute(NULL, L"open", info->template_name, NULL, NULL, SW_SHOWNORMAL);

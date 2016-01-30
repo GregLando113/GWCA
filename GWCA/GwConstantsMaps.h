@@ -1,6 +1,26 @@
 #pragma once
 
 namespace GwConstants {
+
+	enum class MapRegion {
+		International = -2,
+		American = 0,
+		Korean,
+		European,
+		Chinese,
+		Japanese
+	};
+
+	enum class MapLanguage {
+		English,
+		French = 2,
+		German,
+		Italian,
+		Spanish,
+		Polish = 9,
+		Russian
+	};
+
 	enum class MapID {
 		None = 0,
 		Gladiators_Arena,

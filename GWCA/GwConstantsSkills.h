@@ -2990,6 +2990,37 @@ namespace GwConstants {
 		Gift_of_Battle,
 		Rolling_Start,
 		Disguised_when_using_Everlasting_Legionnaire_Tonic,
+	};
 
+	enum class SkillType {
+		Bounty = 1,
+		Scroll = 2,
+		Stance = 3,
+		Hex = 4,
+		Spell = 5,
+		Enchantment = 6,
+		Signet = 7,
+		Condition = 8,
+		Well = 9,
+		Skill = 10,
+		Ward = 11,
+		Glyph = 12,
+		Title = 13,
+		Attack = 14,
+		Shout = 15,
+		Skill2 = 16,
+		Passive = 17,
+		Environmental = 18,
+		Preparation = 19,
+		PetAttack = 20,
+		Trap = 21,
+		Ritual = 22,
+		EnvironmentalTrap = 23,
+		ItemSpell = 24,
+		WeaponSpell = 25,
+		Form = 26,
+		Chant = 27,
+		EchoRefrain = 28,
+		Disguise = 29
 	};
 }

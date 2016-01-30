@@ -21,12 +21,12 @@ GWCA::GW::AgentArray GWCA::AgentMgr::GetAgentArray() {
 	return *(GW::AgentArray*)MemoryMgr::agArrayPtr;
 }
 
-DWORD GWCA::AgentMgr::GetDistance(GW::Agent* a, GW::Agent* b) {
-	return (DWORD)sqrtl((DWORD)(a->X - b->X) * (DWORD)(a->X - b->X) + (DWORD)(a->Y - b->Y) * (DWORD)(a->Y - b->Y));
+DWORD GWCA::AgentMgr::GetDistance(const GW::GamePos& a, const GW::GamePos& b) {
+	return (DWORD)sqrtf((DWORD)(a.x - b.x) * (DWORD)(a.x - b.x) + (DWORD)(a.y - b.y) * (DWORD)(a.y - b.y));
 }
 
-DWORD GWCA::AgentMgr::GetSqrDistance(GW::Agent* a, GW::Agent* b) {
-	return (DWORD)(a->X - b->X) * (DWORD)(a->X - b->X) + (DWORD)(a->Y - b->Y) * (DWORD)(a->Y - b->Y);
+DWORD GWCA::AgentMgr::GetSqrDistance(const GW::GamePos& a,const GW::GamePos& b) {
+	return (DWORD)(a.x- b.x) * (DWORD)(a.x - b.x) + (DWORD)(a.y - b.y) * (DWORD)(a.y - b.y);
 }
 
 void GWCA::AgentMgr::ChangeTarget(GW::Agent* Agent) {

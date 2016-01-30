@@ -102,7 +102,7 @@
     <IncludePath>$(SolutionDir);Dependencies\;Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>GWCA_r</TargetName>
+    <TargetName>GWCA</TargetName>
     <IncludePath>$(SolutionDir);Dependencies\;Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)</OutDir>
   </PropertyGroup>

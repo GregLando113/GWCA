@@ -20,8 +20,8 @@ namespace GWCA {
 			GetPlayerArray()[id].Name;
 		}
 
-		void SetPlayerName(PlayerID id,wchar_t* replacename){
-			wcscpy(GetPlayerArray()[id].Name1->Name, replacename);
+		void SetPlayerName(PlayerID id, const wchar_t* replacename){
+			wcscpy_s(GetPlayerArray()[id].Name1->Name, replacename);
 		}
 
 	private:

@@ -184,11 +184,15 @@ namespace GwConstants {
 		const int Eggs = 22752;
 		const int Kabobs = 17060;
 		const int Warsupplies = 35121;
+		const int LunarRat = 29425;
+		const int LunarOx = 29426;
+		const int LunarTiger = 29427;
 		const int LunarRabbit = 29428;
 		const int LunarDragon = 29429;
 		const int LunarSnake = 29430;
 		const int LunarHorse = 29431;
 		const int LunarSheep = 29432;
+		const int LunarMonkey = 29433;
 		const int ConsEssence = 24859;
 		const int ConsArmor = 24860;
 		const int ConsGrail = 24861;

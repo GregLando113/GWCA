@@ -140,11 +140,11 @@ namespace GwConstants {
 	
 
 	namespace Range {
-		const int Adjacent = 156;
-		const int Nearby = 240;
-		const int Area = 312;
-		const int Earshot = 1000;
-		const int Spellcast = 1085;
+		const int Adjacent = 166;
+		const int Nearby = 238;
+		const int Area = 322;
+		const int Earshot = 1010;	
+		const int Spellcast = 1246;
 		const int Spirit = 2500;
 		const int Compass = 5000;
 	};
@@ -236,6 +236,43 @@ namespace GwConstants {
 		const int MiniatureHighPriestZhang = 348;
 		const int MiniatureGhostlyPriest = 349;
 		const int MiniatureRiftWarden = 350;
+
+		// ==== DoA ====
+		// stygian lords
+		const int StygianLordNecro = 5141;
+		const int StygianLordMesmer = 5142;
+		const int StygianLordEle = 5143;
+		const int StygianLordMonk = 5144;
+		const int StygianLordDerv = 5159;
+		const int StygianLordRanger = 5160;
+
+		// margonites
+		const int MargoniteAnurKaya = 5162;
+		const int MargoniteAnurDabi = 5163;
+		const int MargoniteAnurSu = 5164;
+		const int MargoniteAnurKi = 5165;
+		const int MargoniteAnurVi = 5166;
+		const int MargoniteAnurTuk = 5167;
+		const int MargoniteAnurRuk = 5168;
+		const int MargoniteAnurRand = 5169;
+		const int MargoniteAnurMank = 5170;
+
+		// stygians
+		const int StygianHunger = 5171;
+		const int StygianBrute = 5172;
+		const int StygianGolem = 5173;
+		const int StygianHorror = 5174;
+		const int StygianFiend = 5175;
+
+		// tormentors
+		const int MindTormentor = 5176;
+		const int SoulTormentor = 5177;
+		const int WaterTormentor = 5178;
+		const int HeartTormentor = 5179;
+		const int FleshTormentor = 5180;
+		const int SpiritTormentor = 5181;
+		const int EarthTormentor = 5182;
+		const int SanityTormentor = 5183;
 	}
 
 	namespace DialogID {

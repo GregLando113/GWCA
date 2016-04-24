@@ -444,16 +444,16 @@ namespace GWCA {
 		};
 		const DWORD Packet<P060>::STATIC_HEADER = 60;
 
+		// quest add compass
 		struct P061 : Packet<P061> {
-			// DWORD
-			// Vector2f
-			// WORD
-			// WORD
-			// DWORD
-			// wchar_t array[8] // prefixType="int16"
-			// wchar_t array[8] // prefixType="int16"
-			// wchar_t array[8] // prefixType="int16"
-			// WORD
+			DWORD quest_id; // ?
+			Vector2f coordinates;
+			DWORD unk1;
+			DWORD unk2;
+			wchar_t array1[8]; // prefixType="int16" // category?
+			wchar_t array2[8]; // prefixType="int16" // name?
+			wchar_t array3[8]; // prefixType="int16" // givenby?
+			DWORD map_id; // ?
 		};
 		const DWORD Packet<P061>::STATIC_HEADER = 61;
 
@@ -1772,10 +1772,11 @@ namespace GWCA {
 		};
 		const DWORD Packet<P259>::STATIC_HEADER = 259;
 
+		// manipulate map object
 		struct P260 : Packet<P260> {
-			// WORD
-			// BYTE
-			// DWORD
+			DWORD object_id;
+			DWORD unk1;
+			DWORD unk2;
 		};
 		const DWORD Packet<P260>::STATIC_HEADER = 260;
 
@@ -1792,9 +1793,9 @@ namespace GWCA {
 		const DWORD Packet<P262>::STATIC_HEADER = 262;
 
 		struct P263 : Packet<P263> {
-			// WORD
-			// DWORD
-			// DWORD
+			DWORD object_id;
+			DWORD unk1;
+			DWORD unk2;
 		};
 		const DWORD Packet<P263>::STATIC_HEADER = 263;
 

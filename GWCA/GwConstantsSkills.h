@@ -1425,7 +1425,7 @@ namespace GwConstants {
 		Scepter_of_Ether,
 		Summoning_of_the_Scepter,
 		Rise_From_Your_Grave,
-		Sugar_Rush_long,
+		Sugar_Rush_long, // 5 minutes
 		Corsair_disguise,
 		REMOVE_Queen_Wail,
 		REMOVE_Queen_Armor,
@@ -1666,7 +1666,7 @@ namespace GwConstants {
 		Lose_your_Head,
 		Wandering_Mind,
 		Altar_Buff = 1859,
-		Sugar_Rush_short,
+		Sugar_Rush_short, // 3 minutes
 		Choking_Breath,
 		Junundu_Bite,
 		Blinding_Breath,
@@ -1709,7 +1709,7 @@ namespace GwConstants {
 		Claim_Resource_Heroes_Ascent,
 		Hard_mode1,
 		Hard_Mode_NPC_Buff,
-		Sugar_Jolt_short,
+		Sugar_Jolt_short, // 2 minutes
 		Rollerbeetle_Racer,
 		Ram,
 		Harden_Shell,

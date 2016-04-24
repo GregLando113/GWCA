@@ -587,14 +587,34 @@ namespace GWCA {
 		};
 		const DWORD Packet<P080>::STATIC_HEADER = 80;
 
+		// Define chat message
 		struct P081 : Packet<P081> {
-			// wchar_t array[122] // prefixType="int16"
+			wchar_t message[122]; // prefixType="int16"
 		};
 		const DWORD Packet<P081>::STATIC_HEADER = 81;
 
+		enum ChatChannel {
+			Alliance,	// sender: orange		message: white
+			Unk1,		// sender: dark blue	message: white
+			Unk2,		// sender: light blue	message: light blue
+			All,		// sender: yellow		message: white
+			Unk4,		// sender: light grey	message: dark grey
+			Unk5,		// sender: Cyan			message: cyan
+			Unk6,		// sender: white		message: white
+			Warning,	// sender: -none-		message: red (in middle of screen)
+			Unk8,		// sender: light grey	message: cyan
+			Guild,		// sender: green		message: white
+			Global,		// sender: light green	message: light green
+			Group,		// sender: blue			message: white
+			Trade,		// sender: light pink	message: light pink
+			Advisory,	// sender: dark orange	message: dark orange
+			Whisper,	// sender: blue			message: white
+		};
+
+		// Deliver chat message (no owner)
 		struct P082 : Packet<P082> {
-			// WORD
-			// BYTE
+			DWORD id; // some kind of ID of the affected target
+			DWORD type; // enum ChatChannel above.
 		};
 		const DWORD Packet<P082>::STATIC_HEADER = 82;
 
@@ -605,16 +625,18 @@ namespace GWCA {
 		};
 		const DWORD Packet<P083>::STATIC_HEADER = 83;
 
+		// Chat, identifies sender
 		struct P084 : Packet<P084> {
-			// BYTE
-			// wchar_t array[32] // prefixType="int16"
-			// wchar_t array[6] // prefixType="int16"
+			DWORD id; // some kind of ID
+			wchar_t sender_name[32]; // full in-game name
+			wchar_t sender_guild[6]; // guild tag for alliance chat, empty for guild chat
 		};
 		const DWORD Packet<P084>::STATIC_HEADER = 84;
 
+		// Deliver chat message (player sender)
 		struct P085 : Packet<P085> {
-			// WORD
-			// BYTE
+			DWORD id; // some kind of ID of the sender
+			DWORD type; // enum ChatChannel above.
 		};
 		const DWORD Packet<P085>::STATIC_HEADER = 85;
 

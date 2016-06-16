@@ -379,43 +379,43 @@ namespace GWCA {
 		};
 		const DWORD Packet<P051>::STATIC_HEADER = 51;
 
-		struct P052_RemoveExternalBond : Packet<P052> {
+		struct P052_RemoveExternalBond : Packet<P052_RemoveExternalBond> {
 			DWORD agent_id;
 			DWORD effect_id;
 		};
-		const DWORD Packet<P052>::STATIC_HEADER = 52;
+		const DWORD Packet<P052_RemoveExternalBond>::STATIC_HEADER = 52;
 
-		struct P053_AddExternalBond : Packet<P053> { // prety much a bond from someone else / hero bond
+		struct P053_AddExternalBond : Packet<P053_AddExternalBond> { // prety much a bond from someone else / hero bond
 			DWORD caster_id;
 			DWORD receiver_id;
 			DWORD skill_id;
 			DWORD effect_type;
 			DWORD effect_id;
 		};
-		const DWORD Packet<P053>::STATIC_HEADER = 53;
+		const DWORD Packet<P053_AddExternalBond>::STATIC_HEADER = 53;
 
-		struct P054_AddEffect : Packet<P054> { // Skill applied on yourself & pcons
+		struct P054_AddEffect : Packet<P054_AddEffect> { // Skill applied on yourself & pcons
 			DWORD agent_id;
 			DWORD skill_id; // see: http://wiki.guildwars.com/wiki/Guild_Wars_Wiki:Game_integration
 			DWORD effect_type;
 			DWORD effect_id; // id synchronise with the server so watch out
 			float duration;
 		};
-		const DWORD Packet<P054>::STATIC_HEADER = 54;
+		const DWORD Packet<P054_AddEffect>::STATIC_HEADER = 54;
 
-		struct P055_ReApplieEffect : Packet<P055> {
+		struct P055_ReApplyEffect : Packet<P055_ReApplyEffect> {
 			DWORD agent_id;
 			DWORD unk; // alway 0
 			DWORD effect_id;
 			float duration;
 		};
-		const DWORD Packet<P055>::STATIC_HEADER = 55;
+		const DWORD Packet<P055_ReApplyEffect>::STATIC_HEADER = 55;
 
-		struct P056_RemoveEffect : Packet<P056> {
+		struct P056_RemoveEffect : Packet<P056_RemoveEffect> {
 			DWORD agent_id;
 			DWORD effect_id;
 		};
-		const DWORD Packet<P056>::STATIC_HEADER = 56;
+		const DWORD Packet<P056_RemoveEffect>::STATIC_HEADER = 56;
 
 		struct P057 : Packet<P057> {
 			// DWORD

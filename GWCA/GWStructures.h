@@ -298,12 +298,27 @@ namespace GWCA {
 			ItemArray Items;						// 0020
 		};
 
+		class ItemModifier {
+		public:
+
+			DWORD identifier() { return (mod_ & 0x3FF00000) >> 20; }
+			DWORD arg1() { return (mod_ & 0x0001FF00) >> 8; }
+			DWORD arg2() { return (mod_ & 0x000000FE); }
+			DWORD arg3() { return (mod_ & 0x0003FFFF); }
+			DWORD arg4() { return (mod_ & 0x00040000) >> 17; }
+			DWORD arg5() { return (mod_ & 0x0001FFFE); }
+			DWORD arg6() { return (mod_ & 0x00000001); }
+
+		private:
+			DWORD mod_;
+		};
+
 		struct Item{							// total : 50 BYTEs
 			DWORD ItemId;						// 0000
 			DWORD AgentId;						// 0004
 			BYTE unknown1[4];					// 0008	|--4 BYTEs--|
 			Bag* bag;							// 000C
-			DWORD* ModStruct;						// 0010						pointer to an array of mods
+			ItemModifier* ModStruct;						// 0010						pointer to an array of mods
 			DWORD ModStructSize;				// 0014						size of this array
 			wchar_t* Customized;				// 0018
 			BYTE unknown3[3];

@@ -10,6 +10,7 @@ namespace GWCA {
 		friend class GWCAManager<CtoSMgr>;
 
 	public:
+		typedef void(__fastcall *SendCtoGSPacket_t)(DWORD ctogsobj, DWORD size, DWORD* packet);
 
 		// Send packet that uses only dword parameters, can copypaste most gwa2 sendpackets :D
 		void SendPacket(DWORD size, ...);
@@ -23,10 +24,10 @@ namespace GWCA {
 				MemoryMgr::GetGSObject(), size, (DWORD*)packet);
 		}
 
-	private:		
-		typedef void(__fastcall *SendCtoGSPacket_t)(DWORD ctogsobj, DWORD size, DWORD* packet);
-
 		static SendCtoGSPacket_t gs_send_function_;
+	private:		
+
+
 
 		static void __fastcall packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet);
 

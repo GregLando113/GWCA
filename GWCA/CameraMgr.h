@@ -52,7 +52,7 @@ namespace GWCA {
 		void SetMaxDist(float dist) { cam_class_->maxdistance2 = dist; }
 
 		// Unlock camera & return the new state of it
-		bool UnlockCam(bool enable) { return patch_camupdate->TooglePatch(enable); }
+		bool UnlockCam(bool flag) { return patch_camupdate->TooglePatch(flag); }
 		bool GetCameraUnlock() { return patch_camupdate->GetPatchState(); }
 
 		void SetLookAtTarget(Vector3f const& newPos) {
@@ -76,7 +76,7 @@ namespace GWCA {
 		}
 
 		// Enable or Disable the fog & return the state of it
-		bool SetFog(bool enable) { return patch_fog->TooglePatch(!enable); }
+		bool SetFog(bool flag) { return patch_fog->TooglePatch(!flag); }
 
 		void SetFieldOfView(float fov) { cam_class_->fieldofview = fov; };
 

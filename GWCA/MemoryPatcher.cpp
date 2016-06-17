@@ -3,7 +3,7 @@
 GWCA::MemoryPatcher::MemoryPatcher(LPVOID addr, BYTE *patch, UINT size) {
 	this->addr = addr;
 	this->size = size;
-	this->enable = false;
+	this->flag = false;
 
 	this->patch = new BYTE[size];
 	memcpy(this->patch, patch, size);
@@ -22,19 +22,19 @@ GWCA::MemoryPatcher::~MemoryPatcher() {
 	delete[] backup;
 }
 
-bool GWCA::MemoryPatcher::TooglePatch(bool enable) {
-	if (this->enable == enable)
-		return enable;
+bool GWCA::MemoryPatcher::TooglePatch(bool flag) {
+	if (this->flag == flag)
+		return flag;
 
 	DWORD oldProt;
 	VirtualProtect(addr, size, PAGE_EXECUTE_READWRITE, &oldProt);
-	if (enable) {
+	if (flag) {
 		memcpy(addr, patch, size);
 	} else {
 		memcpy(addr, backup, size);
 	}
 	VirtualProtect(addr, size, oldProt, &oldProt);
 
-	this->enable = enable;
-	return enable;
+	this->flag = flag;
+	return flag;
 }

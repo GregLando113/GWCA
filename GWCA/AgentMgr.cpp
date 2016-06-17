@@ -3,6 +3,7 @@
 #include "GameThreadMgr.h"
 #include "CtoSMgr.h"
 #include "MapMgr.h"
+#include "GameContext.h"
 
 BYTE* GWCA::AgentMgr::dialog_log_ret_ = NULL;
 DWORD GWCA::AgentMgr::last_dialog_id_ = 0;
@@ -127,6 +128,17 @@ const char* GWCA::AgentMgr::GetProfessionAcronym(GwConstants::Profession profess
 	case GwConstants::Profession::Dervish: return "D";
 	default: return "";
 	}
+}
+
+GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(int heroindex) {
+	if (heroindex == 0) return GetPlayerId();
+
+	auto ctx = GameContext::instance();
+	auto heroarray = ctx->party->partyinfo->heroes;
+
+	if (!heroarray.valid() || heroindex > heroarray.size()) return 0;
+
+	return heroarray[--heroindex].id;
 }
 
 GWCA::GW::PlayerArray GWCA::AgentMgr::GetPlayerArray() {

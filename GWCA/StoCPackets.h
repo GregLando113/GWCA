@@ -846,11 +846,11 @@ namespace GWCA {
 		};
 		const DWORD Packet<P113>::STATIC_HEADER = 113;
 
-		struct P114 : Packet<P114> {
-			// BYTE
-			// wchar_t array[128] // prefixType="int16"
-			// DWORD
-			// DWORD
+		struct P114_DialogButton : Packet<P114_DialogButton> {
+			DWORD button_style;
+			wchar_t array[128]; // hstring
+			DWORD dialog_id; // dialog id send when button is clicked
+			DWORD skill_id; // skill / effect id if button_style is skill.
 		};
 		const DWORD Packet<P114>::STATIC_HEADER = 114;
 
@@ -858,13 +858,13 @@ namespace GWCA {
 		};
 		const DWORD Packet<P115>::STATIC_HEADER = 115;
 
-		struct P116 : Packet<P116> {
-			// wchar_t array[122] // prefixType="int16"
+		struct P116_DialogBody : Packet<P116_DialogBody> {
+			wchar_t array[122]; // hstring
 		};
 		const DWORD Packet<P116>::STATIC_HEADER = 116;
 
-		struct P117 : Packet<P117> {
-			// DWORD agent_id;
+		struct P117_DialogSender : Packet<P117_DialogSender> {
+			DWORD agent_id;
 		};
 		const DWORD Packet<P117>::STATIC_HEADER = 117;
 

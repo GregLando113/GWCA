@@ -339,7 +339,7 @@ namespace GWCA {
 		};
 
 		struct Inventory {
-			Bag bags[0x1F];
+			Bag* bags[0x1F];
 			DWORD gold_character;
 			DWORD gold_storage;
 		};

@@ -57,6 +57,12 @@ namespace GWCA {
 			TransactionPacket recieve = TransactionPacket()
 			);
 
+		void EnqueueQuoteRequest(
+			TransactionType type,
+			TransactionPacket give = TransactionPacket(),
+			TransactionPacket recieve = TransactionPacket()
+			);
+
 		void BuyMerchantItem(DWORD modelid,DWORD quantity = 1);
 
 		void SellMerchantItem(GW::Item* itemtosell, DWORD sellquantity = NULL);
@@ -71,10 +77,16 @@ namespace GWCA {
 			TransactionPacket recieve
 		);
 
+		typedef void(__fastcall *RequestQuote_t)
+			(
+				TransactionType type,
+
+		);
 
 		MerchantMgr();
 		void RestoreHooks() override;
 
 		Transaction_t transaction_function_;
+		Transaction_t quote_function_;
 	};
 }

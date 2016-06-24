@@ -9,10 +9,19 @@ GWCA::MerchantMgr::MerchantMgr() : GWCAManager() {
 
 	transaction_function_ = (Transaction_t)scan.FindPattern("\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C);
 	if (transaction_function_){
-		printf("TransactionFunction = %X\n", transaction_function_);
+		printf("transaction_function_ = %X\n", transaction_function_);
 	}
 	else {
-		printf("TransactionFunction = ERR\n");
+		printf("transaction_function_ = ERR\n");
+	}
+
+	quote_function_ = (Transaction_t)scan.FindPattern("\x53\x56\x8B\x75\x0C\x57\x83\xFE\x10", "xxxxxxxxx", -0x9);
+
+	if (quote_function_) {
+		printf("quote_function_ = %X\n", transaction_function_);
+	}
+	else {
+		printf("quote_function_ = ERR\n");
 	}
 }
 
@@ -44,6 +53,11 @@ void GWCA::MerchantMgr::BuyMerchantItem(DWORD modelid, DWORD quantity /*= 1*/) {
 
 void GWCA::MerchantMgr::EnqueueTransaction(TransactionType type, DWORD gold_give, TransactionPacket give /*= TransactionPacket()*/, DWORD gold_recieve, TransactionPacket recieve /*= TransactionPacket()*/) {
 	GameThreadMgr::Instance().Enqueue(transaction_function_, type, gold_give, give, gold_recieve, recieve);
+}
+
+void GWCA::MerchantMgr::EnqueueQuoteRequest(TransactionType type, TransactionPacket give, TransactionPacket recieve)
+{
+	GameThreadMgr::Instance().Enqueue(quote_function_, type, 0, give, 0, recieve);
 }
 
 GWCA::GW::Item* GWCA::MerchantMgr::GetMerchantItemByModelID(DWORD modelid) {

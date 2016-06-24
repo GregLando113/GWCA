@@ -15,7 +15,6 @@
     <ClInclude Include="GWCA\CameraMgr.h" />
     <ClInclude Include="GWCA\ChatMgr.h" />
     <ClInclude Include="GWCA\CtoSMgr.h" />
-    <ClInclude Include="GWCA\DirectXMgr.h" />
     <ClInclude Include="Dependencies\disasm\ld32.h" />
     <ClInclude Include="GWCA\EffectMgr.h" />
     <ClInclude Include="GWCA\FriendListMgr.h" />
@@ -47,7 +46,6 @@
     <ClCompile Include="GWCA\CameraMgr.cpp" />
     <ClCompile Include="GWCA\ChatMgr.cpp" />
     <ClCompile Include="GWCA\CtoSMgr.cpp" />
-    <ClCompile Include="GWCA\DirectXMgr.cpp" />
     <ClCompile Include="Dependencies\disasm\ld32.c" />
     <ClCompile Include="GWCA\EffectMgr.cpp" />
     <ClCompile Include="GWCA\FriendListMgr.cpp" />
@@ -99,11 +97,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>GWCA_d</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
-    <IncludePath>$(SolutionDir);Dependencies\;Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>GWCA</TargetName>
-    <IncludePath>$(SolutionDir);Dependencies\;Dependencies\DirectX\Include;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -118,7 +114,6 @@
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <ForcedIncludeFiles>GWCA_defines.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +135,6 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <ForcedIncludeFiles>GWCA_defines.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -50,13 +50,6 @@ THE SOFTWARE.
 
 \**********************************************************************************/
 
-// this file is used to provide solution-specific defines to the library, 
-// add it to your solution directory and leave it empty or define stuff in it (e.g. GWAPI_USEDIRECTX)
-// it is included here to force inclusion by other projects 
-// (it is already a forced global include in GWCA project)
-#include "GWCA_defines.h"
-
-
 /*
 Class used for GWCA initialization, access and destruction
 
@@ -104,9 +97,6 @@ namespace GWCA {
 	class MapMgr;
 	class FriendListMgr;
 	class CameraMgr;
-#ifdef GWAPI_USEDIRECTX
-	class DirectXMgr;
-#endif
 
 	// GWCA Module Accessors.
 	GameThreadMgr& Gamethread();
@@ -123,9 +113,6 @@ namespace GWCA {
 	MapMgr& Map();
 	FriendListMgr& FriendList();
 	CameraMgr& Camera();
-#ifdef GWAPI_USEDIRECTX
-	DirectXMgr& DirectX();
-#endif
 
 	class Api {
 		friend class GWCABaseManager;

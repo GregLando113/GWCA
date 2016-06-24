@@ -15,7 +15,6 @@
     <ClInclude Include="GWCA\AgentMgr.h" />
     <ClInclude Include="GWCA\ChatMgr.h" />
     <ClInclude Include="GWCA\CtoSMgr.h" />
-    <ClInclude Include="GWCA\DirectXMgr.h" />
     <ClInclude Include="GWCA\EffectMgr.h" />
     <ClInclude Include="GWCA\GameThreadMgr.h" />
     <ClInclude Include="GWCA\GuildMgr.h" />
@@ -50,9 +49,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\CtoSMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\DirectXMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\EffectMgr.cpp">

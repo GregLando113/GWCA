@@ -6,9 +6,6 @@
 #include "AgentMgr.h"
 #include "PartyMgr.h"
 #include "ItemMgr.h"
-#ifdef GWAPI_USEDIRECTX
-#include "DirectXMgr.h"
-#endif
 #include "SkillbarMgr.h"
 #include "EffectMgr.h"
 #include "MapMgr.h"
@@ -61,6 +58,4 @@ GWCA::GuildMgr&			GWCA::Guild()		{ return GuildMgr::Instance(); }
 GWCA::MapMgr&			GWCA::Map()			{ return MapMgr::Instance(); }
 GWCA::FriendListMgr&	GWCA::FriendList()	{ return FriendListMgr::Instance(); }
 GWCA::CameraMgr&		GWCA::Camera()		{ return CameraMgr::Instance(); }
-#ifdef GWAPI_USEDIRECTX
-GWCA::DirectXMgr&		GWCA::DirectX()		{ return DirectXMgr::Instance(); }
-#endif
+

@@ -33,10 +33,10 @@ namespace GWCA {
 		GW::PlayerArray GetPlayerArray();
 
 		// Computes distance between the two agents in game units
-		DWORD GetDistance(const GW::GamePos& a, const GW::GamePos& b);
+		float GetDistance(const GW::GamePos& a, const GW::GamePos& b);
 
 		// Computes squared distance between the two agents in game units
-		DWORD GetSqrDistance(const GW::GamePos& a, const GW::GamePos& b);
+		float GetSqrDistance(const GW::GamePos& a, const GW::GamePos& b);
 
 		// Change targeted agent to (Agent)
 		void ChangeTarget(GW::Agent* Agent);

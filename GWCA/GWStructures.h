@@ -531,7 +531,8 @@ namespace GWCA {
 		};
 
 		struct Camera {
-			DWORD unk1[2];
+			DWORD lookAtAgentID;
+			DWORD unk1;
 			float unk2[2];
 			float maxdistance; // Max distance camera can go, usually constant @ 750 unless max zoom changed
 			float unk3;

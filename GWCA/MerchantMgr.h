@@ -77,12 +77,6 @@ namespace GWCA {
 			TransactionPacket recieve
 		);
 
-		typedef void(__fastcall *RequestQuote_t)
-			(
-				TransactionType type,
-
-		);
-
 		MerchantMgr();
 		void RestoreHooks() override;
 

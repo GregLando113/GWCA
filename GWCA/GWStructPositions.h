@@ -68,7 +68,7 @@ namespace GWCA {
 		}
 
 		// Multiply vector by a common multiple
-		const Vector2f operator * (const float _w) {
+		const Vector2f operator * (const float _w) const {
 			return Vector2f(x * _w, y * _w);
 		}
 		Vector2f& operator *= (const float _w) {
@@ -77,7 +77,7 @@ namespace GWCA {
 		}
 
 		// Divide vector by a common multiple
-		const Vector2f operator / (const float _w) {
+		const Vector2f operator / (const float _w) const {
 			return Vector2f(x / _w, y / _w);
 		}
 
@@ -124,17 +124,25 @@ namespace GWCA {
 		};
 
 		// computes the distance to the other vector
-		float DistanceTo(const Vector2f& _v){
+		float DistanceTo(const Vector2f& _v) const {
 			return std::sqrt((_v.x - x) * (_v.x - x) + (_v.y - y) * (_v.y - y));
 		}
 
-		float SquaredDistanceTo(const Vector2f& _v){
+		float SquaredDistanceTo(const Vector2f& _v) const {
 			return (_v.x - x) * (_v.x - x) + (_v.y - y) * (_v.y - y);
 		}
 
 		// Angle between two vectors in radians.
-		float AngleBetween(const Vector2f& _v){
+		float AngleBetween(const Vector2f& _v) const {
 			return atan2f(_v.x - x, _v.y - y);
+		}
+
+		Vector2f Rotated(float rotation) const {
+			return Rotated(std::cos(rotation), std::sin(rotation));
+		}
+
+		Vector2f Rotated(float cos, float sin) const {
+			return Vector2f(x * cos - y * sin, x * sin + y * cos);
 		}
 	};
 

@@ -57,14 +57,21 @@ namespace GWCA {
 			BYTE unknown3[8];
 			AgentID Id; //AgentId
 			float Z; //Z coord in float
-			BYTE unknown4[8];
-			float BoxHoverWidth; //Width of the model's box
-			float BoxHoverHeight; //Height of the model's box
-			BYTE unknown5[8];
-			float Rotation; //Rotation in radians from East (-pi to pi)
-			BYTE unknown6[8];
+			float Width1;	//Width of the model's box
+			float Height1;	//Height of the model's box
+			float Width2;	//Width of the model's box (same as 1)
+			float Height2;	//Height of the model's box (same as 1)
+			float Width3;	//Width of the model's box (usually same as 1)
+			float Height3;	//Height of the model's box (usually same as 1)
+			float Rotation_angle; //Rotation in radians from East (-pi to pi)
+			float Rotation_cos; // cosine of rotation
+			float Rotation_sin; // sine of rotation
 			long NameProperties; //Bitmap basically telling what the agent is
-			BYTE unknown7[24];
+			BYTE unknown4[8]; 
+			float unkfloat1;	// weird values, change with movement, always between -1 and 1
+			float unkfloat2;
+			float unkfloat3;
+			BYTE unknown5[4];
 			union {
 				struct {
 					float X; //X coord in float
@@ -75,16 +82,18 @@ namespace GWCA {
 					GamePos pos;
 				};
 			};
-			BYTE unknown8[4];
+			BYTE unknown6[4];
 			float NameTagX; //Exactly the same as X above
-			float NameTagY; //Exactly the same aswell
-			float NameTagZ; //Z coord in float (actually negated)
-			BYTE unknown9[12];
+			float NameTagY; //Exactly the same as Y above
+			float NameTagZ; //Z coord in float
+			BYTE unknown7[12];
 			long Type; //0xDB = players, npc's, monsters etc. 0x200 = signpost/chest/object (unclickable). 0x400 = item to pick up
 			float MoveX; //If moving, how much on the X axis per second
 			float MoveY; //If moving, how much on the Y axis per second
-			//BYTE unknown10[68];
-			BYTE unknown10[28];
+			BYTE unknown8[4]; // always 0?
+			float Rotation_cos2; // same as cosine above
+			float Rotation_sin2; // same as sine above
+			BYTE unknown10[16];
 			long Owner;
 			ItemID itemid; // Only valid if agent is type 0x400 (item)
 			BYTE unknown24[4];
@@ -106,12 +115,11 @@ namespace GWCA {
 			BYTE unknown15[4];
 			float HPPips; //Regen/degen as float
 			BYTE unknown16[4];
-			//Offset +0x130
 			float HP; //Health in % where 1=100% and 0=0%
 			long MaxHP; //Only works for yourself
 			long Effects; //Bitmap for effects to display when targetted. DOES include hexes
 			BYTE unknown17[4];
-			BYTE Hex; //Bitmap for the hex effect when targetted (apparently obsolete!)
+			BYTE Hex; //Bitmap for the hex effect when targetted (apparently obsolete!) (yes)
 			BYTE unknown18[18];
 			long ModelState; //Different values for different states of the model.
 			long TypeMap; //Odd variable! 0x08 = dead, 0xC00 = boss, 0x40000 = spirit, 0x400000 = player
@@ -119,16 +127,16 @@ namespace GWCA {
 			long InSpiritRange; //Tells if agent is within spirit range of you. Doesn't work anymore?
 			BYTE unknown20[16];
 			PlayerID LoginNumber; //Unique number in instance that only works for players
-			float ModelMode; //Float for the current mode the agent is in. Varies a lot
-			BYTE unknown21[4];
-			long ModelAnimation; //Id of the current animation
+			float AnimationSpeed;	// Speed of the current animation
+			BYTE AnimationUnk[4];	// related to animations
+			long AnimationID;		// Id of the current animation
 			BYTE unknown22[32];
 			BYTE DaggerStatus; // 0x1 = used lead attack, 0x2 = used offhand attack, 0x3 = used dual attack
 			BYTE Allegiance;  // 0x1 = ally/non-attackable, 0x2 = neutral, 0x3 = enemy, 0x4 = spirit/pet, 0x5 = minion, 0x6 = npc/minipet
 			WORD WeaponType; //1=bow, 2=axe, 3=hammer, 4=daggers, 5=scythe, 6=spear, 7=sWORD, 10=wand, 12=staff, 14=staff
-			//Offset +0x1B4
-			WORD Skill; //0 = not using a skill. Anything else is the Id of that skill
-			BYTE unknown23[4];
+			WORD Skill;		//0 = not using a skill. Anything else is the Id of that skill
+			WORD WeaponItemType;
+			WORD OffhandItemType;
 			WORD WeaponItemId;
 			WORD OffhandItemId;
 
@@ -149,23 +157,26 @@ namespace GWCA {
 			inline bool GetIsItemType() { return (Type & 0x400) != 0; }
 
 			// Agent TypeMap Bitmasks.
-			inline bool GetInCombatStance() { return (TypeMap & 1) != 0; }
-			inline bool GetHasQuest() { return (TypeMap & 2) != 0; }
-			inline bool GetIsDeadByTypeMap() { return (TypeMap & 8) != 0; }
-			inline bool GetIsFemale() { return (TypeMap & 512) != 0; }
-			inline bool GetHasBossGlow() { return (TypeMap & 1024) != 0; }
-			inline bool GetIsHidingCape() { return (TypeMap & 4096) != 0; }
-			inline bool GetCanBeViewedInPartyWindow() { return (TypeMap & 131072) != 0; }
-			inline bool GetIsSpawned() { return (TypeMap & 262144) != 0; }
-			inline bool GetIsBeingObserved() { return (TypeMap & 4194304) != 0; }
+			inline bool GetInCombatStance() { return (TypeMap & 0x1) != 0; }
+			inline bool GetHasQuest() { return (TypeMap & 0x2) != 0; } // if agent has quest marker
+			inline bool GetIsDeadByTypeMap() { return (TypeMap & 0x8) != 0; }
+			inline bool GetIsFemale() { return (TypeMap & 0x200) != 0; }
+			inline bool GetHasBossGlow() { return (TypeMap & 0x400) != 0; }
+			inline bool GetIsHidingCape() { return (TypeMap & 0x1000) != 0; }
+			inline bool GetCanBeViewedInPartyWindow() { return (TypeMap & 0x20000) != 0; }
+			inline bool GetIsSpawned() { return (TypeMap & 0x40000) != 0; }
+			inline bool GetIsBeingObserved() { return (TypeMap & 0x400000) != 0; }
 
 			// Modelstates.
 			inline bool GetIsKnockedDown() { return ModelState == 1104; }
 			inline bool GetIsMoving() { return ModelState == 12 || ModelState == 76 || ModelState == 204; }
 			inline bool GetIsAttacking() { return ModelState == 96 || ModelState == 1088 || ModelState == 1120; }
+		
+			inline bool IsPlayer() { return LoginNumber != 0; }
+			inline bool IsNPC() { return LoginNumber == 0; }
 		};
 
-		struct MapAgent{
+		struct MapAgent {
 			float curenergy; //?
 			float maxenergy; //?
 			float energyregen;
@@ -282,6 +293,13 @@ namespace GWCA {
 			}
 		};
 
+		struct NPC {
+			DWORD modelfileid; //0x0000 
+			char pad_0x0004[0xC]; //0x0004
+			DWORD npcflags; //0x0010 
+			char pad_0x0014[0x1C]; //0x0014
+		}; //Size=0x0030
+		using NPCArray = gw_array<NPC>;
 
 		struct Bag;
 		struct Item;

@@ -237,7 +237,14 @@ namespace GwConstants {
 		const int MiniatureGhostlyPriest = 349;
 		const int MiniatureRiftWarden = 350;
 
+		// ==== SoO ====
+		const int SoO_brigand = 7005;
+		const int SoO_fendi = 7009;
+		const int SoO_fendi_soul = 7010;
+
 		// ==== DoA ====
+		const int BlackBeastOfArgh = 5146;
+
 		// stygian lords
 		const int StygianLordNecro = 5141;
 		const int StygianLordMesmer = 5142;

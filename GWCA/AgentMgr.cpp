@@ -144,3 +144,7 @@ GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(int heroindex) {
 GWCA::GW::PlayerArray GWCA::AgentMgr::GetPlayerArray() {
 	return *MemoryMgr::ReadPtrChain<GW::PlayerArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x80C);
 }
+
+GWCA::GW::NPCArray GWCA::AgentMgr::GetNPCArray() {
+	return *MemoryMgr::ReadPtrChain<GW::NPCArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x7FC);
+}

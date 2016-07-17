@@ -32,6 +32,9 @@ namespace GWCA {
 
 		GW::PlayerArray GetPlayerArray();
 
+		GW::NPCArray GetNPCArray();
+		inline GW::NPC& GetNPCByID(DWORD id) { return GetNPCArray()[id]; }
+
 		// Computes distance between the two agents in game units
 		float GetDistance(const GW::GamePos& a, const GW::GamePos& b);
 

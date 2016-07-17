@@ -171,9 +171,12 @@ namespace GWCA {
 			inline bool GetIsKnockedDown() { return ModelState == 1104; }
 			inline bool GetIsMoving() { return ModelState == 12 || ModelState == 76 || ModelState == 204; }
 			inline bool GetIsAttacking() { return ModelState == 96 || ModelState == 1088 || ModelState == 1120; }
+		
+			inline bool IsPlayer() { return LoginNumber != 0; }
+			inline bool IsNPC() { return LoginNumber == 0; }
 		};
 
-		struct MapAgent{
+		struct MapAgent {
 			float curenergy; //?
 			float maxenergy; //?
 			float energyregen;
@@ -290,6 +293,13 @@ namespace GWCA {
 			}
 		};
 
+		struct NPC {
+			DWORD modelfileid; //0x0000 
+			char pad_0x0004[0xC]; //0x0004
+			DWORD npcflags; //0x0010 
+			char pad_0x0014[0x1C]; //0x0014
+		}; //Size=0x0030
+		using NPCArray = gw_array<NPC>;
 
 		struct Bag;
 		struct Item;

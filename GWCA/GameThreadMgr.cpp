@@ -3,26 +3,30 @@
 #include "GWCA.h"
 #include "MemoryMgr.h"
 
+CRITICAL_SECTION GWCA::GameThreadMgr::criticalsection_;
+
 void __stdcall GWCA::GameThreadMgr::CallFunctions() {
-	std::unique_lock<std::mutex> VecLock(call_vector_mutex_);
-	if (!calls_.empty())
+	if (TryEnterCriticalSection(&criticalsection_))
 	{
-		for (const auto& Call : calls_)
+		if (!calls_.empty())
 		{
-			Call();
+			for (const auto& Call : calls_)
+			{
+				Call();
+			}
+
+			calls_.clear();
 		}
 
-		calls_.clear();
-	}
-	
-	if (!calls_permanent_.empty())
-	{
-		for (const auto& Call : calls_permanent_)
+		if (!calls_permanent_.empty())
 		{
-			Call();
+			for (const auto& Call : calls_permanent_)
+			{
+				Call();
+			}
 		}
+		LeaveCriticalSection(&criticalsection_);
 	}
-	
 }
 
 void __declspec(naked) GWCA::GameThreadMgr::gameLoopHook() {
@@ -70,6 +74,7 @@ void GWCA::GameThreadMgr::ToggleRenderHook() {
 
 GWCA::GameThreadMgr::GameThreadMgr() : render_state_(false) {
 	MemoryMgr::GameLoopReturn = (BYTE*)hk_game_thread_.Detour(MemoryMgr::GameLoopLocation, (BYTE*)gameLoopHook, 5);
+	InitializeCriticalSection(&criticalsection_);
 }
 
 void GWCA::GameThreadMgr::RestoreHooks() {

@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <functional>
-#include <mutex>
 
 #include "GWCAManager.h"
 #include "Hooker.h"
@@ -24,14 +23,16 @@ namespace GWCA {
 		template<typename F, typename... ArgTypes>
 		void Enqueue(F&& Func, ArgTypes&&... Args)
 		{
-			std::unique_lock<std::mutex> VecLock(call_vector_mutex_);
+			EnterCriticalSection(&criticalsection_);
 			calls_.emplace_back(std::bind(std::forward<F>(Func), std::forward<ArgTypes>(Args)...));
+			LeaveCriticalSection(&criticalsection_);
 		}
 		template<typename F, typename... ArgTypes>
 		void AddPermanentCall(F&& Func, ArgTypes&&... Args)
 		{
-			std::unique_lock<std::mutex> VecLock(call_vector_mutex_);
+			EnterCriticalSection(&criticalsection_);
 			calls_permanent_.emplace_back(std::bind(std::forward<F>(Func), std::forward<ArgTypes>(Args)...));
+			LeaveCriticalSection(&criticalsection_);
 		}
 
 
@@ -46,7 +47,7 @@ namespace GWCA {
 
 		std::vector<std::function<void(void)> > calls_;
 		std::vector<std::function<void(void)> > calls_permanent_;
-		mutable std::mutex call_vector_mutex_;
+		static CRITICAL_SECTION criticalsection_;
 		bool render_state_;
 		Hook hk_game_thread_;
 	};

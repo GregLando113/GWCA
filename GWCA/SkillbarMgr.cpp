@@ -1,6 +1,7 @@
 #include "SkillbarMgr.h"
 
 #include "GameThreadMgr.h"
+#include "GameContext.h"
 #include "CtoSMgr.h"
 #include "AgentMgr.h"
 
@@ -67,7 +68,7 @@ GWCA::GW::Skillbar GWCA::SkillbarMgr::GetPlayerSkillbar() {
 }
 
 GWCA::GW::SkillbarArray GWCA::SkillbarMgr::GetSkillbarArray() {
-	return *MemoryMgr::ReadPtrChain<GW::SkillbarArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x6F0);
+	return GameContext::instance()->world->skillbar;
 }
 
 void GWCA::SkillbarMgr::UseSkillByID(DWORD SkillID, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/) {

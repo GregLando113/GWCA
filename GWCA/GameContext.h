@@ -58,7 +58,7 @@ namespace GWCA {
 			struct sub2 {
 				BYTE pad1[0x18];
 				PathingMapArray pmaps;
-			};
+			} *sub2;
 			//... Bunch of arrays and shit
 		} *sub1;
 		//... Player coords and shit beyond this point if they are desirable :p
@@ -159,8 +159,8 @@ namespace GWCA {
 		DWORD unk6; // 0x7C8
 		gw_array<void*> unk22_array; // 0x7CC
 		gw_array<void*> unk23_array; // 0x7DC
-		gw_array<void*> unk24_array; // 0x7EC
-		gw_array<void*> unk25_array; // 0x7FC
+		MissionMapIconArray missionmapicons; // 0x7EC
+		NPCArray npcs; // 0x7FC
 		PlayerArray players; // 0x80C
 		TitleArray titles; // 0x81C
 		//... couple more arrays after this

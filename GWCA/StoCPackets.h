@@ -261,6 +261,7 @@ namespace GWCA {
 		};
 		const DWORD Packet<P034>::STATIC_HEADER = 34;
 
+		// Update Agent Rotation
 		struct P035 : Packet<P035> {
 			// DWORD
 			// DWORD
@@ -305,9 +306,10 @@ namespace GWCA {
 		};
 		const DWORD Packet<P040>::STATIC_HEADER = 40;
 
+		// creates the "ping" on an enemy when some player targets it
 		struct P041 : Packet<P041> {
-			// WORD
-			// DWORD agent_id;
+			DWORD Player; // who sent the message
+			DWORD agent_id; // target agent
 		};
 		const DWORD Packet<P041>::STATIC_HEADER = 41;
 
@@ -976,10 +978,15 @@ namespace GWCA {
 		};
 		const DWORD Packet<P132>::STATIC_HEADER = 132;
 
+		// Pings and drawing in compass
 		struct P133 : Packet<P133> {
-			// WORD
-			// DWORD
-			// int[16] // prefixType="int16"
+			DWORD Player;    // player who sent the ping
+			DWORD SessionID; // Changes for different pings/lines/curves
+			DWORD NumberPts; // Number of points in the data, between 1 and 8
+			struct {
+				short x;	 // world coordinates divided by 10
+				short y;	 // same
+			} points[8];
 		};
 		const DWORD Packet<P133>::STATIC_HEADER = 133;
 

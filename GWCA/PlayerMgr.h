@@ -7,6 +7,8 @@ namespace GWCA {
 	class PlayerMgr : public GWCAManager<PlayerMgr> {
 		friend class GWCAManager<PlayerMgr>;
 	public:
+		void SetActiveTitle(GwConstants::TitleID id);
+		void RemoveActiveTitle();
 
 		GW::PlayerArray& GetPlayerArray() const {
 			return GameContext::instance()->world->players;

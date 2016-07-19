@@ -5,6 +5,7 @@
 #include "GWCAManager.h"
 #include "GwConstants.h"
 #include "GWStructures.h"
+#include "GameContext.h"
 
 
 namespace GWCA {
@@ -20,6 +21,7 @@ namespace GWCA {
 			DWORD unk;
 		};
 	public:
+		bool IsMapLoaded();
 
 		// Get current map ID.
 		GwConstants::MapID GetMapID();

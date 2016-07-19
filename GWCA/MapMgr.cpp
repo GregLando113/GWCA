@@ -3,6 +3,10 @@
 #include "CtoSMgr.h"
 #include "GameContext.h"
 
+bool GWCA::MapMgr::IsMapLoaded() {
+	return GameContext::instance()->map;
+}
+
 void GWCA::MapMgr::Travel(GwConstants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
 

@@ -61,6 +61,7 @@
     <ClCompile Include="GWCA\MerchantMgr.cpp" />
     <ClCompile Include="GWCA\PartyMgr.cpp" />
     <ClCompile Include="GWCA\PatternScanner.cpp" />
+    <ClCompile Include="GWCA\PlayerMgr.cpp" />
     <ClCompile Include="GWCA\SkillbarMgr.cpp" />
     <ClCompile Include="GWCA\StoCMgr.cpp" />
   </ItemGroup>

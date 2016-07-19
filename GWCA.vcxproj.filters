@@ -105,5 +105,8 @@
     <ClCompile Include="GWCA\PartyMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="GWCA\PlayerMgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

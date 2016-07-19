@@ -13,7 +13,7 @@ wchar_t* GWCA::GuildMgr::GetPlayerGuildAnnouncement() {
 }
 
 DWORD GWCA::GuildMgr::GetPlayerGuildIndex() {
-	GameContext::instance()->guild->playerguildindex;
+	return GameContext::instance()->guild->playerguildindex;
 }
 
 GWCA::GW::GuildArray GWCA::GuildMgr::GetGuildArray() {

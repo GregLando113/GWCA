@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GWCA\AgentMgr.h" />
+    <ClInclude Include="GWCA\CameraMgr.h" />
+    <ClInclude Include="GWCA\ChatMgr.h" />
+    <ClInclude Include="GWCA\CtoSMgr.h" />
+    <ClInclude Include="Dependencies\disasm\ld32.h" />
+    <ClInclude Include="GWCA\EffectMgr.h" />
+    <ClInclude Include="GWCA\FriendListMgr.h" />
+    <ClInclude Include="GWCA\GameContext.h" />
+    <ClInclude Include="GWCA\GameThreadMgr.h" />
+    <ClInclude Include="GWCA\GuildMgr.h" />
+    <ClInclude Include="GWCA\GWCA.h" />
+    <ClInclude Include="GWCA\GWCAManager.h" />
+    <ClInclude Include="GWCA\GwConstants.h" />
+    <ClInclude Include="GWCA\GwConstantsMaps.h" />
+    <ClInclude Include="GWCA\GwConstantsSkills.h" />
+    <ClInclude Include="GWCA\GWStructPositions.h" />
+    <ClInclude Include="GWCA\GWStructures.h" />
+    <ClInclude Include="GWCA\Hooker.h" />
+    <ClInclude Include="GWCA\ItemMgr.h" />
+    <ClInclude Include="GWCA\MapMgr.h" />
+    <ClInclude Include="GWCA\MemoryMgr.h" />
+    <ClInclude Include="GWCA\MemoryPatcher.h" />
+    <ClInclude Include="GWCA\MerchantMgr.h" />
+    <ClInclude Include="GWCA\PartyMgr.h" />
+    <ClInclude Include="GWCA\PatternScanner.h" />
+    <ClInclude Include="GWCA\PlayerMgr.h" />
+    <ClInclude Include="GWCA\SkillbarMgr.h" />
+    <ClInclude Include="GWCA\StoCMgr.h" />
+    <ClInclude Include="GWCA\StoCPackets.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GWCA\AgentMgr.cpp" />
+    <ClCompile Include="GWCA\CameraMgr.cpp" />
+    <ClCompile Include="GWCA\ChatMgr.cpp" />
+    <ClCompile Include="GWCA\CtoSMgr.cpp" />
+    <ClCompile Include="Dependencies\disasm\ld32.c" />
+    <ClCompile Include="GWCA\EffectMgr.cpp" />
+    <ClCompile Include="GWCA\FriendListMgr.cpp" />
+    <ClCompile Include="GWCA\GameThreadMgr.cpp" />
+    <ClCompile Include="GWCA\GuildMgr.cpp" />
+    <ClCompile Include="GWCA\GWCA.cpp" />
+    <ClCompile Include="GWCA\GWCAManager.cpp" />
+    <ClCompile Include="GWCA\Hooker.cpp" />
+    <ClCompile Include="GWCA\ItemMgr.cpp" />
+    <ClCompile Include="GWCA\MapMgr.cpp" />
+    <ClCompile Include="GWCA\MemoryMgr.cpp" />
+    <ClCompile Include="GWCA\MemoryPatcher.cpp" />
+    <ClCompile Include="GWCA\MerchantMgr.cpp" />
+    <ClCompile Include="GWCA\PartyMgr.cpp" />
+    <ClCompile Include="GWCA\PatternScanner.cpp" />
+    <ClCompile Include="GWCA\PlayerMgr.cpp" />
+    <ClCompile Include="GWCA\SkillbarMgr.cpp" />
+    <ClCompile Include="GWCA\StoCMgr.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GWCA</RootNamespace>
+    <ProjectName>GWCA</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

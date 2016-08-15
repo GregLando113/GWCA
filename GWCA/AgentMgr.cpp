@@ -130,7 +130,7 @@ const char* GWCA::AgentMgr::GetProfessionAcronym(GwConstants::Profession profess
 	}
 }
 
-GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(int heroindex) {
+GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(DWORD heroindex) {
 	if (heroindex == 0) return GetPlayerId();
 
 	auto ctx = GameContext::instance();

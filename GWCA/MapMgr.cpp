@@ -4,7 +4,7 @@
 #include "GameContext.h"
 
 bool GWCA::MapMgr::IsMapLoaded() {
-	return GameContext::instance()->map;
+	return GameContext::instance()->map != nullptr;
 }
 
 void GWCA::MapMgr::Travel(GwConstants::MapID MapID,

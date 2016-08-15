@@ -94,12 +94,12 @@ namespace GwConstants {
 
 	enum class Tick { NOT_READY, READY };
 
-	enum class InterfaceSize { SMALL = -1, NORMAL, LARGE, VERYLARGE };
+	enum class InterfaceSize { SMALL = 0, NORMAL, LARGE, LARGER };
 	namespace HealthbarHeight {
 		const int Small = 25;
 		const int Normal = 22;
 		const int Large = 28;
-		const int VeryLarge = 31;
+		const int Larger = 31;
 	}
 
 	// travel, region, districts

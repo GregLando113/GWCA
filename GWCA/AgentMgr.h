@@ -81,7 +81,7 @@ namespace GWCA {
 		// Returns the profession as short string, e.g. "W" for warrior
 		const char* GetProfessionAcronym(GwConstants::Profession profession);
 
-		GW::AgentID GetHeroAgentID(int heroindex);
+		GW::AgentID GetHeroAgentID(DWORD heroindex);
 
 	private:
 		

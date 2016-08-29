@@ -4,8 +4,8 @@
 #include <string>
 #include <Windows.h>
 
-#include "GwConstantsSkills.h"
-#include "GwConstantsMaps.h"
+#include "./Skills.h"
+#include "./Maps.h"
 
 namespace GwConstants {
 

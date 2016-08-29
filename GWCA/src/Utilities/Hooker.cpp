@@ -1,7 +1,7 @@
-#include "Hooker.h"
+#include "..\..\Utilities\Hooker.h"
 
 extern "C"{
-#include "..\Dependencies\disasm\ld32.h"
+#include "..\..\..\Dependencies\disasm\ld32.h"
 }
 
 void GWCA::Hook::Retour() {

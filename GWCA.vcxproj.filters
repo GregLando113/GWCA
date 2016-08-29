@@ -1,109 +1,184 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="disasm">
+    <Filter Include="src">
+      <UniqueIdentifier>{693d29f9-ab1a-40e4-b990-54ff8f636002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{ed0c02f8-2dfe-4fe5-8e03-fddce7b19bcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\disasm">
       <UniqueIdentifier>{b45d386e-87c5-4e30-b9c6-a4397e122c75}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{693d29f9-ab1a-40e4-b990-54ff8f636002}</UniqueIdentifier>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{ae34f276-2d47-472f-a430-b70f6652529e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Structures">
+      <UniqueIdentifier>{596cc75f-349d-4ecc-93a2-db7e0738f41b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Constants">
+      <UniqueIdentifier>{4e018a54-4297-4188-8bd6-903e29606696}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{09643a15-7723-4757-8081-77311731da3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Managers">
+      <UniqueIdentifier>{c34b2d24-afc4-4555-9c27-32008718f2f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Utilities">
+      <UniqueIdentifier>{88afd6b9-5690-4eb1-a674-f46588d1f8aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\disasm\ld32.h">
-      <Filter>disasm</Filter>
+      <Filter>Dependencies\disasm</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\AgentMgr.h" />
-    <ClInclude Include="GWCA\ChatMgr.h" />
-    <ClInclude Include="GWCA\CtoSMgr.h" />
-    <ClInclude Include="GWCA\EffectMgr.h" />
-    <ClInclude Include="GWCA\GameThreadMgr.h" />
-    <ClInclude Include="GWCA\GuildMgr.h" />
-    <ClInclude Include="GWCA\GwConstants.h" />
-    <ClInclude Include="GWCA\GwConstantsMaps.h" />
-    <ClInclude Include="GWCA\GwConstantsSkills.h" />
-    <ClInclude Include="GWCA\GWStructures.h" />
-    <ClInclude Include="GWCA\Hooker.h" />
-    <ClInclude Include="GWCA\ItemMgr.h" />
-    <ClInclude Include="GWCA\MapMgr.h" />
-    <ClInclude Include="GWCA\MemoryMgr.h" />
-    <ClInclude Include="GWCA\MerchantMgr.h" />
-    <ClInclude Include="GWCA\SkillbarMgr.h" />
-    <ClInclude Include="GWCA\PatternScanner.h" />
-    <ClInclude Include="GWCA\StoCMgr.h" />
-    <ClInclude Include="GWCA\FriendListMgr.h" />
-    <ClInclude Include="GWCA\CameraMgr.h" />
-    <ClInclude Include="GWCA\StoCPackets.h" />
-    <ClInclude Include="GWCA\GWCAManager.h" />
     <ClInclude Include="GWCA\GWCA.h" />
-    <ClInclude Include="GWCA\GWStructPositions.h" />
-    <ClInclude Include="GWCA\GameContext.h" />
-    <ClInclude Include="GWCA\MemoryPatcher.h" />
-    <ClInclude Include="GWCA\PlayerMgr.h" />
-    <ClInclude Include="GWCA\PartyMgr.h" />
+    <ClInclude Include="GWCA\Constants\Maps.h">
+      <Filter>Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Constants\Skills.h">
+      <Filter>Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Constants\Constants.h">
+      <Filter>Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\AgentMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\CameraMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\ChatMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\CtoSMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\EffectMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\FriendListMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\GameThreadMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\GuildMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\GWCAManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\ItemMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\MapMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\MemoryMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\MerchantMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\PartyMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\PlayerMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\SkillbarMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\StoCMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GWStructures.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GWStructPositions.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameContext.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Utilities\Hooker.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Utilities\MemoryPatcher.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Utilities\PatternScanner.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\StoCPackets.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GWCA\AgentMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\ChatMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\CtoSMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\EffectMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\GameThreadMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\Hooker.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\ItemMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\MapMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\MemoryMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\MerchantMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\SkillbarMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\GuildMgr.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\PatternScanner.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Dependencies\disasm\ld32.c">
-      <Filter>disasm</Filter>
+      <Filter>Dependencies\disasm</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\StoCMgr.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="GWCA\src\Managers\AgentMgr.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\FriendListMgr.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="GWCA\src\Managers\CameraMgr.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\CameraMgr.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="GWCA\src\Managers\ChatMgr.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\GWCA.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="GWCA\src\Managers\CtoSMgr.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\MemoryPatcher.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="GWCA\src\Managers\EffectMgr.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\GWCAManager.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="GWCA\src\Managers\FriendListMgr.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\PartyMgr.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="GWCA\src\Managers\GameThreadMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\GuildMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\GWCAManager.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\ItemMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\MapMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\MemoryMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\MerchantMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\PartyMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\SkillbarMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\StoCMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Utilities\Hooker.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Utilities\MemoryPatcher.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Utilities\PatternScanner.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\GWCA.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

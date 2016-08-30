@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #include "..\GameEntities\Agent.h"
+#include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
   class AgentContext

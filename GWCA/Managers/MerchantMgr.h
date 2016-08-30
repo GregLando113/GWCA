@@ -3,8 +3,7 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
-#include "Hooker.h"
-#include "GWStructures.h"
+#include "..\Structures\GameEntities\Item.h"
 
 namespace GWCA {
 

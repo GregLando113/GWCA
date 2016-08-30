@@ -1,7 +1,7 @@
-#include "CtoSMgr.h"
+#include "..\..\Managers\CtoSMgr.h"
 
-#include "MemoryMgr.h"
-#include "GameThreadMgr.h"
+#include "..\..\Managers\MemoryMgr.h"
+#include "..\..\Managers\GameThreadMgr.h"
 
 GWCA::CtoSMgr::SendCtoGSPacket_t GWCA::CtoSMgr::gs_send_function_ = NULL;
 

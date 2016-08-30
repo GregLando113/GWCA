@@ -1,8 +1,9 @@
-#include "SkillbarMgr.h"
+#include "..\..\Managers\SkillbarMgr.h"
 
-#include "GameThreadMgr.h"
-#include "CtoSMgr.h"
-#include "AgentMgr.h"
+#include "..\..\Managers\GameThreadMgr.h"
+#include "..\..\Managers\CtoSMgr.h"
+#include "..\..\Managers\AgentMgr.h"
+#include "..\..\Managers\MemoryMgr.h"
 
 GWCA::GW::Skill GWCA::SkillbarMgr::GetSkillConstantData(DWORD SkillID) {
 	return SkillConstants_[SkillID];

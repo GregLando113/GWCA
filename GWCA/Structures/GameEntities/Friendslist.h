@@ -1,5 +1,7 @@
 #pragma once
+
 #include <Windows.h>
+#include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
   namespace GW {
@@ -12,7 +14,7 @@ namespace GWCA {
       DWORD zoneId;
     };
 
-    typedef gw_array<Friend*> FriendsListArray;
+    using FriendsListArray = gw_array<Friend*>;
 
     struct FriendList {
       FriendsListArray friends;

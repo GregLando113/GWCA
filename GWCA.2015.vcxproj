@@ -14,9 +14,6 @@
     <ClInclude Include="GWCA\Constants\Constants.h" />
     <ClInclude Include="GWCA\Constants\Maps.h" />
     <ClInclude Include="GWCA\Constants\Skills.h" />
-	<ClInclude Include="GWCA\Structures\GWStructPositions.h" />
-    <ClInclude Include="GWCA\Structures\GWStructures.h" />
-	<ClInclude Include="GWCA\Structures\GameContext.h" />
     <ClInclude Include="GWCA\Managers\AgentMgr.h" />
     <ClInclude Include="GWCA\Managers\CameraMgr.h" />
     <ClInclude Include="GWCA\Managers\ChatMgr.h" />
@@ -27,6 +24,34 @@
     <ClInclude Include="GWCA\Managers\GameThreadMgr.h" />
     <ClInclude Include="GWCA\Managers\GuildMgr.h" />
     <ClInclude Include="GWCA\Managers\GWCAManager.h" />
+    <ClInclude Include="GWCA\Structures\Context\AgentContext.h" />
+    <ClInclude Include="GWCA\Structures\Context\CharContext.h" />
+    <ClInclude Include="GWCA\Structures\Context\GameContext.h" />
+    <ClInclude Include="GWCA\Structures\Context\GuildContext.h" />
+    <ClInclude Include="GWCA\Structures\Context\ItemContext.h" />
+    <ClInclude Include="GWCA\Structures\Context\MapContext.h" />
+    <ClInclude Include="GWCA\Structures\Context\PartyContext.h" />
+    <ClInclude Include="GWCA\Structures\Context\TradeContext.h" />
+    <ClInclude Include="GWCA\Structures\Context\WorldContext.h" />
+    <ClInclude Include="GWCA\Structures\GameContainers\gw_array.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Agent.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Attribute.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Camera.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Friendslist.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Guild.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Hero.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Item.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Map.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\NPC.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Party.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Pathing.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Player.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Position.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Quest.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Skill.h" />
+    <ClInclude Include="GWCA\Structures\GameEntities\Title.h" />
+    <ClInclude Include="GWCA\Structures\GWStructures.h" />
+    <ClInclude Include="GWCA\Structures\Packets\StoC.h" />
     <ClInclude Include="GWCA\Utilities\Hooker.h" />
     <ClInclude Include="GWCA\Managers\ItemMgr.h" />
     <ClInclude Include="GWCA\Managers\MapMgr.h" />
@@ -38,14 +63,13 @@
     <ClInclude Include="GWCA\Managers\PlayerMgr.h" />
     <ClInclude Include="GWCA\Managers\SkillbarMgr.h" />
     <ClInclude Include="GWCA\Managers\StoCMgr.h" />
-    <ClInclude Include="GWCA\Structures\StoCPackets.h" />
-	<ClInclude Include="GWCA\GWCA.h" />
+    <ClInclude Include="GWCA\GWCA.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c" />
-	<ClCompile Include="GWCA\src\Utilities\Hooker.cpp" />
-	<ClCompile Include="GWCA\src\Utilities\MemoryPatcher.cpp" />
-	<ClCompile Include="GWCA\src\Utilities\PatternScanner.cpp" />
+    <ClCompile Include="GWCA\src\Utilities\Hooker.cpp" />
+    <ClCompile Include="GWCA\src\Utilities\MemoryPatcher.cpp" />
+    <ClCompile Include="GWCA\src\Utilities\PatternScanner.cpp" />
     <ClCompile Include="GWCA\src\Managers\AgentMgr.cpp" />
     <ClCompile Include="GWCA\src\Managers\CameraMgr.cpp" />
     <ClCompile Include="GWCA\src\Managers\ChatMgr.cpp" />
@@ -62,7 +86,7 @@
     <ClCompile Include="GWCA\src\Managers\PartyMgr.cpp" />
     <ClCompile Include="GWCA\src\Managers\SkillbarMgr.cpp" />
     <ClCompile Include="GWCA\src\Managers\StoCMgr.cpp" />
-	<ClCompile Include="GWCA\src\GWCA.cpp" />
+    <ClCompile Include="GWCA\src\GWCA.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}</ProjectGuid>
@@ -95,7 +119,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>GWCA_d</TargetName>
+    <TargetName>GWCAd</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

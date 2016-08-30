@@ -37,7 +37,7 @@ namespace GWCA {
 			}
 
 			T& operator[](DWORD index) {
-				return index(index)
+				return this->index(index);
 			}
 			
 			bool valid() {

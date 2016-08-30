@@ -1,7 +1,8 @@
-#include "EffectMgr.h"
+#include "..\..\Managers\EffectMgr.h"
 
-#include "GameThreadMgr.h"
-#include "CtoSMgr.h"
+#include "..\..\Managers\MemoryMgr.h"
+#include "..\..\Managers\GameThreadMgr.h"
+#include "..\..\Managers\CtoSMgr.h"
 
 DWORD GWCA::EffectMgr::alcohol_level_ = NULL;
 GWCA::EffectMgr::PPEFunc_t GWCA::EffectMgr::ppe_retour_func_ = NULL;

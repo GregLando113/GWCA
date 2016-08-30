@@ -1,13 +1,16 @@
-#include "ItemMgr.h"
+#include "..\..\Managers\ItemMgr.h"
 
-#include "GameThreadMgr.h"
-#include "StoCMgr.h"
-#include "CtoSMgr.h"
-#include "MapMgr.h"
+#include "..\..\Constants\Constants.h"
+
+#include "..\..\Managers\GameThreadMgr.h"
+#include "..\..\Managers\StoCMgr.h"
+#include "..\..\Managers\CtoSMgr.h"
+#include "..\..\Managers\MapMgr.h"
+#include "..\..\Managers\MemoryMgr.h"
 
 void GWCA::ItemMgr::OpenXunlaiWindow() {
 	static DWORD ecxbuf[4] = { 119, 0, 0, 3 };
-	StoCMgr::Instance().EmulatePacket((StoC_Pak::PacketBase*)ecxbuf);
+	StoCMgr::Instance().EmulatePacket((Packet::StoC::PacketBase*)ecxbuf);
 }
 
 void GWCA::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {

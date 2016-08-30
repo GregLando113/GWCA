@@ -1,7 +1,9 @@
 #pragma once
 
 #include "GWCAManager.h"
-#include "GameContext.h"
+#include "..\Structures\Context\GameContext.h"
+#include "..\Structures\Context\WorldContext.h"
+#include "..\Structures\GameEntities\Player.h";
 
 namespace GWCA {
 	class PlayerMgr : public GWCAManager<PlayerMgr> {

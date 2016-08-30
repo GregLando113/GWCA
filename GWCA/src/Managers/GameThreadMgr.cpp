@@ -1,7 +1,7 @@
-#include "GameThreadMgr.h"
+#include "..\..\Managers\GameThreadMgr.h"
 
-#include "GWCA.h"
-#include "MemoryMgr.h"
+#include "..\..\GWCA.h"
+#include "..\..\Managers\MemoryMgr.h"
 
 CRITICAL_SECTION GWCA::GameThreadMgr::criticalsection_;
 

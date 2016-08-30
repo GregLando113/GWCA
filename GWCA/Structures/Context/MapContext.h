@@ -3,6 +3,7 @@
 #include <Windows.h>
 
 #include "..\GameEntities\Pathing.h"
+#include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
   using namespace GW;

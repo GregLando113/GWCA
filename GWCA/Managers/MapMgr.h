@@ -3,9 +3,9 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
-#include "GwConstants.h"
-#include "GWStructures.h"
-
+#include "..\Constants\Constants.h"
+#include "..\Structures\GameEntities\Map.h"
+#include "..\Structures\GameEntities\Pathing.h"
 
 namespace GWCA {
 	class MapMgr : public GWCAManager<MapMgr> {
@@ -25,10 +25,10 @@ namespace GWCA {
 		GwConstants::MapID GetMapID();
 
 		// Get current region you are in.
-		inline int GetRegion() { return *(int*)(MemoryMgr::MapInfoPtr + 0x10); }
+		int GetRegion();
 
 		// Get current language you are in.
-		inline int GetLanguage() { return *(int*)(MemoryMgr::MapInfoPtr + 0xC); }
+		int GetLanguage();
 
 		// Get time, in ms, since the instance you are residing in has been created.
 		DWORD GetInstanceTime();

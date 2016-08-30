@@ -1,5 +1,8 @@
 #pragma once
+
 #include <Windows.h>
+#include "..\GameContainers\gw_array.h"
+#include "..\..\Constants\Constants.h"
 
 namespace GWCA {
   namespace GW {

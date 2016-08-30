@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Windows.h>
-#include "GWStructPositions.h"
+#include "..\GameEntities\Position.h"
 
 /*
 Server to client packets, sorted by header
@@ -14,7 +14,7 @@ the packet name, e.g. P391 -> P391_InstanceLoadMap
 */
 
 namespace GWCA {
-
+	namespace Packet {
 	namespace StoC {
 		struct PacketBase {
 			DWORD header;
@@ -3360,5 +3360,6 @@ namespace GWCA {
 			// DWORD
 		};
 		const DWORD Packet<P481>::STATIC_HEADER = 481;
+	}
 	}
 }

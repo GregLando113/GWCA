@@ -1,9 +1,12 @@
-#include "AgentMgr.h"
+#include "..\..\Managers\AgentMgr.h"
 
-#include "GameThreadMgr.h"
-#include "CtoSMgr.h"
-#include "MapMgr.h"
-#include "GameContext.h"
+#include "..\..\Managers\MemoryMgr.h"
+#include "..\..\Managers\GameThreadMgr.h"
+#include "..\..\Managers\CtoSMgr.h"
+#include "..\..\Managers\MapMgr.h"
+
+#include "..\..\Structures\Context\GameContext.h"
+#include "..\..\Structures\Context\PartyContext.h"
 
 BYTE* GWCA::AgentMgr::dialog_log_ret_ = NULL;
 DWORD GWCA::AgentMgr::last_dialog_id_ = 0;
@@ -136,9 +139,9 @@ GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(int heroindex) {
 	auto ctx = GameContext::instance();
 	auto heroarray = ctx->party->partyinfo->heroes;
 
-	if (!heroarray.valid() || heroindex > heroarray.size()) return 0;
+	if (!heroarray.valid() || (DWORD)heroindex > heroarray.size()) return 0;
 
-	return heroarray[--heroindex].id;
+	return heroarray[--heroindex].agentid;
 }
 
 GWCA::GW::PlayerArray GWCA::AgentMgr::GetPlayerArray() {

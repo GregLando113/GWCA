@@ -73,13 +73,13 @@ GWCA::Destruct()
 
 // included memorymgr, gamethread and ctos since 
 // they are needed by most other managers
-#include "MemoryMgr.h"
-#include "GameThreadMgr.h"
-#include "CtoSMgr.h"
+#include "Managers\MemoryMgr.h"
+#include "Managers\GameThreadMgr.h"
+#include "Managers\CtoSMgr.h"
 
 // include agentmgr and mapmgr by default since they are used by most applications
-#include "AgentMgr.h"
-#include "MapMgr.h"
+#include "Managers\AgentMgr.h"
+#include "Managers\MapMgr.h"
 
 namespace GWCA {
 

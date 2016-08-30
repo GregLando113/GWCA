@@ -3,8 +3,9 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
-#include "GWStructures.h"
-#include "GwConstants.h"
+
+#include "..\Constants\Constants.h"
+#include "..\Structures\GameEntities\Friendslist.h"
 
 namespace GWCA {
 

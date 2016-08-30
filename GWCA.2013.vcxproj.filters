@@ -28,6 +28,18 @@
     <Filter Include="src\Utilities">
       <UniqueIdentifier>{88afd6b9-5690-4eb1-a674-f46588d1f8aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Structures\Context">
+      <UniqueIdentifier>{61197b20-cff8-45c7-a877-dd6ad197f8c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Structures\GameContainers">
+      <UniqueIdentifier>{ba2d8b80-12eb-459a-83f8-0e429eda007d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Structures\GameEntities">
+      <UniqueIdentifier>{00ae97e4-a570-4056-a2e6-3031d97e58d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Structures\Packets">
+      <UniqueIdentifier>{99998bce-68f7-4dc4-82a6-193f869faeb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\disasm\ld32.h">
@@ -94,15 +106,6 @@
     <ClInclude Include="GWCA\Managers\StoCMgr.h">
       <Filter>Managers</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\Structures\GWStructures.h">
-      <Filter>Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="GWCA\Structures\GWStructPositions.h">
-      <Filter>Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="GWCA\Structures\GameContext.h">
-      <Filter>Structures</Filter>
-    </ClInclude>
     <ClInclude Include="GWCA\Utilities\Hooker.h">
       <Filter>Utilities</Filter>
     </ClInclude>
@@ -112,8 +115,89 @@
     <ClInclude Include="GWCA\Utilities\PatternScanner.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\Structures\StoCPackets.h">
+    <ClInclude Include="GWCA\Structures\GWStructures.h">
       <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Agent.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\AgentContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Attribute.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Camera.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\CharContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Friendslist.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\GameContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Guild.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\GuildContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameContainers\gw_array.h">
+      <Filter>Structures\GameContainers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Hero.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Item.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Map.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\NPC.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Party.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Pathing.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Player.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Position.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Quest.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Skill.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\GameEntities\Title.h">
+      <Filter>Structures\GameEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\ItemContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\MapContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\PartyContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\TradeContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Context\WorldContext.h">
+      <Filter>Structures\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Structures\Packets\StoC.h">
+      <Filter>Structures\Packets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
-#include "PartyMgr.h"
+#include "..\..\Managers\PartyMgr.h"
 
-#include "AgentMgr.h"
-#include "CtoSMgr.h"
+#include "..\..\Managers\AgentMgr.h"
+#include "..\..\Managers\CtoSMgr.h"
 
 GWCA::PartyMgr::PartyMgr() {
 	BYTE* addr_tick = (BYTE*)0x0054E6B0;

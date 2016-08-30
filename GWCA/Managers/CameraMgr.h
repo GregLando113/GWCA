@@ -1,8 +1,9 @@
 #pragma once
 
 #include "GWCAManager.h"
-#include "GWStructures.h"
-#include "MemoryPatcher.h"
+
+#include "..\Structures\GameEntities\Camera.h"
+#include "..\Utilities\MemoryPatcher.h"
 
 namespace GWCA {
 

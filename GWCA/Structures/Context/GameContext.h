@@ -1,13 +1,8 @@
 #pragma once
 
-#include "GwConstants.h"
-#include "GWStructures.h"
-#include "PatternScanner.h"
+#include "..\..\Utilities\PatternScanner.h"
 
 namespace GWCA {
-
-	using namespace GW;
-
 
   class AgentContext;
   class MapContext;

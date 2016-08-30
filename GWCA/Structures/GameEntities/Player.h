@@ -1,7 +1,11 @@
 #pragma once
+#include <Windows.h>
+#include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
   namespace GW {
+
+	using PlayerID = DWORD;
 
     struct Player {
       DWORD AgentID; //0x0000

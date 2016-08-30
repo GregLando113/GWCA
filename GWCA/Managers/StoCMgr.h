@@ -4,10 +4,11 @@
 #include <vector>
 #include <map>
 
-#include "GWCAManager.h"
-#include "StoCPackets.h"
-#include "GWStructures.h"
-#include "GameThreadMgr.h"
+#include ".\GWCAManager.h"
+#include ".\GameThreadMgr.h"
+
+#include "..\Structures\Packets\StoC.h"
+#include "..\Structures\GameContainers\gw_array.h"
 
 namespace GWCA {
 
@@ -26,7 +27,7 @@ namespace GWCA {
 			Inherit this, then ignore added header, just all other fields of packet in your definitions.
 		*/
 
-		typedef std::function<bool(StoC_Pak::PacketBase*)> Handler;
+		typedef std::function<bool(Packet::StoC::PacketBase*)> Handler;
 
 		template <typename T>
 		using CallbackFunc = std::function<bool(T*)>;
@@ -48,12 +49,12 @@ namespace GWCA {
 			GameThreadMgr::Instance().Enqueue(VoidOriginalHandler, packet);
 		}
 
-		void EmulatePacket(StoC_Pak::PacketBase* packet) {
+		void EmulatePacket(Packet::StoC::PacketBase* packet) {
 			GameThreadMgr::Instance().Enqueue(VoidOriginalHandler, packet);
 		}
 
 	private:
-		using StoCHandler_t = bool(__fastcall *)(StoC_Pak::PacketBase* pak);
+		using StoCHandler_t = bool(__fastcall *)(Packet::StoC::PacketBase* pak);
 
 		struct StoCHandler {
 			DWORD* packettemplate;
@@ -65,9 +66,9 @@ namespace GWCA {
 		StoCMgr();
 		void RestoreHooks() override;
 
-		static bool __fastcall StoCHandlerFunc(StoC_Pak::PacketBase* pak);
+		static bool __fastcall StoCHandlerFunc(Packet::StoC::PacketBase* pak);
 
-		static void VoidOriginalHandler(StoC_Pak::PacketBase* packet) {
+		static void VoidOriginalHandler(Packet::StoC::PacketBase* packet) {
 			original_functions_[packet->header].handlerfunc(packet);
 		}
 

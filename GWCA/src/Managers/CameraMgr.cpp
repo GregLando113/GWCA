@@ -1,5 +1,5 @@
-#include "CameraMgr.h"
-#include "PatternScanner.h"
+#include "..\..\Managers\CameraMgr.h"
+#include "..\..\Utilities\PatternScanner.h"
 
 GWCA::CameraMgr::CameraMgr() {
 	PatternScanner scan("Gw.exe");

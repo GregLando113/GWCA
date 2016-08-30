@@ -4,9 +4,14 @@
 #include <vector>
 
 #include "GWCAManager.h"
-#include "GWStructures.h"
-#include "GwConstants.h"
-#include "Hooker.h"
+
+#include "..\Constants\Constants.h"
+#include "..\Structures\GameEntities\Position.h"
+#include "..\Structures\GameEntities\NPC.h"
+#include "..\Structures\GameEntities\Player.h"
+#include "..\Structures\GameEntities\Agent.h"
+#include "..\Managers\MemoryMgr.h"
+#include "..\Utilities\Hooker.h"
 
 namespace GWCA {
 

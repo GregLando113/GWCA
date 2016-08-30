@@ -2,6 +2,7 @@
 #pragma once
 #include <Windows.h>
 
+#include "..\GameContainers\gw_array.h"
 #include "..\GameEntities\Agent.h"
 #include "..\GameEntities\Item.h"
 #include "..\GameEntities\Attribute.h"

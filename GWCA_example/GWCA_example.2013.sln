@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Windows Desktop
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA", "..\GWCA.vcxproj", "{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA", "..\GWCA.2013.vcxproj", "{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA_example", "GWCA_example.vcxproj", "{D60712B8-DA82-45D7-9D57-3E89C13DDE35}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA_example", "GWCA_example.2013.vcxproj", "{D60712B8-DA82-45D7-9D57-3E89C13DDE35}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38} = {B3359F05-68CF-4E7F-B9D6-D106F6D48A38}
 	EndProjectSection

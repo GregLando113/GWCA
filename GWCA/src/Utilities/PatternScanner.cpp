@@ -1,4 +1,4 @@
-#include "PatternScanner.h"
+#include "..\..\Utilities\PatternScanner.h"
 #include <Psapi.h>
 
 DWORD GWCA::PatternScanner::FindPattern(char* pattern, char* mask, DWORD offset) {

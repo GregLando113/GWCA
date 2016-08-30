@@ -1,6 +1,6 @@
-#include "MapMgr.h"
-
-#include "CtoSMgr.h"
+#include "..\..\Managers\MapMgr.h"
+#include "..\..\Managers\CtoSMgr.h"
+#include "..\..\Managers\MemoryMgr.h"
 
 void GWCA::MapMgr::Travel(GwConstants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
@@ -67,6 +67,14 @@ DWORD GWCA::MapMgr::GetInstanceTime() {
 GwConstants::MapID GWCA::MapMgr::GetMapID() {
 	return static_cast<GwConstants::MapID>(*(DWORD*)MemoryMgr::MapIDPtr);
 }
+
+// Get current region you are in.
+
+int GWCA::MapMgr::GetRegion() { return *(int*)(MemoryMgr::MapInfoPtr + 0x10); }
+
+// Get current language you are in.
+
+int GWCA::MapMgr::GetLanguage() { return *(int*)(MemoryMgr::MapInfoPtr + 0xC); }
 
 GwConstants::InstanceType GWCA::MapMgr::GetInstanceType() {
 	return *(GwConstants::InstanceType*)(MemoryMgr::agArrayPtr - 0xF0);

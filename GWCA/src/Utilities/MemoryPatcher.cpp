@@ -1,4 +1,4 @@
-#include "MemoryPatcher.h"
+#include "..\..\Utilities\MemoryPatcher.h"
 
 GWCA::MemoryPatcher::MemoryPatcher(LPVOID addr, BYTE *patch, UINT size) {
 	this->addr = addr;

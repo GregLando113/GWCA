@@ -1,6 +1,6 @@
-#include "GWCAManager.h"
+#include "..\..\Managers\GWCAManager.h"
 
-#include "GWCA.h"
+#include "..\..\GWCA.h"
 
 GWCA::GWCABaseManager::GWCABaseManager() {
 	GWCA::Api::managers.push_back(this);

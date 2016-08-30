@@ -1,17 +1,17 @@
-#include "ChatMgr.h"
+#include "..\..\Managers\ChatMgr.h"
 
 #include <sstream>
 #include <iomanip>
 #include <ctime>
 
-#include "PatternScanner.h"
-#include "CtoSMgr.h"
-#include "MemoryMgr.h"
+#include "..\..\Utilities\PatternScanner.h"
+#include "..\..\Managers\CtoSMgr.h"
+#include "..\..\Managers\MemoryMgr.h"
 
 static wchar_t* wcssep(wchar_t* str, wchar_t sep);
 
 GWCA::ChatMgr::ChatMgr() {
-	PatternScanner scanner("Gw.exe");
+	PatternScanner scanner(0x401000,0x49A000);
 	BYTE* chatlog_addr = (BYTE*)scanner.FindPattern("\x53\x56\x8B\xF1\x57\x8B\x56\x14\x8B\x4E\x0C\xE8", "xxxxxxxxxxxx", -6);
 	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
 	BYTE* opentemplate_addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43","xxxxxxxx",0);

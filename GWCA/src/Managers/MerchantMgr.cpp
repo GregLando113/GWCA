@@ -1,8 +1,9 @@
-#include "MerchantMgr.h"
+#include "..\..\Managers\MerchantMgr.h"
 
-#include "PatternScanner.h"
-#include "GameThreadMgr.h"
-#include "ItemMgr.h"
+#include "..\..\Utilities\PatternScanner.h"
+#include "..\..\Managers\GameThreadMgr.h"
+#include "..\..\Managers\ItemMgr.h"
+#include "..\..\Managers\MemoryMgr.h"
 
 GWCA::MerchantMgr::MerchantMgr() : GWCAManager() {
 	PatternScanner scan(0x401000,0x4FF000);

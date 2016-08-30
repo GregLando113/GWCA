@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
+
 #include "..\GameEntities\Item.h"
+#include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
 using namespace GW;

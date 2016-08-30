@@ -1,6 +1,6 @@
-#include "MemoryMgr.h"
+#include "..\..\Managers\MemoryMgr.h"
 #include <stdio.h>
-#include "PatternScanner.h"
+#include "..\..\Utilities\PatternScanner.h"
 
 // Agent Array
 BYTE* GWCA::MemoryMgr::agArrayPtr = NULL;

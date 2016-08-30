@@ -1,12 +1,12 @@
-#include "StoCMgr.h"
+#include "..\..\Managers\StoCMgr.h"
 
-#include "PatternScanner.h"
+#include "..\..\Utilities\PatternScanner.h"
 
 GWCA::StoCMgr::StoCHandlerArray GWCA::StoCMgr::game_server_handler_;
 GWCA::StoCMgr::StoCHandler* GWCA::StoCMgr::original_functions_ = NULL;
 std::map<DWORD, std::vector<GWCA::StoCMgr::Handler>> GWCA::StoCMgr::event_calls_;
 
-bool GWCA::StoCMgr::StoCHandlerFunc(StoC_Pak::PacketBase* pak) {
+bool GWCA::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
 	bool do_not_process = false;
 	for (auto call : event_calls_[pak->header])
 	{

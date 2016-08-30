@@ -5,7 +5,7 @@
 #include <map>
 
 #include "GWCAManager.h"
-#include "Hooker.h"
+#include "..\Utilities\Hooker.h"
 
 namespace GWCA {
 

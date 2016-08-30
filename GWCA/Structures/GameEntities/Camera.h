@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include "Position.h"
 
 namespace GWCA {
   namespace GW {

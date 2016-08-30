@@ -1,7 +1,9 @@
-#include "GuildMgr.h"
+#include "..\..\Managers\GuildMgr.h"
 
-#include "GameContext.h"
-#include "CtoSMgr.h"
+#include "..\..\Structures\Context\GameContext.h"
+#include "..\..\Structures\Context\GuildContext.h"
+#include "..\..\Managers\MemoryMgr.h"
+#include "..\..\Managers\CtoSMgr.h"
 
 wchar_t* GWCA::GuildMgr::GetPlayerGuildAnnouncer() {
 	return MemoryMgr::ReadPtrChain<wchar_t*>(MemoryMgr::GetContextPtr(), 2, 0x3C, 0x278);

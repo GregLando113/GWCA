@@ -3,8 +3,8 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
-#include "GWStructures.h"
-#include "GwConstants.h"
+#include "..\Constants\Skills.h"
+#include "..\Structures\GameEntities\Skill.h"
 
 namespace GWCA {
 

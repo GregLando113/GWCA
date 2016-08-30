@@ -2,10 +2,10 @@
 
 #include <Windows.h>
 
-#include "GWCAManager.h"
-#include "GWStructures.h"
-#include "GwConstants.h"
-#include "Hooker.h"
+#include ".\GWCAManager.h"
+#include "..\Utilities\Hooker.h"
+#include "..\Constants\Skills.h"
+#include "..\Structures\GameEntities\Skill.h"
 
 
 namespace GWCA {

@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
-#include "GWStructures.h"
+#include "..\Structures\GameEntities\Guild.h"
 
 namespace GWCA {
 

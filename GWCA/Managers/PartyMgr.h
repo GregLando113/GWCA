@@ -1,8 +1,11 @@
 #pragma once
 
-#include "GWCAManager.h"
-#include "GameContext.h"
-#include "Hooker.h"
+#include ".\GWCAManager.h"
+
+#include "..\Utilities\Hooker.h"
+#include "..\Structures\Context\GameContext.h"
+#include "..\Structures\Context\PartyContext.h"
+
 
 namespace GWCA {
 	class PartyMgr : public GWCAManager<PartyMgr> {

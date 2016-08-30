@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include "gw_array.h"
+#include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
   namespace GW {
@@ -58,10 +58,10 @@ namespace GWCA {
       DWORD Recharge;					// 0008
       DWORD SkillId;					// 000C						see GWConst::SkillIds
       DWORD Event;					// 0010	s
-      long GetRecharge() const {		// returns recharge time remaining in milliseconds, or 0 if recharged
-        if (Recharge == 0) return 0;
-        return Recharge - MemoryMgr::GetSkillTimer();
-      }
+     // long GetRecharge() const {		// returns recharge time remaining in milliseconds, or 0 if recharged
+     //   if (Recharge == 0) return 0;
+     //   return Recharge - MemoryMgr::GetSkillTimer();
+     // }
     };
     struct Skillbar {						// total : BC BYTEs
       Skillbar() : AgentId(0) {}
@@ -96,7 +96,7 @@ namespace GWCA {
       DWORD Unknown1;						// 0004
       DWORD BuffId;						// 0008						id of buff in the buff array
       DWORD TargetAgentId;				// 000C						agent id of the target (0 if no target)
-      static Buff Nil() { return Buff{ 0, 0, 0, 0 }; }
+      static Buff Nil() { return Buff(); }
       Buff(): SkillId(0), Unknown1(0), BuffId(0), TargetAgentId(0) {}
     };
 

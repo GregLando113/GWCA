@@ -15,7 +15,7 @@ the packet name, e.g. P391 -> P391_InstanceLoadMap
 
 namespace GWCA {
 
-	namespace StoC_Pak {
+	namespace StoC {
 		struct PacketBase {
 			DWORD header;
 		};

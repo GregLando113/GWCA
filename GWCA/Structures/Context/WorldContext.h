@@ -12,6 +12,7 @@
 #include "..\GameEntities\Skill.h"
 #include "..\GameEntities\Title.h"
 #include "..\GameEntities\Quest.h"
+#include "..\GameEntities\Map.h"
 
 namespace GWCA {
 using namespace GW;
@@ -37,7 +38,7 @@ public:
   GamePos all_flag; // 0x9C
   BYTE pad3[0x4]; // 0xA8
   PartyAttributeArray attributes; // 0xAC
-  BYTE pad4[0x3FC]; // 0xB0
+  BYTE pad4[0x3FC]; // 0xBC
   gw_array<void*> unk1_array; // 0x4B8
   gw_array<void*> unk2_array; // 0x4C8
   BYTE pad5[0x4]; // 0x4D8
@@ -57,22 +58,23 @@ public:
   gw_array<void*> unk9_array; // 0x5CC
   gw_array<void*> unk10_array; // 0x5DC
   gw_array<void*> unk11_array; // 0x5EC
-  gw_array<void*> unk12_array; // 0x60C
+  gw_array<void*> unk12_array; // 0x5FC
+  gw_array<void*> unk13_array; // 0x60C
   DWORD unk3[4]; // 0x61C
-  gw_array<void*> unk13_array; // 0x62C
+  gw_array<void*> unk14_array; // 0x62C
   BYTE pad8[0x44]; // 0x63C
-  gw_array<void*> unk14_array; // 0x680 - Struct size = 0x138 i think, has a vtable
+  gw_array<void*> unk15_array; // 0x680 - Struct size = 0x138 i think, has a vtable
   DWORD salvagesessionid; // 0x690
-  DWORD unk4[0x9]; // 0x6A0
-  gw_array<void*> unk15_array; // 0x6BC
-  gw_array<void*> unk16_array; // 0x6CC
+  DWORD unk4[0xA]; // 0x694
+  gw_array<void*> unk16_array; // 0x6BC
+  gw_array<void*> unk17_array; // 0x6CC
   DWORD unk5; // 0x6DC
-  gw_array<void*> unk17_array; // 0x6E0
+  gw_array<void*> unk18_array; // 0x6E0
   SkillbarArray skillbar; // 0x6F0
-  gw_array<void*> unk18_array; // 0x700
-  gw_array<void*> unk19_array; // 0x710
-  gw_array<void*> unk20_array; // 0x720
-  gw_array<void*> unk21_array; // 0x730
+  gw_array<void*> unk19_array; // 0x700
+  gw_array<void*> unk20_array; // 0x710
+  gw_array<void*> unk21_array; // 0x720
+  gw_array<void*> unk22_array; // 0x730
   DWORD experience; // 0x740
   DWORD experience_dupe; // 0x744
   DWORD currentkurzick; // 0x748
@@ -108,10 +110,10 @@ public:
   DWORD maxbalth; // 0x7C0
   DWORD maximperial; // 0x7C4
   DWORD unk6; // 0x7C8
-  gw_array<void*> unk22_array; // 0x7CC
-  gw_array<void*> unk23_array; // 0x7DC
-  gw_array<void*> unk24_array; // 0x7EC
-  gw_array<void*> unk25_array; // 0x7FC
+  gw_array<void*> unk23_array; // 0x7CC
+  gw_array<void*> unk24_array; // 0x7DC
+  MissionMapIconArray missionmapicons; // 0x7EC
+  NPCArray npcs; // 0x7FC
   PlayerArray players; // 0x80C
   TitleArray titles; // 0x81C
   //... couple more arrays after this

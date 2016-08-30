@@ -22,7 +22,7 @@ namespace GWCA {
       struct sub2 {
         BYTE pad1[0x18];
         PathingMapArray pmaps;
-      };
+      } *sub2;
       //... Bunch of arrays and shit
     } *sub1;
     //... Player coords and shit beyond this point if they are desirable :p

@@ -1,6 +1,17 @@
 #include "..\..\Managers\MapMgr.h"
+
+#include "..\..\Structures\Context\GameContext.h"
+#include "..\..\Structures\Context\MapContext.h"
+#include "..\..\Structures\Context\AgentContext.h"
+#include "..\..\Structures\Context\WorldContext.h"
+
 #include "..\..\Managers\CtoSMgr.h"
 #include "..\..\Managers\MemoryMgr.h"
+
+
+bool GWCA::MapMgr::IsMapLoaded() {
+	return GameContext::instance()->map != nullptr;
+}
 
 void GWCA::MapMgr::Travel(GwConstants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
@@ -61,7 +72,7 @@ void GWCA::MapMgr::Travel(GwConstants::MapID MapID, GwConstants::District distri
 }
 
 DWORD GWCA::MapMgr::GetInstanceTime() {
-	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 2, 0x8, 0x1AC);
+	return GameContext::instance()->agent->instancetimer;
 }
 
 GwConstants::MapID GWCA::MapMgr::GetMapID() {
@@ -81,9 +92,9 @@ GwConstants::InstanceType GWCA::MapMgr::GetInstanceType() {
 }
 
 GWCA::GW::MissionMapIconArray GWCA::MapMgr::GetMissionMapIconArray() {
-	return *MemoryMgr::ReadPtrChain<GW::MissionMapIconArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x7EC);
+	return GameContext::instance()->world->missionmapicons;
 }
 
 GWCA::GW::PathingMapArray GWCA::MapMgr::GetPathingMap() {
-	return *MemoryMgr::ReadPtrChain<GW::PathingMapArray*>(MemoryMgr::GetContextPtr(), 4, 0x14, 0x74, 0x0, 0x18);
+	return GameContext::instance()->map->sub1->sub2->pmaps;
 }

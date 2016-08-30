@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c" />
+    <ClCompile Include="GWCA\src\Managers\PlayerMgr.cpp" />
     <ClCompile Include="GWCA\src\Utilities\Hooker.cpp" />
     <ClCompile Include="GWCA\src\Utilities\MemoryPatcher.cpp" />
     <ClCompile Include="GWCA\src\Utilities\PatternScanner.cpp" />
@@ -89,7 +90,7 @@
     <ClCompile Include="GWCA\src\GWCA.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}</ProjectGuid>
+    <ProjectGuid>{89DC50EE-C3C2-437C-B416-DD43AC3743CC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GWCA</RootNamespace>
     <ProjectName>GWCA</ProjectName>

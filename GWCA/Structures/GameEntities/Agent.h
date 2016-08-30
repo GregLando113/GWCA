@@ -1,6 +1,7 @@
 #pragma once
 
 #include "..\GameContainers\gw_array.h"
+#include "Position.h"
 
 namespace GWCA {
 

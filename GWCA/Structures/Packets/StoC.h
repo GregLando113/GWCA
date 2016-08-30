@@ -980,13 +980,14 @@ namespace GWCA {
 
 		// Pings and drawing in compass
 		struct P133 : Packet<P133> {
-			DWORD Player;    // player who sent the ping
+			DWORD Player;    // player who sent the ping (PlayerNumber)
 			DWORD SessionID; // Changes for different pings/lines/curves
 			DWORD NumberPts; // Number of points in the data, between 1 and 8
 			struct {
 				short x;	 // world coordinates divided by 10
 				short y;	 // same
 			} points[8];
+			// there *might* be another 8 DWORDs, but they look like noise and they are not relayed by the server to other players
 		};
 		const DWORD Packet<P133>::STATIC_HEADER = 133;
 

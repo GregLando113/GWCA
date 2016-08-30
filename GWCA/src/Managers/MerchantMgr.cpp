@@ -1,5 +1,8 @@
 #include "..\..\Managers\MerchantMgr.h"
 
+#include "..\..\Structures\Context\GameContext.h"
+#include "..\..\Structures\Context\WorldContext.h"
+
 #include "..\..\Utilities\PatternScanner.h"
 #include "..\..\Managers\GameThreadMgr.h"
 #include "..\..\Managers\ItemMgr.h"
@@ -76,7 +79,7 @@ GWCA::GW::Item* GWCA::MerchantMgr::GetMerchantItemByModelID(DWORD modelid) {
 }
 
 GWCA::GW::MerchItemArray GWCA::MerchantMgr::GetMerchantItemsArray() {
-	return *MemoryMgr::ReadPtrChain<GW::MerchItemArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x24);
+	return GameContext::instance()->world->merchitems;
 }
 
 void GWCA::MerchantMgr::TransactionPacket::AddItem(DWORD itemid, DWORD quantity) {

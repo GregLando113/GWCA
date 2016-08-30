@@ -1,5 +1,7 @@
 #include "..\..\Managers\EffectMgr.h"
 
+#include "..\..\Structures\Context\GameContext.h"
+#include "..\..\Structures\Context\WorldContext.h"
 #include "..\..\Managers\MemoryMgr.h"
 #include "..\..\Managers\GameThreadMgr.h"
 #include "..\..\Managers\CtoSMgr.h"
@@ -67,7 +69,7 @@ void GWCA::EffectMgr::GetDrunkAf(DWORD Intensity,DWORD Tint) {
 }
 
 GWCA::GW::AgentEffectsArray GWCA::EffectMgr::GetPartyEffectArray() {
-	return *MemoryMgr::ReadPtrChain<GW::AgentEffectsArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x508);
+	return GameContext::instance()->world->partyeffects;
 }
 
 GWCA::GW::BuffArray GWCA::EffectMgr::GetPlayerBuffArray() {

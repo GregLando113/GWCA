@@ -3,9 +3,11 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
+
 #include "..\Constants\Constants.h"
 #include "..\Structures\GameEntities\Map.h"
 #include "..\Structures\GameEntities\Pathing.h"
+
 
 namespace GWCA {
 	class MapMgr : public GWCAManager<MapMgr> {
@@ -20,6 +22,7 @@ namespace GWCA {
 			DWORD unk;
 		};
 	public:
+		bool IsMapLoaded();
 
 		// Get current map ID.
 		GwConstants::MapID GetMapID();

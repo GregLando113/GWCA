@@ -58,10 +58,10 @@ namespace GWCA {
       DWORD Recharge;					// 0008
       DWORD SkillId;					// 000C						see GWConst::SkillIds
       DWORD Event;					// 0010	s
-     // long GetRecharge() const {		// returns recharge time remaining in milliseconds, or 0 if recharged
-     //   if (Recharge == 0) return 0;
-     //   return Recharge - MemoryMgr::GetSkillTimer();
-     // }
+      //long GetRecharge() const {		// returns recharge time remaining in milliseconds, or 0 if recharged
+      //  if (Recharge == 0) return 0;
+      //  return Recharge - MemoryMgr::GetSkillTimer();
+      //}
     };
     struct Skillbar {						// total : BC BYTEs
       Skillbar() : AgentId(0) {}

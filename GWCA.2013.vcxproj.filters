@@ -264,5 +264,8 @@
     <ClCompile Include="GWCA\src\GWCA.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\PlayerMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

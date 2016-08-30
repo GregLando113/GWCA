@@ -5,20 +5,21 @@
 #include "..\..\Managers\MemoryMgr.h"
 #include "..\..\Managers\CtoSMgr.h"
 
+
 wchar_t* GWCA::GuildMgr::GetPlayerGuildAnnouncer() {
-	return MemoryMgr::ReadPtrChain<wchar_t*>(MemoryMgr::GetContextPtr(), 2, 0x3C, 0x278);
+	return GameContext::instance()->guild->lastannouncementwriter;
 }
 
 wchar_t* GWCA::GuildMgr::GetPlayerGuildAnnouncement() {
-	return MemoryMgr::ReadPtrChain<wchar_t*>(MemoryMgr::GetContextPtr(), 2, 0x3C, 0x78);
+	return GameContext::instance()->guild->guildannouncement;
 }
 
 DWORD GWCA::GuildMgr::GetPlayerGuildIndex() {
-	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 2, 0x3C, 0x60);
+	return GameContext::instance()->guild->playerguildindex;
 }
 
 GWCA::GW::GuildArray GWCA::GuildMgr::GetGuildArray() {
-	return *MemoryMgr::ReadPtrChain<GW::GuildArray*>(MemoryMgr::GetContextPtr(), 2, 0x3C, 0x2F8);
+	return GameContext::instance()->guild->guilds;
 }
 
 void GWCA::GuildMgr::TravelGH() {

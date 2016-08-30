@@ -41,10 +41,10 @@ namespace GWCA {
 		inline GW::NPC& GetNPCByID(DWORD id) { return GetNPCArray()[id]; }
 
 		// Computes distance between the two agents in game units
-		float GetDistance(const GW::GamePos& a, const GW::GamePos& b);
+		float GetDistance(Vector2f a, const Vector2f b);
 
 		// Computes squared distance between the two agents in game units
-		float GetSqrDistance(const GW::GamePos& a, const GW::GamePos& b);
+		float GetSqrDistance(Vector2f a, const Vector2f b);
 
 		// Change targeted agent to (Agent)
 		void ChangeTarget(GW::Agent* Agent);
@@ -86,7 +86,7 @@ namespace GWCA {
 		// Returns the profession as short string, e.g. "W" for warrior
 		const char* GetProfessionAcronym(GwConstants::Profession profession);
 
-		GW::AgentID GetHeroAgentID(int heroindex);
+		GW::AgentID GetHeroAgentID(DWORD heroindex);
 
 	private:
 		

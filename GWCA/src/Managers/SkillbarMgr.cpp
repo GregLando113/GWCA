@@ -1,9 +1,13 @@
 #include "..\..\Managers\SkillbarMgr.h"
 
+#include "..\..\Structures\Context\GameContext.h"
+#include "..\..\Structures\Context\WorldContext.h"
+
 #include "..\..\Managers\GameThreadMgr.h"
 #include "..\..\Managers\CtoSMgr.h"
 #include "..\..\Managers\AgentMgr.h"
 #include "..\..\Managers\MemoryMgr.h"
+
 
 GWCA::GW::Skill GWCA::SkillbarMgr::GetSkillConstantData(DWORD SkillID) {
 	return SkillConstants_[SkillID];
@@ -68,7 +72,7 @@ GWCA::GW::Skillbar GWCA::SkillbarMgr::GetPlayerSkillbar() {
 }
 
 GWCA::GW::SkillbarArray GWCA::SkillbarMgr::GetSkillbarArray() {
-	return *MemoryMgr::ReadPtrChain<GW::SkillbarArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x6F0);
+	return GameContext::instance()->world->skillbar;
 }
 
 void GWCA::SkillbarMgr::UseSkillByID(DWORD SkillID, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/) {

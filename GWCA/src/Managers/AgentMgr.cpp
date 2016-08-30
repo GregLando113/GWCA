@@ -5,6 +5,7 @@
 #include "..\..\Managers\CtoSMgr.h"
 #include "..\..\Managers\MapMgr.h"
 
+#include "..\..\Structures\Context\WorldContext.h"
 #include "..\..\Structures\Context\GameContext.h"
 #include "..\..\Structures\Context\PartyContext.h"
 
@@ -25,11 +26,11 @@ GWCA::GW::AgentArray GWCA::AgentMgr::GetAgentArray() {
 	return *(GW::AgentArray*)MemoryMgr::agArrayPtr;
 }
 
-float GWCA::AgentMgr::GetDistance(const GW::GamePos& a, const GW::GamePos& b) {
+float GWCA::AgentMgr::GetDistance(Vector2f a, Vector2f b) {
 	return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 
-float GWCA::AgentMgr::GetSqrDistance(const GW::GamePos& a,const GW::GamePos& b) {
+float GWCA::AgentMgr::GetSqrDistance(Vector2f a, Vector2f b) {
 	return (a.x- b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 }
 
@@ -60,7 +61,7 @@ void GWCA::AgentMgr::Dialog(DWORD id) {
 }
 
 GWCA::GW::MapAgentArray GWCA::AgentMgr::GetMapAgentArray() {
-	return *MemoryMgr::ReadPtrChain<GW::MapAgentArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x7C);
+	return GameContext::instance()->world->mapagents;
 }
 
 GWCA::GW::Agent* GWCA::AgentMgr::GetPlayer() {
@@ -106,15 +107,15 @@ void __declspec(naked) GWCA::AgentMgr::detourDialogLog() {
 
 DWORD GWCA::AgentMgr::GetAmountOfPlayersInInstance() {
 	// -1 because the 1st array element is nil
-	return MemoryMgr::ReadPtrChain<DWORD>(MemoryMgr::GetContextPtr(), 3, 0x2C, 0x814, 0) - 1;
+	return GameContext::instance()->world->players.size() - 1;
 }
 
 wchar_t* GWCA::AgentMgr::GetPlayerNameByLoginNumber(DWORD loginnumber) {
-	return MemoryMgr::ReadPtrChain<wchar_t*>(MemoryMgr::GetContextPtr(), 4, 0x2C, 0x80C, 0x28 + 0x4C * loginnumber, 0);
+	return GameContext::instance()->world->players[loginnumber].Name;
 }
 
 DWORD GWCA::AgentMgr::GetAgentIdByLoginNumber(DWORD loginnumber) {
-	return MemoryMgr::ReadPtrChain<DWORD>(MemoryMgr::GetContextPtr(), 4, 0x2C, 0x80C, 0x4C * loginnumber, 0);
+	return GameContext::instance()->world->players[loginnumber].AgentID;
 }
 
 const char* GWCA::AgentMgr::GetProfessionAcronym(GwConstants::Profession profession) {
@@ -133,7 +134,7 @@ const char* GWCA::AgentMgr::GetProfessionAcronym(GwConstants::Profession profess
 	}
 }
 
-GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(int heroindex) {
+GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(DWORD heroindex) {
 	if (heroindex == 0) return GetPlayerId();
 
 	auto ctx = GameContext::instance();
@@ -145,9 +146,9 @@ GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(int heroindex) {
 }
 
 GWCA::GW::PlayerArray GWCA::AgentMgr::GetPlayerArray() {
-	return *MemoryMgr::ReadPtrChain<GW::PlayerArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x80C);
+	return GameContext::instance()->world->players;
 }
 
 GWCA::GW::NPCArray GWCA::AgentMgr::GetNPCArray() {
-	return *MemoryMgr::ReadPtrChain<GW::NPCArray*>(MemoryMgr::GetContextPtr(), 2, 0x2C, 0x7FC);
+	return GameContext::instance()->world->npcs;
 }

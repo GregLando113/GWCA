@@ -2,6 +2,8 @@
 
 #include "..\..\Constants\Constants.h"
 
+#include "..\..\Structures\Context\GameContext.h"
+#include "..\..\Structures\Context\ItemContext.h"
 #include "..\..\Managers\GameThreadMgr.h"
 #include "..\..\Managers\StoCMgr.h"
 #include "..\..\Managers\CtoSMgr.h"
@@ -30,11 +32,11 @@ void GWCA::ItemMgr::UseItem(GW::Item* item) {
 }
 
 GWCA::GW::Bag** GWCA::ItemMgr::GetBagArray() {
-	return *MemoryMgr::ReadPtrChain<GW::Bag***>(MemoryMgr::GetContextPtr(), 2, 0x40, 0xF8);
+	return GameContext::instance()->items->inventory->bags;
 }
 
 GWCA::GW::ItemArray GWCA::ItemMgr::GetItemArray() {
-	return *MemoryMgr::ReadPtrChain<GW::ItemArray*>(MemoryMgr::GetContextPtr(), 2, 0x40, 0xB8);
+	return GameContext::instance()->items->itemarray;
 }
 
 GWCA::ItemMgr::ItemMgr() {
@@ -118,11 +120,11 @@ GWCA::GW::Item* GWCA::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /*=
 }
 
 DWORD GWCA::ItemMgr::GetGoldAmountOnCharacter() {
-	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 3, 0x40, 0xF8, 0x7C);
+	return GameContext::instance()->items->inventory->gold_character;
 }
 
 DWORD GWCA::ItemMgr::GetGoldAmountInStorage() {
-	return *MemoryMgr::ReadPtrChain<DWORD*>(MemoryMgr::GetContextPtr(), 3, 0x40, 0xF8, 0x80);
+	return GameContext::instance()->items->inventory->gold_storage;
 }
 
 void GWCA::ItemMgr::OpenLockedChest() {

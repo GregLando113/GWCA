@@ -45,7 +45,7 @@ namespace GW {
 		BYTE pad6[0x1C]; // 0x4EC
 		AgentEffectsArray partyeffects; // 0x508
 		gw_array<void*> unk4_array; // 0x518
-		DWORD unk1; // 0x528
+		DWORD activequestid; // 0x528
 		QuestLog questlog; // 0x52C
 		BYTE pad7[0x38]; // 0x53C
 		gw_array<DWORD> unk5_array; // 0x574 - Seems like agent/item ids (only appears in outpost?)

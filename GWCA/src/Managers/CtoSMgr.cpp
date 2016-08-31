@@ -1,15 +1,15 @@
-#include "..\..\Managers\CtoSMgr.h"
+#include <GWCA\Managers\CtoSMgr.h>
 
-#include "..\..\Managers\MemoryMgr.h"
-#include "..\..\Managers\GameThreadMgr.h"
+#include <GWCA\Managers\MemoryMgr.h>
+#include <GWCA\Managers\GameThreadMgr.h>
 
-GWCA::CtoSMgr::SendCtoGSPacket_t GWCA::CtoSMgr::gs_send_function_ = NULL;
+GW::CtoSMgr::SendCtoGSPacket_t GW::CtoSMgr::gs_send_function_ = NULL;
 
-GWCA::CtoSMgr::CtoSMgr() {
+GW::CtoSMgr::CtoSMgr() {
 	gs_send_function_ = (SendCtoGSPacket_t)MemoryMgr::CtoGSSendFunction;
 }
 
-void GWCA::CtoSMgr::SendPacket(DWORD size, ...) {
+void GW::CtoSMgr::SendPacket(DWORD size, ...) {
 	DWORD* pak = new DWORD[size / 4];;
 
 	va_list vl;
@@ -24,7 +24,7 @@ void GWCA::CtoSMgr::SendPacket(DWORD size, ...) {
 }
 
 
-void GWCA::CtoSMgr::packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet) {
+void GW::CtoSMgr::packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet) {
 	gs_send_function_(thisptr, size, packet);
 
 	delete[] packet;

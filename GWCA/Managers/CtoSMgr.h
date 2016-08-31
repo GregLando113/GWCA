@@ -4,7 +4,7 @@
 #include "GWCAManager.h"
 #include "GameThreadMgr.h"
 
-namespace GWCA {
+namespace GW {
 
 	class CtoSMgr : public GWCAManager<CtoSMgr> {
 		friend class GWCAManager<CtoSMgr>;

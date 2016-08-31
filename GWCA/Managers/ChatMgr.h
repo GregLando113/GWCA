@@ -5,9 +5,9 @@
 #include <map>
 
 #include "GWCAManager.h"
-#include "..\Utilities\Hooker.h"
+#include <GWCA\Utilities\Hooker.h>
 
-namespace GWCA {
+namespace GW {
 
 	class ChatMgr : public GWCAManager<ChatMgr> {
 		friend class GWCAManager<ChatMgr>;

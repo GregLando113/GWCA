@@ -4,25 +4,25 @@
 #include <vector>
 
 #include "GWCAManager.h"
+#include "MemoryMgr.h"
+#include <GWCA\Utilities\Hooker.h>
+#include <GWCA\Constants\Constants.h>
+#include <GWCA\GameEntities\Position.h>
+#include <GWCA\GameEntities\NPC.h>
+#include <GWCA\GameEntities\Player.h>
+#include <GWCA\GameEntities\Agent.h>
 
-#include "..\Constants\Constants.h"
-#include "..\Structures\GameEntities\Position.h"
-#include "..\Structures\GameEntities\NPC.h"
-#include "..\Structures\GameEntities\Player.h"
-#include "..\Structures\GameEntities\Agent.h"
-#include "..\Managers\MemoryMgr.h"
-#include "..\Utilities\Hooker.h"
 
-namespace GWCA {
+namespace GW {
 
 	class AgentMgr : public GWCAManager<AgentMgr> {
 		friend class GWCAManager<AgentMgr>;
 
 	public:
 		// Get AgentArray Structures of player or target.
-		GW::Agent* GetPlayer();
-		GW::Agent* GetTarget();
-		inline GW::Agent* GetAgentByID(DWORD id) { return GetAgentArray()[id]; }
+		Agent* GetPlayer();
+		Agent* GetTarget();
+		inline Agent* GetAgentByID(DWORD id) { return GetAgentArray()[id]; }
 
 		// Get Current AgentID's of player or target.
 		inline DWORD GetPlayerId() { return *(DWORD*)MemoryMgr::PlayerAgentIDPtr; }
@@ -82,9 +82,6 @@ namespace GWCA {
 
 		// Returns AgentID of player with selected loginnumber.
 		DWORD GetAgentIdByLoginNumber(DWORD loginnumber);
-
-		// Returns the profession as short string, e.g. "W" for warrior
-		const char* GetProfessionAcronym(GwConstants::Profession profession);
 
 		GW::AgentID GetHeroAgentID(DWORD heroindex);
 

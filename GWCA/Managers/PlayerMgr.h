@@ -2,16 +2,16 @@
 
 #include "GWCAManager.h"
 
-#include "..\Structures\Context\GameContext.h"
-#include "..\Structures\Context\WorldContext.h"
-#include "..\Structures\GameEntities\Player.h"
+#include <GWCA\Context\GameContext.h>
+#include <GWCA\Context\WorldContext.h>
+#include <GWCA\GameEntities\Player.h>
 
-namespace GWCA {
+namespace GW {
 	class PlayerMgr : public GWCAManager<PlayerMgr> {
 		friend class GWCAManager<PlayerMgr>;
 
 	public:
-		void SetActiveTitle(GwConstants::TitleID id);
+		void SetActiveTitle(GW::Constants::TitleID id);
 		void RemoveActiveTitle();
 
 		GW::PlayerArray& GetPlayerArray() const {

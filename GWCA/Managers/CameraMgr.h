@@ -1,11 +1,10 @@
 #pragma once
 
 #include "GWCAManager.h"
+#include <GWCA\Utilities\MemoryPatcher.h>
+#include <GWCA\GameEntities\Camera.h>
 
-#include "..\Structures\GameEntities\Camera.h"
-#include "..\Utilities\MemoryPatcher.h"
-
-namespace GWCA {
+namespace GW {
 
 	class CameraMgr : public GWCAManager<CameraMgr> {
 		friend class GWCAManager<CameraMgr>;
@@ -94,5 +93,4 @@ namespace GWCA {
 		MemoryPatcher *patch_fog;
 		MemoryPatcher *patch_fov;
 	};
-
 }

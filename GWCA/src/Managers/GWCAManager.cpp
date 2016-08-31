@@ -1,7 +1,7 @@
-#include "..\..\Managers\GWCAManager.h"
+#include <GWCA\Managers\GWCAManager.h>
 
-#include "..\..\GWCA.h"
+#include <GWCA\GWCA.h>
 
-GWCA::GWCABaseManager::GWCABaseManager() {
-	GWCA::Api::managers.push_back(this);
+GW::GWCABaseManager::GWCABaseManager() {
+	GW::Api::managers.push_back(this);
 }

@@ -3,25 +3,18 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
-#include "..\Constants\Skills.h"
-#include "..\Structures\GameEntities\Skill.h"
+#include <GWCA\Constants\Skills.h>
+#include <GWCA\GameEntities\Skill.h>
 
-namespace GWCA {
+namespace GW {
 
 	class SkillbarMgr : public GWCAManager<SkillbarMgr> {
 		friend class GWCAManager<SkillbarMgr>;
 
 	public:
-
-		// Get array of skillbars, [0] = player [1-7] = heroes.
-		GW::SkillbarArray GetSkillbarArray();
-
-		// Same as GetSkillbarArray()[0] with checks. 
-		GW::Skillbar GetPlayerSkillbar();
-
 		// Get the skill slot in the player bar of the player.
 		// Returns 0 if the skill is not there
-		int GetSkillSlot(GwConstants::SkillID SkillID);
+		int GetSkillSlot(Constants::SkillID SkillID);
 
 		// Use Skill in slot (Slot) on (Agent), optionally call that you are using said skill.
 		void UseSkill(DWORD Slot, DWORD Target = 0, DWORD CallTarget = 0);

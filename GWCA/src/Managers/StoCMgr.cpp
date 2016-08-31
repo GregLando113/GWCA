@@ -1,12 +1,12 @@
-#include "..\..\Managers\StoCMgr.h"
+#include <GWCA\Managers\StoCMgr.h>
 
-#include "..\..\Utilities\PatternScanner.h"
+#include <GWCA\Utilities\PatternScanner.h>
 
-GWCA::StoCMgr::StoCHandlerArray GWCA::StoCMgr::game_server_handler_;
-GWCA::StoCMgr::StoCHandler* GWCA::StoCMgr::original_functions_ = NULL;
-std::map<DWORD, std::vector<GWCA::StoCMgr::Handler>> GWCA::StoCMgr::event_calls_;
+GW::StoCMgr::StoCHandlerArray GW::StoCMgr::game_server_handler_;
+GW::StoCMgr::StoCHandler* GW::StoCMgr::original_functions_ = NULL;
+std::map<DWORD, std::vector<GW::StoCMgr::Handler>> GW::StoCMgr::event_calls_;
 
-bool GWCA::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
+bool GW::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
 	bool do_not_process = false;
 	for (auto call : event_calls_[pak->header]) {
 		if (call(pak)) do_not_process = true;
@@ -14,7 +14,7 @@ bool GWCA::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
 	return do_not_process ? true : original_functions_[pak->header].handlerfunc(pak);
 }
 
-GWCA::StoCMgr::StoCMgr() : GWCAManager() {
+GW::StoCMgr::StoCMgr() : GWCAManager() {
 	PatternScanner scan(0x401000, 0x49A000);
 
 	// inb4 has rages at this
@@ -46,7 +46,7 @@ GWCA::StoCMgr::StoCMgr() : GWCAManager() {
 
 }
 
-void GWCA::StoCMgr::RestoreHooks() {
+void GW::StoCMgr::RestoreHooks() {
 	for (DWORD i = 0; i < game_server_handler_.size(); ++i) {
 		game_server_handler_[i] = original_functions_[i];
 	}

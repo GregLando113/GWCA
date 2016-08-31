@@ -2,11 +2,9 @@
 
 #include <Windows.h>
 
-
-namespace GWCA {
+namespace GW {
 
 	// v1 hooker by 4D 1
-
 	class Hook {
 		BYTE* retour_func_;
 		BYTE* source_;
@@ -17,5 +15,4 @@ namespace GWCA {
 		BYTE* Detour(BYTE* _source, BYTE* _detour, const DWORD _length);
 		void Retour();
 	};
-
 }

@@ -1,49 +1,49 @@
-#include "..\..\Managers\ItemMgr.h"
+#include <GWCA\Managers\ItemMgr.h>
 
-#include "..\..\Constants\Constants.h"
+#include <GWCA\Constants\Constants.h>
 
-#include "..\..\Structures\Context\GameContext.h"
-#include "..\..\Structures\Context\ItemContext.h"
-#include "..\..\Managers\GameThreadMgr.h"
-#include "..\..\Managers\StoCMgr.h"
-#include "..\..\Managers\CtoSMgr.h"
-#include "..\..\Managers\MapMgr.h"
-#include "..\..\Managers\MemoryMgr.h"
+#include <GWCA\Context\GameContext.h>
+#include <GWCA\Context\ItemContext.h>
+#include <GWCA\Managers\GameThreadMgr.h>
+#include <GWCA\Managers\StoCMgr.h>
+#include <GWCA\Managers\CtoSMgr.h>
+#include <GWCA\Managers\MapMgr.h>
+#include <GWCA\Managers\MemoryMgr.h>
 
-void GWCA::ItemMgr::OpenXunlaiWindow() {
+void GW::ItemMgr::OpenXunlaiWindow() {
 	static DWORD ecxbuf[4] = { 119, 0, 0, 3 };
 	StoCMgr::Instance().EmulatePacket((Packet::StoC::PacketBase*)ecxbuf);
 }
 
-void GWCA::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
+void GW::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
 	CtoSMgr::Instance().SendPacket(0xC, 0x39, item->AgentId, CallTarget);
 }
 
-void GWCA::ItemMgr::DropItem(GW::Item* item, DWORD quantity) {
+void GW::ItemMgr::DropItem(GW::Item* item, DWORD quantity) {
 	CtoSMgr::Instance().SendPacket(0xC, 0x26, item->ItemId, quantity);
 }
 
-void GWCA::ItemMgr::EquipItem(GW::Item* item) {
+void GW::ItemMgr::EquipItem(GW::Item* item) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x2A, item->ItemId);
 }
 
-void GWCA::ItemMgr::UseItem(GW::Item* item) {
+void GW::ItemMgr::UseItem(GW::Item* item) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x78, item->ItemId);
 }
 
-GWCA::GW::Bag** GWCA::ItemMgr::GetBagArray() {
+GW::Bag** GW::ItemMgr::GetBagArray() {
 	return GameContext::instance()->items->inventory->bags;
 }
 
-GWCA::GW::ItemArray GWCA::ItemMgr::GetItemArray() {
+GW::ItemArray GW::ItemMgr::GetItemArray() {
 	return GameContext::instance()->items->itemarray;
 }
 
-GWCA::ItemMgr::ItemMgr() {}
+GW::ItemMgr::ItemMgr() {}
 
-bool GWCA::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+bool GW::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 
-	if (MapMgr::Instance().GetInstanceType() == GwConstants::InstanceType::Loading) return false;
+	if (MapMgr::Instance().GetInstanceType() == GW::Constants::InstanceType::Loading) return false;
 
 	GW::Bag** bags = GetBagArray();
 	if (bags == NULL) return false;
@@ -71,11 +71,11 @@ bool GWCA::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const
 	return false;
 }
 
-void GWCA::ItemMgr::DropGold(DWORD Amount /*= 1*/) {
+void GW::ItemMgr::DropGold(DWORD Amount /*= 1*/) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x29, Amount);
 }
 
-DWORD GWCA::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+DWORD GW::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 	DWORD itemcount = 0;
 	GW::Bag** bags = GetBagArray();
 	GW::Bag* bag = NULL;
@@ -97,7 +97,7 @@ DWORD GWCA::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, co
 	return itemcount;
 }
 
-GWCA::GW::Item* GWCA::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+GW::Item* GW::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 	GW::Bag** bags = GetBagArray();
 	GW::Bag* bag = NULL;
 
@@ -118,14 +118,14 @@ GWCA::GW::Item* GWCA::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /*=
 	return NULL;
 }
 
-DWORD GWCA::ItemMgr::GetGoldAmountOnCharacter() {
+DWORD GW::ItemMgr::GetGoldAmountOnCharacter() {
 	return GameContext::instance()->items->inventory->gold_character;
 }
 
-DWORD GWCA::ItemMgr::GetGoldAmountInStorage() {
+DWORD GW::ItemMgr::GetGoldAmountInStorage() {
 	return GameContext::instance()->items->inventory->gold_storage;
 }
 
-void GWCA::ItemMgr::OpenLockedChest() {
+void GW::ItemMgr::OpenLockedChest() {
 	return CtoSMgr::Instance().SendPacket(0x8, 0x4D, 0x2);
 }

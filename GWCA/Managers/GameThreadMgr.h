@@ -4,9 +4,9 @@
 #include <functional>
 
 #include "GWCAManager.h"
-#include "..\Utilities\Hooker.h"
+#include <GWCA\Utilities\Hooker.h>
 
-namespace GWCA {
+namespace GW {
 
 	// Shoutouts to DarthTon @ unknowncheats.me for this class.
 

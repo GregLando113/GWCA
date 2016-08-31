@@ -3,11 +3,10 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
+#include <GWCA\Constants\Constants.h>
+#include <GWCA\GameEntities\Friendslist.h>
 
-#include "..\Constants\Constants.h"
-#include "..\Structures\GameEntities\Friendslist.h"
-
-namespace GWCA {
+namespace GW {
 
 	class FriendListMgr : public GWCAManager<FriendListMgr> {
 		friend class GWCAManager<FriendListMgr>;
@@ -23,7 +22,7 @@ namespace GWCA {
 
 		inline DWORD getMyStatus() { return fList_->myStatus; }
 
-		void SetFriendListStatus(GwConstants::OnlineStatus status);
+		void SetFriendListStatus(Constants::OnlineStatus status);
 
 	private:
 		typedef void(__fastcall *SetOnlineStatus_t)(DWORD status);

@@ -4,13 +4,12 @@
 #include <vector>
 #include <map>
 
-#include ".\GWCAManager.h"
-#include ".\GameThreadMgr.h"
+#include <GWCA\Packets\StoC.h>
+#include <GWCA\GameContainers\gw_array.h>
+#include "GWCAManager.h"
+#include "GameThreadMgr.h"
 
-#include "..\Structures\Packets\StoC.h"
-#include "..\Structures\GameContainers\gw_array.h"
-
-namespace GWCA {
+namespace GW {
 
 	/*
 		StoC Manager
@@ -36,8 +35,8 @@ namespace GWCA {
 		/* Use this to add handlers to the stocmgr, primary function. */
 		template <typename T>
 		void AddGameServerEvent(CallbackFunc<T> handler) {
-			DWORD header = StoC_Pak::Packet<T>::STATIC_HEADER;
-			event_calls_[header].push_back([handler](StoC_Pak::PacketBase* pak) -> bool {
+			DWORD header = Packet::StoC::Packet<T>::STATIC_HEADER;
+			event_calls_[header].push_back([handler](Packet::StoC::PacketBase* pak) -> bool {
 				return handler((T*)pak);
 			});
 			game_server_handler_[header].handlerfunc = StoCHandlerFunc;
@@ -45,7 +44,7 @@ namespace GWCA {
 
 		template <typename T>
 		void EmulatePacket(T* packet) {
-			packet->header = StoC_Pak::Packet<T>::STATIC_HEADER;
+			packet->header = Packet::StoC::Packet<T>::STATIC_HEADER;
 			GameThreadMgr::Instance().Enqueue(VoidOriginalHandler, packet);
 		}
 

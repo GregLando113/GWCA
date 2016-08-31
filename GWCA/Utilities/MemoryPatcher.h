@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-namespace GWCA {
+namespace GW {
 
 	class MemoryPatcher {
 	public:
@@ -22,5 +22,4 @@ namespace GWCA {
 
 		bool flag;
 	};
-
 }

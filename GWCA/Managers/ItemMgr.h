@@ -3,9 +3,9 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
-#include "..\Structures\GameEntities\Item.h"
+#include <GWCA\GameEntities\Item.h>
 
-namespace GWCA {
+namespace GW {
 
 	class ItemMgr : public GWCAManager<ItemMgr> {
 		friend class GWCAManager<ItemMgr>;

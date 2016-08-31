@@ -1,16 +1,16 @@
-#include "..\..\Managers\ChatMgr.h"
+#include <GWCA\Managers\ChatMgr.h>
 
 #include <sstream>
 #include <iomanip>
 #include <ctime>
 
-#include "..\..\Utilities\PatternScanner.h"
-#include "..\..\Managers\CtoSMgr.h"
-#include "..\..\Managers\MemoryMgr.h"
+#include <GWCA\Utilities\PatternScanner.h>
+#include <GWCA\Managers\CtoSMgr.h>
+#include <GWCA\Managers\MemoryMgr.h>
 
 static wchar_t* wcssep(wchar_t* str, wchar_t sep);
 
-GWCA::ChatMgr::ChatMgr() {
+GW::ChatMgr::ChatMgr() {
 	PatternScanner scanner(0x401000, 0x49A000);
 	BYTE* chatlog_addr = (BYTE*)scanner.FindPattern("\x53\x56\x8B\xF1\x57\x8B\x56\x14\x8B\x4E\x0C\xE8", "xxxxxxxxxxxx", -6);
 	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
@@ -25,13 +25,13 @@ GWCA::ChatMgr::ChatMgr() {
 	ori_opentemplate = (OpenTemplate_t)hk_opentemplate_.Detour(opentemplate_addr, (BYTE*)det_opentemplate, opentemplate_length);
 }
 
-void GWCA::ChatMgr::RestoreHooks() {
+void GW::ChatMgr::RestoreHooks() {
 	hk_chatlog_.Retour();
 	hk_chatcmd_.Retour();
 	hk_opentemplate_.Retour();
 }
 
-void GWCA::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel) {
+void GW::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel) {
 	static P5E_SendChat* chat = new P5E_SendChat();
 
 	chat->channel = channel;
@@ -40,7 +40,7 @@ void GWCA::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel) {
 	CtoSMgr::Instance().SendPacket<P5E_SendChat>(chat);
 }
 
-void GWCA::ChatMgr::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
+void GW::ChatMgr::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
 	va_list vl;
 	va_start(vl, format);
 	size_t szbuf = _vscwprintf(format, vl) + 1;
@@ -53,14 +53,14 @@ void GWCA::ChatMgr::WriteChatF(const wchar_t* from, const wchar_t* format, ...) 
 	delete[] chat;
 }
 
-void GWCA::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
+void GW::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 
 	((void(__fastcall *)(DWORD, const wchar_t*, const wchar_t*))
 		MemoryMgr::WriteChatFunction)
 		(0, from, msg);
 }
 
-void __fastcall GWCA::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWORD useless /* same as edx */) {
+void __fastcall GW::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWORD useless /* same as edx */) {
 	ChatMgr& chat = ChatMgr::Instance();
 
 
@@ -88,7 +88,7 @@ void __fastcall GWCA::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWOR
 	chat.ori_chatlog(info, mes, useless);
 }
 
-void __fastcall GWCA::ChatMgr::det_chatcmd(wchar_t *_message) {
+void __fastcall GW::ChatMgr::det_chatcmd(wchar_t *_message) {
 	ChatMgr& chat = ChatMgr::Instance();
 	unsigned int length = wcslen(_message);
 	wchar_t* message = new wchar_t[length + 1];
@@ -114,7 +114,7 @@ void __fastcall GWCA::ChatMgr::det_chatcmd(wchar_t *_message) {
 	chat.ori_chatcmd(_message);
 }
 
-void __fastcall GWCA::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
+void __fastcall GW::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
 	if (ChatMgr::Instance().open_links_
 		&& info->template_name != nullptr
 		&& (!memcmp(info->template_name, L"http://", 7 * sizeof(wchar_t))

@@ -1,19 +1,19 @@
-#include "..\..\Managers\PartyMgr.h"
+#include <GWCA\Managers\PartyMgr.h>
 
-#include "..\..\Managers\AgentMgr.h"
-#include "..\..\Managers\CtoSMgr.h"
+#include <GWCA\Managers\AgentMgr.h>
+#include <GWCA\Managers\CtoSMgr.h>
 
-GWCA::PartyMgr::PartyMgr() {
+GW::PartyMgr::PartyMgr() {
 	BYTE* addr_tick = (BYTE*)0x0054E6B0;
-	DWORD tick_length = GWCA::Hook::CalculateDetourLength(addr_tick);
+	DWORD tick_length = GW::Hook::CalculateDetourLength(addr_tick);
 	ori_tick_ = (Tick_t)hk_tick_.Detour(addr_tick, (BYTE*)DetourTick, tick_length);
 }
 
-void GWCA::PartyMgr::RestoreHooks() {
+void GW::PartyMgr::RestoreHooks() {
 	hk_tick_.Retour();
 }
 
-bool GWCA::PartyMgr::GetIsPartyTicked() {
+bool GW::PartyMgr::GetIsPartyTicked() {
 	GW::PartyInfo* info = GetPartyInfo();
 	if (info == nullptr) return false;
 	if (!info->players.valid()) return false;
@@ -23,7 +23,7 @@ bool GWCA::PartyMgr::GetIsPartyTicked() {
 	return true;
 }
 
-bool GWCA::PartyMgr::GetIsPartyLoaded() {
+bool GW::PartyMgr::GetIsPartyLoaded() {
 	GW::PartyInfo* info = GetPartyInfo();
 	if (info == nullptr) return false;
 	if (!info->players.valid()) return false;
@@ -33,7 +33,7 @@ bool GWCA::PartyMgr::GetIsPartyLoaded() {
 	return true;
 }
 
-bool GWCA::PartyMgr::GetIsTicked(DWORD player_index) {
+bool GW::PartyMgr::GetIsTicked(DWORD player_index) {
 	GW::PartyInfo* info = GetPartyInfo();
 	if (info == nullptr) return false;
 	if (!info->players.valid()) return false;
@@ -41,7 +41,7 @@ bool GWCA::PartyMgr::GetIsTicked(DWORD player_index) {
 	return (info->players[player_index].ticked());
 }
 
-bool GWCA::PartyMgr::GetIsPlayerTicked() {
+bool GW::PartyMgr::GetIsPlayerTicked() {
 	GW::PartyInfo* info = GetPartyInfo();
 	if (info == nullptr) return false;
 	if (!info->players.valid()) return false;
@@ -55,11 +55,11 @@ bool GWCA::PartyMgr::GetIsPlayerTicked() {
 	return false;
 }
 
-void GWCA::PartyMgr::Tick(bool flag) {
+void GW::PartyMgr::Tick(bool flag) {
 	CtoSMgr::Instance().SendPacket(0x8, 0xA9, flag);
 }
 
-DWORD __stdcall GWCA::PartyMgr::DetourTick(DWORD unk1) {
+DWORD __stdcall GW::PartyMgr::DetourTick(DWORD unk1) {
 	// this func is always called twice so use this hack to tick only once
 	static bool toggle = true;
 	toggle = !toggle;
@@ -68,4 +68,3 @@ DWORD __stdcall GWCA::PartyMgr::DetourTick(DWORD unk1) {
 	PartyMgr::Instance().Tick(!PartyMgr::Instance().GetIsPlayerTicked());
 	return 4;
 }
-

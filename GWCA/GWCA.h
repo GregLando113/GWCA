@@ -81,7 +81,7 @@ GWCA::Destruct()
 #include "Managers\AgentMgr.h"
 #include "Managers\MapMgr.h"
 
-namespace GWCA {
+namespace GW {
 
 	class GameThreadMgr;
 	class CtoSMgr;
@@ -104,17 +104,17 @@ namespace GWCA {
 	CtoSMgr& CtoS();
 	StoCMgr& StoC();
 	AgentMgr& Agents();
-	PartyMgr& Party();
+	PartyMgr& Partymgr();
 	ItemMgr& Items();
-	SkillbarMgr& Skillbar();
+	SkillbarMgr& Skillbarmgr();
 	EffectMgr& Effects();
 	ChatMgr& Chat();
 	MerchantMgr& Merchant();
-	GuildMgr& Guild();
+	GuildMgr& Guildmgr();
 	MapMgr& Map();
-	FriendListMgr& FriendList();
-	CameraMgr& Camera();
-	PlayerMgr& Players();
+	FriendListMgr& FriendListmgr();
+	CameraMgr& Cameramgr();
+	PlayerMgr& Playermgr();
 
 	class Api {
 		friend class GWCABaseManager;

@@ -15,11 +15,12 @@
 #include "..\Managers\FriendListMgr.h"
 #include "..\Managers\StoCMgr.h"
 #include "..\Managers\CameraMgr.h"
+#include "..\Managers\PlayerMgr.h"
 #include "..\Managers\GWCAManager.h"
 
-std::vector<GWCA::GWCABaseManager*> GWCA::Api::managers;
+std::vector<GW::GWCABaseManager*> GW::Api::managers;
 
-bool GWCA::Api::Initialize() {
+bool GW::Api::Initialize() {
 	if (MemoryMgr::Scan()) {
 
 		// force the construction of at least gamethread and ctos
@@ -32,8 +33,8 @@ bool GWCA::Api::Initialize() {
 	}
 }
 
-void GWCA::Api::Destruct() {
-	GWCA::Gamethread().calls_.clear();
+void GW::Api::Destruct() {
+	GW::Gamethread().calls_.clear();
 	for (GWCABaseManager* manager : managers) {
 		manager->RestoreHooks();
 	}
@@ -44,18 +45,18 @@ void GWCA::Api::Destruct() {
 }
 
 // GWCA Module Accessors.
-GWCA::GameThreadMgr&	GWCA::Gamethread() { return GameThreadMgr::Instance(); }
-GWCA::CtoSMgr&			GWCA::CtoS() { return CtoSMgr::Instance(); }
-GWCA::StoCMgr&			GWCA::StoC() { return StoCMgr::Instance(); }
-GWCA::AgentMgr&			GWCA::Agents() { return AgentMgr::Instance(); }
-GWCA::PartyMgr&			GWCA::Party() { return PartyMgr::Instance(); }
-GWCA::ItemMgr&			GWCA::Items() { return ItemMgr::Instance(); }
-GWCA::SkillbarMgr&		GWCA::Skillbar() { return SkillbarMgr::Instance(); }
-GWCA::EffectMgr&		GWCA::Effects() { return EffectMgr::Instance(); }
-GWCA::ChatMgr&			GWCA::Chat() { return ChatMgr::Instance(); }
-GWCA::MerchantMgr&		GWCA::Merchant() { return MerchantMgr::Instance(); }
-GWCA::GuildMgr&			GWCA::Guild() { return GuildMgr::Instance(); }
-GWCA::MapMgr&			GWCA::Map() { return MapMgr::Instance(); }
-GWCA::FriendListMgr&	GWCA::FriendList() { return FriendListMgr::Instance(); }
-GWCA::CameraMgr&		GWCA::Camera() { return CameraMgr::Instance(); }
-
+GW::GameThreadMgr&	GW::Gamethread() { return GameThreadMgr::Instance(); }
+GW::CtoSMgr&		GW::CtoS() { return CtoSMgr::Instance(); }
+GW::StoCMgr&		GW::StoC() { return StoCMgr::Instance(); }
+GW::AgentMgr&		GW::Agents() { return AgentMgr::Instance(); }
+GW::PartyMgr&		GW::Partymgr() { return PartyMgr::Instance(); }
+GW::ItemMgr&		GW::Items() { return ItemMgr::Instance(); }
+GW::SkillbarMgr&	GW::Skillbarmgr() { return SkillbarMgr::Instance(); }
+GW::EffectMgr&		GW::Effects() { return EffectMgr::Instance(); }
+GW::ChatMgr&		GW::Chat() { return ChatMgr::Instance(); }
+GW::MerchantMgr&	GW::Merchant() { return MerchantMgr::Instance(); }
+GW::GuildMgr&		GW::Guildmgr() { return GuildMgr::Instance(); }
+GW::MapMgr&			GW::Map() { return MapMgr::Instance(); }
+GW::FriendListMgr&	GW::FriendListmgr() { return FriendListMgr::Instance(); }
+GW::CameraMgr&		GW::Cameramgr() { return CameraMgr::Instance(); }
+GW::PlayerMgr&		GW::Playermgr() { return PlayerMgr::Instance(); }

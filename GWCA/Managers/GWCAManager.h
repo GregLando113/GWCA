@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace GWCA {
+namespace GW {
 
 	class GWCABaseManager {
 		friend class Api;

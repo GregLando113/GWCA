@@ -1,19 +1,19 @@
-#include "..\..\Managers\MapMgr.h"
+#include <GWCA\Managers\MapMgr.h>
 
-#include "..\..\Structures\Context\GameContext.h"
-#include "..\..\Structures\Context\MapContext.h"
-#include "..\..\Structures\Context\AgentContext.h"
-#include "..\..\Structures\Context\WorldContext.h"
+#include <GWCA\Context\GameContext.h>
+#include <GWCA\Context\MapContext.h>
+#include <GWCA\Context\AgentContext.h>
+#include <GWCA\Context\WorldContext.h>
 
-#include "..\..\Managers\CtoSMgr.h"
-#include "..\..\Managers\MemoryMgr.h"
+#include <GWCA\Managers\CtoSMgr.h>
+#include <GWCA\Managers\MemoryMgr.h>
 
 
-bool GWCA::MapMgr::IsMapLoaded() {
+bool GW::MapMgr::IsMapLoaded() {
 	return GameContext::instance()->map != nullptr;
 }
 
-void GWCA::MapMgr::Travel(GwConstants::MapID MapID,
+void GW::MapMgr::Travel(GW::Constants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
 
 	static PAB_ZoneMap* pak = new PAB_ZoneMap();
@@ -27,74 +27,74 @@ void GWCA::MapMgr::Travel(GwConstants::MapID MapID,
 	CtoSMgr::Instance().SendPacket<PAB_ZoneMap>(pak);
 }
 
-void GWCA::MapMgr::Travel(GwConstants::MapID MapID, GwConstants::District district, int district_number) {
+void GW::MapMgr::Travel(GW::Constants::MapID MapID, GW::Constants::District district, int district_number) {
 	switch (district) {
-	case GwConstants::District::Current:
+	case Constants::District::Current:
 		Travel(MapID, district_number, GetRegion(), GetLanguage());
 		break;
-	case GwConstants::District::International:
-		Travel(MapID, district_number, GwConstants::Region::International, 0);
+	case Constants::District::International:
+		Travel(MapID, district_number, Constants::Region::International, 0);
 		break;
-	case GwConstants::District::American:
-		Travel(MapID, district_number, GwConstants::Region::America, 0);
+	case Constants::District::American:
+		Travel(MapID, district_number, Constants::Region::America, 0);
 		break;
-	case GwConstants::District::EuropeEnglish:
-		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::English);
+	case Constants::District::EuropeEnglish:
+		Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::English);
 		break;
-	case GwConstants::District::EuropeFrench:
-		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::French);
+	case Constants::District::EuropeFrench:
+		Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::French);
 		break;
-	case GwConstants::District::EuropeGerman:
-		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::German);
+	case Constants::District::EuropeGerman:
+		Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::German);
 		break;
-	case GwConstants::District::EuropeItalian:
-		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::Italian);
+	case Constants::District::EuropeItalian:
+		Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Italian);
 		break;
-	case GwConstants::District::EuropeSpanish:
-		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::Spanish);
+	case Constants::District::EuropeSpanish:
+		Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Spanish);
 		break;
-	case GwConstants::District::EuropePolish:
-		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::Polish);
+	case Constants::District::EuropePolish:
+		Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Polish);
 		break;
-	case GwConstants::District::EuropeRussian:
-		Travel(MapID, district_number, GwConstants::Region::Europe, GwConstants::EuropeLanguage::Russian);
+	case Constants::District::EuropeRussian:
+		Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Russian);
 		break;
-	case GwConstants::District::AsiaKorean:
-		Travel(MapID, district_number, GwConstants::Region::Korea, 0);
+	case Constants::District::AsiaKorean:
+		Travel(MapID, district_number, Constants::Region::Korea, 0);
 		break;
-	case GwConstants::District::AsiaChinese:
-		Travel(MapID, district_number, GwConstants::Region::China, 0);
+	case Constants::District::AsiaChinese:
+		Travel(MapID, district_number, Constants::Region::China, 0);
 		break;
-	case GwConstants::District::AsiaJapanese:
-		Travel(MapID, district_number, GwConstants::Region::Japan, 0);
+	case Constants::District::AsiaJapanese:
+		Travel(MapID, district_number, Constants::Region::Japan, 0);
 		break;
 	}
 }
 
-DWORD GWCA::MapMgr::GetInstanceTime() {
+DWORD GW::MapMgr::GetInstanceTime() {
 	return GameContext::instance()->agent->instancetimer;
 }
 
-GwConstants::MapID GWCA::MapMgr::GetMapID() {
-	return static_cast<GwConstants::MapID>(*(DWORD*)MemoryMgr::MapIDPtr);
+GW::Constants::MapID GW::MapMgr::GetMapID() {
+	return static_cast<GW::Constants::MapID>(*(DWORD*)MemoryMgr::MapIDPtr);
 }
 
-// Get current region you are in.
-
-int GWCA::MapMgr::GetRegion() { return *(int*)(MemoryMgr::MapInfoPtr + 0x10); }
-
-// Get current language you are in.
-
-int GWCA::MapMgr::GetLanguage() { return *(int*)(MemoryMgr::MapInfoPtr + 0xC); }
-
-GwConstants::InstanceType GWCA::MapMgr::GetInstanceType() {
-	return *(GwConstants::InstanceType*)(MemoryMgr::agArrayPtr - 0xF0);
+int GW::MapMgr::GetRegion() { 
+	return *(int*)(MemoryMgr::MapInfoPtr + 0x10); 
 }
 
-GWCA::GW::MissionMapIconArray GWCA::MapMgr::GetMissionMapIconArray() {
+int GW::MapMgr::GetLanguage() {
+	return *(int*)(MemoryMgr::MapInfoPtr + 0xC); 
+}
+
+GW::Constants::InstanceType GW::MapMgr::GetInstanceType() {
+	return *(GW::Constants::InstanceType*)(MemoryMgr::agArrayPtr - 0xF0);
+}
+
+GW::MissionMapIconArray GW::MapMgr::GetMissionMapIconArray() {
 	return GameContext::instance()->world->missionmapicons;
 }
 
-GWCA::GW::PathingMapArray GWCA::MapMgr::GetPathingMap() {
+GW::PathingMapArray GW::MapMgr::GetPathingMap() {
 	return GameContext::instance()->map->sub1->sub2->pmaps;
 }

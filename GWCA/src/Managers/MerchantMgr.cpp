@@ -1,14 +1,14 @@
-#include "..\..\Managers\MerchantMgr.h"
+#include <GWCA\Managers\MerchantMgr.h>
 
-#include "..\..\Structures\Context\GameContext.h"
-#include "..\..\Structures\Context\WorldContext.h"
+#include <GWCA\Context\GameContext.h>
+#include <GWCA\Context\WorldContext.h>
 
-#include "..\..\Utilities\PatternScanner.h"
-#include "..\..\Managers\GameThreadMgr.h"
-#include "..\..\Managers\ItemMgr.h"
-#include "..\..\Managers\MemoryMgr.h"
+#include <GWCA\Utilities\PatternScanner.h>
+#include <GWCA\Managers\GameThreadMgr.h>
+#include <GWCA\Managers\ItemMgr.h>
+#include <GWCA\Managers\MemoryMgr.h>
 
-GWCA::MerchantMgr::MerchantMgr() : GWCAManager() {
+GW::MerchantMgr::MerchantMgr() : GWCAManager() {
 	PatternScanner scan(0x401000, 0x4FF000);
 
 	transaction_function_ = (Transaction_t)scan.FindPattern("\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C);
@@ -27,9 +27,9 @@ GWCA::MerchantMgr::MerchantMgr() : GWCAManager() {
 	}
 }
 
-void GWCA::MerchantMgr::RestoreHooks() {}
+void GW::MerchantMgr::RestoreHooks() {}
 
-void GWCA::MerchantMgr::SellMerchantItem(GW::Item* itemtosell, DWORD sellquantity /*= NULL*/) {
+void GW::MerchantMgr::SellMerchantItem(GW::Item* itemtosell, DWORD sellquantity /*= NULL*/) {
 	if (sellquantity == NULL) sellquantity = itemtosell->Quantity;
 
 	TransactionPacket give = TransactionPacket(1);
@@ -40,7 +40,7 @@ void GWCA::MerchantMgr::SellMerchantItem(GW::Item* itemtosell, DWORD sellquantit
 	EnqueueTransaction(TransactionType::MERCHANT_SELL, 0, give, sellquantity * itemtosell->value, recv);
 }
 
-void GWCA::MerchantMgr::BuyMerchantItem(DWORD modelid, DWORD quantity /*= 1*/) {
+void GW::MerchantMgr::BuyMerchantItem(DWORD modelid, DWORD quantity /*= 1*/) {
 	GW::Item* itemrecv = GetMerchantItemByModelID(modelid);
 	if (!itemrecv) return;
 
@@ -52,15 +52,15 @@ void GWCA::MerchantMgr::BuyMerchantItem(DWORD modelid, DWORD quantity /*= 1*/) {
 	EnqueueTransaction(TransactionType::MERCHANT_BUY, 2 * quantity * itemrecv->value, give, 0, recv);
 }
 
-void GWCA::MerchantMgr::EnqueueTransaction(TransactionType type, DWORD gold_give, TransactionPacket give /*= TransactionPacket()*/, DWORD gold_recieve, TransactionPacket recieve /*= TransactionPacket()*/) {
+void GW::MerchantMgr::EnqueueTransaction(TransactionType type, DWORD gold_give, TransactionPacket give /*= TransactionPacket()*/, DWORD gold_recieve, TransactionPacket recieve /*= TransactionPacket()*/) {
 	GameThreadMgr::Instance().Enqueue(transaction_function_, type, gold_give, give, gold_recieve, recieve);
 }
 
-void GWCA::MerchantMgr::EnqueueQuoteRequest(TransactionType type, TransactionPacket give, TransactionPacket recieve) {
+void GW::MerchantMgr::EnqueueQuoteRequest(TransactionType type, TransactionPacket give, TransactionPacket recieve) {
 	GameThreadMgr::Instance().Enqueue(quote_function_, type, 0, give, 0, recieve);
 }
 
-GWCA::GW::Item* GWCA::MerchantMgr::GetMerchantItemByModelID(DWORD modelid) {
+GW::Item* GW::MerchantMgr::GetMerchantItemByModelID(DWORD modelid) {
 	GW::MerchItemArray merchitems = GetMerchantItemsArray();
 	GW::ItemArray items = ItemMgr::Instance().GetItemArray();
 
@@ -72,24 +72,24 @@ GWCA::GW::Item* GWCA::MerchantMgr::GetMerchantItemByModelID(DWORD modelid) {
 	return NULL;
 }
 
-GWCA::GW::MerchItemArray GWCA::MerchantMgr::GetMerchantItemsArray() {
+GW::MerchItemArray GW::MerchantMgr::GetMerchantItemsArray() {
 	return GameContext::instance()->world->merchitems;
 }
 
-void GWCA::MerchantMgr::TransactionPacket::AddItem(DWORD itemid, DWORD quantity) {
+void GW::MerchantMgr::TransactionPacket::AddItem(DWORD itemid, DWORD quantity) {
 	if (item_array_) item_array_[itemid_count_] = itemid;
 	if (item_quantity_array_) item_quantity_array_[itemid_count_] = quantity;
 	itemid_count_++;
 }
 
-GWCA::MerchantMgr::TransactionPacket::TransactionPacket(size_t itemmaxcount) :
+GW::MerchantMgr::TransactionPacket::TransactionPacket(size_t itemmaxcount) :
 	itemid_count_(0),
 	item_array_(new DWORD[itemmaxcount]),
 	item_quantity_array_(new DWORD[itemmaxcount]) {}
 
-GWCA::MerchantMgr::TransactionPacket::TransactionPacket() :
+GW::MerchantMgr::TransactionPacket::TransactionPacket() :
 	itemid_count_(0),
 	item_array_(NULL),
 	item_quantity_array_(NULL) {}
 
-GWCA::MerchantMgr::TransactionPacket::~TransactionPacket() {}
+GW::MerchantMgr::TransactionPacket::~TransactionPacket() {}

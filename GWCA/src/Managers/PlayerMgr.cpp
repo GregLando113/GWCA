@@ -1,11 +1,11 @@
-#include "..\..\Managers\PlayerMgr.h"
+#include <GWCA\Managers\PlayerMgr.h>
 
-#include "..\..\Managers\CtoSMgr.h"
+#include <GWCA\Managers\CtoSMgr.h>
 
-void GWCA::PlayerMgr::SetActiveTitle(GwConstants::TitleID id) {
+void GW::PlayerMgr::SetActiveTitle(GW::Constants::TitleID id) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x51, (DWORD)id);
 }
 
-void GWCA::PlayerMgr::RemoveActiveTitle() {
+void GW::PlayerMgr::RemoveActiveTitle() {
 	CtoSMgr::Instance().SendPacket(0x4, 0x52);
 }

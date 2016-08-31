@@ -1,11 +1,11 @@
-#include "..\..\Managers\GameThreadMgr.h"
+#include <GWCA\Managers\GameThreadMgr.h>
 
-#include "..\..\GWCA.h"
-#include "..\..\Managers\MemoryMgr.h"
+#include <GWCA\GWCA.h>
+#include <GWCA\Managers\MemoryMgr.h>
 
-CRITICAL_SECTION GWCA::GameThreadMgr::criticalsection_;
+CRITICAL_SECTION GW::GameThreadMgr::criticalsection_;
 
-void __stdcall GWCA::GameThreadMgr::CallFunctions() {
+void __stdcall GW::GameThreadMgr::CallFunctions() {
 	if (TryEnterCriticalSection(&criticalsection_)) {
 		if (!calls_.empty()) {
 			for (const auto& Call : calls_) {
@@ -24,7 +24,7 @@ void __stdcall GWCA::GameThreadMgr::CallFunctions() {
 	}
 }
 
-void __declspec(naked) GWCA::GameThreadMgr::gameLoopHook() {
+void __declspec(naked) GW::GameThreadMgr::gameLoopHook() {
 	_asm PUSHAD
 
 	GameThreadMgr::Instance().CallFunctions();
@@ -33,7 +33,7 @@ void __declspec(naked) GWCA::GameThreadMgr::gameLoopHook() {
 	_asm JMP MemoryMgr::GameLoopReturn
 }
 
-void __declspec(naked) GWCA::GameThreadMgr::renderHook() {
+void __declspec(naked) GW::GameThreadMgr::renderHook() {
 	Sleep(1);
 	_asm {
 		POP ESI
@@ -45,7 +45,7 @@ void __declspec(naked) GWCA::GameThreadMgr::renderHook() {
 	}
 }
 
-void GWCA::GameThreadMgr::ToggleRenderHook() {
+void GW::GameThreadMgr::ToggleRenderHook() {
 	static BYTE restorebuf[5];
 	DWORD dwProt;
 
@@ -65,12 +65,12 @@ void GWCA::GameThreadMgr::ToggleRenderHook() {
 	}
 }
 
-GWCA::GameThreadMgr::GameThreadMgr() : render_state_(false) {
+GW::GameThreadMgr::GameThreadMgr() : render_state_(false) {
 	MemoryMgr::GameLoopReturn = (BYTE*)hk_game_thread_.Detour(MemoryMgr::GameLoopLocation, (BYTE*)gameLoopHook, 5);
 	InitializeCriticalSection(&criticalsection_);
 }
 
-void GWCA::GameThreadMgr::RestoreHooks() {
+void GW::GameThreadMgr::RestoreHooks() {
 	if (render_state_) ToggleRenderHook();
 	hk_game_thread_.Retour();
 }

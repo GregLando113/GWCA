@@ -2,12 +2,11 @@
 
 #include <Windows.h>
 
-namespace GWCA {
+namespace GW {
 
 	// class PatternScanner
 	// 32 bit pattern scanner for x86 programs.
 	// Credits to Zat & Midi12 @ unknowncheats.me for the functionality of this class.
-
 	class PatternScanner {
 	public:
 
@@ -23,5 +22,4 @@ namespace GWCA {
 		DWORD base_;
 		DWORD size_;
 	};
-
 }

@@ -3,9 +3,9 @@
 #include <Windows.h>
 
 #include "GWCAManager.h"
-#include "..\Structures\GameEntities\Guild.h"
+#include <GWCA\GameEntities\Guild.h>
 
-namespace GWCA {
+namespace GW {
 
 	class GuildMgr : public GWCAManager<GuildMgr> {
 		friend class GWCAManager<GuildMgr>;

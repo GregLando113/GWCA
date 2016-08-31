@@ -1,44 +1,44 @@
-#include "..\..\Managers\AgentMgr.h"
+#include <GWCA\Managers\AgentMgr.h>
 
-#include "..\..\Managers\MemoryMgr.h"
-#include "..\..\Managers\GameThreadMgr.h"
-#include "..\..\Managers\CtoSMgr.h"
-#include "..\..\Managers\MapMgr.h"
+#include <GWCA\Managers\MemoryMgr.h>
+#include <GWCA\Managers\GameThreadMgr.h>
+#include <GWCA\Managers\CtoSMgr.h>
+#include <GWCA\Managers\MapMgr.h>
 
-#include "..\..\Structures\Context\WorldContext.h"
-#include "..\..\Structures\Context\GameContext.h"
-#include "..\..\Structures\Context\PartyContext.h"
+#include <GWCA\Context\WorldContext.h>
+#include <GWCA\Context\GameContext.h>
+#include <GWCA\Context\PartyContext.h>
 
-BYTE* GWCA::AgentMgr::dialog_log_ret_ = NULL;
-DWORD GWCA::AgentMgr::last_dialog_id_ = 0;
+BYTE* GW::AgentMgr::dialog_log_ret_ = NULL;
+DWORD GW::AgentMgr::last_dialog_id_ = 0;
 
-GWCA::AgentMgr::AgentMgr() : GWCAManager() {
+GW::AgentMgr::AgentMgr() : GWCAManager() {
 	change_target_ = (ChangeTarget_t)MemoryMgr::ChangeTargetFunction;
 	move_ = (Move_t)MemoryMgr::MoveFunction;
 	dialog_log_ret_ = (BYTE*)hk_dialog_log_.Detour(MemoryMgr::DialogFunc, (BYTE*)AgentMgr::detourDialogLog, 9);
 }
 
-void GWCA::AgentMgr::RestoreHooks() {
+void GW::AgentMgr::RestoreHooks() {
 	hk_dialog_log_.Retour();
 }
 
-GWCA::GW::AgentArray GWCA::AgentMgr::GetAgentArray() {
+GW::AgentArray GW::AgentMgr::GetAgentArray() {
 	return *(GW::AgentArray*)MemoryMgr::agArrayPtr;
 }
 
-float GWCA::AgentMgr::GetDistance(Vector2f a, Vector2f b) {
+float GW::AgentMgr::GetDistance(Vector2f a, Vector2f b) {
 	return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 
-float GWCA::AgentMgr::GetSqrDistance(Vector2f a, Vector2f b) {
+float GW::AgentMgr::GetSqrDistance(Vector2f a, Vector2f b) {
 	return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 }
 
-void GWCA::AgentMgr::ChangeTarget(GW::Agent* Agent) {
+void GW::AgentMgr::ChangeTarget(GW::Agent* Agent) {
 	GameThreadMgr::Instance().Enqueue(change_target_, Agent->Id, 0);
 }
 
-void GWCA::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/) {
+void GW::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/) {
 	static GW::GamePos* buf = new GW::GamePos();
 
 	buf->x = X;
@@ -48,7 +48,7 @@ void GWCA::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/) {
 	GameThreadMgr::Instance().Enqueue(move_, buf);
 }
 
-void GWCA::AgentMgr::Move(const GW::GamePos& pos) {
+void GW::AgentMgr::Move(const GW::GamePos& pos) {
 	static GW::GamePos* buf = new GW::GamePos();
 
 	*buf = pos;
@@ -56,15 +56,15 @@ void GWCA::AgentMgr::Move(const GW::GamePos& pos) {
 	GameThreadMgr::Instance().Enqueue(move_, buf);
 }
 
-void GWCA::AgentMgr::Dialog(DWORD id) {
+void GW::AgentMgr::Dialog(DWORD id) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x35, id);
 }
 
-GWCA::GW::MapAgentArray GWCA::AgentMgr::GetMapAgentArray() {
+GW::MapAgentArray GW::AgentMgr::GetMapAgentArray() {
 	return GameContext::instance()->world->mapagents;
 }
 
-GWCA::GW::Agent* GWCA::AgentMgr::GetPlayer() {
+GW::Agent* GW::AgentMgr::GetPlayer() {
 	GW::AgentArray agents = GetAgentArray();
 	int id = GetPlayerId();
 	if (agents.valid() && id > 0) {
@@ -74,7 +74,7 @@ GWCA::GW::Agent* GWCA::AgentMgr::GetPlayer() {
 	}
 }
 
-GWCA::GW::Agent* GWCA::AgentMgr::GetTarget() {
+GW::Agent* GW::AgentMgr::GetTarget() {
 	GW::AgentArray agents = GetAgentArray();
 	int id = GetTargetId();
 	if (agents.valid() && id > 0) {
@@ -84,57 +84,41 @@ GWCA::GW::Agent* GWCA::AgentMgr::GetTarget() {
 	}
 }
 
-void GWCA::AgentMgr::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/) {
+void GW::AgentMgr::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/) {
 	CtoSMgr::Instance().SendPacket(0xC, 0x33, Agent->Id, CallTarget);
 }
 
-void GWCA::AgentMgr::GoPlayer(GW::Agent* Agent) {
+void GW::AgentMgr::GoPlayer(GW::Agent* Agent) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x2D, Agent->Id);
 }
 
-void GWCA::AgentMgr::GoSignpost(GW::Agent* Agent, BOOL CallTarget /*= 0*/) {
+void GW::AgentMgr::GoSignpost(GW::Agent* Agent, BOOL CallTarget /*= 0*/) {
 	CtoSMgr::Instance().SendPacket(0xC, 0x4B, Agent->Id, CallTarget);
 }
 
-void GWCA::AgentMgr::CallTarget(GW::Agent* Agent) {
+void GW::AgentMgr::CallTarget(GW::Agent* Agent) {
 	CtoSMgr::Instance().SendPacket(0xC, 0x1C, 0xA, Agent->Id);
 }
 
-void __declspec(naked) GWCA::AgentMgr::detourDialogLog() {
+void __declspec(naked) GW::AgentMgr::detourDialogLog() {
 	_asm MOV AgentMgr::last_dialog_id_, ESI
 	_asm JMP AgentMgr::dialog_log_ret_
 }
 
-DWORD GWCA::AgentMgr::GetAmountOfPlayersInInstance() {
+DWORD GW::AgentMgr::GetAmountOfPlayersInInstance() {
 	// -1 because the 1st array element is nil
 	return GameContext::instance()->world->players.size() - 1;
 }
 
-wchar_t* GWCA::AgentMgr::GetPlayerNameByLoginNumber(DWORD loginnumber) {
+wchar_t* GW::AgentMgr::GetPlayerNameByLoginNumber(DWORD loginnumber) {
 	return GameContext::instance()->world->players[loginnumber].Name;
 }
 
-DWORD GWCA::AgentMgr::GetAgentIdByLoginNumber(DWORD loginnumber) {
+DWORD GW::AgentMgr::GetAgentIdByLoginNumber(DWORD loginnumber) {
 	return GameContext::instance()->world->players[loginnumber].AgentID;
 }
 
-const char* GWCA::AgentMgr::GetProfessionAcronym(GwConstants::Profession profession) {
-	switch (profession) {
-	case GwConstants::Profession::Warrior: return "W";
-	case GwConstants::Profession::Ranger: return "R";
-	case GwConstants::Profession::Monk: return "Mo";
-	case GwConstants::Profession::Necromancer: return "N";
-	case GwConstants::Profession::Mesmer: return "Me";
-	case GwConstants::Profession::Elementalist: return "E";
-	case GwConstants::Profession::Assassin: return "A";
-	case GwConstants::Profession::Ritualist: return "Rt";
-	case GwConstants::Profession::Paragon: return "P";
-	case GwConstants::Profession::Dervish: return "D";
-	default: return "";
-	}
-}
-
-GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(DWORD heroindex) {
+GW::AgentID GW::AgentMgr::GetHeroAgentID(DWORD heroindex) {
 	if (heroindex == 0) return GetPlayerId();
 
 	auto ctx = GameContext::instance();
@@ -145,10 +129,10 @@ GWCA::GW::AgentID GWCA::AgentMgr::GetHeroAgentID(DWORD heroindex) {
 	return heroarray[--heroindex].agentid;
 }
 
-GWCA::GW::PlayerArray GWCA::AgentMgr::GetPlayerArray() {
+GW::PlayerArray GW::AgentMgr::GetPlayerArray() {
 	return GameContext::instance()->world->players;
 }
 
-GWCA::GW::NPCArray GWCA::AgentMgr::GetNPCArray() {
+GW::NPCArray GW::AgentMgr::GetNPCArray() {
 	return GameContext::instance()->world->npcs;
 }

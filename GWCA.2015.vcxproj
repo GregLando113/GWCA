@@ -11,9 +11,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GWCA\Constants\AgentIDs.h" />
     <ClInclude Include="GWCA\Constants\Constants.h" />
+    <ClInclude Include="GWCA\Constants\ItemIDs.h" />
     <ClInclude Include="GWCA\Constants\Maps.h" />
+    <ClInclude Include="GWCA\Constants\QuestIDs.h" />
     <ClInclude Include="GWCA\Constants\Skills.h" />
+    <ClInclude Include="GWCA\Context\AgentContext.h" />
+    <ClInclude Include="GWCA\Context\CharContext.h" />
+    <ClInclude Include="GWCA\Context\GameContext.h" />
+    <ClInclude Include="GWCA\Context\GuildContext.h" />
+    <ClInclude Include="GWCA\Context\ItemContext.h" />
+    <ClInclude Include="GWCA\Context\MapContext.h" />
+    <ClInclude Include="GWCA\Context\PartyContext.h" />
+    <ClInclude Include="GWCA\Context\TradeContext.h" />
+    <ClInclude Include="GWCA\Context\WorldContext.h" />
+    <ClInclude Include="GWCA\GameContainers\gw_array.h" />
+    <ClInclude Include="GWCA\GameEntities\Agent.h" />
+    <ClInclude Include="GWCA\GameEntities\Attribute.h" />
+    <ClInclude Include="GWCA\GameEntities\Camera.h" />
+    <ClInclude Include="GWCA\GameEntities\Friendslist.h" />
+    <ClInclude Include="GWCA\GameEntities\Guild.h" />
+    <ClInclude Include="GWCA\GameEntities\Hero.h" />
+    <ClInclude Include="GWCA\GameEntities\Item.h" />
+    <ClInclude Include="GWCA\GameEntities\Map.h" />
+    <ClInclude Include="GWCA\GameEntities\NPC.h" />
+    <ClInclude Include="GWCA\GameEntities\Party.h" />
+    <ClInclude Include="GWCA\GameEntities\Pathing.h" />
+    <ClInclude Include="GWCA\GameEntities\Player.h" />
+    <ClInclude Include="GWCA\GameEntities\Position.h" />
+    <ClInclude Include="GWCA\GameEntities\Quest.h" />
+    <ClInclude Include="GWCA\GameEntities\Skill.h" />
+    <ClInclude Include="GWCA\GameEntities\Title.h" />
     <ClInclude Include="GWCA\Managers\AgentMgr.h" />
     <ClInclude Include="GWCA\Managers\CameraMgr.h" />
     <ClInclude Include="GWCA\Managers\ChatMgr.h" />
@@ -24,32 +53,7 @@
     <ClInclude Include="GWCA\Managers\GameThreadMgr.h" />
     <ClInclude Include="GWCA\Managers\GuildMgr.h" />
     <ClInclude Include="GWCA\Managers\GWCAManager.h" />
-    <ClInclude Include="GWCA\Structures\Context\AgentContext.h" />
-    <ClInclude Include="GWCA\Structures\Context\CharContext.h" />
-    <ClInclude Include="GWCA\Structures\Context\GameContext.h" />
-    <ClInclude Include="GWCA\Structures\Context\GuildContext.h" />
-    <ClInclude Include="GWCA\Structures\Context\ItemContext.h" />
-    <ClInclude Include="GWCA\Structures\Context\MapContext.h" />
-    <ClInclude Include="GWCA\Structures\Context\PartyContext.h" />
-    <ClInclude Include="GWCA\Structures\Context\TradeContext.h" />
-    <ClInclude Include="GWCA\Structures\Context\WorldContext.h" />
-    <ClInclude Include="GWCA\Structures\GameContainers\gw_array.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Agent.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Attribute.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Camera.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Friendslist.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Guild.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Hero.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Item.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Map.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\NPC.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Party.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Pathing.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Player.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Position.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Quest.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Skill.h" />
-    <ClInclude Include="GWCA\Structures\GameEntities\Title.h" />
+    <ClInclude Include="GWCA\Packets\CtoS.h" />
     <ClInclude Include="GWCA\Structures\GWStructures.h" />
     <ClInclude Include="GWCA\Structures\Packets\StoC.h" />
     <ClInclude Include="GWCA\Utilities\Hooker.h" />
@@ -67,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c" />
+    <ClCompile Include="GWCA\src\GameEntities\Skill.cpp" />
     <ClCompile Include="GWCA\src\Utilities\Hooker.cpp" />
     <ClCompile Include="GWCA\src\Utilities\MemoryPatcher.cpp" />
     <ClCompile Include="GWCA\src\Utilities\PatternScanner.cpp" />
@@ -121,10 +126,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>GWCAd</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>GWCA</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

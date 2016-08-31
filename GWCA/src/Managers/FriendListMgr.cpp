@@ -1,7 +1,7 @@
-#include "..\..\Managers\FriendListMgr.h"
-#include "..\..\Utilities\PatternScanner.h"
+#include <GWCA\Managers\FriendListMgr.h>
+#include <GWCA\Utilities\PatternScanner.h>
 
-GWCA::FriendListMgr::FriendListMgr() {
+GW::FriendListMgr::FriendListMgr() {
 	/*
 	All function that directly use the adresse of friend list are really small or make no sense to scan.
 	So we scan a function that call one of this function then follow by transforming rel adr to abs adr.
@@ -13,6 +13,6 @@ GWCA::FriendListMgr::FriendListMgr() {
 	fList_ = &(*(GW::FriendList*)*(DWORD*)call);
 }
 
-void GWCA::FriendListMgr::SetFriendListStatus(GwConstants::OnlineStatus status) {
+void GW::FriendListMgr::SetFriendListStatus(GW::Constants::OnlineStatus status) {
 	set_online_status_((DWORD)status);
 }

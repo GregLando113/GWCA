@@ -1,24 +1,24 @@
-#include "..\..\Managers\EffectMgr.h"
+#include <GWCA\Managers\EffectMgr.h>
 
-#include "..\..\Structures\Context\GameContext.h"
-#include "..\..\Structures\Context\WorldContext.h"
-#include "..\..\Managers\MemoryMgr.h"
-#include "..\..\Managers\GameThreadMgr.h"
-#include "..\..\Managers\CtoSMgr.h"
+#include <GWCA\Context\GameContext.h>
+#include <GWCA\Context\WorldContext.h>
+#include <GWCA\Managers\MemoryMgr.h>
+#include <GWCA\Managers\GameThreadMgr.h>
+#include <GWCA\Managers\CtoSMgr.h>
 
-DWORD GWCA::EffectMgr::alcohol_level_ = NULL;
-GWCA::EffectMgr::PPEFunc_t GWCA::EffectMgr::ppe_retour_func_ = NULL;
+DWORD GW::EffectMgr::alcohol_level_ = NULL;
+GW::EffectMgr::PPEFunc_t GW::EffectMgr::ppe_retour_func_ = NULL;
 
 
-GWCA::EffectMgr::EffectMgr() {
+GW::EffectMgr::EffectMgr() {
 	ppe_retour_func_ = (PPEFunc_t)hk_post_process_effect_.Detour(MemoryMgr::PostProcessEffectFunction, (BYTE*)AlcoholHandler, 6);
 }
 
-void GWCA::EffectMgr::RestoreHooks() {
+void GW::EffectMgr::RestoreHooks() {
 	hk_post_process_effect_.Retour();
 }
 
-GWCA::GW::Effect GWCA::EffectMgr::GetPlayerEffectById(GwConstants::SkillID SkillID) {
+GW::Effect GW::EffectMgr::GetPlayerEffectById(GW::Constants::SkillID SkillID) {
 	DWORD id = static_cast<DWORD>(SkillID);
 	GW::AgentEffectsArray AgEffects = GetPartyEffectArray();
 
@@ -34,7 +34,7 @@ GWCA::GW::Effect GWCA::EffectMgr::GetPlayerEffectById(GwConstants::SkillID Skill
 	return GW::Effect::Nil();
 }
 
-GWCA::GW::Buff GWCA::EffectMgr::GetPlayerBuffBySkillId(GwConstants::SkillID SkillID) {
+GW::Buff GW::EffectMgr::GetPlayerBuffBySkillId(GW::Constants::SkillID SkillID) {
 	DWORD id = static_cast<DWORD>(SkillID);
 	GW::AgentEffectsArray AgEffects = GetPartyEffectArray();
 
@@ -50,7 +50,7 @@ GWCA::GW::Buff GWCA::EffectMgr::GetPlayerBuffBySkillId(GwConstants::SkillID Skil
 	return GW::Buff::Nil();
 }
 
-GWCA::GW::EffectArray GWCA::EffectMgr::GetPlayerEffectArray() {
+GW::EffectArray GW::EffectMgr::GetPlayerEffectArray() {
 	GW::AgentEffectsArray ageffects = GetPartyEffectArray();
 	if (ageffects.valid()) {
 		return ageffects[0].Effects;
@@ -59,20 +59,20 @@ GWCA::GW::EffectArray GWCA::EffectMgr::GetPlayerEffectArray() {
 	}
 }
 
-void __fastcall GWCA::EffectMgr::AlcoholHandler(DWORD Intensity, DWORD Tint) {
+void __fastcall GW::EffectMgr::AlcoholHandler(DWORD Intensity, DWORD Tint) {
 	alcohol_level_ = Intensity;
 	return ppe_retour_func_(Intensity, Tint);
 }
 
-void GWCA::EffectMgr::GetDrunkAf(DWORD Intensity, DWORD Tint) {
+void GW::EffectMgr::GetDrunkAf(DWORD Intensity, DWORD Tint) {
 	GameThreadMgr::Instance().Enqueue(ppe_retour_func_, Intensity, Tint);
 }
 
-GWCA::GW::AgentEffectsArray GWCA::EffectMgr::GetPartyEffectArray() {
+GW::AgentEffectsArray GW::EffectMgr::GetPartyEffectArray() {
 	return GameContext::instance()->world->partyeffects;
 }
 
-GWCA::GW::BuffArray GWCA::EffectMgr::GetPlayerBuffArray() {
+GW::BuffArray GW::EffectMgr::GetPlayerBuffArray() {
 	GW::AgentEffectsArray ageffects = GetPartyEffectArray();
 	if (ageffects.valid()) {
 		return ageffects[0].Buffs;
@@ -81,7 +81,6 @@ GWCA::GW::BuffArray GWCA::EffectMgr::GetPlayerBuffArray() {
 	}
 }
 
-void GWCA::EffectMgr::DropBuff(DWORD buffId) {
+void GW::EffectMgr::DropBuff(DWORD buffId) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x23, buffId);
 }
-

@@ -4,8 +4,8 @@
 #include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
-  namespace GW {
-    struct GHKey { DWORD k[4]; };
+	namespace GW {
+		struct GHKey { DWORD k[4]; };
 
 		struct GuildPlayer {
 			void* vtable;
@@ -41,5 +41,5 @@ namespace GWCA {
 		};
 
 		using GuildArray = gw_array<Guild*>;
-  }
+	}
 }

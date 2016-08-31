@@ -5,10 +5,10 @@
 #include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
-  class AgentContext
-	{
-		AgentContext(){}
-		AgentContext(const AgentContext&){}
+	class AgentContext {
+		AgentContext() {}
+		AgentContext(const AgentContext&) {}
+
 	public:
 		gw_array<void*> unk1_array;
 		DWORD pad1[5];

@@ -5,28 +5,27 @@
 #include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
-using namespace GW;
-class TradeContext
-{
-  TradeContext(){}
-  TradeContext(const TradeContext&){}
+	using namespace GW;
+	class TradeContext {
+		TradeContext() {}
+		TradeContext(const TradeContext&) {}
 
-public:
-  enum State : DWORD { NO_TRADE, TRADE_INITIATED, OFFER_ACCEPTED = 3 };
+	public:
+		enum State : DWORD { NO_TRADE, TRADE_INITIATED, OFFER_ACCEPTED = 3 };
 
-  struct Item {
-    ItemID itemid;
-    DWORD quantity;
-  };
+		struct Item {
+			ItemID itemid;
+			DWORD quantity;
+		};
 
-  struct Trader {
-    DWORD gold;
-    gw_array<TradeContext::Item> items;
-  };
+		struct Trader {
+			DWORD gold;
+			gw_array<TradeContext::Item> items;
+		};
 
-  State state;
-  DWORD pad1[3]; // Seemingly 3 null dwords
-  Trader player;
-  Trader partner;
-};
+		State state;
+		DWORD pad1[3]; // Seemingly 3 null dwords
+		Trader player;
+		Trader partner;
+	};
 }

@@ -4,9 +4,9 @@
 #include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
-  namespace GW {
+	namespace GW {
 
-    struct PlayerPartyMember {
+		struct PlayerPartyMember {
 			DWORD loginnumber;
 			DWORD unk1;
 			DWORD state;
@@ -31,12 +31,11 @@ namespace GWCA {
 			DWORD level;
 		};
 
-    using PlayerPartyMemberArray = gw_array<PlayerPartyMember>;
+		using PlayerPartyMemberArray = gw_array<PlayerPartyMember>;
 		using HeroPartyMemberArray = gw_array<HeroPartyMember>;
 		using HenchmanPartyMemberArray = gw_array<HenchmanPartyMember>;
 
-    struct PartyInfo
-		{
+		struct PartyInfo {
 			char pad_0x0000[0x4]; //0x0000
 			gw_array<PlayerPartyMember> players; //0x0004
 			gw_array<HenchmanPartyMember> henchmen; //0x0014
@@ -44,5 +43,5 @@ namespace GWCA {
 			gw_array<void*> unk1_arr; //0x0034
 		};
 
-  }
+	}
 }

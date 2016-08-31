@@ -7,7 +7,7 @@ GWCA::MemoryPatcher::MemoryPatcher(LPVOID addr, BYTE *patch, UINT size) {
 
 	this->patch = new BYTE[size];
 	memcpy(this->patch, patch, size);
-	
+
 	this->backup = new BYTE[size];
 
 	DWORD oldProt;

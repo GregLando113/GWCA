@@ -25,7 +25,7 @@ namespace GWCA {
 		wchar_t* GetPlayerGuildAnnouncer();
 
 		void TravelGH();
-		
+
 		void TravelGH(GW::GHKey key);
 
 		void LeaveGH();

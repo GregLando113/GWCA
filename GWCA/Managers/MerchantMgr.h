@@ -50,31 +50,31 @@ namespace GWCA {
 
 		void EnqueueTransaction(
 			TransactionType type,
-			DWORD gold_give = 0, 
+			DWORD gold_give = 0,
 			TransactionPacket give = TransactionPacket(),
-			DWORD gold_recieve = 0, 
+			DWORD gold_recieve = 0,
 			TransactionPacket recieve = TransactionPacket()
-			);
+		);
 
 		void EnqueueQuoteRequest(
 			TransactionType type,
 			TransactionPacket give = TransactionPacket(),
 			TransactionPacket recieve = TransactionPacket()
-			);
+		);
 
-		void BuyMerchantItem(DWORD modelid,DWORD quantity = 1);
+		void BuyMerchantItem(DWORD modelid, DWORD quantity = 1);
 
 		void SellMerchantItem(GW::Item* itemtosell, DWORD sellquantity = NULL);
 
 	private:
 		typedef void(__fastcall *Transaction_t)
-		(
-			TransactionType type,
-			DWORD gold_give,
-			TransactionPacket give,
-			DWORD gold_recieve,
-			TransactionPacket recieve
-		);
+			(
+				TransactionType type,
+				DWORD gold_give,
+				TransactionPacket give,
+				DWORD gold_recieve,
+				TransactionPacket recieve
+				);
 
 		MerchantMgr();
 		void RestoreHooks() override;

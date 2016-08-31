@@ -27,7 +27,7 @@ namespace GWCA {
 
 	private:
 		typedef void(__fastcall *SetOnlineStatus_t)(DWORD status);
-		
+
 		FriendListMgr();
 		void RestoreHooks() override {}
 

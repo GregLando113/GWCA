@@ -22,7 +22,7 @@ namespace GWCA {
 
 	public:
 
-		/* 
+		/*
 			Base structure definition for stoc packets
 			Inherit this, then ignore added header, just all other fields of packet in your definitions.
 		*/
@@ -74,6 +74,6 @@ namespace GWCA {
 
 		static StoCHandlerArray game_server_handler_;
 		static StoCHandler* original_functions_;
-		static std::map<DWORD,std::vector<Handler>> event_calls_;
+		static std::map<DWORD, std::vector<Handler>> event_calls_;
 	};
 }

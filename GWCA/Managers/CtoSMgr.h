@@ -17,15 +17,14 @@ namespace GWCA {
 
 		// Send a packet with a specific struct alignment, used for more complex packets.
 		template <class T>
-		void SendPacket(T* packet)
-		{
+		void SendPacket(T* packet) {
 			DWORD size = sizeof(T);
-			GameThreadMgr::Instance().Enqueue(gs_send_function_, 
+			GameThreadMgr::Instance().Enqueue(gs_send_function_,
 				MemoryMgr::GetGSObject(), size, (DWORD*)packet);
 		}
 
 		static SendCtoGSPacket_t gs_send_function_;
-	private:		
+	private:
 
 
 

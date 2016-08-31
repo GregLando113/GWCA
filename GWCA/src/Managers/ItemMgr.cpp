@@ -39,8 +39,7 @@ GWCA::GW::ItemArray GWCA::ItemMgr::GetItemArray() {
 	return GameContext::instance()->items->itemarray;
 }
 
-GWCA::ItemMgr::ItemMgr() {
-}
+GWCA::ItemMgr::ItemMgr() {}
 
 bool GWCA::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 

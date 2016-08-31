@@ -21,15 +21,13 @@ namespace GWCA {
 
 		// Add function to gameloop queue, only use if you know what you're doing.
 		template<typename F, typename... ArgTypes>
-		void Enqueue(F&& Func, ArgTypes&&... Args)
-		{
+		void Enqueue(F&& Func, ArgTypes&&... Args) {
 			EnterCriticalSection(&criticalsection_);
 			calls_.emplace_back(std::bind(std::forward<F>(Func), std::forward<ArgTypes>(Args)...));
 			LeaveCriticalSection(&criticalsection_);
 		}
 		template<typename F, typename... ArgTypes>
-		void AddPermanentCall(F&& Func, ArgTypes&&... Args)
-		{
+		void AddPermanentCall(F&& Func, ArgTypes&&... Args) {
 			EnterCriticalSection(&criticalsection_);
 			calls_permanent_.emplace_back(std::bind(std::forward<F>(Func), std::forward<ArgTypes>(Args)...));
 			LeaveCriticalSection(&criticalsection_);

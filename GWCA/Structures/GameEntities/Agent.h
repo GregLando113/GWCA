@@ -5,11 +5,10 @@
 
 namespace GWCA {
 
-  namespace GW {
+	namespace GW {
+		using AgentID = DWORD;
 
-    using AgentID = DWORD;
-
-    struct Agent {
+		struct Agent {
 			DWORD* vtable;
 			BYTE unknown1[24];
 			BYTE unknown2[4]; //This actually points to the agent before but with a small offset
@@ -136,7 +135,7 @@ namespace GWCA {
 			inline bool IsNPC() { return LoginNumber == 0; }
 		};
 
-    struct MapAgent {
+		struct MapAgent {
 			float curenergy; //?
 			float maxenergy; //?
 			float energyregen;
@@ -178,9 +177,8 @@ namespace GWCA {
 			float Y;
 		};
 
-    using AgentArray = gw_array<Agent*>;
-    using MapAgentArray = gw_array<MapAgent>;
-    using AgentMovementArray = gw_array<AgentMovement*>;
-
-  }
+		using AgentArray = gw_array<Agent*>;
+		using MapAgentArray = gw_array<MapAgent>;
+		using AgentMovementArray = gw_array<AgentMovement*>;
+	}
 }

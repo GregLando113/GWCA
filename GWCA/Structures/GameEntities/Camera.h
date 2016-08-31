@@ -3,9 +3,9 @@
 #include "Position.h"
 
 namespace GWCA {
-  namespace GW {
-    
-    struct Camera {
+	namespace GW {
+
+		struct Camera {
 			DWORD lookAtAgentID;
 			DWORD unk1;
 			float unk2[2];
@@ -41,5 +41,5 @@ namespace GWCA {
 			float fieldofview2;
 			// ...
 		};
-  }
+	}
 }

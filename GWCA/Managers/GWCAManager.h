@@ -35,4 +35,3 @@ namespace GWCA {
 	template <class T>
 	T* GWCAManager<T>::instance_ = nullptr;
 }
-

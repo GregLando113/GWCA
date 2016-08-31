@@ -4,8 +4,8 @@
 #include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
-  namespace GW {
-    struct MissionMapIcon { // MapOverlay from GWCA
+	namespace GW {
+		struct MissionMapIcon { // MapOverlay from GWCA
 			long index;
 			float X;
 			float Y;
@@ -19,5 +19,5 @@ namespace GWCA {
 		};
 
 		using MissionMapIconArray = gw_array<MissionMapIcon>;
-  }
+	}
 }

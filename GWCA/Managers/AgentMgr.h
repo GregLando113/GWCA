@@ -89,8 +89,8 @@ namespace GWCA {
 		GW::AgentID GetHeroAgentID(DWORD heroindex);
 
 	private:
-		
-		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID,DWORD smth);
+
+		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID, DWORD smth);
 
 		typedef void(__fastcall *Move_t)(GW::GamePos* Pos);
 

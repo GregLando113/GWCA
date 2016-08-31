@@ -7,25 +7,20 @@ DWORD GWCA::PatternScanner::FindPattern(char* pattern, char* mask, DWORD offset)
 	bool found = false;
 
 	//For each byte from start to end
-	for (DWORD i = base_; i < base_ + size_ - patternLength; i++)
-	{
-		if (*(BYTE*)i != first)
-		{
+	for (DWORD i = base_; i < base_ + size_ - patternLength; i++) {
+		if (*(BYTE*)i != first) {
 			continue;
 		}
 		found = true;
 		//For each byte in the pattern
-		for (int idx = 0; idx < patternLength; idx++)
-		{
+		for (int idx = 0; idx < patternLength; idx++) {
 
-			if (mask[idx] == 'x' && pattern[idx] != *(char*)(i + idx))
-			{
+			if (mask[idx] == 'x' && pattern[idx] != *(char*)(i + idx)) {
 				found = false;
 				break;
 			}
 		}
-		if (found)
-		{
+		if (found) {
 			return i + offset;
 		}
 	}
@@ -55,5 +50,4 @@ GWCA::PatternScanner::PatternScanner(char* moduleName /*= NULL*/) {
 	}
 }
 
-GWCA::PatternScanner::PatternScanner(DWORD _start, DWORD _size) : base_(_start), size_(_size) {
-}
+GWCA::PatternScanner::PatternScanner(DWORD _start, DWORD _size) : base_(_start), size_(_size) {}

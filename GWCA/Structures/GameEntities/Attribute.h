@@ -3,8 +3,8 @@
 #include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
-  namespace GW {
-    struct Attribute {
+	namespace GW {
+		struct Attribute {
 			DWORD ID; // ID of attribute
 			DWORD level_base; // Level of attribute without modifiers (runes,pcons,etc)
 			DWORD level; // Level with modifiers
@@ -18,5 +18,5 @@ namespace GWCA {
 		};
 
 		using PartyAttributeArray = gw_array<PartyAttribute>;
-  }
+	}
 }

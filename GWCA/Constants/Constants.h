@@ -18,7 +18,7 @@ namespace GwConstants {
 		Elementalist, Assassin, Ritualist, Paragon, Dervish
 	};
 	static std::wstring to_wstring(Profession prof) {
-		switch (prof) {
+		switch(prof) {
 		case GwConstants::Profession::None: return L"X";
 		case GwConstants::Profession::Warrior: return L"W";
 		case GwConstants::Profession::Ranger: return L"R";
@@ -34,7 +34,7 @@ namespace GwConstants {
 		}
 	}
 
-	enum class Attribute {			
+	enum class Attribute {
 		FastCasting, IllusionMagic, DominationMagic, InspirationMagic,		// mesmer
 		BloodMagic, DeathMagic, SoulReaping, Curses,						// necro
 		AirMagic, EarthMagic, FireMagic, WaterMagic, EnergyStorage,			// ele
@@ -49,47 +49,49 @@ namespace GwConstants {
 		None = 0xff
 	};
 
-	enum class OnlineStatus{ OFFLINE, ONLINE, DO_NOT_DISTURB, AWAY };
+	enum class OnlineStatus { OFFLINE, ONLINE, DO_NOT_DISTURB, AWAY };
 
-	enum class Bag{	None,Backpack,Belt_Pouch,Bag_1,Bag_2,Equipment_Pack,
-					Material_Storage,Unclaimed_Items,Storage_1,Storage_2,
-					Storage_3,Storage_4,Storage_5,Storage_6,Storage_7,
-					Storage_8,Storage_9,Equipped_Items};
+	enum class Bag {
+		None, Backpack, Belt_Pouch, Bag_1, Bag_2, Equipment_Pack,
+		Material_Storage, Unclaimed_Items, Storage_1, Storage_2,
+		Storage_3, Storage_4, Storage_5, Storage_6, Storage_7,
+		Storage_8, Storage_9, Equipped_Items
+	};
 
 	enum class AgentType {
-		Living = 0xDB,Chest_Signpost = 0x200,Item = 0x400
+		Living = 0xDB, Chest_Signpost = 0x200, Item = 0x400
 	};
 
 	enum class ItemType {
-		Salvage,Axe=2,Bag,Boots,Bow,Chestpiece=7,Rune_Mod,Usable,Dye,
-		Materials_Zcoins,Offhand,Gloves,Hammer=15,Headpiece,CC_Shards,
-		Key,Leggings,Gold_Coin,Quest_Item,Wand,Shield=24,Staff=26,Sword,
-		Kit=29,Trophy,Scroll,Daggers,Minipet,Scythe,Spear,Costume=45
+		Salvage, Axe = 2, Bag, Boots, Bow, Chestpiece = 7, Rune_Mod, Usable, Dye,
+		Materials_Zcoins, Offhand, Gloves, Hammer = 15, Headpiece, CC_Shards,
+		Key, Leggings, Gold_Coin, Quest_Item, Wand, Shield = 24, Staff = 26, Sword,
+		Kit = 29, Trophy, Scroll, Daggers, Minipet, Scythe, Spear, Costume = 45
 	};
 
 	enum HeroID : DWORD {
-		Norgu = 1,Goren,Tahlkora,MasterOfWhispers,AcolyteJin,Koss,
-		Dunkoro,AcolyteSousuke,Melonni,ZhedShadowhoof,GeneralMorgahn,
-		MargridTheSly,Zenmai,Olias,Razah,MOX,Jora = 18,PyreFierceshot,
-		Anton,Livia,Hayda,Kahmu,Gwen,Xandra,Vekk,Ogden,Merc1,Merc2,Merc3,
-		Merc4,Merc5,Merc6,Merc7,Merc8,Miku,ZeiRi
+		Norgu = 1, Goren, Tahlkora, MasterOfWhispers, AcolyteJin, Koss,
+		Dunkoro, AcolyteSousuke, Melonni, ZhedShadowhoof, GeneralMorgahn,
+		MargridTheSly, Zenmai, Olias, Razah, MOX, Jora = 18, PyreFierceshot,
+		Anton, Livia, Hayda, Kahmu, Gwen, Xandra, Vekk, Ogden, Merc1, Merc2, Merc3,
+		Merc4, Merc5, Merc6, Merc7, Merc8, Miku, ZeiRi
 	};
 
 	enum HeroState : DWORD {
-		Fight,Guard,AvoidCombat
+		Fight, Guard, AvoidCombat
 	};
 
 	enum TitleID : DWORD {
-		Hero,TyrianCarto,CanthanCarto,Gladiator,Champion,Kurzick,
-		Luxon,Drunkard,Survivor = 0x9,KoaBD,ProtectorTyria = 0xD,
-		ProtectorCantha,Lucky,Unlucky,Sunspear,ElonianCarto,
-		ProtectorElona,Lightbringer,LDoA,Commander,Gamer,
-		SkillHunterTyria,VanquisherTyria,SkillHunterCantha,
-		VanquisherCantha,SkillHunterElona,VanquisherElona,
-		LegendaryCarto,LegendaryGuardian,LegendarySkillHunter,
-		LegendaryVanquisher,Sweets,GuardianTyria,GuardianCantha,
-		GuardianElona,Asuran,Deldrimor,Vanguard,Norn,MasterOfTheNorth,
-		Party,Zaishen,TreasureHunter,Wisdom,Codex
+		Hero, TyrianCarto, CanthanCarto, Gladiator, Champion, Kurzick,
+		Luxon, Drunkard, Survivor = 0x9, KoaBD, ProtectorTyria = 0xD,
+		ProtectorCantha, Lucky, Unlucky, Sunspear, ElonianCarto,
+		ProtectorElona, Lightbringer, LDoA, Commander, Gamer,
+		SkillHunterTyria, VanquisherTyria, SkillHunterCantha,
+		VanquisherCantha, SkillHunterElona, VanquisherElona,
+		LegendaryCarto, LegendaryGuardian, LegendarySkillHunter,
+		LegendaryVanquisher, Sweets, GuardianTyria, GuardianCantha,
+		GuardianElona, Asuran, Deldrimor, Vanguard, Norn, MasterOfTheNorth,
+		Party, Zaishen, TreasureHunter, Wisdom, Codex
 	};
 
 	enum class Tick { NOT_READY, READY };
@@ -137,13 +139,13 @@ namespace GwConstants {
 		AsiaChinese,
 		AsiaJapanese,
 	};
-	
+
 
 	namespace Range {
 		const int Adjacent = 166;
 		const int Nearby = 238;
 		const int Area = 322;
-		const int Earshot = 1010;	
+		const int Earshot = 1010;
 		const int Spellcast = 1246;
 		const int Spirit = 2500;
 		const int Compass = 5000;

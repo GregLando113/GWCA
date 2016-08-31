@@ -14,7 +14,7 @@ namespace GWCA {
 		friend class GWCAManager<EffectMgr>;
 
 	public:
-		
+
 		// Get full array of effects and buffs for player and heroes.
 		GW::AgentEffectsArray GetPartyEffectArray();
 
@@ -39,7 +39,7 @@ namespace GWCA {
 
 		// Have fun with this ;))))))))))
 		void GetDrunkAf(DWORD Intensity, DWORD Tint);
-		
+
 	private:
 
 		typedef void(__fastcall *PPEFunc_t)(DWORD Intensity, DWORD Tint);

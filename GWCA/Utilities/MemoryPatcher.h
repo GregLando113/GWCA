@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 namespace GWCA {
-	
+
 	class MemoryPatcher {
 	public:
 		MemoryPatcher(LPVOID addr, BYTE *patch, UINT size);

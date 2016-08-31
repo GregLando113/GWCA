@@ -3,8 +3,8 @@
 #include "..\GameContainers\gw_array.h"
 
 namespace GWCA {
-  namespace GW {
-    struct Title {
+	namespace GW {
+		struct Title {
 			DWORD unk1;
 			DWORD currentpoints;
 			DWORD unk2;
@@ -17,5 +17,5 @@ namespace GWCA {
 		}; // size = 0x28
 
 		using TitleArray = gw_array<Title>;
-  }
+	}
 }

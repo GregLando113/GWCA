@@ -10,9 +10,9 @@
 namespace GWCA {
 	class PartyMgr : public GWCAManager<PartyMgr> {
 		friend class GWCAManager<PartyMgr>;
-		
+
 	public:
-		GW::PartyInfo* GetPartyInfo() { 
+		GW::PartyInfo* GetPartyInfo() {
 			return GameContext::instance()->party->partyinfo;
 		}
 
@@ -44,10 +44,10 @@ namespace GWCA {
 			}
 		}
 
-		bool GetIsPartyInHardMode(){
+		bool GetIsPartyInHardMode() {
 			return GameContext::instance()->party->partystate.InHardMode();
 		}
-		bool GetIsPartyDefeated(){
+		bool GetIsPartyDefeated() {
 			return GameContext::instance()->party->partystate.IsDefeated();
 		}
 

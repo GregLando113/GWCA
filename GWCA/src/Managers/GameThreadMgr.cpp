@@ -6,22 +6,17 @@
 CRITICAL_SECTION GWCA::GameThreadMgr::criticalsection_;
 
 void __stdcall GWCA::GameThreadMgr::CallFunctions() {
-	if (TryEnterCriticalSection(&criticalsection_))
-	{
-		if (!calls_.empty())
-		{
-			for (const auto& Call : calls_)
-			{
+	if (TryEnterCriticalSection(&criticalsection_)) {
+		if (!calls_.empty()) {
+			for (const auto& Call : calls_) {
 				Call();
 			}
 
 			calls_.clear();
 		}
 
-		if (!calls_permanent_.empty())
-		{
-			for (const auto& Call : calls_permanent_)
-			{
+		if (!calls_permanent_.empty()) {
+			for (const auto& Call : calls_permanent_) {
 				Call();
 			}
 		}
@@ -56,16 +51,14 @@ void GWCA::GameThreadMgr::ToggleRenderHook() {
 
 	render_state_ = !render_state_;
 
-	if (render_state_)
-	{
+	if (render_state_) {
 		memcpy(restorebuf, MemoryMgr::RenderLoopLocation, 5);
 
 		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, PAGE_EXECUTE_READWRITE, &dwProt);
 		memset(MemoryMgr::RenderLoopLocation, 0xE9, 1);
 		*(DWORD*)(MemoryMgr::RenderLoopLocation + 1) = (DWORD)((BYTE*)renderHook - MemoryMgr::RenderLoopLocation) - 5;
 		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, dwProt, &dwProt);
-	}
-	else{
+	} else {
 		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, PAGE_EXECUTE_READWRITE, &dwProt);
 		memcpy(MemoryMgr::RenderLoopLocation, restorebuf, 5);
 		VirtualProtect(MemoryMgr::RenderLoopLocation, 5, dwProt, &dwProt);

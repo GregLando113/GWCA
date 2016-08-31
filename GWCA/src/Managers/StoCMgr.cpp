@@ -8,8 +8,7 @@ std::map<DWORD, std::vector<GWCA::StoCMgr::Handler>> GWCA::StoCMgr::event_calls_
 
 bool GWCA::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
 	bool do_not_process = false;
-	for (auto call : event_calls_[pak->header])
-	{
+	for (auto call : event_calls_[pak->header]) {
 		if (call(pak)) do_not_process = true;
 	}
 	return do_not_process ? true : original_functions_[pak->header].handlerfunc(pak);
@@ -17,7 +16,7 @@ bool GWCA::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
 
 GWCA::StoCMgr::StoCMgr() : GWCAManager() {
 	PatternScanner scan(0x401000, 0x49A000);
-	
+
 	// inb4 has rages at this
 	struct LSObjPtrChain {
 		struct {

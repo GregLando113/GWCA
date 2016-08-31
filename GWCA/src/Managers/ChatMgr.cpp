@@ -11,10 +11,10 @@
 static wchar_t* wcssep(wchar_t* str, wchar_t sep);
 
 GWCA::ChatMgr::ChatMgr() {
-	PatternScanner scanner(0x401000,0x49A000);
+	PatternScanner scanner(0x401000, 0x49A000);
 	BYTE* chatlog_addr = (BYTE*)scanner.FindPattern("\x53\x56\x8B\xF1\x57\x8B\x56\x14\x8B\x4E\x0C\xE8", "xxxxxxxxxxxx", -6);
 	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
-	BYTE* opentemplate_addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43","xxxxxxxx",0);
+	BYTE* opentemplate_addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
 
 	DWORD chatlog_length = Hook::CalculateDetourLength(chatlog_addr);
 	DWORD chatcmd_length = Hook::CalculateDetourLength(chatcmd_addr);
@@ -78,7 +78,7 @@ void __fastcall GWCA::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWOR
 				if (quote != std::wstring::npos) {
 					message = message.substr(quote + 7);
 
-					wsprintf(mes->message, L"<c=#%06x>%ls</c>: %ls  ", 
+					wsprintf(mes->message, L"<c=#%06x>%ls</c>: %ls  ",
 						color, sender.c_str(), message.c_str());
 				}
 			}
@@ -94,13 +94,11 @@ void __fastcall GWCA::ChatMgr::det_chatcmd(wchar_t *_message) {
 	wchar_t* message = new wchar_t[length + 1];
 	wcscpy_s(message, length + 1, _message);
 
-	if (*message == '/')
-	{
+	if (*message == '/') {
 		wchar_t* cmd = wcssep(message + 1, '\x20'); // \x20 is space
 		CallBack cb = chat.chatcmd_callbacks[std::wstring(cmd)];
 
-		if (cb.callback)
-		{
+		if (cb.callback) {
 			std::vector<std::wstring> args;
 
 			wchar_t* arg = NULL;
@@ -120,7 +118,7 @@ void __fastcall GWCA::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
 	if (ChatMgr::Instance().open_links_
 		&& info->template_name != nullptr
 		&& (!memcmp(info->template_name, L"http://", 7 * sizeof(wchar_t))
-		|| !memcmp(info->template_name, L"https://", 8 * sizeof(wchar_t)))) {
+			|| !memcmp(info->template_name, L"https://", 8 * sizeof(wchar_t)))) {
 		ShellExecute(NULL, L"open", info->template_name, NULL, NULL, SW_SHOWNORMAL);
 	} else {
 		ChatMgr::Instance().ori_opentemplate(unk, info);

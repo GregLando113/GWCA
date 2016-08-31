@@ -12,9 +12,9 @@ namespace GWCA {
 		BYTE* source_;
 		DWORD length_;
 	public:
-	
+
 		static DWORD CalculateDetourLength(BYTE* _source);
-		BYTE* Detour(BYTE* _source, BYTE* _detour,const DWORD _length);
+		BYTE* Detour(BYTE* _source, BYTE* _detour, const DWORD _length);
 		void Retour();
 	};
 

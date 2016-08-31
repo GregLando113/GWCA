@@ -11,8 +11,7 @@ namespace GWCA {
 		// reccomended to only use references to maintain up-to-date information ( gw_array<T>& )
 
 		template <typename T>
-		class gw_array
-		{
+		class gw_array {
 		public:
 
 			enum class Exception {
@@ -29,9 +28,9 @@ namespace GWCA {
 			const_iterator end() const { return array_ + current_size_; }
 
 			T& index(DWORD index) {
-				if(index >= size() || index < 0)
+				if (index >= size() || index < 0)
 					throw Exception::kOutOfBounds;
-				if(!valid())
+				if (!valid())
 					throw Exception::kInvalidArray;
 				return array_[index];
 			}
@@ -39,7 +38,7 @@ namespace GWCA {
 			T& operator[](DWORD index) {
 				return this->index(index);
 			}
-			
+
 			bool valid() {
 				return array_ != nullptr;
 			}

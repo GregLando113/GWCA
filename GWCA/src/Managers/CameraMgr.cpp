@@ -6,15 +6,13 @@ GWCA::CameraMgr::CameraMgr() {
 	DWORD scancamclass = scan.FindPattern("\x75\x0B\x51\xB9", "xxxx", 4);
 	if (scancamclass) {
 		cam_class_ = *(GW::Camera**)scancamclass;
-	}
-	else {
+	} else {
 		cam_class_ = NULL;
 	}
 	DWORD scanprojmatrix = scan.FindPattern("\x89\x4D\xCC\x89\x45\xD4\x8B\x56\x08", "xxxxxxxxx", -4);
 	if (scancamclass) {
 		projection_matrix_ = (*(float**)scanprojmatrix) + 0x68;
-	}
-	else {
+	} else {
 		projection_matrix_ = NULL;
 	}
 

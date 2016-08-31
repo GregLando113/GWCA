@@ -16,13 +16,13 @@ namespace GWCA {
 
 		// Set float values
 		Vector2f(const float _x, const float _y) :
-			x(_x), y(_y){}
+			x(_x), y(_y) {}
 
 		// Test if two vectors are equal
 		bool operator == (const Vector2f& _vec) const {
 			return (x == _vec.x && y == _vec.y);
 		}
-		
+
 		// Retrieve the negative (inverted) version of vector
 		const Vector2f operator - () const {
 			return Vector2f(-x, -y);
@@ -82,7 +82,7 @@ namespace GWCA {
 		}
 
 		Vector2f& operator /= (const float _w) {
-			x /= _w; 
+			x /= _w;
 			y /= _w;
 			return *this;
 		}
@@ -118,7 +118,7 @@ namespace GWCA {
 
 		Vector2f& Normalize() {
 			const float n = Norm();
-			x /= n; 
+			x /= n;
 			y /= n;
 			return *this;
 		};
@@ -160,7 +160,7 @@ namespace GWCA {
 
 		// Set float values
 		Vector3f(const float _x, const float _y, const float _z) :
-			x(_x), y(_y),z(_z){}
+			x(_x), y(_y), z(_z) {}
 
 		// Test if two vectors are equal
 		bool operator == (const Vector3f& _vec) const {
@@ -174,7 +174,7 @@ namespace GWCA {
 
 		// Add two vectors
 		const Vector3f operator + (const Vector3f& _vec) const {
-			return Vector3f(x + _vec.x, y + _vec.y,z + _vec.z);
+			return Vector3f(x + _vec.x, y + _vec.y, z + _vec.z);
 		}
 
 		// Subtract vector 1 by vector 2
@@ -184,7 +184,7 @@ namespace GWCA {
 
 		// Divide vector 1 by vector 2
 		const Vector3f operator / (const Vector3f& _vec) const {
-			return Vector3f(x / _vec.x, y / _vec.y,z / _vec.z);
+			return Vector3f(x / _vec.x, y / _vec.y, z / _vec.z);
 		}
 
 		// Add vector 2 to vector 1
@@ -247,10 +247,10 @@ namespace GWCA {
 		// Cross product
 		const Vector3f operator ^ (const Vector3f& _vec) const {
 			return Vector3f(
-							(y * _vec.z) - (_vec.y * z),
-							(z * _vec.x) - (_vec.z * x),
-							(x * _vec.y) - (_vec.x * y)
-							);
+				(y * _vec.z) - (_vec.y * z),
+				(z * _vec.x) - (_vec.z * x),
+				(x * _vec.y) - (_vec.x * y)
+			);
 		};
 
 		float Norm1() const {
@@ -295,10 +295,10 @@ namespace GWCA {
 
 			GamePos() : GamePos(0, 0, 0) {}
 
-			GamePos(const float _x, const float _y)	: GamePos(_x, _y, 0) {}
+			GamePos(const float _x, const float _y) : GamePos(_x, _y, 0) {}
 
 			GamePos(const float _x, const float _y, const unsigned int _zplane)
-			: Vector2f(_x,_y), zplane(_zplane) {}
+				: Vector2f(_x, _y), zplane(_zplane) {}
 		};
 	}
 }

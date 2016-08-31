@@ -1491,6 +1491,6 @@ namespace GwConstants {
 		"Plains of Jarin",
 		"Plains of Jarin",
 		"Plains of Jarin",
-		"(crash)" 
+		"(crash)"
 	};
 }

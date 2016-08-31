@@ -31,11 +31,11 @@ float GWCA::AgentMgr::GetDistance(Vector2f a, Vector2f b) {
 }
 
 float GWCA::AgentMgr::GetSqrDistance(Vector2f a, Vector2f b) {
-	return (a.x- b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+	return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 }
 
 void GWCA::AgentMgr::ChangeTarget(GW::Agent* Agent) {
-	GameThreadMgr::Instance().Enqueue(change_target_, Agent->Id,0);
+	GameThreadMgr::Instance().Enqueue(change_target_, Agent->Id, 0);
 }
 
 void GWCA::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/) {

@@ -1,6 +1,6 @@
 #include "..\..\Utilities\Hooker.h"
 
-extern "C"{
+extern "C" {
 #include "..\..\..\Dependencies\disasm\ld32.h"
 }
 
@@ -27,7 +27,7 @@ BYTE* GWCA::Hook::Detour(BYTE* _source, BYTE* _detour, const DWORD _length) {
 	memcpy(retour_func_, source_, length_);
 
 	retour_func_ += length_;
-	
+
 	retour_func_[0] = 0xE9;
 	*(DWORD*)(retour_func_ + 1) = (DWORD)((source_ + length_) - (retour_func_ + 5));
 
@@ -37,7 +37,7 @@ BYTE* GWCA::Hook::Detour(BYTE* _source, BYTE* _detour, const DWORD _length) {
 	*(DWORD*)(source_ + 1) = (DWORD)(_detour - (source_ + 5));
 
 	if (length_ != 5)
-		for (DWORD i = 5; i < length_;i++)
+		for (DWORD i = 5; i < length_; i++)
 			source_[i] = 0x90;
 
 	VirtualProtect(source_, length_, old_protection, &old_protection);
@@ -48,13 +48,13 @@ BYTE* GWCA::Hook::Detour(BYTE* _source, BYTE* _detour, const DWORD _length) {
 }
 
 DWORD GWCA::Hook::CalculateDetourLength(BYTE* _source) {
-	
+
 	DWORD len = 0;
 	DWORD current_op;
 
-	do{
+	do {
 		current_op = length_disasm((void*)_source);
-		if (current_op != 0){
+		if (current_op != 0) {
 			len += current_op;
 			_source += current_op;
 		}

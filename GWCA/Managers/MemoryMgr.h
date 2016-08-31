@@ -5,7 +5,7 @@
 
 namespace GWCA {
 
-	struct MemoryMgr{
+	struct MemoryMgr {
 
 		// Agent shit
 		static BYTE* agArrayPtr;
@@ -37,7 +37,7 @@ namespace GWCA {
 
 		// Skill timer for effects.
 		static BYTE* SkillTimerPtr;
-		
+
 		// To extract alcohol level.
 		static BYTE* PostProcessEffectFunction;
 
@@ -63,20 +63,17 @@ namespace GWCA {
 
 		// Basics
 		static bool Scan();
-		template <typename T> static T ReadPtrChain(DWORD _base,DWORD _amount_of_offsets,...)
-		{
+		template <typename T> static T ReadPtrChain(DWORD _base, DWORD _amount_of_offsets, ...) {
 			va_list vl;
 
 			va_start(vl, _amount_of_offsets);
-			while (_amount_of_offsets--)
-			{
+			while (_amount_of_offsets--) {
 				_base = (*(DWORD*)_base);
-					if (_base){
-						_base += va_arg(vl, DWORD);
-					}
-					else{
-						return NULL;
-					}
+				if (_base) {
+					_base += va_arg(vl, DWORD);
+				} else {
+					return NULL;
+				}
 			}
 			va_end(vl);
 
@@ -84,9 +81,9 @@ namespace GWCA {
 		}
 
 		// Memory Reads.
-		inline static DWORD GetContextPtr(){ return (*(DWORD*)BasePointerLocation) + 0x18; }
-		inline static DWORD GetSkillTimer(){ return GetTickCount() + *(DWORD*)SkillTimerPtr; }
-		inline static HWND GetGWWindowHandle(){ return *(HWND*)WinHandlePtr; }
+		inline static DWORD GetContextPtr() { return (*(DWORD*)BasePointerLocation) + 0x18; }
+		inline static DWORD GetSkillTimer() { return GetTickCount() + *(DWORD*)SkillTimerPtr; }
+		inline static HWND GetGWWindowHandle() { return *(HWND*)WinHandlePtr; }
 		inline static DWORD GetGSObject() { return **(DWORD**)MemoryMgr::GSObjectPtr; }
 	};
 }

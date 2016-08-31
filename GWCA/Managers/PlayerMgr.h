@@ -18,15 +18,15 @@ namespace GWCA {
 			return GameContext::instance()->world->players;
 		}
 
-		GW::Player& GetPlayerByID(PlayerID id){
+		GW::Player& GetPlayerByID(PlayerID id) {
 			return GetPlayerArray()[id];
 		}
 
-		wchar_t* GetPlayerName(PlayerID id){
+		wchar_t* GetPlayerName(PlayerID id) {
 			GetPlayerArray()[id].Name;
 		}
 
-		void SetPlayerName(PlayerID id, const wchar_t* replacename){
+		void SetPlayerName(PlayerID id, const wchar_t* replacename) {
 			wcscpy_s(GetPlayerArray()[id].Name1->Name, replacename);
 		}
 

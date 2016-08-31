@@ -15,8 +15,7 @@ void GWCA::CtoSMgr::SendPacket(DWORD size, ...) {
 	va_list vl;
 
 	va_start(vl, size);
-	for (DWORD i = 0; i < size / 4; i++)
-	{
+	for (DWORD i = 0; i < size / 4; i++) {
 		pak[i] = va_arg(vl, DWORD);
 	}
 	va_end(vl);

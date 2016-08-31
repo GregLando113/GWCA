@@ -44,18 +44,18 @@ void GWCA::Api::Destruct() {
 }
 
 // GWCA Module Accessors.
-GWCA::GameThreadMgr&	GWCA::Gamethread()	{ return GameThreadMgr::Instance(); }
-GWCA::CtoSMgr&			GWCA::CtoS()		{ return CtoSMgr::Instance(); }
-GWCA::StoCMgr&			GWCA::StoC()		{ return StoCMgr::Instance(); }
-GWCA::AgentMgr&			GWCA::Agents()		{ return AgentMgr::Instance(); }
-GWCA::PartyMgr&			GWCA::Party()		{ return PartyMgr::Instance(); }
-GWCA::ItemMgr&			GWCA::Items()		{ return ItemMgr::Instance(); }
-GWCA::SkillbarMgr&		GWCA::Skillbar()	{ return SkillbarMgr::Instance(); }
-GWCA::EffectMgr&		GWCA::Effects()		{ return EffectMgr::Instance(); }
-GWCA::ChatMgr&			GWCA::Chat()		{ return ChatMgr::Instance(); }
-GWCA::MerchantMgr&		GWCA::Merchant()	{ return MerchantMgr::Instance(); }
-GWCA::GuildMgr&			GWCA::Guild()		{ return GuildMgr::Instance(); }
-GWCA::MapMgr&			GWCA::Map()			{ return MapMgr::Instance(); }
-GWCA::FriendListMgr&	GWCA::FriendList()	{ return FriendListMgr::Instance(); }
-GWCA::CameraMgr&		GWCA::Camera()		{ return CameraMgr::Instance(); }
+GWCA::GameThreadMgr&	GWCA::Gamethread() { return GameThreadMgr::Instance(); }
+GWCA::CtoSMgr&			GWCA::CtoS() { return CtoSMgr::Instance(); }
+GWCA::StoCMgr&			GWCA::StoC() { return StoCMgr::Instance(); }
+GWCA::AgentMgr&			GWCA::Agents() { return AgentMgr::Instance(); }
+GWCA::PartyMgr&			GWCA::Party() { return PartyMgr::Instance(); }
+GWCA::ItemMgr&			GWCA::Items() { return ItemMgr::Instance(); }
+GWCA::SkillbarMgr&		GWCA::Skillbar() { return SkillbarMgr::Instance(); }
+GWCA::EffectMgr&		GWCA::Effects() { return EffectMgr::Instance(); }
+GWCA::ChatMgr&			GWCA::Chat() { return ChatMgr::Instance(); }
+GWCA::MerchantMgr&		GWCA::Merchant() { return MerchantMgr::Instance(); }
+GWCA::GuildMgr&			GWCA::Guild() { return GuildMgr::Instance(); }
+GWCA::MapMgr&			GWCA::Map() { return MapMgr::Instance(); }
+GWCA::FriendListMgr&	GWCA::FriendList() { return FriendListMgr::Instance(); }
+GWCA::CameraMgr&		GWCA::Camera() { return CameraMgr::Instance(); }
 

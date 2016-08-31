@@ -47,7 +47,8 @@ namespace GW {
 		DWORD ModStructSize;				// 0014						size of this array
 		wchar_t* Customized;				// 0018
 		DWORD modelfileid;
-		short type;
+		BYTE type;
+		BYTE unk7;
 		short extraId;
 		short value;
 		BYTE unknown4[4];

@@ -39,8 +39,7 @@ From there you can retrieve different submodules such as Agents,Items,Skillbar,E
 ### Print Player Coordinates ###
 
 
-```
-#!c++
+```c
 
 #include "GWCA/APIMain.h"
 
@@ -61,8 +60,7 @@ void printCoords(){
 ### Make all ZRanks look like rank 12 (Full Script) ###
 
 
-```
-#!c++
+```c
 
 #include <Windows.h>
 #include "GWCA\GWCA\GWCA.h"

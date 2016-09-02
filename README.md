@@ -20,7 +20,6 @@ Miracle444,TheArkanaProject - Work done in the GWA2 Project.
 Start up a project in visual studio and init a git repo inside for it. Then use:
 
 ```
-#!
 git submodule add git@bitbucket.org:0x4D1/gwca.git
 ```
 

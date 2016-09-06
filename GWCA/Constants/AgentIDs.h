@@ -4,6 +4,9 @@ namespace GW {
 	namespace Constants {
 
 		namespace ModelID { // this is actually agent->PlayerNumber for agents
+			const int EoE = 2872;
+			const int QZ = 2882;
+
 			const int SkeletonOfDhuum = 2338;
 			const int Boo = 7445;
 			const int MiniatureGuildLord = 347;

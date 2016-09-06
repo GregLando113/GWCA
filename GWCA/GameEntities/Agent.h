@@ -174,7 +174,7 @@ namespace GW {
 				float X2;
 				float Y2;
 				DWORD Ground2;
-			}
+			};
 			GamePos pos2;
 		};
 		byte unknown5[4];
@@ -183,7 +183,7 @@ namespace GW {
 				float X;
 				float Y;
 				DWORD Ground;
-			}
+			};
 			GamePos pos;
 		};
 	};

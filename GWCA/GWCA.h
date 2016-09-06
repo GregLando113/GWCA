@@ -50,13 +50,6 @@ THE SOFTWARE.
 
 \**********************************************************************************/
 
-// this file is used to provide solution-specific defines to the library, 
-// add it to your solution directory and leave it empty or define stuff in it (e.g. GWAPI_USEDIRECTX)
-// it is included here to force inclusion by other projects 
-// (it is already a forced global include in GWCA project)
-#include "GWCA_defines.h"
-
-
 /*
 Class used for GWCA initialization, access and destruction
 
@@ -80,15 +73,16 @@ GWCA::Destruct()
 
 // included memorymgr, gamethread and ctos since 
 // they are needed by most other managers
-#include "MemoryMgr.h"
-#include "GameThreadMgr.h"
-#include "CtoSMgr.h"
+
+#include "Managers\MemoryMgr.h"
+#include "Managers\GameThreadMgr.h"
+#include "Managers\CtoSMgr.h"
 
 // include agentmgr and mapmgr by default since they are used by most applications
-#include "AgentMgr.h"
-#include "MapMgr.h"
+#include "Managers\AgentMgr.h"
+#include "Managers\MapMgr.h"
 
-namespace GWCA {
+namespace GW {
 
 	class GameThreadMgr;
 	class CtoSMgr;
@@ -104,28 +98,25 @@ namespace GWCA {
 	class MapMgr;
 	class FriendListMgr;
 	class CameraMgr;
-#ifdef GWAPI_USEDIRECTX
-	class DirectXMgr;
-#endif
+
+	class PlayerMgr;
 
 	// GWCA Module Accessors.
 	GameThreadMgr& Gamethread();
 	CtoSMgr& CtoS();
 	StoCMgr& StoC();
 	AgentMgr& Agents();
-	PartyMgr& Party();
+	PartyMgr& Partymgr();
 	ItemMgr& Items();
-	SkillbarMgr& Skillbar();
+	SkillbarMgr& Skillbarmgr();
 	EffectMgr& Effects();
 	ChatMgr& Chat();
 	MerchantMgr& Merchant();
-	GuildMgr& Guild();
+	GuildMgr& Guildmgr();
 	MapMgr& Map();
-	FriendListMgr& FriendList();
-	CameraMgr& Camera();
-#ifdef GWAPI_USEDIRECTX
-	DirectXMgr& DirectX();
-#endif
+	FriendListMgr& FriendListmgr();
+	CameraMgr& Cameramgr();
+	PlayerMgr& Playermgr();
 
 	class Api {
 		friend class GWCABaseManager;

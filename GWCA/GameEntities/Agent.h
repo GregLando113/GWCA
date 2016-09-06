@@ -169,11 +169,23 @@ namespace GW {
 		BYTE unknown3[8];
 		long Moving2; //exactly same as Moving1
 		BYTE unknown4[28];
-		float X2;
-		float Y2;
-		byte unknown5[8];
-		float X;
-		float Y;
+		union {
+			struct {
+				float X2;
+				float Y2;
+				DWORD Ground2;
+			}
+			GamePos pos2;
+		};
+		byte unknown5[4];
+		union {
+			struct {
+				float X;
+				float Y;
+				DWORD Ground;
+			}
+			GamePos pos;
+		};
 	};
 
 	//using AgentArray = gw_array<Agent*>;

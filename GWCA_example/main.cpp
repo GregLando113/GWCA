@@ -31,7 +31,6 @@ int main() {
 // Do all your startup things here instead.
 void init(HMODULE hModule) {
 
-
 	main();
 
 	GWCA::Api::Destruct();
@@ -53,7 +52,6 @@ BOOL WINAPI DllMain(_In_ HMODULE _HDllHandle, _In_ DWORD _Reason, _In_opt_ LPVOI
 		if (!GWCA::Api::Initialize()) {
 			return FALSE;
 		}
-
 
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)init, _HDllHandle, 0, 0);
 	}

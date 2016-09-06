@@ -73,6 +73,7 @@ GWCA::Destruct()
 
 // included memorymgr, gamethread and ctos since 
 // they are needed by most other managers
+
 #include "Managers\MemoryMgr.h"
 #include "Managers\GameThreadMgr.h"
 #include "Managers\CtoSMgr.h"
@@ -97,6 +98,7 @@ namespace GW {
 	class MapMgr;
 	class FriendListMgr;
 	class CameraMgr;
+
 	class PlayerMgr;
 
 	// GWCA Module Accessors.

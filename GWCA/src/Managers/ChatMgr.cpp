@@ -8,22 +8,20 @@
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
 
-static wchar_t* wcssep(wchar_t* str, wchar_t sep);
-
 GW::ChatMgr::ChatMgr() {
 	PatternScanner scanner(0x401000, 0x49A000);
-	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
+	BYTE* sendchat_addr = (BYTE*)scanner.FindPattern("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
 	BYTE* opentemplate_addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
 
-	DWORD chatcmd_length = Hook::CalculateDetourLength(chatcmd_addr);
+	DWORD sendchat_length = Hook::CalculateDetourLength(sendchat_addr);
 	DWORD opentemplate_length = Hook::CalculateDetourLength(opentemplate_addr);
 
-	ori_chatcmd = (ChatCmd_t)hk_chatcmd_.Detour(chatcmd_addr, (BYTE*)det_chatcmd, chatcmd_length);
+	ori_sendchat = (SendChat_t)hk_sendchat_.Detour(sendchat_addr, (BYTE*)det_sendchat, sendchat_length);
 	ori_opentemplate = (OpenTemplate_t)hk_opentemplate_.Detour(opentemplate_addr, (BYTE*)det_opentemplate, opentemplate_length);
 }
 
 void GW::ChatMgr::RestoreHooks() {
-	hk_chatcmd_.Retour();
+	hk_sendchat_.Retour();
 	hk_opentemplate_.Retour();
 }
 
@@ -56,30 +54,29 @@ void GW::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 		(0, from, msg);
 }
 
-void __fastcall GW::ChatMgr::det_chatcmd(wchar_t *_message) {
-	ChatMgr& chat = ChatMgr::Instance();
-	unsigned int length = wcslen(_message);
-	wchar_t* message = new wchar_t[length + 1];
-	wcscpy_s(message, length + 1, _message);
+void __fastcall GW::ChatMgr::det_sendchat(wchar_t *message)
+{
+    ChatMgr &chat = ChatMgr::Instance();
+    if (*message == '/') {
+        GW::ChatMgr::String msg = &message[1];
 
-	if (*message == '/') {
-		wchar_t* cmd = wcssep(message + 1, '\x20'); // \x20 is space
-		CallBack cb = chat.chatcmd_callbacks[std::wstring(cmd)];
+        size_t index = msg.find_first_of(' ');
+        GW::ChatMgr::String command = msg.substr(0, index);
+        GW::ChatMgr::StringArray args;
 
-		if (cb.callback) {
-			std::vector<std::wstring> args;
+        size_t start = index, end = String::npos;
+        while (start != String::npos) {
+            end = msg.find_first_of(' ', start);
+            args.push_back( msg.substr(start, end) );
+            start = end;
+        }
 
-			wchar_t* arg = NULL;
-			while (arg = wcssep(NULL, '\x20'))
-				args.push_back(std::wstring(arg));
-
-			cb.callback(std::wstring(cmd), args);
-
-			if (cb.override)
-				return;
-		}
-	}
-	chat.ori_chatcmd(_message);
+        auto callback = chat.sendchat_callbacks.find(command);
+        if (callback != chat.sendchat_callbacks.end()) {
+            callback->second(command, args);       
+        }
+    }
+    chat.ori_sendchat(message);
 }
 
 void __fastcall GW::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
@@ -91,22 +88,4 @@ void __fastcall GW::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
 	} else {
 		ChatMgr::Instance().ori_opentemplate(unk, info);
 	}
-}
-
-static wchar_t* wcssep(wchar_t* str, wchar_t sep) {
-	static wchar_t* next = NULL;
-	if (str) next = str;
-	if (!next) return NULL;
-
-	while (*next == sep) next++;
-	if (*next == '\0') return NULL;
-	str = next;
-	while (*next != sep && *next != '\0') next++;
-
-	if (*next == '\0')
-		next = NULL;
-	else
-		*next++ = '\0';
-
-	return str;
 }

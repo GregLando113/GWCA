@@ -1,9 +1,5 @@
 #include <GWCA\Managers\ChatMgr.h>
 
-#include <sstream>
-#include <iomanip>
-#include <ctime>
-
 #include <GWCA\Utilities\PatternScanner.h>
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>

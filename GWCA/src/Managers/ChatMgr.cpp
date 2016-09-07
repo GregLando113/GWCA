@@ -12,21 +12,17 @@ static wchar_t* wcssep(wchar_t* str, wchar_t sep);
 
 GW::ChatMgr::ChatMgr() {
 	PatternScanner scanner(0x401000, 0x49A000);
-	BYTE* chatlog_addr = (BYTE*)scanner.FindPattern("\x53\x56\x8B\xF1\x57\x8B\x56\x14\x8B\x4E\x0C\xE8", "xxxxxxxxxxxx", -6);
 	BYTE* chatcmd_addr = (BYTE*)scanner.FindPattern("\x8B\xD1\x68\x8A\x00\x00\x00\x8D\x8D\xE8\xFE\xFF\xFF", "xxxxxxxxxxxxx", -0xC);
 	BYTE* opentemplate_addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
 
-	DWORD chatlog_length = Hook::CalculateDetourLength(chatlog_addr);
 	DWORD chatcmd_length = Hook::CalculateDetourLength(chatcmd_addr);
 	DWORD opentemplate_length = Hook::CalculateDetourLength(opentemplate_addr);
 
-	ori_chatlog = (ChatLog_t)hk_chatlog_.Detour(chatlog_addr, (BYTE*)det_chatlog, chatlog_length);
 	ori_chatcmd = (ChatCmd_t)hk_chatcmd_.Detour(chatcmd_addr, (BYTE*)det_chatcmd, chatcmd_length);
 	ori_opentemplate = (OpenTemplate_t)hk_opentemplate_.Detour(opentemplate_addr, (BYTE*)det_opentemplate, opentemplate_length);
 }
 
 void GW::ChatMgr::RestoreHooks() {
-	hk_chatlog_.Retour();
 	hk_chatcmd_.Retour();
 	hk_opentemplate_.Retour();
 }
@@ -58,34 +54,6 @@ void GW::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 	((void(__fastcall *)(DWORD, const wchar_t*, const wchar_t*))
 		MemoryMgr::WriteChatFunction)
 		(0, from, msg);
-}
-
-void __fastcall GW::ChatMgr::det_chatlog(MessageInfo *info, Message *mes, DWORD useless /* same as edx */) {
-	ChatMgr& chat = ChatMgr::Instance();
-
-
-	std::wstring message(mes->message);
-	const std::wstring::size_type start = message.find(L"<a=1>");
-	if (start != std::wstring::npos) {
-		const std::wstring::size_type end = message.find(L"</a>", start + 5);
-		if (end != std::wstring::npos) {
-			std::wstring sender = message.substr(start + 5, end - start - 5);
-
-			auto it = chat.chatlog_channel.find(sender);
-			if (it != chat.chatlog_channel.end()) {
-				const Color_t color = it->second;
-				const std::wstring::size_type quote = message.find(L"<quote>");
-				if (quote != std::wstring::npos) {
-					message = message.substr(quote + 7);
-
-					wsprintf(mes->message, L"<c=#%06x>%ls</c>: %ls  ",
-						color, sender.c_str(), message.c_str());
-				}
-			}
-		}
-	}
-
-	chat.ori_chatlog(info, mes, useless);
 }
 
 void __fastcall GW::ChatMgr::det_chatcmd(wchar_t *_message) {

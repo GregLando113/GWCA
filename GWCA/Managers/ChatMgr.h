@@ -28,25 +28,6 @@ namespace GW {
 			DWORD unk;
 		};
 
-		struct Message { // a gw_array
-			wchar_t* message;
-			DWORD size1;
-			DWORD size2;
-			DWORD unknow;
-		};
-
-		struct MessageInfo {
-			DWORD hash;
-			DWORD channel;
-			DWORD isHandled;
-		};
-
-		struct ChatBuffer { // May want to put it in GwStructure
-			DWORD current;
-			DWORD useless;
-			WCHAR *HMessage[0x100];
-		};
-
 		struct ChatTemplate {
 			DWORD unk1[2];
 			wchar_t* template_code; // Is actually part of a gw_array<wchar_t>
@@ -75,11 +56,6 @@ namespace GW {
 		// Simple write to chat as a PM
 		void WriteChat(const wchar_t* from, const wchar_t* msg);
 
-		inline void RegisterChannel(std::wstring sender, Color_t color) {
-			chatlog_channel[sender] = color;
-		}
-		inline void DeleteChannel(std::wstring sender) { chatlog_channel.erase(sender); };
-
 		inline void RegisterCommand(std::wstring command, Callback_t callback, bool override = true) {
 			chatcmd_callbacks[command] = { callback, override };
 		}
@@ -91,27 +67,22 @@ namespace GW {
 		ChatMgr();
 
 	private:
-		std::map< std::wstring, Color_t > chatlog_channel;
 		std::map< std::wstring, CallBack > chatcmd_callbacks;
 
 		bool open_links_;
 
 		/* Hook stuff */
-		typedef void(__fastcall *ChatLog_t)(MessageInfo*, Message*, DWORD);
 		typedef void(__fastcall *ChatCmd_t)(wchar_t*);
 		typedef void(__fastcall *OpenTemplate_t)(DWORD unk, ChatTemplate* info);
 
 		void RestoreHooks() override;
 
-		Hook hk_chatlog_;
 		Hook hk_chatcmd_;
 		Hook hk_opentemplate_;
 
-		ChatLog_t ori_chatlog;
 		ChatCmd_t ori_chatcmd;
 		OpenTemplate_t ori_opentemplate;
 
-		static void __fastcall det_chatlog(MessageInfo*, Message*, DWORD);
 		static void __fastcall det_chatcmd(wchar_t *_message);
 		static void __fastcall det_opentemplate(DWORD unk, ChatTemplate* info);
 	};

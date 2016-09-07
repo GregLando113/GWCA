@@ -9,21 +9,34 @@
 
 namespace GW {
 
+    enum Channel {
+        CHANNEL_ALLIANCE	= 0,
+        CHANNEL_NPC			= 1,
+        CHANNEL_GWCA1		= 2,
+        CHANNEL_ALL			= 3,
+        CHANNEL_GWCA2		= 4,
+        CHANNEL_MODERATOR	= 5,
+        CHANNEL_GWCA3		= 6,
+        CHANNEL_GWCA4		= 7,
+        CHANNEL_GWCA5		= 8,
+        CHANNEL_GUILD		= 9,
+        CHANNEL_GLOBAL		= 10,
+        CHANNEL_GROUP		= 11,
+        CHANNEL_TRADE		= 12,
+        CHANNEL_ADVISORY	= 13,
+        CHANNEL_WHISPER		= 14,
+
+        CHANNEL_COUNT
+    };
+
+    typedef uint32_t Color;
+
 	class ChatMgr : public GWCAManager<ChatMgr> {
 		friend class GWCAManager<ChatMgr>;
 
         typedef std::wstring String;
         typedef std::vector<String> StringArray;
-
-		typedef DWORD Color_t;
-        typedef void (*Callback)(String& command, StringArray& args);
-
-		struct P5E_SendChat {
-			const DWORD header = 0x5E;
-			wchar_t channel;
-			wchar_t msg[137];
-			DWORD unk;
-		};
+        typedef bool (*Callback)(String& command, StringArray& args);
 
 		struct ChatTemplate {
 			DWORD unk1[2];
@@ -51,6 +64,9 @@ namespace GW {
 
 		inline void SetOpenLinks(bool b) { open_links_ = b; }
 
+        Color SetSenderColor(Channel chan, Color col);
+        Color SetMessageColor(Channel chan, Color col);
+
 	protected:
 		ChatMgr();
 
@@ -67,11 +83,15 @@ namespace GW {
 
 		Hook hk_sendchat_;
 		Hook hk_opentemplate_;
+        Hook hk_sendercolor_;
+        Hook hk_messagecolor_;
 
 		SendChat_t ori_sendchat;
 		OpenTemplate_t ori_opentemplate;
 
 		static void __fastcall det_sendchat(wchar_t *_message);
 		static void __fastcall det_opentemplate(DWORD unk, ChatTemplate* info);
+        static Color* __fastcall det_sendercolor(Color *color, Channel chan);
+        static Color* __fastcall det_messagecolor(Color *color, Channel chan);
 	};
 }

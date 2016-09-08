@@ -4,8 +4,14 @@
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
 
-#define COLOR_ARGB(a, r, g, b) (uint32_t)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
+#define COLOR_ARGB(a, r, g, b) (GW::Color)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
 #define COLOR_RGB(r, g, b) COLOR_ARGB(0xff, r, g, b)
+
+struct RawMessage {
+	int channel;
+	wchar_t *message;
+	int player_id;
+};
 
 static GW::Color SenderColor[] = {
 	COLOR_RGB(0xff, 0xc0, 0x60),
@@ -44,6 +50,10 @@ static GW::Color MessageColor[] = {
 };
 
 static void (__fastcall *GwSendChat)(const wchar_t *message);
+static void (__fastcall *GwWriteChat)(int, const wchar_t*, const wchar_t*);
+static void (__fastcall *GwSendMessage)(int id, void *param, void *extended);
+
+static wchar_t *tohstr(wchar_t *buffer, const wchar_t *str);
 
 GW::ChatMgr::ChatMgr() {
 	PatternScanner scanner(0x401000, 0x49A000);
@@ -64,6 +74,9 @@ GW::ChatMgr::ChatMgr() {
     addr = (BYTE*)0x00481570;
     length = Hook::CalculateDetourLength(addr);
     hk_messagecolor_.Detour(addr, (BYTE*)det_messagecolor, length);
+
+	GwSendMessage = (decltype(GwSendMessage))0x00605AC0;
+	GwWriteChat = (decltype(GwWriteChat))MemoryMgr::WriteChatFunction;
 }
 
 void GW::ChatMgr::RestoreHooks() {
@@ -93,10 +106,33 @@ void GW::ChatMgr::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
 }
 
 void GW::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
+	GwWriteChat(0, from, msg);
+}
 
-	((void(__fastcall *)(DWORD, const wchar_t*, const wchar_t*))
-		MemoryMgr::WriteChatFunction)
-		(0, from, msg);
+void GW::ChatMgr::WriteChat(Channel channel, const wchar_t *message) {
+	size_t len = wcslen(message);
+	wchar_t *buffer = new wchar_t[len + 4];
+	if (tohstr(buffer, message)) {
+		RawMessage msg;
+		msg.channel = channel;
+		msg.message = buffer;
+		msg.player_id = 0;
+
+		GwSendMessage(0x1000007E, &msg, NULL);
+	}
+	delete buffer;
+}
+
+static wchar_t *tohstr(wchar_t *buffer, const wchar_t *str) {
+	if (!buffer || !str)
+		return NULL;
+
+	*buffer++ = 0x0108;
+	*buffer++ = 0x0107;
+	while(*str != '\0') *buffer++ = *str++;
+	*buffer++ = 0x0001;
+	*buffer++ = 0;
+	return buffer;
 }
 
 GW::Color GW::ChatMgr::SetSenderColor(Channel chan, Color col) {

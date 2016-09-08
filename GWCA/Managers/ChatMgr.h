@@ -44,6 +44,10 @@ namespace GW {
 		};
 
 	public:
+		typedef std::wstring String;
+		typedef std::vector<String> StringArray;
+		typedef bool(*Callback)(String& command, StringArray& args);
+
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(const wchar_t* msg, wchar_t channel);
 
@@ -52,6 +56,9 @@ namespace GW {
 
 		// Simple write to chat as a PM
 		void WriteChat(const wchar_t* from, const wchar_t* msg);
+
+		// Emulates a message in a given channel.
+		void WriteChat(Channel channel, const wchar_t *message);
 
 		inline void RegisterCommand(const String& command, Callback callback) {
 			sendchat_callbacks[command] = callback;
@@ -67,10 +74,6 @@ namespace GW {
 		ChatMgr();
 
 	private:
-		typedef std::wstring String;
-		typedef std::vector<String> StringArray;
-		typedef bool (*Callback)(String& command, StringArray& args);
-
 		std::map< std::wstring, Callback > sendchat_callbacks;
 		bool open_links_;
 

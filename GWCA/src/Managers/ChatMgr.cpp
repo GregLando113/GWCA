@@ -173,7 +173,7 @@ void __fastcall GW::ChatMgr::det_sendchat(wchar_t *message) {
 
 		auto callback = chat.sendchat_callbacks.find(command);
 		if (callback != chat.sendchat_callbacks.end()) {
-			if (!callback->second(command, args))
+			if (callback->second(command, args))
 				return;
 		}
 	}

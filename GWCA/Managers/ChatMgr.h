@@ -17,7 +17,7 @@ namespace GW {
 		CHANNEL_GWCA2		= 4,
 		CHANNEL_MODERATOR	= 5,
 		CHANNEL_GWCA3		= 6,
-		CHANNEL_GWCA4		= 7,
+		CHANNEL_GWCA4		= 7, // shows in the middle of the screen and does not parse <c> tags
 		CHANNEL_GWCA5		= 8,
 		CHANNEL_GUILD		= 9,
 		CHANNEL_GLOBAL		= 10,

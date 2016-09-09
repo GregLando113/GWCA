@@ -61,19 +61,19 @@ GW::ChatMgr::ChatMgr() {
 	BYTE* addr = (BYTE*)scanner.FindPattern("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
 	DWORD length = Hook::CalculateDetourLength(addr);
 	ori_sendchat = (SendChat_t)hk_sendchat_.Detour(addr, (BYTE*)det_sendchat, length);
-    GwSendChat = (decltype(GwSendChat))addr;
+	GwSendChat = (decltype(GwSendChat))addr;
 
 	addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
 	length = Hook::CalculateDetourLength(addr);
 	ori_opentemplate = (OpenTemplate_t)hk_opentemplate_.Detour(addr, (BYTE*)det_opentemplate, length);
 
-    addr = (BYTE*)0x00481650;
-    length = Hook::CalculateDetourLength(addr);
-    hk_sendercolor_.Detour(addr, (BYTE*)det_sendercolor, length);
+	addr = (BYTE*)0x00481650;
+	length = Hook::CalculateDetourLength(addr);
+	hk_sendercolor_.Detour(addr, (BYTE*)det_sendercolor, length);
 
-    addr = (BYTE*)0x00481570;
-    length = Hook::CalculateDetourLength(addr);
-    hk_messagecolor_.Detour(addr, (BYTE*)det_messagecolor, length);
+	addr = (BYTE*)0x00481570;
+	length = Hook::CalculateDetourLength(addr);
+	hk_messagecolor_.Detour(addr, (BYTE*)det_messagecolor, length);
 
 	GwSendMessage = (decltype(GwSendMessage))0x00605AC0;
 	GwWriteChat = (decltype(GwWriteChat))MemoryMgr::WriteChatFunction;
@@ -82,14 +82,14 @@ GW::ChatMgr::ChatMgr() {
 void GW::ChatMgr::RestoreHooks() {
 	hk_sendchat_.Retour();
 	hk_opentemplate_.Retour();
-    hk_sendercolor_.Retour();
-    hk_messagecolor_.Retour();
+	hk_sendercolor_.Retour();
+	hk_messagecolor_.Retour();
 }
 
 void GW::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel) {
-    wchar_t buffer[140] = {channel};
-    wcscpy_s(&buffer[1], 139, msg);
-    GwSendChat(buffer);
+	wchar_t buffer[140] = {channel};
+	wcscpy_s(&buffer[1], 139, msg);
+	GwSendChat(buffer);
 }
 
 void GW::ChatMgr::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
@@ -118,7 +118,7 @@ void GW::ChatMgr::WriteChat(Channel channel, const wchar_t *message) {
 		msg.message = buffer;
 		msg.player_id = 0;
 
-        GameThreadMgr::Instance().Enqueue(GwSendMessage, 0x1000007E, &msg, NULL);
+		GameThreadMgr::Instance().Enqueue(GwSendMessage, 0x1000007E, &msg, NULL);
 	}
 	delete buffer;
 }
@@ -136,40 +136,40 @@ static wchar_t *tohstr(wchar_t *buffer, const wchar_t *str) {
 }
 
 GW::Color GW::ChatMgr::SetSenderColor(Channel chan, Color col) {
-    Color old = SenderColor[chan];
-    SenderColor[chan] = col;
-    return old;
+	Color old = SenderColor[chan];
+	SenderColor[chan] = col;
+	return old;
 }
 
 GW::Color GW::ChatMgr::SetMessageColor(Channel chan, Color col) {
-    Color old = MessageColor[chan];
-    MessageColor[chan] = col;
-    return old;
+	Color old = MessageColor[chan];
+	MessageColor[chan] = col;
+	return old;
 }
 
 void __fastcall GW::ChatMgr::det_sendchat(wchar_t *message) {
-    ChatMgr &chat = ChatMgr::Instance();
-    if (*message == '/') {
-        GW::ChatMgr::String msg = &message[1];
+	ChatMgr &chat = ChatMgr::Instance();
+	if (*message == '/') {
+		GW::ChatMgr::String msg = &message[1];
 
-        size_t index = msg.find(' ');
-        GW::ChatMgr::String command = msg.substr(0, index);
-        GW::ChatMgr::StringArray args;
+		size_t index = msg.find(' ');
+		GW::ChatMgr::String command = msg.substr(0, index);
+		GW::ChatMgr::StringArray args;
 
-        size_t start = index + 1, end = String::npos;
-        while (start != String::npos) {
-            end = msg.find(' ', start);
-            args.push_back( msg.substr(start, end) );
-            start = end + 1;
-        }
+		size_t start = index + 1, end = String::npos;
+		while (start != String::npos) {
+			end = msg.find(' ', start);
+			args.push_back( msg.substr(start, end) );
+			start = end + 1;
+		}
 
-        auto callback = chat.sendchat_callbacks.find(command);
-        if (callback != chat.sendchat_callbacks.end()) {
-            if (!callback->second(command, args))
-                return;
-        }
-    }
-    chat.ori_sendchat(message);
+		auto callback = chat.sendchat_callbacks.find(command);
+		if (callback != chat.sendchat_callbacks.end()) {
+			if (!callback->second(command, args))
+				return;
+		}
+	}
+	chat.ori_sendchat(message);
 }
 
 void __fastcall GW::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
@@ -184,11 +184,11 @@ void __fastcall GW::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
 }
 
 GW::Color* __fastcall GW::ChatMgr::det_sendercolor(Color *color, Channel chan) {
-    *color = SenderColor[chan];
-    return color;
+	*color = SenderColor[chan];
+	return color;
 };
 
 GW::Color* __fastcall GW::ChatMgr::det_messagecolor(Color *color, Channel chan) {
-    *color = MessageColor[chan];
-    return color;
+	*color = MessageColor[chan];
+	return color;
 };

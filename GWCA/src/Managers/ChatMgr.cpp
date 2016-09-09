@@ -118,7 +118,7 @@ void GW::ChatMgr::WriteChat(Channel channel, const wchar_t *message) {
 		msg.message = buffer;
 		msg.player_id = 0;
 
-		GwSendMessage(0x1000007E, &msg, NULL);
+        GameThreadMgr::Instance().Enqueue(GwSendMessage, 0x1000007E, &msg, NULL);
 	}
 	delete buffer;
 }
@@ -152,15 +152,15 @@ void __fastcall GW::ChatMgr::det_sendchat(wchar_t *message) {
     if (*message == '/') {
         GW::ChatMgr::String msg = &message[1];
 
-        size_t index = msg.find_first_of(' ');
+        size_t index = msg.find(' ');
         GW::ChatMgr::String command = msg.substr(0, index);
         GW::ChatMgr::StringArray args;
 
-        size_t start = index, end = String::npos;
+        size_t start = index + 1, end = String::npos;
         while (start != String::npos) {
-            end = msg.find_first_of(' ', start);
+            end = msg.find(' ', start);
             args.push_back( msg.substr(start, end) );
-            start = end;
+            start = end + 1;
         }
 
         auto callback = chat.sendchat_callbacks.find(command);

@@ -52,14 +52,14 @@ namespace GW {
 			TransactionType type,
 			DWORD gold_give = 0,
 			TransactionPacket give = TransactionPacket(),
-			DWORD gold_recieve = 0,
-			TransactionPacket recieve = TransactionPacket()
+			DWORD gold_receive = 0,
+			TransactionPacket receive = TransactionPacket()
 		);
 
 		void EnqueueQuoteRequest(
 			TransactionType type,
 			TransactionPacket give = TransactionPacket(),
-			TransactionPacket recieve = TransactionPacket()
+			TransactionPacket receive = TransactionPacket()
 		);
 
 		void BuyMerchantItem(DWORD modelid, DWORD quantity = 1);

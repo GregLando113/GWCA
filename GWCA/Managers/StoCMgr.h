@@ -45,11 +45,15 @@ namespace GW {
 		template <typename T>
 		void EmulatePacket(T* packet) {
 			packet->header = Packet::StoC::Packet<T>::STATIC_HEADER;
-			GameThreadMgr::Instance().Enqueue(VoidOriginalHandler, packet);
+			GameThreadMgr::Instance().Enqueue([this, packet]() {
+				VoidOriginalHandler(packet);
+			});
 		}
 
 		void EmulatePacket(Packet::StoC::PacketBase* packet) {
-			GameThreadMgr::Instance().Enqueue(VoidOriginalHandler, packet);
+			GameThreadMgr::Instance().Enqueue([this, packet]() {
+				VoidOriginalHandler(packet);
+			});
 		}
 
 	private:

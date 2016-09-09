@@ -175,7 +175,9 @@ namespace GW {
 				float Y2;
 				DWORD Ground2;
 			};
-			GamePos pos2;
+			struct {
+				GamePos pos2;
+			};
 		};
 		byte unknown5[4];
 		union {
@@ -184,7 +186,9 @@ namespace GW {
 				float Y;
 				DWORD Ground;
 			};
-			GamePos pos;
+			struct {
+				GamePos pos2;
+			};
 		};
 	};
 

@@ -52,12 +52,20 @@ void GW::MerchantMgr::BuyMerchantItem(DWORD modelid, DWORD quantity /*= 1*/) {
 	EnqueueTransaction(TransactionType::MERCHANT_BUY, 2 * quantity * itemrecv->value, give, 0, recv);
 }
 
-void GW::MerchantMgr::EnqueueTransaction(TransactionType type, DWORD gold_give, TransactionPacket give /*= TransactionPacket()*/, DWORD gold_recieve, TransactionPacket recieve /*= TransactionPacket()*/) {
-	GameThreadMgr::Instance().Enqueue(transaction_function_, type, gold_give, give, gold_recieve, recieve);
+void GW::MerchantMgr::EnqueueTransaction(TransactionType type, 
+	DWORD gold_give, TransactionPacket give /*= TransactionPacket()*/, 
+	DWORD gold_receive, TransactionPacket receive /*= TransactionPacket()*/) {
+	GameThreadMgr::Instance().Enqueue(
+		[this, type, gold_give, give, gold_receive, receive]() {
+		transaction_function_(type, gold_give, give, gold_receive, receive);
+	});
 }
 
-void GW::MerchantMgr::EnqueueQuoteRequest(TransactionType type, TransactionPacket give, TransactionPacket recieve) {
-	GameThreadMgr::Instance().Enqueue(quote_function_, type, 0, give, 0, recieve);
+void GW::MerchantMgr::EnqueueQuoteRequest(TransactionType type, 
+	TransactionPacket give, TransactionPacket receive) {
+	GameThreadMgr::Instance().Enqueue([this, type, give, receive]() {
+		quote_function_(type, 0, give, 0, receive);
+	});
 }
 
 GW::Item* GW::MerchantMgr::GetMerchantItemByModelID(DWORD modelid) {

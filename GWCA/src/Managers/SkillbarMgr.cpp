@@ -53,7 +53,9 @@ void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, 
 }
 
 void GW::SkillbarMgr::UseSkill(DWORD Slot, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/) {
-	GameThreadMgr::Instance().Enqueue(UseSkill_, AgentMgr::Instance().GetPlayerId(), Slot, Target, CallTarget);
+	GameThreadMgr::Instance().Enqueue([this, Slot, Target, CallTarget]() {
+		UseSkill_(AgentMgr::Instance().GetPlayerId(), Slot, Target, CallTarget);
+	});
 }
 
 GW::SkillbarMgr::SkillbarMgr() {

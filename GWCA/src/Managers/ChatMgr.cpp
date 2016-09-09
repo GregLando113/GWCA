@@ -1,5 +1,7 @@
 #include <GWCA\Managers\ChatMgr.h>
 
+#include <sstream>
+
 #include <GWCA\Utilities\PatternScanner.h>
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
@@ -49,11 +51,11 @@ static GW::Color MessageColor[] = {
 	COLOR_RGB(0xe0, 0xe0, 0xe0)
 };
 
-static void (__fastcall *GwSendChat)(const wchar_t *message);
-static void (__fastcall *GwWriteChat)(int, const wchar_t*, const wchar_t*);
-static void (__fastcall *GwSendMessage)(int id, void *param, void *extended);
+void (__fastcall *GwSendChat)(const wchar_t *message);
+void (__fastcall *GwWriteChat)(int, const wchar_t*, const wchar_t*);
+void (__fastcall *GwSendMessage)(int id, const RawMessage* msg, void *extended);
 
-static wchar_t *tohstr(wchar_t *buffer, const wchar_t *str);
+wchar_t *tohstr(wchar_t *buffer, const wchar_t *str);
 
 GW::ChatMgr::ChatMgr() {
 	PatternScanner scanner(0x401000, 0x49A000);
@@ -113,14 +115,15 @@ void GW::ChatMgr::WriteChat(Channel channel, const wchar_t *message) {
 	size_t len = wcslen(message);
 	wchar_t *buffer = new wchar_t[len + 4];
 	if (tohstr(buffer, message)) {
-		RawMessage msg;
-		msg.channel = channel;
-		msg.message = buffer;
-		msg.player_id = 0;
-
-		GameThreadMgr::Instance().Enqueue(GwSendMessage, 0x1000007E, &msg, NULL);
+		GameThreadMgr::Instance().Enqueue([this, channel, buffer]() {
+			RawMessage msg;
+			msg.channel = channel;
+			msg.message = buffer;
+			msg.player_id = 0;
+			GwSendMessage(0x1000007E, &msg, NULL);
+			delete buffer;
+		});
 	}
-	delete buffer;
 }
 
 static wchar_t *tohstr(wchar_t *buffer, const wchar_t *str) {
@@ -156,11 +159,16 @@ void __fastcall GW::ChatMgr::det_sendchat(wchar_t *message) {
 		GW::ChatMgr::String command = msg.substr(0, index);
 		GW::ChatMgr::StringArray args;
 
-		size_t start = index + 1, end = String::npos;
-		while (start != String::npos) {
-			end = msg.find(' ', start);
-			args.push_back( msg.substr(start, end) );
-			start = end + 1;
+		++index;
+		while (index < msg.size()) {
+			size_t end = msg.find(' ', index);
+			if (end == String::npos) {
+				args.push_back(msg.substr(index, end));
+				index = end;
+			} else {
+				args.push_back(msg.substr(index, end - index));
+				index = end + 1;
+			}
 		}
 
 		auto callback = chat.sendchat_callbacks.find(command);

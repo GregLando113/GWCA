@@ -89,7 +89,7 @@ namespace GW {
 
 		typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID, DWORD smth);
 
-		typedef void(__fastcall *Move_t)(GW::GamePos* Pos);
+		typedef void(__fastcall *Move_t)(const GW::GamePos* Pos);
 
 		AgentMgr();
 

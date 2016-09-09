@@ -20,12 +20,8 @@ void GW::CtoSMgr::SendPacket(DWORD size, ...) {
 	}
 	va_end(vl);
 
-	GameThreadMgr::Instance().Enqueue(packetsendintermediary, MemoryMgr::GetGSObject(), size, pak);
-}
-
-
-void GW::CtoSMgr::packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet) {
-	gs_send_function_(thisptr, size, packet);
-
-	delete[] packet;
+	GameThreadMgr::Instance().Enqueue([this, size, pak]() {
+		gs_send_function_(MemoryMgr::GetGSObject(), size, pak);
+		delete[] pak;
+	});
 }

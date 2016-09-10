@@ -9,43 +9,30 @@
 
 namespace GW {
 
+	enum Channel {
+		CHANNEL_ALLIANCE	= 0,
+		CHANNEL_NPC			= 1,
+		CHANNEL_GWCA1		= 2,
+		CHANNEL_ALL			= 3,
+		CHANNEL_GWCA2		= 4,
+		CHANNEL_MODERATOR	= 5,
+		CHANNEL_GWCA3		= 6,
+		CHANNEL_GWCA4		= 7, // shows in the middle of the screen and does not parse <c> tags
+		CHANNEL_GWCA5		= 8,
+		CHANNEL_GUILD		= 9,
+		CHANNEL_GLOBAL		= 10,
+		CHANNEL_GROUP		= 11,
+		CHANNEL_TRADE		= 12,
+		CHANNEL_ADVISORY	= 13,
+		CHANNEL_WHISPER		= 14,
+
+		CHANNEL_COUNT
+	};
+
+	typedef DWORD Color;
+
 	class ChatMgr : public GWCAManager<ChatMgr> {
 		friend class GWCAManager<ChatMgr>;
-
-		typedef DWORD Color_t;
-		typedef std::function<const void(std::wstring, std::vector<std::wstring>)> Callback_t;
-		typedef std::function<std::wstring(std::wstring)> ParseMessage_t; // unused
-
-		struct CallBack {
-			Callback_t callback;
-			bool override;
-		};
-
-		struct P5E_SendChat {
-			const DWORD header = 0x5E;
-			wchar_t channel;
-			wchar_t msg[137];
-			DWORD unk;
-		};
-
-		struct Message { // a gw_array
-			wchar_t* message;
-			DWORD size1;
-			DWORD size2;
-			DWORD unknow;
-		};
-
-		struct MessageInfo {
-			DWORD hash;
-			DWORD channel;
-			DWORD isHandled;
-		};
-
-		struct ChatBuffer { // May want to put it in GwStructure
-			DWORD current;
-			DWORD useless;
-			WCHAR *HMessage[0x100];
-		};
 
 		struct ChatTemplate {
 			DWORD unk1[2];
@@ -57,17 +44,12 @@ namespace GW {
 		};
 
 	public:
+		typedef std::wstring String;
+		typedef std::vector<String> StringArray;
+		typedef bool(*Callback)(String& command, StringArray& args);
+
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(const wchar_t* msg, wchar_t channel);
-		// Like SendChat but make sure that cmd goes through det_chatcmd
-		inline void SendChatCmd(const wchar_t* msg, wchar_t channel) {
-			DWORD len = wcslen(msg);
-			wchar_t *newMes = new wchar_t[len + 2];
-			newMes[0] = channel;
-			wcscpy_s(&newMes[1], len + 1, msg);
-			det_chatcmd(newMes);
-			delete[] newMes;
-		}
 
 		// Write to chat as a PM with printf style arguments.
 		void WriteChatF(const wchar_t* from, const wchar_t* format, ...);
@@ -75,44 +57,43 @@ namespace GW {
 		// Simple write to chat as a PM
 		void WriteChat(const wchar_t* from, const wchar_t* msg);
 
-		inline void RegisterChannel(std::wstring sender, Color_t color) {
-			chatlog_channel[sender] = color;
-		}
-		inline void DeleteChannel(std::wstring sender) { chatlog_channel.erase(sender); };
+		// Emulates a message in a given channel.
+		void WriteChat(Channel channel, const wchar_t *message);
 
-		inline void RegisterCommand(std::wstring command, Callback_t callback, bool override = true) {
-			chatcmd_callbacks[command] = { callback, override };
+		inline void RegisterCommand(const String& command, Callback callback) {
+			sendchat_callbacks[command] = callback;
 		}
-		inline void DeleteCommand(std::wstring command) { chatcmd_callbacks.erase(command); }
+		inline void DeleteCommand(const String& command) { sendchat_callbacks.erase(command); }
 
 		inline void SetOpenLinks(bool b) { open_links_ = b; }
+
+		Color SetSenderColor(Channel chan, Color col);
+		Color SetMessageColor(Channel chan, Color col);
 
 	protected:
 		ChatMgr();
 
 	private:
-		std::map< std::wstring, Color_t > chatlog_channel;
-		std::map< std::wstring, CallBack > chatcmd_callbacks;
-
+		std::map< std::wstring, Callback > sendchat_callbacks;
 		bool open_links_;
 
 		/* Hook stuff */
-		typedef void(__fastcall *ChatLog_t)(MessageInfo*, Message*, DWORD);
-		typedef void(__fastcall *ChatCmd_t)(wchar_t*);
+		typedef void(__fastcall *SendChat_t)(wchar_t*);
 		typedef void(__fastcall *OpenTemplate_t)(DWORD unk, ChatTemplate* info);
 
 		void RestoreHooks() override;
 
-		Hook hk_chatlog_;
-		Hook hk_chatcmd_;
+		Hook hk_sendchat_;
 		Hook hk_opentemplate_;
+		Hook hk_sendercolor_;
+		Hook hk_messagecolor_;
 
-		ChatLog_t ori_chatlog;
-		ChatCmd_t ori_chatcmd;
+		SendChat_t ori_sendchat;
 		OpenTemplate_t ori_opentemplate;
 
-		static void __fastcall det_chatlog(MessageInfo*, Message*, DWORD);
-		static void __fastcall det_chatcmd(wchar_t *_message);
+		static void __fastcall det_sendchat(wchar_t *_message);
 		static void __fastcall det_opentemplate(DWORD unk, ChatTemplate* info);
+		static Color* __fastcall det_sendercolor(Color *color, Channel chan);
+		static Color* __fastcall det_messagecolor(Color *color, Channel chan);
 	};
 }

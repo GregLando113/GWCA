@@ -18,20 +18,16 @@ namespace GW {
 		// Send a packet with a specific struct alignment, used for more complex packets.
 		template <class T>
 		void SendPacket(T* packet) {
-			DWORD size = sizeof(T);
-			GameThreadMgr::Instance().Enqueue(gs_send_function_,
-				MemoryMgr::GetGSObject(), size, (DWORD*)packet);
+			GameThreadMgr::Instance().Enqueue([this, packet]() {
+				DWORD size = sizeof(T);
+				gs_send_function_(MemoryMgr::GetGSObject(), size, (DWORD*)packet);
+			});
 		}
 
 		static SendCtoGSPacket_t gs_send_function_;
 	private:
 
-
-
-		static void __fastcall packetsendintermediary(DWORD thisptr, DWORD size, DWORD* packet);
-
 		CtoSMgr();
 		void RestoreHooks() override {}
 	};
-
 }

@@ -65,7 +65,9 @@ void __fastcall GW::EffectMgr::AlcoholHandler(DWORD Intensity, DWORD Tint) {
 }
 
 void GW::EffectMgr::GetDrunkAf(DWORD Intensity, DWORD Tint) {
-	GameThreadMgr::Instance().Enqueue(ppe_retour_func_, Intensity, Tint);
+	GameThreadMgr::Instance().Enqueue([this, Intensity, Tint]() {
+		ppe_retour_func_(Intensity, Tint);
+	});
 }
 
 GW::AgentEffectsArray GW::EffectMgr::GetPartyEffectArray() {

@@ -189,7 +189,7 @@ namespace GW {
 				DWORD Ground;
 			};
 			struct {
-				GamePos pos2;
+				GamePos pos;
 			};
 		};
 	};

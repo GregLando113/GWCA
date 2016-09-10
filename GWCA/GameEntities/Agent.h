@@ -56,7 +56,9 @@ namespace GW {
 		DWORD itemid; // Only valid if agent is type 0x400 (item)
 		BYTE unknown24[4];
 		long ExtraType;
-		BYTE unknown11[24];
+		BYTE unknown11a[0xC];
+		float animationtype;
+		BYTE unknown11b[0x8];
 		float WeaponAttackSpeed; //The base attack speed in float of last attacks weapon. 1.33 = axe, sWORD, daggers etc.
 		float AttackSpeedModifier; //Attack speed modifier of the last attack. 0.67 = 33% increase (1-.33)
 		WORD PlayerNumber; //Selfexplanatory. All non-players have identifiers for their type. Two of the same mob = same number

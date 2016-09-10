@@ -5,6 +5,10 @@
 
 CRITICAL_SECTION GW::GameThreadMgr::criticalsection_;
 
+typedef void(__fastcall *Render_t)(void*);
+uintptr_t* g__thingy;
+Render_t g__thingyret;
+
 void __stdcall GW::GameThreadMgr::CallFunctions() {
 	if (TryEnterCriticalSection(&criticalsection_)) {
 		if (!calls_.empty()) {
@@ -24,13 +28,9 @@ void __stdcall GW::GameThreadMgr::CallFunctions() {
 	}
 }
 
-void __declspec(naked) GW::GameThreadMgr::gameLoopHook() {
-	_asm PUSHAD
-
+void __fastcall GW::GameThreadMgr::gameLoopHook(void* unk) {
 	GameThreadMgr::Instance().CallFunctions();
-
-	_asm POPAD
-	_asm JMP MemoryMgr::GameLoopReturn
+	g__thingyret(unk);
 }
 
 void __declspec(naked) GW::GameThreadMgr::renderHook() {
@@ -65,12 +65,17 @@ void GW::GameThreadMgr::ToggleRenderHook() {
 	}
 }
 
+
 GW::GameThreadMgr::GameThreadMgr() : render_state_(false) {
-	MemoryMgr::GameLoopReturn = (BYTE*)hk_game_thread_.Detour(MemoryMgr::GameLoopLocation, (BYTE*)gameLoopHook, 5);
+	g__thingy = MemoryMgr::ReadPtrChain<uintptr_t*>((DWORD)MemoryMgr::BasePointerLocation, 3, 0, 0x3C, 0x4);
+	g__thingyret = (Render_t)*g__thingy;
+	*g__thingy = (uintptr_t)GW::GameThreadMgr::gameLoopHook;
+
+
 	InitializeCriticalSection(&criticalsection_);
 }
 
 void GW::GameThreadMgr::RestoreHooks() {
 	if (render_state_) ToggleRenderHook();
-	hk_game_thread_.Retour();
+	*g__thingy = (uintptr_t)g__thingyret;
 }

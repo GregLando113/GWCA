@@ -34,7 +34,7 @@ namespace GW {
 		}
 
 
-		static void gameLoopHook();
+		static void __fastcall gameLoopHook(void*);
 		static void renderHook();
 		void ToggleRenderHook();
 

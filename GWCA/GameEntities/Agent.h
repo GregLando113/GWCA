@@ -194,19 +194,7 @@ namespace GW {
 		};
 	};
 
-	//using AgentArray = gw_array<Agent*>;
+	using AgentArray = gw_array<Agent*>;
 	using MapAgentArray = gw_array<MapAgent>;
 	using AgentMovementArray = gw_array<AgentMovement*>;
-
-	class AgentArray : public gw_array<Agent*> {
-	public:
-		Agent* index(DWORD index) {
-			if (!valid()) return nullptr;
-			if (index >= size() || index < 0) return nullptr;
-			return array_[index];
-		}
-		Agent* operator[](DWORD index) {
-			return this->index(index);
-		}
-	};
 }

@@ -6,6 +6,7 @@ namespace GW {
 		namespace ModelID { // this is actually agent->PlayerNumber for agents
 			const int EoE = 2872;
 			const int QZ = 2882;
+			const int Winnowing = 2871;
 
 			const int SkeletonOfDhuum = 2338;
 			const int Boo = 7445;

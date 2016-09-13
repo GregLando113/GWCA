@@ -159,15 +159,17 @@ void __fastcall GW::ChatMgr::det_sendchat(wchar_t *message) {
 		GW::ChatMgr::String command = msg.substr(0, index);
 		GW::ChatMgr::StringArray args;
 
-		++index;
-		while (index < msg.size()) {
-			size_t end = msg.find(' ', index);
-			if (end == String::npos) {
-				args.push_back(msg.substr(index, end));
-				index = end;
-			} else {
-				args.push_back(msg.substr(index, end - index));
-				index = end + 1;
+		if (index != String::npos) {
+			++index;
+			while (index < msg.size()) {
+				size_t end = msg.find(' ', index);
+				if (end == String::npos) {
+					args.push_back(msg.substr(index, end));
+					index = end;
+				} else {
+					args.push_back(msg.substr(index, end - index));
+					index = end + 1;
+				}
 			}
 		}
 

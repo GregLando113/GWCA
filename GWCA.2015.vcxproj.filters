@@ -277,5 +277,6 @@
     <ClCompile Include="GWCA\src\GameEntities\Skill.cpp">
       <Filter>src\GameEntities</Filter>
     </ClCompile>
+    <ClCompile Include="GWCA\src\Managers\PlayerMgr.cpp" />
   </ItemGroup>
 </Project>

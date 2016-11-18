@@ -72,6 +72,7 @@
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c" />
     <ClCompile Include="GWCA\src\GameEntities\Skill.cpp" />
+    <ClCompile Include="GWCA\src\Managers\PlayerMgr.cpp" />
     <ClCompile Include="GWCA\src\Utilities\Hooker.cpp" />
     <ClCompile Include="GWCA\src\Utilities\MemoryPatcher.cpp" />
     <ClCompile Include="GWCA\src\Utilities\PatternScanner.cpp" />

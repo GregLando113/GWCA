@@ -56,6 +56,8 @@ namespace GW {
 		// Ticks
 		inline void Tick() { Tick(true); }
 
+        void SetHardMode(bool flag);
+
 		// check if the whole party is ticked
 		bool GetIsPartyTicked();
 

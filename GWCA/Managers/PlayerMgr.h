@@ -23,7 +23,7 @@ namespace GW {
 		}
 
 		wchar_t* GetPlayerName(PlayerID id) {
-			GetPlayerArray()[id].Name;
+			return GetPlayerArray()[id].Name;
 		}
 
 		void SetPlayerName(PlayerID id, const wchar_t* replacename) {

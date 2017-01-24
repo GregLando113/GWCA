@@ -28,6 +28,8 @@ namespace GW {
 			namespace DoA {
 				const int BlackBeastOfArgh = 5146;
 				const int SmotheringTendril = 5210;
+				const int Fury = 5145;
+				const int LordJadoth = 5140;
 
 				// stygian lords
 				const int StygianLordNecro = 5141;

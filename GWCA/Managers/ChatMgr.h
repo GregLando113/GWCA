@@ -50,6 +50,7 @@ namespace GW {
 
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(const wchar_t* msg, wchar_t channel);
+		void SendChat(const char* msg, char channel);
 
 		// Write to chat as a PM with printf style arguments.
 		void WriteChatF(const wchar_t* from, const wchar_t* format, ...);

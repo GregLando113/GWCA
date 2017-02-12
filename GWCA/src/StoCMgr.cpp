@@ -4,7 +4,7 @@
 
 GW::StoCMgr::StoCHandlerArray GW::StoCMgr::game_server_handler_;
 GW::StoCMgr::StoCHandler* GW::StoCMgr::original_functions_ = NULL;
-std::map<DWORD, std::vector<GW::StoCMgr::Handler>> GW::StoCMgr::event_calls_;
+std::map<DWORD, std::vector<GW::StoCMgr::CallbackFunc<GW::Packet::StoC::PacketBase>>> GW::StoCMgr::event_calls_;
 
 bool GW::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
 	bool do_not_process = false;

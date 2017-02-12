@@ -1,4 +1,4 @@
-#include "..\..\Utilities\PatternScanner.h"
+#include "..\Utilities\PatternScanner.h"
 #include <Psapi.h>
 
 DWORD GW::PatternScanner::FindPattern(char* pattern, char* mask, DWORD offset) {

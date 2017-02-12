@@ -94,6 +94,12 @@ void GW::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel) {
 	GwSendChat(buffer);
 }
 
+void GW::ChatMgr::SendChat(const char* msg, char channel) {
+	wchar_t buffer[140];
+	wsprintfW(buffer, L"%s%s", channel, msg);
+	GwSendChat(buffer);
+}
+
 void GW::ChatMgr::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
 	va_list vl;
 	va_start(vl, format);
@@ -187,7 +193,7 @@ void __fastcall GW::ChatMgr::det_opentemplate(DWORD unk, ChatTemplate* info) {
 		&& info->template_name != nullptr
 		&& (!wcsncmp(info->template_name, L"http://", 7)
 			|| !wcsncmp(info->template_name, L"https://", 8))) {
-		ShellExecute(NULL, L"open", info->template_name, NULL, NULL, SW_SHOWNORMAL);
+		ShellExecuteW(NULL, L"open", info->template_name, NULL, NULL, SW_SHOWNORMAL);
 	} else {
 		ChatMgr::Instance().ori_opentemplate(unk, info);
 	}

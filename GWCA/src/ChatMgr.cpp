@@ -95,10 +95,13 @@ void GW::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel) {
 }
 
 void GW::ChatMgr::SendChat(const char* msg, char channel) {
-    wchar_t buffer[140] = {0};
-    buffer[0] = reinterpret_cast<wchar_t>(channel);
-    for(const wchar_t* dst = (buffer + 1);*msg;++msg,++dst)
-        *dst = reinterpret_cast<wchar_t>(*msg);
+	wchar_t buffer[140];
+	wchar_t* buf = buffer;
+	*buf++ = static_cast<wchar_t>(channel);
+	for (int i = 1; i < 139 && *msg; ++i) {
+		*buf++ = static_cast<wchar_t>(*msg++);
+	}
+	*buf = L'\0';
     GwSendChat(buffer);
 }
 

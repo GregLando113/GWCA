@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <map>
+#include <functional>
 
 #include <GWCA\Packets\StoC.h>
 #include <GWCA\GameContainers\gw_array.h>
@@ -26,14 +27,17 @@ namespace GW {
         */
         
         template <typename T>
-            using CallbackFunc = bool(*)(T*);
+            using CallbackFunc = std::function<bool(T*)>;
         
         
         /* Use this to add handlers to the stocmgr, primary function. */
         template <typename T>
             void AddGameServerEvent(CallbackFunc<T> handler) {
             DWORD header = Packet::StoC::Packet<T>::STATIC_HEADER;
-            event_calls_[header].push_back(reinterpret_cast<CallbackFunc<Packet::StoC::PacketBase>>(handler));
+            event_calls_[header].push_back(
+				[handler](Packet::StoC::PacketBase* pak) -> bool {
+				return handler((T*)pak);
+			});
             game_server_handler_[header].handlerfunc = StoCHandlerFunc;
         }
         

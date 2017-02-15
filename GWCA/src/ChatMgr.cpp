@@ -55,8 +55,6 @@ void (__fastcall *GwSendChat)(const wchar_t *message);
 void (__fastcall *GwWriteChat)(int, const wchar_t*, const wchar_t*);
 void (__fastcall *GwSendMessage)(int id, const RawMessage* msg, void *extended);
 
-wchar_t *tohstr(wchar_t *buffer, const wchar_t *str);
-
 GW::ChatMgr::ChatMgr() {
     PatternScanner scanner(0x401000, 0x49A000);
     
@@ -123,30 +121,39 @@ void GW::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 }
 
 void GW::ChatMgr::WriteChat(Channel channel, const wchar_t *message) {
-    size_t len = wcslen(message);
-    wchar_t *buffer = new wchar_t[len + 4];
-    if (tohstr(buffer, message)) {
-        GameThreadMgr::Instance().Enqueue([this, channel, buffer]() {
-                                          RawMessage msg;
-                                          msg.channel = channel;
-                                          msg.message = buffer;
-                                          msg.player_id = 0;
-                                          GwSendMessage(0x1000007E, &msg, NULL);
-                                          delete buffer;
-                                          });
-    }
+	wchar_t *buffer = new wchar_t[wcslen(message) + 4];
+
+	RawMessage msg;
+	msg.channel = channel;
+	msg.message = buffer;
+	msg.player_id = 0;
+
+	*buffer++ = 0x0108;
+	*buffer++ = 0x0107;
+	while (*message != L'\0') *buffer++ = *message++;
+	*buffer++ = 0x0001;
+	*buffer++ = 0;
+
+	GwSendMessage(0x1000007E, &msg, NULL);
+	delete[] msg.message;
 }
 
-static wchar_t *tohstr(wchar_t *buffer, const wchar_t *str) {
-    if (!buffer || !str)
-        return NULL;
-    
-    *buffer++ = 0x0108;
-    *buffer++ = 0x0107;
-    while(*str != '\0') *buffer++ = *str++;
-    *buffer++ = 0x0001;
-    *buffer++ = 0;
-    return buffer;
+void GW::ChatMgr::WriteChat(Channel channel, const char* message) {
+	wchar_t* buffer = new wchar_t[strlen(message) + 4];
+
+	RawMessage msg;
+	msg.channel = channel;
+	msg.message = buffer;
+	msg.player_id = 0;
+
+	*buffer++ = 0x0108;
+	*buffer++ = 0x0107;
+	while (*message != L'\0') *buffer++ = static_cast<wchar_t>(*message++);
+	*buffer++ = 0x0001;
+	*buffer++ = 0;
+
+	GwSendMessage(0x1000007E, &msg, NULL);
+	delete[] msg.message;
 }
 
 GW::Color GW::ChatMgr::SetSenderColor(Channel chan, Color col) {

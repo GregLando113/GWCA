@@ -60,6 +60,7 @@ namespace GW {
 
 		// Emulates a message in a given channel.
 		void WriteChat(Channel channel, const wchar_t *message);
+		void WriteChat(Channel channel, const char* message);
 
 		inline void RegisterCommand(const String& command, Callback callback) {
 			sendchat_callbacks[command] = callback;

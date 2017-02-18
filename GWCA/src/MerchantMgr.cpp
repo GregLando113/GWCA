@@ -1,103 +1,98 @@
 #include <GWCA\Managers\MerchantMgr.h>
 
-#include <GWCA\Context\GameContext.h>
-#include <GWCA\Context\WorldContext.h>
-
 #include <GWCA\Utilities\PatternScanner.h>
-#include <GWCA\Managers\GameThreadMgr.h>
 #include <GWCA\Managers\ItemMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
+#include <GWCA\Managers\StoCMgr.h>
+
+
+typedef void __fastcall TransactItem_t(
+DWORD type, 
+DWORD gold_give,
+TransactionInfo give,
+DWORD gold_recv,
+TransactionInfo recv
+);
+
+typedef void __fastcall RequestQuote_t(
+DWORD type, 
+DWORD unknown,
+QuoteInfo give,
+QuoteInfo recv
+);
+
+TransactItem_t* g_transactitemfn;
+RequestQuote_t* g_requestquotefn;
+
+DWORD           g_lastitemid;
+DWORD           g_lastitemprice;
 
 GW::MerchantMgr::MerchantMgr() : GWCAManager() {
-	PatternScanner scan(0x401000, 0x4FF000);
-
-	transaction_function_ = (Transaction_t)scan.FindPattern("\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C);
-	if (transaction_function_) {
-		printf("transaction_function_ = %X\n", transaction_function_);
-	} else {
-		printf("transaction_function_ = ERR\n");
-	}
-
-	quote_function_ = (Transaction_t)scan.FindPattern("\x53\x56\x8B\x75\x0C\x57\x83\xFE\x10", "xxxxxxxxx", -0x9);
-
-	if (quote_function_) {
-		printf("quote_function_ = %X\n", transaction_function_);
-	} else {
-		printf("quote_function_ = ERR\n");
-	}
+    PatternScanner scan(0x401000, 0x4FF000);
+    
+    g_transactitemfn = reinterpret_cast<TransactItem_t*>(scan.FindPattern("\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C));
+    
+    if (transaction_function_) {
+        printf("transaction_function_ = %X\n", transaction_function_);
+    } else {
+        printf("transaction_function_ = ERR\n");
+    }
+    
+    g_requestquotefn = reinterpret_cast<RequestQuote_t*>(scan.FindPattern("\x53\x56\x8B\x75\x0C\x57\x83\xFE\x10", "xxxxxxxxx", -0x9));
+    
+    if (quote_function_) {
+        printf("quote_function_ = %X\n", transaction_function_);
+    } else {
+        printf("quote_function_ = ERR\n");
+    }
+    
+    StoCMgr::Instance().AddGameServerEvent<P235_QuotedItemPrice>([](P235_QuotedItemPrice* p) -> bool {
+                                                                 g_lastitemid    = p->itemid;
+                                                                 g_lastitemprice = p->price;
+                                                                 return false;
+                                                                 }
+                                                                 );
 }
 
 void GW::MerchantMgr::RestoreHooks() {}
 
-void GW::MerchantMgr::SellMerchantItem(GW::Item* itemtosell, DWORD sellquantity /*= NULL*/) {
-	if (sellquantity == NULL) sellquantity = itemtosell->Quantity;
-
-	TransactionPacket give = TransactionPacket(1);
-	give.AddItem(itemtosell->ItemId, sellquantity);
-
-	TransactionPacket recv = TransactionPacket();
-
-	EnqueueTransaction(TransactionType::MERCHANT_SELL, 0, give, sellquantity * itemtosell->value, recv);
+void 
+GW::MerchantMgr::TransactItems(
+TransactionType type,
+DWORD gold_give,
+TransactionInfo give,
+DWORD gold_recv,
+TransactionInfo recv
+) {
+    
+    g_transactitemfn(
+        type,
+        gold_give,
+        give,
+        gold_recv,
+        recv
+        );
+    
 }
 
-void GW::MerchantMgr::BuyMerchantItem(DWORD modelid, DWORD quantity /*= 1*/) {
-	GW::Item* itemrecv = GetMerchantItemByModelID(modelid);
-	if (!itemrecv) return;
-
-	TransactionPacket give = TransactionPacket();
-
-	TransactionPacket recv = TransactionPacket(1);
-	recv.AddItem(itemrecv->ItemId, quantity);
-
-	EnqueueTransaction(TransactionType::MERCHANT_BUY, 2 * quantity * itemrecv->value, give, 0, recv);
+void
+GW::MerchantMgr::RequestQuote(
+TransactionType type,
+QuoteInfo give,
+QuoteInfo recv
+) {
+    
+    g_lastitemprice = 0;
+    g_requestquotefn(
+        type,
+        0,
+        give,
+        recv
+        );
+    
 }
 
-void GW::MerchantMgr::EnqueueTransaction(TransactionType type, 
-	DWORD gold_give, TransactionPacket give /*= TransactionPacket()*/, 
-	DWORD gold_receive, TransactionPacket receive /*= TransactionPacket()*/) {
-	GameThreadMgr::Instance().Enqueue(
-		[this, type, gold_give, give, gold_receive, receive]() {
-		transaction_function_(type, gold_give, give, gold_receive, receive);
-	});
+DWORD 
+GW::MerchantMgr::GetQuotedItemPrice() {
+    return g_lastitemprice;
 }
-
-void GW::MerchantMgr::EnqueueQuoteRequest(TransactionType type, 
-	TransactionPacket give, TransactionPacket receive) {
-	GameThreadMgr::Instance().Enqueue([this, type, give, receive]() {
-		quote_function_(type, 0, give, 0, receive);
-	});
-}
-
-GW::Item* GW::MerchantMgr::GetMerchantItemByModelID(DWORD modelid) {
-	GW::MerchItemArray merchitems = GetMerchantItemsArray();
-	GW::ItemArray items = ItemMgr::Instance().GetItemArray();
-
-	for (DWORD i = 0; i < merchitems.size_allocated(); ++i) {
-		if (items[merchitems[i]]->ModelId == modelid) {
-			return items[merchitems[i]];
-		}
-	}
-	return NULL;
-}
-
-GW::MerchItemArray GW::MerchantMgr::GetMerchantItemsArray() {
-	return GameContext::instance()->world->merchitems;
-}
-
-void GW::MerchantMgr::TransactionPacket::AddItem(DWORD itemid, DWORD quantity) {
-	if (item_array_) item_array_[itemid_count_] = itemid;
-	if (item_quantity_array_) item_quantity_array_[itemid_count_] = quantity;
-	itemid_count_++;
-}
-
-GW::MerchantMgr::TransactionPacket::TransactionPacket(size_t itemmaxcount) :
-	itemid_count_(0),
-	item_array_(new DWORD[itemmaxcount]),
-	item_quantity_array_(new DWORD[itemmaxcount]) {}
-
-GW::MerchantMgr::TransactionPacket::TransactionPacket() :
-	itemid_count_(0),
-	item_array_(NULL),
-	item_quantity_array_(NULL) {}
-
-GW::MerchantMgr::TransactionPacket::~TransactionPacket() {}

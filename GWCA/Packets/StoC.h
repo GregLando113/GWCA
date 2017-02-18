@@ -1657,11 +1657,11 @@ namespace GW {
 			};
 			const DWORD Packet<P234>::STATIC_HEADER = 234;
 
-			struct P235 : Packet<P235> {
-				// DWORD
-				// DWORD
+			struct P235_QuotedItemPrice : Packet<P235_QuotedItemPrice> {
+				DWORD itemid;
+				DWORD price;
 			};
-			const DWORD Packet<P235>::STATIC_HEADER = 235;
+			const DWORD Packet<P235_QuotedItemPrice>::STATIC_HEADER = 235;
 
 			struct P236 : Packet<P236> {
 				// DWORD agent_id;

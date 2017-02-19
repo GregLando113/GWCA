@@ -11,11 +11,16 @@ namespace GW {
 
 			// materials
 			const int Bones = 921;
-			const int Iron = 948;
-			const int Granite = 955;
+			const int BoltsOfCloth = 925;
 			const int Dust = 929;
-			const int Fibers = 934;
 			const int Feathers = 933;
+			const int Fibers = 934;
+			const int TannedHideSquares = 940;
+			const int WoodPlanks = 946;
+			const int Iron = 948;
+			const int Scales = 953;
+			const int ChitinFragments = 954;
+			const int Granite = 955;
 
 			// pcons
 			const int BRC = 31151;

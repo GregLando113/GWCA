@@ -33,6 +33,10 @@ namespace GW {
 			return array_[index];
 		}
 
+		T& index_unchecked(DWORD index) {
+			return array_[index];
+		}
+
 		T& operator[](DWORD index) {
 			return this->index(index);
 		}

@@ -50,6 +50,9 @@ namespace GW {
 			QuoteInfo recv
 		);
 
+		// note: can contain pointers to random items from your inventory
+		GW::MerchItemArray GetMerchantItemsArray();
+
 		//DWORD GetQuotedItemPrice();
 	};
 }

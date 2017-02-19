@@ -5,6 +5,7 @@
 #include <GWCA\Managers\MemoryMgr.h>
 #include <GWCA\Managers\StoCMgr.h>
 #include <GWCA\Packets\StoC.h>
+#include <GWCA\Context\GameContext.h>
 
 
 typedef void __fastcall TransactItem_t(
@@ -80,3 +81,7 @@ void GW::MerchantMgr::RequestQuote(TransactionType type,
 //DWORD GW::MerchantMgr::GetQuotedItemPrice() {
 //    return g_lastitemprice;
 //}
+
+GW::MerchItemArray GW::MerchantMgr::GetMerchantItemsArray() {
+	return GameContext::instance()->world->merchitems;
+}

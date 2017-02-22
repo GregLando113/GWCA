@@ -2090,6 +2090,7 @@ namespace GW {
 			};
 			const DWORD Packet<P302>::STATIC_HEADER = 302;
 
+			// Update item quantity (e.g. in inventory)
 			struct P303 : Packet<P303> {
 				DWORD itemid;
 				DWORD quantity;
@@ -2233,9 +2234,10 @@ namespace GW {
 			};
 			const DWORD Packet<P324>::STATIC_HEADER = 324;
 
+			// Gold removed from inventory
 			struct P325 : Packet<P325> {
-				// WORD
-				// DWORD
+				DWORD unk; // some kind of id? but neither agentid nor playerid
+				DWORD gold;
 			};
 			const DWORD Packet<P325>::STATIC_HEADER = 325;
 

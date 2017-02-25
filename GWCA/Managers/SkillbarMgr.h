@@ -13,7 +13,7 @@ namespace GW {
 
 	public:
 		// Get the skill slot in the player bar of the player.
-		// Returns 0 if the skill is not there
+		// Returns -1 if the skill is not there
 		int GetSkillSlot(Constants::SkillID SkillID);
 
 		// Use Skill in slot (Slot) on (Agent), optionally call that you are using said skill.

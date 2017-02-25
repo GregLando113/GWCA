@@ -126,6 +126,7 @@ namespace GW {
 			struct P016 : Packet<P016> {};
 			const DWORD Packet<P016>::STATIC_HEADER = 16;
 
+			// Skill Unlocked
 			struct P017 : Packet<P017> {
 				// WORD
 				// BYTE
@@ -176,6 +177,7 @@ namespace GW {
 			};
 			const DWORD Packet<P021>::STATIC_HEADER = 21;
 
+			// Despawn object
 			struct P022 : Packet<P022> {
 				DWORD agent_id;
 			};
@@ -212,9 +214,10 @@ namespace GW {
 			};
 			const DWORD Packet<P027>::STATIC_HEADER = 27;
 
+			// Change Movement Speed
 			struct P028 : Packet<P028> {
-				// DWORD
-				// float
+				DWORD agent_id;
+				float speed;
 			};
 			const DWORD Packet<P028>::STATIC_HEADER = 28;
 
@@ -285,6 +288,7 @@ namespace GW {
 			};
 			const DWORD Packet<P037>::STATIC_HEADER = 37;
 
+			// Hero Account Name (?)
 			struct P038 : Packet<P038> {
 				// wchar_t array[32] // prefixType="int16"
 			};
@@ -300,6 +304,7 @@ namespace GW {
 			};
 			const DWORD Packet<P039>::STATIC_HEADER = 39;
 
+			// Message Of The Day (?)
 			struct P040 : Packet<P040> {
 				// wchar_t array[64] // prefixType="int16"
 			};
@@ -325,6 +330,7 @@ namespace GW {
 			};
 			const DWORD Packet<P043>::STATIC_HEADER = 43;
 
+			// Update Attribute Points (?)
 			struct P044 : Packet<P044> {
 				// DWORD agent_id;
 				// BYTE
@@ -332,6 +338,7 @@ namespace GW {
 			};
 			const DWORD Packet<P044>::STATIC_HEADER = 44;
 
+			// Unused Attribute Points (?)
 			struct P045 : Packet<P045> {
 				// DWORD agent_id;
 				// BYTE
@@ -344,6 +351,7 @@ namespace GW {
 			};
 			const DWORD Packet<P046>::STATIC_HEADER = 46;
 
+			// Set Attributes (?)
 			struct P047 : Packet<P047> {
 				// DWORD agent_id;
 				// int[48] // prefixType="int16"
@@ -371,6 +379,7 @@ namespace GW {
 			};
 			const DWORD Packet<P050>::STATIC_HEADER = 50;
 
+			// Skill Upkeep Add (?)
 			struct P051 : Packet<P051> {
 				// DWORD agent_id1;
 				// DWORD agent_id2;
@@ -439,6 +448,7 @@ namespace GW {
 			};
 			const DWORD Packet<P059>::STATIC_HEADER = 59;
 
+			// Display Cape (?)
 			struct P060 : Packet<P060> {
 				// DWORD agent_id;
 				// BYTE
@@ -468,6 +478,7 @@ namespace GW {
 			};
 			const DWORD Packet<P063>::STATIC_HEADER = 63;
 
+			// Quest Description (?)
 			struct P064 : Packet<P064> {
 				// DWORD
 				// wchar_t array[128] // prefixType="int16"
@@ -493,13 +504,14 @@ namespace GW {
 			struct P067 : Packet<P067> {};
 			const DWORD Packet<P067>::STATIC_HEADER = 67;
 
+			// Add Quest (?)
 			struct P068 : Packet<P068> {
-				// DWORD
-				// DWORD
-				// wchar_t array[8] // prefixType="int16"
-				// wchar_t array[8] // prefixType="int16"
-				// wchar_t array[8] // prefixType="int16"
-				// WORD
+				// DWORD id?
+				// DWORD status?
+				// wchar_t array[8] // prefixType="int16" category?
+				// wchar_t array[8] // prefixType="int16" name?
+				// wchar_t array[8] // prefixType="int16" givenby?
+				// WORD mapid?
 			};
 			const DWORD Packet<P068>::STATIC_HEADER = 68;
 
@@ -511,6 +523,7 @@ namespace GW {
 			};
 			const DWORD Packet<P069>::STATIC_HEADER = 69;
 
+			// Remove Quest
 			struct P070 : Packet<P070> {
 				// DWORD
 			};
@@ -546,12 +559,14 @@ namespace GW {
 			};
 			const DWORD Packet<P074_NpcGeneralStats>::STATIC_HEADER = 74;
 
+			// NPC model file (?)
 			struct P075 : Packet<P075> {
 				DWORD npc_id;
 				// int[8] // prefixType="int16"
 			};
 			const DWORD Packet<P075>::STATIC_HEADER = 75;
 
+			// Character Name (?)
 			struct P076 : Packet<P076> {
 				// DWORD
 				// wchar_t array[32] // prefixType="int16"
@@ -579,10 +594,11 @@ namespace GW {
 			};
 			const DWORD Packet<P079>::STATIC_HEADER = 79;
 
+			// Agent attack status (?)
 			struct P080 : Packet<P080> {
-				// DWORD agent_id1;
-				// DWORD agent_id2;
-				// DWORD
+				// DWORD agent_id1; attacker?
+				// DWORD agent_id2; target?
+				// DWORD status?
 			};
 			const DWORD Packet<P080>::STATIC_HEADER = 80;
 
@@ -658,9 +674,10 @@ namespace GW {
 			};
 			const DWORD Packet<P088>::STATIC_HEADER = 88;
 
+			// Hero Disabled SKills
 			struct P089 : Packet<P089> {
-				// DWORD agent_id;
-				// BYTE
+				// DWORD agent_id; // hero
+				// BYTE  // bit field containing the disabled skills
 			};
 			const DWORD Packet<P089>::STATIC_HEADER = 89;
 
@@ -671,6 +688,7 @@ namespace GW {
 			};
 			const DWORD Packet<P090>::STATIC_HEADER = 90;
 
+			// Flag team (?)
 			struct P091 : Packet<P091> {
 				// Vector2f
 				// WORD
@@ -689,28 +707,32 @@ namespace GW {
 			};
 			const DWORD Packet<P093>::STATIC_HEADER = 93;
 
+			// Request File (?)
 			struct P094 : Packet<P094> {
 				// DWORD
 			};
 			const DWORD Packet<P094>::STATIC_HEADER = 94;
 
+			// Post Process Effect (?)
 			struct P095 : Packet<P095> {
 				// BYTE
 				// DWORD
 			};
 			const DWORD Packet<P095>::STATIC_HEADER = 95;
 
+			// Dungeon Reward (?)
 			struct P096 : Packet<P096> {
-				// DWORD
-				// DWORD
-				// DWORD
+				// DWORD experience?
+				// DWORD gold?
+				// DWORD skillpts?
 			};
 			const DWORD Packet<P096>::STATIC_HEADER = 96;
 
+			// Update Agent Weapons (?)
 			struct P097 : Packet<P097> {
 				// DWORD agent_id;
-				// DWORD
-				// DWORD
+				// DWORD leadhand;
+				// DWORD offhand;
 			};
 			const DWORD Packet<P097>::STATIC_HEADER = 97;
 
@@ -1083,21 +1105,24 @@ namespace GW {
 			};
 			const DWORD Packet<P147>::STATIC_HEADER = 147;
 
+			
+			// Update Target Generic Value
 			struct P148 : Packet<P148> {
-				// DWORD
-				// DWORD agent_id;
-				// DWORD agent_id;
-				// DWORD
+				DWORD Value_id;
+				DWORD target; // agent id
+				DWORD caster; // agent id
+				DWORD value;
 			};
 			const DWORD Packet<P148>::STATIC_HEADER = 148;
 
+			// Play Effect, used to play a visual effect somewhere on the map
 			struct P149 : Packet<P149> {
-				// Vector2f
-				// WORD
-				// DWORD agent_id;
-				// WORD
-				// BYTE
-				// BYTE
+				Vector2f pos;
+				DWORD plane;
+				DWORD agent_id;
+				DWORD effect_id;
+				BYTE unk1;
+				BYTE unk2;
 			};
 			const DWORD Packet<P149>::STATIC_HEADER = 149;
 
@@ -1509,32 +1534,36 @@ namespace GW {
 			};
 			const DWORD Packet<P214>::STATIC_HEADER = 214;
 
+			// Skill Activated (finish casting)
 			struct P215 : Packet<P215> {
-				// DWORD agent_id;
-				// WORD
-				// DWORD
+				DWORD agent_id;
+				DWORD skill_id;
+				DWORD skill_instance;
 			};
 			const DWORD Packet<P215>::STATIC_HEADER = 215;
 
+			// Skill Activate (begin casting)
 			struct P216 : Packet<P216> {
-				// DWORD agent_id;
-				// WORD
-				// DWORD
+				DWORD agent_id;
+				DWORD skill_id;
+				DWORD skill_instance;
 			};
 			const DWORD Packet<P216>::STATIC_HEADER = 216;
 
+			// Skill Recharge (skill becomes recharging)
 			struct P217 : Packet<P217> {
-				// DWORD agent_id;
-				// WORD
-				// DWORD
-				// DWORD
+				DWORD agent_id;
+				DWORD skill_id;
+				DWORD skill_instance;
+				DWORD recharge;
 			};
 			const DWORD Packet<P217>::STATIC_HEADER = 217;
 
+			// skill recharged (skill becomes available)
 			struct P218 : Packet<P218> {
-				// DWORD agent_id;
-				// WORD
-				// DWORD
+				DWORD agent_id;
+				DWORD skill_id;
+				// DWORD ?
 			};
 			const DWORD Packet<P218>::STATIC_HEADER = 218;
 

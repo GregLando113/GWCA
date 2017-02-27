@@ -16,6 +16,8 @@ bool GW::MapMgr::IsMapLoaded() {
 void GW::MapMgr::Travel(GW::Constants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
 
+	if (GetInstanceType() == GW::Constants::InstanceType::Loading) return;
+
 	static PAB_ZoneMap* pak = new PAB_ZoneMap();
 
 	pak->mapid = static_cast<DWORD>(MapID);

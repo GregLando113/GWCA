@@ -184,8 +184,8 @@ namespace GW {
 			const DWORD Packet<P022>::STATIC_HEADER = 22;
 
 			struct P023 : Packet<P023> {
-				// DWORD
-				// DWORD
+				DWORD unk1;
+				DWORD unk2;
 			};
 			const DWORD Packet<P023>::STATIC_HEADER = 23;
 

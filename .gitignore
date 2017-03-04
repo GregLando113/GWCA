@@ -25,3 +25,5 @@ Release/
 dox/
 GWCA_d.lib
 *.opendb
+
+GWCAd\.lib

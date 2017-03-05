@@ -17,6 +17,15 @@ GW::Skillbar GW::Skillbar::GetPlayerSkillbar() {
 	}
 }
 
+GW::Maybe<GW::SkillbarSkill> GW::Skillbar::GetSkillById(GW::Constants::SkillID skillId) {
+    for (auto skill : Skills) {
+        if (skill.SkillId == static_cast<DWORD>(skillId))
+            return Just<SkillbarSkill>(skill);
+    }
+
+    return Nothing<SkillbarSkill>();
+}
+
 GW::SkillbarArray GW::SkillbarArray::GetSkillbarArray() {
 	return GameContext::instance()->world->skillbar;
 }

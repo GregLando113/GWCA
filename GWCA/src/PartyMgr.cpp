@@ -63,6 +63,10 @@ void GW::PartyMgr::SetHardMode(bool flag) {
     CtoSMgr::Instance().SendPacket(0x8, 0x95, flag);
 }
 
+void GW::PartyMgr::RespondToPartyRequest(bool accept) {
+    CtoSMgr::Instance().SendPacket(0x8, accept ? 0x96 : 0x98, 1);
+}
+
 DWORD __stdcall GW::PartyMgr::DetourTick(DWORD unk1) {
 	// this func is always called twice so use this hack to tick only once
 	static bool toggle = true;

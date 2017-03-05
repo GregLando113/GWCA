@@ -1,7 +1,9 @@
 #pragma once
 #include <Windows.h>
 
+#include <GWCA\Constants\Constants.h>
 #include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\Utilities\Maybe.h>
 
 namespace GW {
 	struct Skill {							// total : A0 BYTEs
@@ -57,6 +59,7 @@ namespace GW {
 		DWORD Recharge;					// 0008
 		DWORD SkillId;					// 000C						see GWConst::SkillIds
 		DWORD Event;					// 0010	s
+
 		long GetRecharge() const;		// returns recharge time remaining in milliseconds, or 0 if recharged
 	};
 	struct Skillbar {						// total : BC BYTEs
@@ -71,6 +74,7 @@ namespace GW {
 
 		// Same as SkillbarArray::GetSkillbarArray()[0] with checks. 
 		static Skillbar GetPlayerSkillbar();
+        Maybe<SkillbarSkill> GetSkillById(Constants::SkillID skillId);
 	};
 
 	struct SkillbarArray : gw_array<Skillbar> {

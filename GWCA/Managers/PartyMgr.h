@@ -70,6 +70,8 @@ namespace GW {
 		// check if the whole party is loaded
 		bool GetIsPartyLoaded();
 
+        void RespondToPartyRequest(bool accept);
+
 	private:
 		PartyMgr();
 

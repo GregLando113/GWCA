@@ -53,16 +53,16 @@ namespace GW {
             return !operator==(rhs);
         }
 
+        bool HasValue() const {
+            return hasValue;
+        }
+
         const T& Value() const {
             if (hasValue)
                 return value;
 
             throw std::exception("No value");
         }
-
-        static constexpr Maybe<T> Nothing() {
-            return Maybe<T>();
-        };
 
     private:
         bool hasValue;

@@ -4,12 +4,13 @@
 
 GW::StoCMgr::StoCHandlerArray GW::StoCMgr::game_server_handler_;
 GW::StoCMgr::StoCHandler* GW::StoCMgr::original_functions_ = NULL;
-std::map<DWORD, std::vector<GW::StoCMgr::CallbackFunc<GW::Packet::StoC::PacketBase>>> GW::StoCMgr::event_calls_;
+std::map<DWORD, std::map<DWORD, GW::StoCMgr::CallbackFunc<GW::Packet::StoC::PacketBase>>> GW::StoCMgr::event_calls_;
+DWORD GW::StoCMgr::last_identifier_ = 0;
 
 bool GW::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
 	bool do_not_process = false;
 	for (auto call : event_calls_[pak->header]) {
-		if (call(pak)) do_not_process = true;
+		if (call.second(pak)) do_not_process = true;
 	}
 	return do_not_process ? true : original_functions_[pak->header].handlerfunc(pak);
 }

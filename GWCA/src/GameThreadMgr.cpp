@@ -3,6 +3,7 @@
 #include <GWCA\GWCA.h>
 #include <GWCA\Managers\MemoryMgr.h>
 
+DWORD GW::GameThreadMgr::last_identifier_ = 0;
 CRITICAL_SECTION GW::GameThreadMgr::criticalsection_;
 
 typedef void(__fastcall *Render_t)(void*);
@@ -21,7 +22,7 @@ void __stdcall GW::GameThreadMgr::CallFunctions() {
 
 		if (!calls_permanent_.empty()) {
 			for (const auto& Call : calls_permanent_) {
-				Call();
+				Call.second();
 			}
 		}
 		LeaveCriticalSection(&criticalsection_);

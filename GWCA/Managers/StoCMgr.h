@@ -32,13 +32,21 @@ namespace GW {
         
         /* Use this to add handlers to the stocmgr, primary function. */
         template <typename T>
-            void AddGameServerEvent(CallbackFunc<T> handler) {
+            DWORD AddGameServerEvent(CallbackFunc<T> handler) {
             DWORD header = Packet::StoC::Packet<T>::STATIC_HEADER;
-            event_calls_[header].push_back(
-				[handler](Packet::StoC::PacketBase* pak) -> bool {
+            last_identifier_++;
+            event_calls_[header][last_identifier_] = [handler](Packet::StoC::PacketBase* pak) -> bool {
 				return handler((T*)pak);
-			});
+			};
             game_server_handler_[header].handlerfunc = StoCHandlerFunc;
+
+            return last_identifier_;
+        }
+
+        template <typename T>
+            void RemoveGameServerEvent(DWORD identifier) {
+            DWORD header = Packet::StoC::Packet<T>::STATIC_HEADER;
+            event_calls_[header].erase(identifier);
         }
         
         template <typename T>
@@ -76,6 +84,7 @@ namespace GW {
         
         static StoCHandlerArray game_server_handler_;
         static StoCHandler* original_functions_;
-        static std::map<DWORD, std::vector<CallbackFunc<Packet::StoC::PacketBase>>> event_calls_;
+        static std::map<DWORD, std::map<DWORD, CallbackFunc<Packet::StoC::PacketBase>>> event_calls_;
+        static DWORD last_identifier_;
     };
 }

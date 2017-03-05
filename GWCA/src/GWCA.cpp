@@ -16,6 +16,7 @@
 #include "..\Managers\StoCMgr.h"
 #include "..\Managers\CameraMgr.h"
 #include "..\Managers\PlayerMgr.h"
+#include "..\Managers\TradeMgr.h"
 #include "..\Managers\GWCAManager.h"
 
 std::vector<GW::GWCABaseManager*> GW::Api::managers;
@@ -60,3 +61,4 @@ GW::MapMgr&			GW::Map() { return MapMgr::Instance(); }
 GW::FriendListMgr&	GW::FriendListmgr() { return FriendListMgr::Instance(); }
 GW::CameraMgr&		GW::Cameramgr() { return CameraMgr::Instance(); }
 GW::PlayerMgr&		GW::Playermgr() { return PlayerMgr::Instance(); }
+GW::TradeMgr&       GW::Trademgr() { return TradeMgr::Instance(); }

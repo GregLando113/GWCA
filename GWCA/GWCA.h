@@ -100,6 +100,7 @@ namespace GW {
 	class CameraMgr;
 
 	class PlayerMgr;
+    class TradeMgr;
 
 	// GWCA Module Accessors.
 	GameThreadMgr& Gamethread();
@@ -117,6 +118,7 @@ namespace GW {
 	FriendListMgr& FriendListmgr();
 	CameraMgr& Cameramgr();
 	PlayerMgr& Playermgr();
+    TradeMgr& Trademgr();
 
 	class Api {
 		friend class GWCABaseManager;

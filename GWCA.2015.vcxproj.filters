@@ -212,6 +212,9 @@
     <ClInclude Include="GWCA\Utilities\Maybe.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Managers\TradeMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">
@@ -282,6 +285,9 @@
     </ClCompile>
     <ClCompile Include="GWCA\src\PatternScanner.cpp">
       <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\TradeMgr.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

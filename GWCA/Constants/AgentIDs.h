@@ -50,10 +50,10 @@ namespace GW {
 				const int MargoniteAnurDabi = 5163;
 				const int MargoniteAnurSu = 5164;
 				const int MargoniteAnurKi = 5165;
-				const int MargoniteAnurVi = 5166;
+				const int MargoniteAnurVu = 5166;
 				const int MargoniteAnurTuk = 5167;
 				const int MargoniteAnurRuk = 5168;
-				const int MargoniteAnurRand = 5169;
+				const int MargoniteAnurRund = 5169;
 				const int MargoniteAnurMank = 5170;
 
 				// stygians

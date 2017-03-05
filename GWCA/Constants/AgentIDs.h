@@ -7,6 +7,12 @@ namespace GW {
 			const int EoE = 2872;
 			const int QZ = 2882;
 			const int Winnowing = 2871;
+            const int InfuriatingHeat = 5711;
+            const int Equinox = 4232;
+            const int Famine = 4234;
+            const int FrozenSoil = 2878;
+            const int Quicksand = 5714;
+            const int Lacerate = 4228;
 
 			const int SkeletonOfDhuum = 2338;
 			const int Boo = 7445;
@@ -57,15 +63,38 @@ namespace GW {
 				const int StygianHorror = 5174;
 				const int StygianFiend = 5175;
 
-				// tormentors
-				const int MindTormentor = 5176;
-				const int SoulTormentor = 5177;
-				const int WaterTormentor = 5178;
-				const int HeartTormentor = 5179;
-				const int FleshTormentor = 5180;
-				const int SpiritTormentor = 5181;
-				const int EarthTormentor = 5182;
-				const int SanityTormentor = 5183;
+                // tormentors
+                const int MindTormentor = 5200;
+                const int SoulTormentor = 5201;
+                const int WaterTormentor = 5202;
+                const int HeartTormentor = 5203;
+                const int FleshTormentor = 5204;
+                const int SpiritTormentor = 5205;
+                const int EarthTormentor = 5206;
+                const int SanityTormentor = 5208;
+
+                // termentors in veil
+                const int VeilMindTormentor = 5176;
+                const int VeilSoulTormentor = 5177;
+                const int VeilWaterTormentor = 5178;
+                const int VeilHeartTormentor = 5179;
+                const int VeilFleshTormentor = 5180;
+                const int VeilSpiritTormentor = 5181;
+                const int VeilEarthTormentor = 5182;
+                const int VeilSanityTormentor = 5183;
+
+                // titans
+                const int MiseryTitan = 5191;
+                const int RageTitan = 5192;
+                const int DementiaTitan = 5193;
+                const int AnguishTitan = 5194;
+                const int DespairTitan = 5195;
+                const int FuryTitan = 5196;
+                const int RageTitan2 = 5197;
+                const int DementiaTitan2 = 5198;
+
+                const int TorturewebDryder = 5211;
+                const int GreaterDreamRider = 5212;
 			}
 
 			namespace UW {

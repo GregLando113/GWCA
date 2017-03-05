@@ -77,6 +77,15 @@ namespace GW {
 			const int Keg = 31146;
 			const int FlaskOfFirewater = 2513;
 			const int KrytanBrandy = 35124;
+
+            // DoA Gemstones
+            const int MargoniteGem = 21128;
+            const int StygianGem = 21129;
+            const int TitanGem = 21130;
+            const int TormentGem = 21131;
+
+            // Holiday Drops
+            const int LunarToken = 21833;
 		}
 	}
 }

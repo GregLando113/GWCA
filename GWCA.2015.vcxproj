@@ -60,6 +60,7 @@
     <ClInclude Include="GWCA\Managers\ItemMgr.h" />
     <ClInclude Include="GWCA\Managers\MapMgr.h" />
     <ClInclude Include="GWCA\Managers\MemoryMgr.h" />
+    <ClInclude Include="GWCA\Utilities\Maybe.h" />
     <ClInclude Include="GWCA\Utilities\MemoryPatcher.h" />
     <ClInclude Include="GWCA\Managers\MerchantMgr.h" />
     <ClInclude Include="GWCA\Managers\PartyMgr.h" />

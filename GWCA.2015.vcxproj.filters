@@ -209,6 +209,9 @@
     <ClInclude Include="GWCA\Constants\QuestIDs.h">
       <Filter>Constants</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Utilities\Maybe.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">

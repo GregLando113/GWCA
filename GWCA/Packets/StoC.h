@@ -634,9 +634,9 @@ namespace GW {
 			const DWORD Packet<P082>::STATIC_HEADER = 82;
 
 			struct P083 : Packet<P083> {
-				// DWORD agent_id;
-				// BYTE
-				// wchar_t array[8] // prefixType="int16"
+				DWORD agent_id;
+				DWORD unk1;
+				wchar_t unk2[8]; // prefixType="int16"
 			};
 			const DWORD Packet<P083>::STATIC_HEADER = 83;
 
@@ -650,7 +650,7 @@ namespace GW {
 
 			// Deliver chat message (player sender)
 			struct P085 : Packet<P085> {
-				DWORD id; // some kind of ID of the sender
+				DWORD id; // PlayerNumber of the sender
 				DWORD type; // enum ChatChannel above.
 			};
 			const DWORD Packet<P085>::STATIC_HEADER = 85;

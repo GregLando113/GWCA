@@ -640,7 +640,7 @@ namespace GW {
 			};
 			const DWORD Packet<P083>::STATIC_HEADER = 83;
 
-			// Chat, identifies sender
+			// Deliver chat message (player sender in guild or alliance chat)
 			struct P084 : Packet<P084> {
 				DWORD id; // some kind of ID
 				wchar_t sender_name[32]; // full in-game name
@@ -648,7 +648,7 @@ namespace GW {
 			};
 			const DWORD Packet<P084>::STATIC_HEADER = 84;
 
-			// Deliver chat message (player sender)
+			// Deliver chat message (player sender in the instance)
 			struct P085 : Packet<P085> {
 				DWORD id; // PlayerNumber of the sender
 				DWORD type; // enum ChatChannel above.
@@ -656,14 +656,14 @@ namespace GW {
 			const DWORD Packet<P085>::STATIC_HEADER = 85;
 
 			struct P086 : Packet<P086> {
-				// DWORD agent_id;
-				// DWORD
+				DWORD agent_id;
+				DWORD unk;
 			};
 			const DWORD Packet<P086>::STATIC_HEADER = 86;
 
 			struct P087 : Packet<P087> {
-				// DWORD agent_id1;
-				// DWORD agent_id2;
+				DWORD agent_id1;
+				DWORD agent_id2;
 			};
 			const DWORD Packet<P087>::STATIC_HEADER = 87;
 

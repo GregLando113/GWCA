@@ -18,9 +18,8 @@ namespace GW {
         void SendPacket(DWORD size, void* buffer);
 
         template <class T>
-        void SendPacket(T* packet) { SendPacket(sizeof(t),packet); }
-        
-        static SendCtoGSPacket_t gs_send_function_;
+        void SendPacket(T* packet) { SendPacket(sizeof(T),packet); }
+
         private:
         
         CtoSMgr();

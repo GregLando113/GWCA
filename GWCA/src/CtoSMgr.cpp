@@ -1,27 +1,23 @@
 #include <GWCA\Managers\CtoSMgr.h>
 
 #include <GWCA\Managers\MemoryMgr.h>
-#include <GWCA\Managers\GameThreadMgr.h>
 
-GW::CtoSMgr::SendCtoGSPacket_t GW::CtoSMgr::gs_send_function_ = NULL;
+typedef void __fastcall SendCtoGSPacket_t(DWORD ctogsobj, DWORD size, void* packet);
+static SendCtoGSPacket_t* gs_send_function_ = NULL;
 
 GW::CtoSMgr::CtoSMgr() {
-	gs_send_function_ = (SendCtoGSPacket_t)MemoryMgr::CtoGSSendFunction;
+	gs_send_function_ = (SendCtoGSPacket_t*)MemoryMgr::CtoGSSendFunction;
 }
 
 void GW::CtoSMgr::SendPacket(DWORD size, ...) {
-	DWORD* pak = new DWORD[size / 4];;
+	DWORD* pak = &size + 1;
+	DWORD gs = MemoryMgr::GetGSObject();
+	if(gs)
+		gs_send_function_(gs, size, pak);
+}
 
-	va_list vl;
-
-	va_start(vl, size);
-	for (DWORD i = 0; i < size / 4; i++) {
-		pak[i] = va_arg(vl, DWORD);
-	}
-	va_end(vl);
-
-	GameThreadMgr::Instance().Enqueue([this, size, pak]() {
-		gs_send_function_(MemoryMgr::GetGSObject(), size, pak);
-		delete[] pak;
-	});
+void GW::CtoSMgr::SendPacket(DWORD size, void* buffer) {
+	DWORD gs = MemoryMgr::GetGSObject();
+	if(gs)
+		gs_send_function_(gs, size, buffer);
 }

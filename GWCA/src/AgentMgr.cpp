@@ -35,23 +35,19 @@ float GW::AgentMgr::GetSqrDistance(Vector2f a, Vector2f b) {
 }
 
 void GW::AgentMgr::ChangeTarget(GW::Agent* Agent) {
-	GameThreadMgr::Instance().Enqueue([this, Agent]() { change_target_(Agent->Id, 0); });
+	change_target_(Agent->Id, 0);
 }
 
 void GW::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/) {
-	GameThreadMgr::Instance().Enqueue([this, X, Y, ZPlane]() {
-		GW::GamePos pos;
-		pos.x = X;
-		pos.y = Y;
-		pos.zplane = ZPlane;
-		move_(&pos);
-	});
+	GW::GamePos pos;
+	pos.x = X;
+	pos.y = Y;
+	pos.zplane = ZPlane;
+	move_(&pos);
 }
 
 void GW::AgentMgr::Move(const GW::GamePos& pos) {
-	GameThreadMgr::Instance().Enqueue([this, pos]() {
-		move_(&pos);
-	});
+	move_(&pos);
 }
 
 void GW::AgentMgr::Dialog(DWORD id) {

@@ -115,8 +115,11 @@ DWORD GW::AgentMgr::GetAgentIdByLoginNumber(DWORD loginnumber) {
 GW::AgentID GW::AgentMgr::GetHeroAgentID(DWORD heroindex) {
 	if (heroindex == 0) return GetPlayerId();
 
-	auto ctx = GameContext::instance();
-	auto heroarray = ctx->party->partyinfo->heroes;
+	GW::GameContext* ctx = GameContext::instance();
+	if (ctx == nullptr) return 0;
+	if (ctx->party == nullptr) return 0;
+	if (ctx->party->partyinfo == nullptr) return 0;
+	HeroPartyMemberArray heroarray = ctx->party->partyinfo->heroes;
 
 	if (!heroarray.valid() || (DWORD)heroindex > heroarray.size()) return 0;
 

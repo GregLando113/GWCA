@@ -294,6 +294,8 @@ namespace GW {
 
 		GamePos() : GamePos(0, 0, 0) {}
 
+		GamePos(const Vector2f v) : GamePos(v.x, v.y, 0) {}
+
 		GamePos(const float _x, const float _y) : GamePos(_x, _y, 0) {}
 
 		GamePos(const float _x, const float _y, const unsigned int _zplane)

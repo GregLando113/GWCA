@@ -72,6 +72,15 @@ namespace GW {
 
         void RespondToPartyRequest(bool accept);
 
+		// hero flagging
+		void FlagHero(DWORD hero_index, GW::GamePos pos);
+		void UnflagHero(DWORD hero_index) {
+			FlagHero(hero_index, GW::GamePos(HUGE_VALF, HUGE_VALF, 0));
+		}
+
+		void FlagAll(GW::GamePos pos);
+		void UnflagAll() { FlagAll(GW::GamePos(HUGE_VALF, HUGE_VALF, 0)); }
+
 	private:
 		PartyMgr();
 

@@ -2,6 +2,7 @@
 
 #include <GWCA\Managers\AgentMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
+#include <GWCA\Packets\CtoS.h>
 
 GW::PartyMgr::PartyMgr() {
 	BYTE* addr_tick = (BYTE*)0x0054E6B0;
@@ -75,4 +76,20 @@ DWORD __stdcall GW::PartyMgr::DetourTick(DWORD unk1) {
 
 	PartyMgr::Instance().Tick(!PartyMgr::Instance().GetIsPlayerTicked());
 	return 4;
+}
+
+void GW::PartyMgr::FlagHero(DWORD hero_index, GW::GamePos pos) {
+	DWORD heroid = AgentMgr::Instance().GetHeroAgentID(hero_index);
+	if (heroid == 0) return;
+	if (heroid == AgentMgr::Instance().GetPlayerId()) return;
+	static GW::Packet::CtoS::P019 pak;
+	pak.id = heroid;
+	pak.pos = pos;
+	CtoSMgr::Instance().SendPacket(&pak);
+}
+
+void GW::PartyMgr::FlagAll(GW::GamePos pos) {
+	static GW::Packet::CtoS::P020 pak;
+	pak.pos = pos;
+	CtoSMgr::Instance().SendPacket(&pak);
 }

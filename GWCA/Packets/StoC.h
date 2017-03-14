@@ -713,10 +713,10 @@ namespace GW {
 			};
 			const DWORD Packet<P094>::STATIC_HEADER = 94;
 
-			// Post Process Effect (?)
+			// Alcohol Post Process Effect
 			struct P095 : Packet<P095> {
-				// BYTE
-				// DWORD
+				DWORD level;
+				DWORD tint;
 			};
 			const DWORD Packet<P095>::STATIC_HEADER = 95;
 
@@ -1098,10 +1098,11 @@ namespace GW {
 			};
 			const DWORD Packet<P146>::STATIC_HEADER = 146;
 
+			// agent animation lock (and probably something else)
 			struct P147 : Packet<P147> {
-				// DWORD
-				// DWORD agent_id;
-				// DWORD
+				DWORD unk1;
+				DWORD agent_id;
+				DWORD unk2;
 			};
 			const DWORD Packet<P147>::STATIC_HEADER = 147;
 
@@ -1165,9 +1166,10 @@ namespace GW {
 			};
 			const DWORD Packet<P152>::STATIC_HEADER = 152;
 
+			// agent text above head
 			struct P153 : Packet<P153> {
-				// DWORD agent_id;
-				// wchar_t array[122] // prefixType="int16"
+				DWORD agent_id;
+				wchar_t message[122];
 			};
 			const DWORD Packet<P153>::STATIC_HEADER = 153;
 
@@ -1640,9 +1642,10 @@ namespace GW {
 			};
 			const DWORD Packet<P228>::STATIC_HEADER = 228;
 
+			// update agent state
 			struct P229 : Packet<P229> {
-				// DWORD agent_id;
-				// DWORD
+				DWORD agent_id;
+				DWORD state; // bitmap of agent states (0 neutral, 2 condition, 128 enchanted, 1024 degen?, 2048 hexed, 8192 sitting, etc)
 			};
 			const DWORD Packet<P229>::STATIC_HEADER = 229;
 
@@ -1665,6 +1668,7 @@ namespace GW {
 			};
 			const DWORD Packet<P232>::STATIC_HEADER = 232;
 
+			// received after using an item
 			struct P233 : Packet<P233> {
 				// DWORD
 				// DWORD
@@ -2030,13 +2034,15 @@ namespace GW {
 			};
 			const DWORD Packet<P286>::STATIC_HEADER = 286;
 
+			// received before P280, P288 and P297 when a guildy changes status, contains the actual name
 			struct P287 : Packet<P287> {
-				// wchar_t array[20] // prefixType="int16"
+				wchar_t name[20];
 			};
 			const DWORD Packet<P287>::STATIC_HEADER = 287;
 
+			// received after P290 when a guildy changes status. Always followed by P297. Contains the name known by the guild (invited under).
 			struct P288 : Packet<P288> {
-				// wchar_t array[20] // prefixType="int16"
+				wchar_t name[20];
 			};
 			const DWORD Packet<P288>::STATIC_HEADER = 288;
 
@@ -2046,9 +2052,10 @@ namespace GW {
 			};
 			const DWORD Packet<P289>::STATIC_HEADER = 289;
 
+			// received when a guildy changes status. Always followed by P288.
 			struct P290 : Packet<P290> {
-				// DWORD
-				// DWORD
+				DWORD unk1;
+				DWORD state; // 0 = offline, 1 = online, 2 = dnd, 3 = away
 			};
 			const DWORD Packet<P290>::STATIC_HEADER = 290;
 
@@ -2083,8 +2090,9 @@ namespace GW {
 			};
 			const DWORD Packet<P296>::STATIC_HEADER = 296;
 
+			// follows P288
 			struct P297 : Packet<P297> {
-				// DWORD
+				DWORD unk; // some kind of hex ID or bitmap, increases by 0x100 every time
 			};
 			const DWORD Packet<P297>::STATIC_HEADER = 297;
 

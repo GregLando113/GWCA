@@ -115,9 +115,6 @@
     <ClInclude Include="GWCA\Utilities\PatternScanner.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\Structures\Packets\StoC.h">
-      <Filter>Packets</Filter>
-    </ClInclude>
     <ClInclude Include="GWCA\Structures\GWStructures.h" />
     <ClInclude Include="GWCA\Packets\CtoS.h">
       <Filter>Packets</Filter>
@@ -214,6 +211,9 @@
     </ClInclude>
     <ClInclude Include="GWCA\Managers\TradeMgr.h">
       <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Packets\StoC.h">
+      <Filter>Packets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

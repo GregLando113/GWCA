@@ -55,8 +55,8 @@
     <ClInclude Include="GWCA\Managers\GWCAManager.h" />
     <ClInclude Include="GWCA\Managers\TradeMgr.h" />
     <ClInclude Include="GWCA\Packets\CtoS.h" />
+    <ClInclude Include="GWCA\Packets\StoC.h" />
     <ClInclude Include="GWCA\Structures\GWStructures.h" />
-    <ClInclude Include="GWCA\Structures\Packets\StoC.h" />
     <ClInclude Include="GWCA\Utilities\Hooker.h" />
     <ClInclude Include="GWCA\Managers\ItemMgr.h" />
     <ClInclude Include="GWCA\Managers\MapMgr.h" />
@@ -169,7 +169,7 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

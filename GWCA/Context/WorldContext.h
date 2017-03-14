@@ -25,8 +25,8 @@ namespace GW {
 			wchar_t* name;
 			//...
 		} *sub1; // 0x0
-		wchar_t *message_buff; // (size == 0xA0?) 0x4 Last chat message recieved via gameserver
-		BYTE pad1[0x1C]; // 0x8
+		gw_array<wchar_t> message_buff; // 0x4 Last chat message recieved via gameserver
+		BYTE pad1[0x10]; // 0x14
 		MerchItemArray merchitems; // 0x24
 		BYTE pad1_1[0x48]; // 0x34
 		MapAgentArray mapagents; // 0x7C

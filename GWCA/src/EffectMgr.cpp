@@ -6,6 +6,7 @@
 #include <GWCA\Managers\GameThreadMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 
+#if USE_ALCOHOL_LEVEL_HOOK
 DWORD GW::EffectMgr::alcohol_level_ = NULL;
 GW::EffectMgr::PPEFunc_t GW::EffectMgr::ppe_retour_func_ = NULL;
 
@@ -17,6 +18,19 @@ GW::EffectMgr::EffectMgr() {
 void GW::EffectMgr::RestoreHooks() {
 	hk_post_process_effect_.Retour();
 }
+
+void __fastcall GW::EffectMgr::AlcoholHandler(DWORD Intensity, DWORD Tint) {
+	alcohol_level_ = Intensity;
+	return ppe_retour_func_(Intensity, Tint);
+}
+
+void GW::EffectMgr::GetDrunkAf(DWORD Intensity, DWORD Tint) {
+	ppe_retour_func_(Intensity, Tint);
+}
+#else
+GW::EffectMgr::EffectMgr() {}
+void GW::EffectMgr::RestoreHooks() {}
+#endif
 
 GW::Effect GW::EffectMgr::GetPlayerEffectById(GW::Constants::SkillID SkillID) {
 	DWORD id = static_cast<DWORD>(SkillID);
@@ -57,15 +71,6 @@ GW::EffectArray GW::EffectMgr::GetPlayerEffectArray() {
 	} else {
 		return GW::EffectArray();
 	}
-}
-
-void __fastcall GW::EffectMgr::AlcoholHandler(DWORD Intensity, DWORD Tint) {
-	alcohol_level_ = Intensity;
-	return ppe_retour_func_(Intensity, Tint);
-}
-
-void GW::EffectMgr::GetDrunkAf(DWORD Intensity, DWORD Tint) {
-	ppe_retour_func_(Intensity, Tint);
 }
 
 GW::AgentEffectsArray GW::EffectMgr::GetPartyEffectArray() {

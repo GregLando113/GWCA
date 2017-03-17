@@ -16,13 +16,13 @@ struct RawMessage {
 };
 
 struct ChatMessage {
-    u32   channel;
-    wchar string;
+	uint32_t channel;
+    wchar_t string;
 };
 
 struct ChatBuffer {
-    u32 next;
-    u32 unk;
+    uint32_t next;
+	uint32_t unk;
     ChatMessage messages[256];
 };
 static SYSTEMTIME Timestamps[256];

@@ -25,7 +25,7 @@ namespace GW {
 
 	struct HenchmanPartyMember {
 		DWORD agentid;
-		DWORD unk[11];
+		DWORD unk[10];
 		DWORD profession;
 		DWORD level;
 	};

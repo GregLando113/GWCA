@@ -37,9 +37,9 @@ namespace GW {
 	struct PartyInfo {
 		char pad_0x0000[0x4]; //0x0000
 		gw_array<PlayerPartyMember> players; //0x0004
-		gw_array<HenchmanPartyMember> henchmen; //0x0014
+		gw_array<HenchmanPartyMember> henchmens; //0x0014
 		gw_array<HeroPartyMember> heroes; //0x0024
-		gw_array<void*> unk1_arr; //0x0034
+		gw_array<DWORD> others; //0x0034, agent id of allies, minions, pets.
 	};
 
 }

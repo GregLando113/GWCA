@@ -67,6 +67,9 @@ void (__fastcall *GwSendChat)(const wchar_t *message);
 void (__fastcall *GwWriteChat)(int, const wchar_t*, const wchar_t*);
 void (__fastcall *GwSendMessage)(int id, const RawMessage* msg, void *extended);
 
+void (__fastcall *GwWriteBuffer)(WCHAR *message, DWORD channel);
+void (__fastcall *DetWriteBuffer)(WCHAR *message, DWORD channel);
+
 GW::ChatMgr::ChatMgr() {
     PatternScanner scanner(0x401000, 0x49A000);
     
@@ -237,5 +240,5 @@ static void __fastcall det_write_buffer(WCHAR *message, DWORD channel)
     // @Robustness, Change to non static address.
     static ChatBuffer **buffer = (ChatBuffer**)0x00D560F0;
     GetLocalTime(&Timestamps[(*buffer)->next]);
-    return ori_write_buffer(message, channel);
+    return DetWriteBuffer(message, channel);
 }

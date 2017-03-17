@@ -15,7 +15,9 @@ namespace GW {
 		// Get full array of items sorted by ItemID.
 		GW::ItemArray GetItemArray();
 
-		// Get bag array [1-4] = inventory bags, [8-16] = storage, more in gr wiki.
+		// Get bag array [1-4] = inventory bags, [5]=Equip pack, [6]=Materials storage,
+		// [7] = Unclaimed items, [8-16] = storage, [17] = Equipped
+		// Note: bag->index of each bag is one less than its index in the array
 		GW::Bag** GetBagArray();
 
 		// Use given item if usable.

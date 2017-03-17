@@ -2177,9 +2177,10 @@ namespace GW {
 			};
 			const DWORD Packet<P309>::STATIC_HEADER = 309;
 
+			// Gold added to inventory
 			struct P310 : Packet<P310> {
-				// WORD
-				// DWORD
+				DWORD unk;
+				DWORD gold;
 			};
 			const DWORD Packet<P310>::STATIC_HEADER = 310;
 

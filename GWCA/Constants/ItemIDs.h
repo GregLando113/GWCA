@@ -10,17 +10,43 @@ namespace GW {
 			const int LegionnaireStone = 37810;
 
 			// materials
-			const int Bones = 921;
-			const int BoltsOfCloth = 925;
-			const int Dust = 929;
-			const int Feathers = 933;
-			const int Fibers = 934;
-			const int TannedHideSquares = 940;
-			const int WoodPlanks = 946;
-			const int Iron = 948;
-			const int Scales = 953;
-			const int ChitinFragments = 954;
-			const int Granite = 955;
+			const int Bone = 921;
+			const int BoltofCloth = 925;
+			const int PileofGlitteringDust = 929;
+			const int Feather = 933;
+			const int PlantFiber = 934;
+			const int TannedHideSquare = 940;
+			const int WoodPlank = 946;
+			const int IronIngot = 948;
+			const int Scale = 953;
+			const int ChitinFragment = 954;
+			const int GraniteSlab = 955;
+
+			const int AmberChunk = 6532;
+			const int BoltofDamask = 927;
+			const int BoltofLinen = 926;
+			const int BoltofSilk = 928;
+			const int DeldrimorSteelIngot = 950;
+			const int Diamond = 935;
+			const int ElonianLeatherSquare = 943;
+			const int FurSquare = 941;
+			const int GlobofEctoplasm = 930;
+			const int JadeiteShard = 6533;
+			const int LeatherSquare = 942;
+			const int LumpofCharcoal = 922;
+			const int MonstrousClaw = 923;
+			const int MonstrousEye = 931;
+			const int MonstrousFang = 932;
+			const int ObsidianShard = 945;
+			const int OnyxGemstone = 936;
+			const int RollofParchment = 951;
+			const int RollofVellum = 952;
+			const int Ruby = 937;
+			const int Sapphire = 938;
+			const int SpiritwoodPlank = 956;
+			const int SteelIngot = 949;
+			const int TemperedGlassVial = 939;
+			const int VialofInk = 944;
 
 			// pcons
 			const int BRC = 31151;

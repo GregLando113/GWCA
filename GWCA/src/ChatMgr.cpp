@@ -15,6 +15,18 @@ struct RawMessage {
     int player_id;
 };
 
+struct ChatMessage {
+    u32   channel;
+    wchar string;
+};
+
+struct ChatBuffer {
+    u32 next;
+    u32 unk;
+    ChatMessage messages[256];
+};
+static SYSTEMTIME Timestamps[256];
+
 static GW::Color SenderColor[] = {
     COLOR_RGB(0xff, 0xc0, 0x60),
     COLOR_RGB(0x60, 0xa0, 0xff),
@@ -93,13 +105,13 @@ void GW::ChatMgr::SendChat(const wchar_t* msg, wchar_t channel) {
 }
 
 void GW::ChatMgr::SendChat(const char* msg, char channel) {
-	wchar_t buffer[140];
-	wchar_t* buf = buffer;
-	*buf++ = static_cast<wchar_t>(channel);
-	for (int i = 1; i < 139 && *msg; ++i) {
-		*buf++ = static_cast<wchar_t>(*msg++);
-	}
-	*buf = L'\0';
+    wchar_t buffer[140];
+    wchar_t* buf = buffer;
+    *buf++ = static_cast<wchar_t>(channel);
+    for (int i = 1; i < 139 && *msg; ++i) {
+        *buf++ = static_cast<wchar_t>(*msg++);
+    }
+    *buf = L'\0';
     GwSendChat(buffer);
 }
 
@@ -112,7 +124,6 @@ void GW::ChatMgr::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
     va_end(vl);
     
     WriteChat(from, chat);
-    
     delete[] chat;
 }
 
@@ -121,39 +132,39 @@ void GW::ChatMgr::WriteChat(const wchar_t* from, const wchar_t* msg) {
 }
 
 void GW::ChatMgr::WriteChat(Channel channel, const wchar_t *message) {
-	wchar_t *buffer = new wchar_t[wcslen(message) + 4];
-
-	RawMessage msg;
-	msg.channel = channel;
-	msg.message = buffer;
-	msg.player_id = 0;
-
-	*buffer++ = 0x0108;
-	*buffer++ = 0x0107;
-	while (*message != L'\0') *buffer++ = *message++;
-	*buffer++ = 0x0001;
-	*buffer++ = 0;
-
-	GwSendMessage(0x1000007E, &msg, NULL);
-	delete[] msg.message;
+    wchar_t *buffer = new wchar_t[wcslen(message) + 4];
+    
+    RawMessage msg;
+    msg.channel = channel;
+    msg.message = buffer;
+    msg.player_id = 0;
+    
+    *buffer++ = 0x0108;
+    *buffer++ = 0x0107;
+    while (*message != L'\0') *buffer++ = *message++;
+    *buffer++ = 0x0001;
+    *buffer++ = 0;
+    
+    GwSendMessage(0x1000007E, &msg, NULL);
+    delete[] msg.message;
 }
 
 void GW::ChatMgr::WriteChat(Channel channel, const char* message) {
-	wchar_t* buffer = new wchar_t[strlen(message) + 4];
-
-	RawMessage msg;
-	msg.channel = channel;
-	msg.message = buffer;
-	msg.player_id = 0;
-
-	*buffer++ = 0x0108;
-	*buffer++ = 0x0107;
-	while (*message != L'\0') *buffer++ = static_cast<wchar_t>(*message++);
-	*buffer++ = 0x0001;
-	*buffer++ = 0;
-
-	GwSendMessage(0x1000007E, &msg, NULL);
-	delete[] msg.message;
+    wchar_t* buffer = new wchar_t[strlen(message) + 4];
+    
+    RawMessage msg;
+    msg.channel = channel;
+    msg.message = buffer;
+    msg.player_id = 0;
+    
+    *buffer++ = 0x0108;
+    *buffer++ = 0x0107;
+    while (*message != L'\0') *buffer++ = static_cast<wchar_t>(*message++);
+    *buffer++ = 0x0001;
+    *buffer++ = 0;
+    
+    GwSendMessage(0x1000007E, &msg, NULL);
+    delete[] msg.message;
 }
 
 GW::Color GW::ChatMgr::SetSenderColor(Channel chan, Color col) {
@@ -220,3 +231,11 @@ GW::Color* __fastcall GW::ChatMgr::det_messagecolor(Color *color, Channel chan) 
     *color = MessageColor[chan];
     return color;
 };
+
+static void __fastcall det_write_buffer(WCHAR *message, DWORD channel)
+{
+    // @Robustness, Change to non static address.
+    static ChatBuffer **buffer = (ChatBuffer**)0x00D560F0;
+    GetLocalTime(&Timestamps[(*buffer)->next]);
+    return ori_write_buffer(message, channel);
+}

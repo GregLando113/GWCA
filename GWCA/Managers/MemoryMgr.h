@@ -61,6 +61,8 @@ namespace GW {
 
 		static BYTE* GStoCBase;
 
+        static BYTE* DecodeStringFunc;
+
 		// Basics
 		static bool Scan();
 		template <typename T> static T ReadPtrChain(DWORD _base, DWORD _amount_of_offsets, ...) {

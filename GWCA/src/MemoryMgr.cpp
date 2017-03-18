@@ -48,6 +48,8 @@ BYTE* GW::MemoryMgr::MapInfoPtr = NULL;
 
 BYTE* GW::MemoryMgr::DialogFunc = NULL;
 
+BYTE* GW::MemoryMgr::DecodeStringFunc = NULL;
+
 bool GW::MemoryMgr::Scan() {
 	PatternScanner scan("Gw.exe");
 	printf("[------------------ API SCAN START ------------------]\n");
@@ -202,6 +204,15 @@ bool GW::MemoryMgr::Scan() {
 		printf("DialogFunc = ERR\n");
 		return false;
 	}
+
+    DecodeStringFunc = (BYTE*)scan.FindPattern("\x8D\x7C\x46\x02\x8B\xCE\x6A\x01", "xxxxxxxx", -136);
+    if (DecodeStringFunc) {
+        printf("DecodeStringFunc = %X\n", (DWORD)DecodeStringFunc);
+    }
+    else {
+        printf("DecodeStringFunc = ERR\n");
+        return false;
+    }
 
 	printf("[--------- API SCAN COMPLETED SUCESSFULLY ---------]\n");
 	return true;

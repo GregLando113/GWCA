@@ -70,14 +70,12 @@ void (__fastcall *GwSendMessage)(int id, const RawMessage* msg, void *extended);
 void (__fastcall *GwWriteBuffer)(WCHAR *message, DWORD channel);
 void (__fastcall *DetWriteBuffer)(WCHAR *message, DWORD channel);
 
-GW::ChatMgr::ChatMgr() {
-    PatternScanner scanner(0x401000, 0x49A000);
-    
-    BYTE* addr = (BYTE*)scanner.FindPattern("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
+GW::ChatMgr::ChatMgr() {    
+    BYTE* addr = (BYTE*)Scanner::Find("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
     ori_sendchat = (SendChat_t)hk_sendchat_.Detour(addr, (BYTE*)det_sendchat);
     GwSendChat = (decltype(GwSendChat))addr;
     
-    addr = (BYTE*)scanner.FindPattern("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
+    addr = (BYTE*)Scanner::Find("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
     ori_opentemplate = (OpenTemplate_t)hk_opentemplate_.Detour(addr, (BYTE*)det_opentemplate);
     
     addr = (BYTE*)0x00481650;
@@ -251,10 +249,12 @@ namespace {
 }
 void GW::ChatNmsp::SetChatEventCallback(std::function<void(DWORD, DWORD, wchar_t*, void*)> callback) {
 	if (chatevent_hook.Empty()) {
-		PatternScanner scanner(0x401000, 0x49A000);
-		ChatEvent_t addr = (ChatEvent_t)scanner.FindPattern("\x83\xFB\x06\x1B", "xxxx", -0x28);
+		ChatEvent_t addr = (ChatEvent_t)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x28);
 		printf("chat event address %d\n", (DWORD)addr);
 		chatevent_hook.Detour((ChatEvent_t)addr, chatevent_detour);
 	}
 	chatevent_callback = callback;
+}
+void GW::ChatNmsp::RestoreChatEvent() {
+	chatevent_hook.Retour();
 }

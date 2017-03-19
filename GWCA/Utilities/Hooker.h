@@ -30,7 +30,7 @@ namespace GW {
 		void Retour() {
 			if (Empty()) return;
 			HookInternal::Retour((BYTE*)source_, (BYTE*)retour_func_, length_);
-			delete[] retour_func_;
+			delete[] (BYTE*)retour_func_;
 			retour_func_ = source_ = nullptr;
 		}
 	};

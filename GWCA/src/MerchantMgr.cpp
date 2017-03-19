@@ -29,17 +29,15 @@ RequestQuote_t* g_requestquotefn;
 //DWORD           g_lastitemid;
 //DWORD           g_lastitemprice;
 
-GW::MerchantMgr::MerchantMgr() : GWCAManager() {
-    PatternScanner scan(0x401000, 0x4FF000);
-    
-    g_transactitemfn = reinterpret_cast<TransactItem_t*>(scan.FindPattern("\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C));
+GW::MerchantMgr::MerchantMgr() : GWCAManager() {    
+    g_transactitemfn = reinterpret_cast<TransactItem_t*>(Scanner::Find("\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C));
     if (g_transactitemfn) {
         printf("transaction_function_ = %X\n", (DWORD)(g_transactitemfn));
     } else {
         printf("transaction_function_ = ERR\n");
     }
     
-    g_requestquotefn = reinterpret_cast<RequestQuote_t*>(scan.FindPattern("\x53\x56\x8B\x75\x0C\x57\x83\xFE\x10", "xxxxxxxxx", -0x9));
+    g_requestquotefn = reinterpret_cast<RequestQuote_t*>(Scanner::Find("\x53\x56\x8B\x75\x0C\x57\x83\xFE\x10", "xxxxxxxxx", -0x9));
     if (g_requestquotefn) {
         printf("quote_function_ = %X\n", (DWORD)(g_requestquotefn));
     } else {

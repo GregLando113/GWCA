@@ -2,13 +2,14 @@
 
 #include <Windows.h>
 #include <Psapi.h>
+#include <cstring>
 
 namespace {
 	uintptr_t g_base = 0;
 	size_t g_size    = 0;
 }
 
-uintptr_t GW::PatternScanner::FindPattern(char* pattern, char* mask, int offset) {
+uintptr_t GW::Scanner::Find(char* pattern, char* mask, int offset) {
 	BYTE first = pattern[0];
 	int patternLength = strlen(mask);
 	bool found = false;
@@ -34,7 +35,7 @@ uintptr_t GW::PatternScanner::FindPattern(char* pattern, char* mask, int offset)
 	return NULL;
 }
 
-GW::PatternScanner::Init(void* module) {
+void GW::Scanner::Initialize(void* module) {
 	MODULEINFO info;
 	if (!GetModuleInformation(GetCurrentProcess(), (HMODULE)module, &info, sizeof(MODULEINFO)))
 		throw 1;
@@ -43,7 +44,7 @@ GW::PatternScanner::Init(void* module) {
 	g_size = (DWORD)info.SizeOfImage;
 }
 
-GW::PatternScanner::Init(char* moduleName) {
+void GW::Scanner::Initialize(char* moduleName) {
 	HMODULE mod = GetModuleHandleA(moduleName);
 	LPVOID textSection = (LPVOID)((DWORD)mod + 0x1000);
 
@@ -57,8 +58,7 @@ GW::PatternScanner::Init(char* moduleName) {
 	}
 }
 
-void 
-GW::PatternScanner::Init(uintptr_t start, size_t size) {
+void GW::Scanner::Initialize(uintptr_t start, size_t size) {
 	g_base = start;
 	g_size = size;
 }

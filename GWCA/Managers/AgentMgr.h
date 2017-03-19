@@ -3,7 +3,6 @@
 #include <Windows.h>
 #include <vector>
 
-#include "GWCAManager.h"
 #include "MemoryMgr.h"
 #include <GWCA\Utilities\Hooker.h>
 #include <GWCA\Constants\Constants.h>
@@ -12,7 +11,6 @@
 #include <GWCA\GameEntities\Player.h>
 #include <GWCA\GameEntities\Agent.h>
 
-
 namespace GW {
 	namespace Agents {
 
@@ -20,8 +18,8 @@ namespace GW {
 		// Same as pressing button (id) while talking to an NPC.
 		void Dialog(DWORD id);
 
-		void SetupDialogHook();
-		void RestoreDialogHook();
+		void SetupLastDialogHook();
+		void RestoreLastDialogHook();
 
 		// Returns last dialog id sent to the server. Requires the hook.
 		DWORD GetLastDialogId();
@@ -59,7 +57,8 @@ namespace GW {
 		float GetSqrDistance(Vector2f a, const Vector2f b);
 
 		// Change targeted agent to (Agent)
-		void ChangeTarget(GW::Agent* Agent);
+		void ChangeTarget(GW::AgentID agentid);
+		inline void ChangeTarget(GW::Agent* agent) { if (agent) ChangeTarget(agent->Id); }
 
 		// Move to specified coordinates.
 		// Note: will do nothing if coordinate is outside the map!

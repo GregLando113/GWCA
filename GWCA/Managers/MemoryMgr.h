@@ -41,17 +41,10 @@ namespace GW {
 		// To extract alcohol level.
 		static BYTE* PostProcessEffectFunction;
 
-		// To change target.
-
-		static BYTE* ChangeTargetFunction;
-
 		// Skill structure array.
 
 		static BYTE* SkillArray;
 		static BYTE* UseSkillFunction;
-
-		// For move calls that dont glitch your char around.
-		static BYTE* MoveFunction;
 
 		static BYTE* WinHandlePtr;
 

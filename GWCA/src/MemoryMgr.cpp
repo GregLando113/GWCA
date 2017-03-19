@@ -38,10 +38,6 @@ BYTE* GW::MemoryMgr::PostProcessEffectFunction = NULL;
 BYTE* GW::MemoryMgr::SkillArray = NULL;
 BYTE* GW::MemoryMgr::UseSkillFunction = NULL;
 
-BYTE* GW::MemoryMgr::ChangeTargetFunction = NULL;
-
-BYTE* GW::MemoryMgr::MoveFunction = NULL;
-
 BYTE* GW::MemoryMgr::WinHandlePtr = NULL;
 
 BYTE* GW::MemoryMgr::MapInfoPtr = NULL;
@@ -51,11 +47,11 @@ BYTE* GW::MemoryMgr::DialogFunc = NULL;
 BYTE* GW::MemoryMgr::DecodeStringFunc = NULL;
 
 bool GW::MemoryMgr::Scan() {
-	PatternScanner scan("Gw.exe");
+	Scanner::Initialize(0x401000, 0x49a000);
 	printf("[------------------ API SCAN START ------------------]\n");
 
 	// Agent Array
-	agArrayPtr = (BYTE*)scan.FindPattern("\x56\x8B\xF1\x3B\xF0\x72\x04", "xxxxxxx", 0xC);
+	agArrayPtr = (BYTE*)Scanner::Find("\x56\x8B\xF1\x3B\xF0\x72\x04", "xxxxxxx", 0xC);
 	if (agArrayPtr) {
 		printf("agArrayPtr = %X\n", (DWORD)agArrayPtr);
 		agArrayPtr = *(BYTE**)agArrayPtr;
@@ -68,14 +64,14 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 	// Packet Sender Stuff
-	GSObjectPtr = (BYTE*)scan.FindPattern("\x56\x33\xF6\x3B\xCE\x74\x0E\x56\x33\xD2", "xxxxxxxxxx", -4);
+	GSObjectPtr = (BYTE*)Scanner::Find("\x56\x33\xF6\x3B\xCE\x74\x0E\x56\x33\xD2", "xxxxxxxxxx", -4);
 	if (GSObjectPtr) {
 		printf("CtoGSObjectPtr = %X\n", (DWORD)GSObjectPtr);
 	} else {
 		printf("CtoGSObjectPtr = ERR\n");
 		return false;
 	}
-	CtoGSSendFunction = (BYTE*)scan.FindPattern("\x55\x8B\xEC\x83\xEC\x2C\x53\x56\x57\x8B\xF9\x85", "xxxxxxxxxxxx", 0);
+	CtoGSSendFunction = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x2C\x53\x56\x57\x8B\xF9\x85", "xxxxxxxxxxxx", 0);
 	if (CtoGSSendFunction) {
 		printf("CtoGSSendFunction = %X\n", (DWORD)CtoGSSendFunction);
 	} else {
@@ -84,7 +80,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 	// Base pointer, used to get context pointer for game world.
-	BasePointerLocation = (BYTE*)scan.FindPattern("\x8B\x42\x0C\x56\x8B\x35", "xxxxxx", 0);
+	BasePointerLocation = (BYTE*)Scanner::Find("\x8B\x42\x0C\x56\x8B\x35", "xxxxxx", 0);
 	if (BasePointerLocation) {
 		printf("BasePointerLocation = %X\n", (DWORD)BasePointerLocation);
 		BasePointerLocation = (BYTE*)(*(DWORD*)(BasePointerLocation + 6));
@@ -94,7 +90,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 	// Used for gamethread calls, as well as disable/enable rendering.
-	RenderLoopLocation = (BYTE*)scan.FindPattern("\x53\x56\xDF\xE0\xF6\xC4\x41", "xxxxxxx", 0);
+	RenderLoopLocation = (BYTE*)Scanner::Find("\x53\x56\xDF\xE0\xF6\xC4\x41", "xxxxxxx", 0);
 	if (RenderLoopLocation) {
 		printf("RenderLoopLocation = %X\n", (DWORD)RenderLoopLocation);
 		RenderLoopLocation = RenderLoopLocation + 0x65;
@@ -106,7 +102,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 	// For Map IDs
-	MapIDPtr = (BYTE*)scan.FindPattern("\xB0\x7F\x8D\x55", "xxxx", 0);
+	MapIDPtr = (BYTE*)Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0);
 	if (MapIDPtr) {
 		printf("MapIDPtr = %X\n", (DWORD)MapIDPtr);
 		MapIDPtr = *(BYTE**)(MapIDPtr + 0x46);
@@ -116,7 +112,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 	// To write info / Debug as a PM in chat
-	WriteChatFunction = (BYTE*)scan.FindPattern("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
+	WriteChatFunction = (BYTE*)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
 	if (WriteChatFunction) {
 		printf("WriteChatFunction = %X\n", (DWORD)WriteChatFunction);
 	} else {
@@ -125,7 +121,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 	// Skill timer to use for exact effect times.
-	SkillTimerPtr = (BYTE*)scan.FindPattern("\x85\xC0\x74\x11\x6A\x76\xBA", "xxxxxxx", -4);
+	SkillTimerPtr = (BYTE*)Scanner::Find("\x85\xC0\x74\x11\x6A\x76\xBA", "xxxxxxx", -4);
 	if (SkillTimerPtr) {
 		printf("SkillTimerPtr = %X\n", (DWORD)SkillTimerPtr);
 		SkillTimerPtr = *(BYTE**)SkillTimerPtr;
@@ -135,7 +131,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 	// Skill array.
-	SkillArray = (BYTE*)scan.FindPattern("\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 0);
+	SkillArray = (BYTE*)Scanner::Find("\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 0);
 	if (SkillArray) {
 		printf("SkillArray = %X\n", (DWORD)SkillArray);
 		SkillArray = *(BYTE**)(SkillArray + 8);
@@ -145,7 +141,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 	// Use Skill Function.
-	UseSkillFunction = (BYTE*)scan.FindPattern("\x55\x8B\xEC\x83\xEC\x10\x53\x56\x8B\xD9\x57\x8B\xF2\x89\x5D\xF0", "xxxxxxxxxxxxxxxx", 0);
+	UseSkillFunction = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x10\x53\x56\x8B\xD9\x57\x8B\xF2\x89\x5D\xF0", "xxxxxxxxxxxxxxxx", 0);
 	if (UseSkillFunction) {
 		printf("UseSkillFunction = %X\n", (DWORD)UseSkillFunction);
 	} else {
@@ -154,7 +150,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 
-	PostProcessEffectFunction = (BYTE*)scan.FindPattern("\x55\x8B\xEC\x83\xEC\x10\x89\x4D\xF8\xC7\x45\xFC", "xxxxxxxxxxxx", 0);
+	PostProcessEffectFunction = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x10\x89\x4D\xF8\xC7\x45\xFC", "xxxxxxxxxxxx", 0);
 	if (PostProcessEffectFunction) {
 		printf("PostProcessEffectFunction = %X\n", (DWORD)PostProcessEffectFunction);
 	} else {
@@ -162,23 +158,7 @@ bool GW::MemoryMgr::Scan() {
 		return false;
 	}
 
-	ChangeTargetFunction = (BYTE*)scan.FindPattern("\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
-	if (ChangeTargetFunction) {
-		printf("ChangeTargetFunction = %X\n", (DWORD)ChangeTargetFunction);
-	} else {
-		printf("ChangeTargetFunction = ERR\n");
-		return false;
-	}
-
-	MoveFunction = (BYTE*)scan.FindPattern("\xD9\x07\xD8\x5D\xF0\xDF\xE0\xF6\xC4\x01", "xxxxxxxxxx", -0x12);
-	if (MoveFunction) {
-		printf("MoveFunction = %X\n", (DWORD)MoveFunction);
-	} else {
-		printf("MoveFunction = ERR\n");
-		return false;
-	}
-
-	WinHandlePtr = (BYTE*)scan.FindPattern("\x56\x8B\xF1\x85\xC0\x89\x35", "xxxxxxx", 0);
+	WinHandlePtr = (BYTE*)Scanner::Find("\x56\x8B\xF1\x85\xC0\x89\x35", "xxxxxxx", 0);
 	if (WinHandlePtr) {
 		printf("WinHandlePtr = %X\n", (DWORD)WinHandlePtr);
 		WinHandlePtr = *(BYTE**)(WinHandlePtr + 7);
@@ -187,7 +167,7 @@ bool GW::MemoryMgr::Scan() {
 		return false;
 	}
 
-	MapInfoPtr = (BYTE*)scan.FindPattern("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
+	MapInfoPtr = (BYTE*)Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
 	if (MapInfoPtr) {
 		printf("MapInfoPtr = %X\n", (DWORD)MapInfoPtr);
 		MapInfoPtr = *(BYTE**)(MapInfoPtr + 7);
@@ -197,7 +177,7 @@ bool GW::MemoryMgr::Scan() {
 	}
 
 
-	DialogFunc = (BYTE*)scan.FindPattern("\x55\x8B\xEC\x83\xEC\x28\x53\x56\x57\x8B\xF2\x8B\xD9", "xxxxxxxxxxxxx", -0x28);
+	DialogFunc = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x28\x53\x56\x57\x8B\xF2\x8B\xD9", "xxxxxxxxxxxxx", -0x28);
 	if (DialogFunc) {
 		printf("DialogFunc = %X\n", (DWORD)DialogFunc);
 	} else {
@@ -205,7 +185,7 @@ bool GW::MemoryMgr::Scan() {
 		return false;
 	}
 
-    DecodeStringFunc = (BYTE*)scan.FindPattern("\x8D\x7C\x46\x02\x8B\xCE\x6A\x01", "xxxxxxxx", -136);
+    DecodeStringFunc = (BYTE*)Scanner::Find("\x8D\x7C\x46\x02\x8B\xCE\x6A\x01", "xxxxxxxx", -136);
     if (DecodeStringFunc) {
         printf("DecodeStringFunc = %X\n", (DWORD)DecodeStringFunc);
     }

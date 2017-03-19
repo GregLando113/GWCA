@@ -10,25 +10,26 @@
 #include <GWCA\Context\PartyContext.h>
 
 namespace {
-	GW::Hook dialoglog_hook;
-	BYTE* dialoglog_ret = nullptr;
-	DWORD last_dialog_id = 0;
+	GW::Hook lastdialoglog_hook;
+	BYTE* lastdialoglog_ret = nullptr;
+	DWORD lastdialog_id = 0;
 	void __declspec(naked) dialoglog_detour() {
-		_asm MOV last_dialog_id, ESI
-		_asm JMP dialoglog_ret
+		_asm MOV lastdialog_id, ESI
+		_asm JMP lastdialoglog_ret
 	}
 }
 
-void GW::Agents::SetupDialogHook() {
-	dialoglog_ret = (BYTE*)dialoglog_hook.Detour(MemoryMgr::DialogFunc, (BYTE*)dialoglog_detour, 9);
+void GW::Agents::SetupLastDialogHook() {
+	lastdialoglog_ret = (BYTE*)lastdialoglog_hook.Detour(MemoryMgr::DialogFunc, (BYTE*)dialoglog_detour, 9);
 }
-
+void GW::Agents::RestoreLastDialogHook() {
+	lastdialoglog_hook.Retour();
+}
 DWORD GW::Agents::GetLastDialogId() { 
-	return last_dialog_id; 
+	return lastdialog_id;
 }
-
-void GW::Agents::RestoreDialogHook() {
-	dialoglog_hook.Retour();
+void GW::Agents::Dialog(DWORD id) {
+	CtoSMgr::Instance().SendPacket(0x8, 0x35, id);
 }
 
 GW::AgentArray GW::Agents::GetAgentArray() {
@@ -43,14 +44,14 @@ float GW::Agents::GetSqrDistance(Vector2f a, Vector2f b) {
 	return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 }
 
-void GW::Agents::ChangeTarget(GW::Agent* Agent) {
+void GW::Agents::ChangeTarget(GW::AgentID agentid) {
 	typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID, DWORD smth);
 	static ChangeTarget_t changetarget_func = nullptr;
-	if (changetarget_func == nullptr) {
-		PatternScanner scan("Gw.exe");
-		changetarget_func = (ChangeTarget_t)scan.FindPattern("\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
+	if (!changetarget_func) {
+		changetarget_func = (ChangeTarget_t)Scanner::Find("\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
+		printf("ChangeTargetFunction = %X\n", (DWORD)changetarget_func);
 	}
-	changetarget_func(Agent->Id, 0);
+	if (changetarget_func) changetarget_func(agentid, 0);
 }
 
 void GW::Agents::Move(float X, float Y, DWORD ZPlane /*= 0*/) {
@@ -63,11 +64,12 @@ void GW::Agents::Move(float X, float Y, DWORD ZPlane /*= 0*/) {
 
 void GW::Agents::Move(const GW::GamePos& pos) {
 	typedef void(__fastcall *Move_t)(const GW::GamePos* Pos);
-	((Move_t)MemoryMgr::MoveFunction)(&pos);
-}
-
-void GW::Agents::Dialog(DWORD id) {
-	CtoSMgr::Instance().SendPacket(0x8, 0x35, id);
+	static Move_t move_func = nullptr;
+	if (!move_func) {
+		move_func = (Move_t)Scanner::Find("\xD9\x07\xD8\x5D\xF0\xDF\xE0\xF6\xC4\x01", "xxxxxxxxxx", -0x12);
+		printf("MoveFunction = %X\n", (DWORD)move_func);
+	}
+	if (move_func) move_func(&pos);
 }
 
 GW::MapAgentArray GW::Agents::GetMapAgentArray() {

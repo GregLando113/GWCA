@@ -34,6 +34,7 @@ namespace GW {
 	namespace ChatNmsp {
 		void SetChatEventCallback(std::function<
 			void(DWORD, DWORD, wchar_t*, void*)> callback);
+		void RestoreChatEvent();
 	}
 
 	class ChatMgr : public GWCAManager<ChatMgr> {

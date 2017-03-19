@@ -16,8 +16,6 @@ bool GW::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
 }
 
 GW::StoCMgr::StoCMgr() : GWCAManager() {
-	PatternScanner scan(0x401000, 0x49A000);
-
 	// inb4 has rages at this
 	struct LSObjPtrChain {
 		struct {
@@ -35,7 +33,7 @@ GW::StoCMgr::StoCMgr() : GWCAManager() {
 				} *sub2;
 			};
 		}*sub1;
-	} *lsobjbase = *(LSObjPtrChain**)scan.FindPattern("\x8B\x56\x04\x85\xC0\x89\x57\x18", "xxxxxxxx", -4);
+	} *lsobjbase = *(LSObjPtrChain**)Scanner::Find("\x8B\x56\x04\x85\xC0\x89\x57\x18", "xxxxxxxx", -4);
 
 	game_server_handler_ = lsobjbase->sub1->sub2->sub3->sub4->gshandlers;
 

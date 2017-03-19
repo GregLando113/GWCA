@@ -1,62 +1,30 @@
 #pragma once
 
-#include "GWCAManager.h"
-#include <GWCA\Utilities\Hooker.h>
-#include <GWCA\Context\GameContext.h>
-#include <GWCA\Context\PartyContext.h>
-
+#include <GWCA\GameEntities\Position.h>
+#include <GWCA\GameEntities\Party.h>
 
 namespace GW {
-	class PartyMgr : public GWCAManager<PartyMgr> {
-		friend class GWCAManager<PartyMgr>;
-
-	public:
-		GW::PartyInfo* GetPartyInfo() {
-			return GameContext::instance()->party->partyinfo;
-		}
-
-		DWORD GetPartySize() {
-			GW::PartyInfo* info = GetPartyInfo();
-			if (info == nullptr) return 0;
-			return info->players.size() + info->heroes.size() + info->henchmen.size();
-		}
-
-		DWORD GetPartyPlayerCount() {
-			if (GetPartyInfo()) {
-				return GetPartyInfo()->players.size();
-			} else {
-				return 0;
-			}
-		}
-		DWORD GetPartyHeroCount() {
-			if (GetPartyInfo()) {
-				return GetPartyInfo()->heroes.size();
-			} else {
-				return 0;
-			}
-		}
-		DWORD GetPartyHenchmanCount() {
-			if (GetPartyInfo()) {
-				return GetPartyInfo()->henchmen.size();
-			} else {
-				return 0;
-			}
-		}
-
-		bool GetIsPartyInHardMode() {
-			return GameContext::instance()->party->partystate.InHardMode();
-		}
-		bool GetIsPartyDefeated() {
-			return GameContext::instance()->party->partystate.IsDefeated();
-		}
+	namespace PartyMgr {
+		// set or unset the fact that ticking will work as a toggle instead
+		// of showing a drop-down menu
+		void SetTickToggle();
+		void RestoreTickToggle();
 
 		// Set party ready status.
-		void Tick(bool flag);
+		void Tick(bool flag = true);
 
-		// Ticks
-		inline void Tick() { Tick(true); }
+		GW::PartyInfo* GetPartyInfo();
 
-        void SetHardMode(bool flag);
+		DWORD GetPartySize();
+		DWORD GetPartyPlayerCount();
+		DWORD GetPartyHeroCount();
+		DWORD GetPartyHenchmanCount();
+
+
+		bool GetIsPartyDefeated();
+
+		void SetHardMode(bool flag);
+		bool GetIsPartyInHardMode();
 
 		// check if the whole party is ticked
 		bool GetIsPartyTicked();
@@ -74,25 +42,9 @@ namespace GW {
 
 		// hero flagging
 		void FlagHero(DWORD hero_index, GW::GamePos pos);
-		void UnflagHero(DWORD hero_index) {
-			FlagHero(hero_index, GW::GamePos(HUGE_VALF, HUGE_VALF, 0));
-		}
+		void UnflagHero(DWORD hero_index);
 
 		void FlagAll(GW::GamePos pos);
-		void UnflagAll() { FlagAll(GW::GamePos(HUGE_VALF, HUGE_VALF, 0)); }
-
-	private:
-		PartyMgr();
-
-		void RestoreHooks() override;
-
-		typedef DWORD(__stdcall *Tick_t)(DWORD unk1);
-
-		Tick_t ori_tick_;
-
-		Hook hk_tick_;
-
-		// Parameter is always 1 or 2 creating "Ready" or "Not ready"
-		static DWORD __stdcall DetourTick(DWORD unk1);
+		void UnflagAll();
 	};
 }

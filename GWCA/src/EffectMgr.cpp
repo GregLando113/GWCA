@@ -87,5 +87,5 @@ GW::BuffArray GW::EffectMgr::GetPlayerBuffArray() {
 }
 
 void GW::EffectMgr::DropBuff(DWORD buffId) {
-	CtoSMgr::Instance().SendPacket(0x8, 0x23, buffId);
+	CtoS::SendPacket(0x8, 0x23, buffId);
 }

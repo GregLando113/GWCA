@@ -1,16 +1,9 @@
 #pragma once
 
 #include <Windows.h>
-#include "GWCAManager.h"
-#include "GameThreadMgr.h"
 
 namespace GW {
-    
-    class CtoSMgr : public GWCAManager<CtoSMgr> {
-        friend class GWCAManager<CtoSMgr>;
-        
-        public:
-
+	namespace CtoS {
         // Send packet that uses only dword parameters, can copypaste most gwa2 sendpackets :D
         void SendPacket(DWORD size, ...);
         
@@ -18,11 +11,6 @@ namespace GW {
         void SendPacket(DWORD size, void* buffer);
 
         template <class T>
-        void SendPacket(T* packet) { SendPacket(sizeof(T),packet); }
-
-        private:
-        
-        CtoSMgr();
-        void RestoreHooks() override {}
+        void SendPacket(T* packet) { SendPacket(sizeof(T), packet); }
     };
 }

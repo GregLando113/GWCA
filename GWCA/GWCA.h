@@ -87,7 +87,6 @@ namespace GW {
 	class GameThreadMgr;
 	class CtoSMgr;
 	class StoCMgr;
-	class PartyMgr;
 	class ItemMgr;
 	class SkillbarMgr;
 	class EffectMgr;
@@ -98,14 +97,9 @@ namespace GW {
 	class FriendListMgr;
 	class CameraMgr;
 
-	class PlayerMgr;
-    class TradeMgr;
-
 	// GWCA Module Accessors.
 	GameThreadMgr& Gamethread();
-	CtoSMgr& CtoS();
 	StoCMgr& StoC();
-	PartyMgr& Partymgr();
 	ItemMgr& Items();
 	SkillbarMgr& Skillbarmgr();
 	EffectMgr& Effects();
@@ -115,8 +109,6 @@ namespace GW {
 	MapMgr& Map();
 	FriendListMgr& FriendListmgr();
 	CameraMgr& Cameramgr();
-	PlayerMgr& Playermgr();
-    TradeMgr& Trademgr();
 
 	class Api {
 		friend class GWCABaseManager;

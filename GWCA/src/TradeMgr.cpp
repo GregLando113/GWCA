@@ -1,26 +1,27 @@
 #include <GWCA\Managers\TradeMgr.h>
+
 #include <GWCA\Managers\CtoSMgr.h>
 
-void GW::TradeMgr::OpenTradeWindow(DWORD agentId) {
-    CtoSMgr::Instance().SendPacket(0x8, 0x43, agentId);
+void GW::Trade::OpenTradeWindow(DWORD agentId) {
+    CtoS::SendPacket(0x8, 0x43, agentId);
 }
 
-void GW::TradeMgr::AcceptTrade() {
-    CtoSMgr::Instance().SendPacket(0x4, 0xB4);
+void GW::Trade::AcceptTrade() {
+	CtoS::SendPacket(0x4, 0xB4);
 }
 
-void GW::TradeMgr::CancelTrade() {
-    CtoSMgr::Instance().SendPacket(0x4, 0xAE);
+void GW::Trade::CancelTrade() {
+	CtoS::SendPacket(0x4, 0xAE);
 }
 
-void GW::TradeMgr::ChangeOffer() {
-    CtoSMgr::Instance().SendPacket(0x4, 0xB3);
+void GW::Trade::ChangeOffer() {
+	CtoS::SendPacket(0x4, 0xB3);
 }
 
-void GW::TradeMgr::SubmitOffer(DWORD gold) {
-    CtoSMgr::Instance().SendPacket(0x8, 0xB0, gold);
+void GW::Trade::SubmitOffer(DWORD gold) {
+	CtoS::SendPacket(0x8, 0xB0, gold);
 }
 
-void GW::TradeMgr::OfferItem(DWORD itemId, DWORD quantity) {
-    CtoSMgr::Instance().SendPacket(0xC, 0xAF, itemId, quantity);
+void GW::Trade::OfferItem(DWORD itemId, DWORD quantity) {
+	CtoS::SendPacket(0xC, 0xAF, itemId, quantity);
 }

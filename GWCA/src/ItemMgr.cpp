@@ -16,19 +16,19 @@ void GW::ItemMgr::OpenXunlaiWindow() {
 }
 
 void GW::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
-	CtoSMgr::Instance().SendPacket(0xC, 0x39, item->AgentId, CallTarget);
+	CtoS::SendPacket(0xC, 0x39, item->AgentId, CallTarget);
 }
 
 void GW::ItemMgr::DropItem(GW::Item* item, DWORD quantity) {
-	CtoSMgr::Instance().SendPacket(0xC, 0x26, item->ItemId, quantity);
+	CtoS::SendPacket(0xC, 0x26, item->ItemId, quantity);
 }
 
 void GW::ItemMgr::EquipItem(GW::Item* item) {
-	CtoSMgr::Instance().SendPacket(0x8, 0x2A, item->ItemId);
+	CtoS::SendPacket(0x8, 0x2A, item->ItemId);
 }
 
 void GW::ItemMgr::UseItem(GW::Item* item) {
-	CtoSMgr::Instance().SendPacket(0x8, 0x78, item->ItemId);
+	CtoS::SendPacket(0x8, 0x78, item->ItemId);
 }
 
 GW::Bag** GW::ItemMgr::GetBagArray() {
@@ -72,7 +72,7 @@ bool GW::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const B
 }
 
 void GW::ItemMgr::DropGold(DWORD Amount /*= 1*/) {
-	CtoSMgr::Instance().SendPacket(0x8, 0x29, Amount);
+	CtoS::SendPacket(0x8, 0x29, Amount);
 }
 
 DWORD GW::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
@@ -127,5 +127,5 @@ DWORD GW::ItemMgr::GetGoldAmountInStorage() {
 }
 
 void GW::ItemMgr::OpenLockedChest() {
-	return CtoSMgr::Instance().SendPacket(0x8, 0x4D, 0x2);
+	CtoS::SendPacket(0x8, 0x4D, 0x2);
 }

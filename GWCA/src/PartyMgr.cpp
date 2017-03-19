@@ -1,16 +1,84 @@
 #include <GWCA\Managers\PartyMgr.h>
 
+#include <cmath>
+#include <GWCA\Context\GameContext.h>
+#include <GWCA\Context\PartyContext.h>
+
 #include <GWCA\Managers\AgentMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Packets\CtoS.h>
 
-GW::PartyMgr::PartyMgr() {
-	BYTE* addr_tick = (BYTE*)0x0054E6B0;
-	ori_tick_ = (Tick_t)hk_tick_.Detour(addr_tick, (BYTE*)DetourTick);
+namespace {
+	typedef DWORD(__stdcall *Tick_t)(DWORD unk1);
+	Tick_t addr_tick = (Tick_t)0x0054E6B0;
+	GW::THook<Tick_t> hk_tick_;
+	Tick_t ori_tick_;
+
+	// Parameter is always 1 or 2 creating "Ready" or "Not ready"
+	DWORD __stdcall DetourTick(DWORD unk1) {
+		// this func is always called twice so use this hack to tick only once
+		static bool toggle = true;
+		toggle = !toggle;
+		if (toggle) return 4;
+
+		GW::PartyMgr::Tick(!GW::PartyMgr::GetIsPlayerTicked());
+		return 4;
+	}
 }
 
-void GW::PartyMgr::RestoreHooks() {
+void GW::PartyMgr::SetTickToggle() {
+	ori_tick_ = (Tick_t)hk_tick_.Detour(addr_tick, DetourTick);
+}
+
+void GW::PartyMgr::RestoreTickToggle() {
 	hk_tick_.Retour();
+}
+
+void GW::PartyMgr::Tick(bool flag) {
+	CtoS::SendPacket(0x8, 0xA9, flag);
+}
+
+GW::PartyInfo* GW::PartyMgr::GetPartyInfo() {
+	return GameContext::instance()->party->partyinfo;
+}
+
+DWORD GW::PartyMgr::GetPartySize() {
+	GW::PartyInfo* info = GetPartyInfo();
+	if (info == nullptr) return 0;
+	return info->players.size() + info->heroes.size() + info->henchmen.size();
+}
+
+DWORD GW::PartyMgr::GetPartyPlayerCount() {
+	if (GetPartyInfo()) {
+		return GetPartyInfo()->players.size();
+	} else {
+		return 0;
+	}
+}
+DWORD GW::PartyMgr::GetPartyHeroCount() {
+	if (GetPartyInfo()) {
+		return GetPartyInfo()->heroes.size();
+	} else {
+		return 0;
+	}
+}
+DWORD GW::PartyMgr::GetPartyHenchmanCount() {
+	if (GetPartyInfo()) {
+		return GetPartyInfo()->henchmen.size();
+	} else {
+		return 0;
+	}
+}
+
+bool GW::PartyMgr::GetIsPartyDefeated() {
+	return GameContext::instance()->party->partystate.IsDefeated(); 
+}
+
+void GW::PartyMgr::SetHardMode(bool flag) {
+	CtoS::SendPacket(0x8, 0x95, flag);
+}
+bool GW::PartyMgr::GetIsPartyInHardMode() {
+	return GameContext::instance()->party->partystate.InHardMode();
 }
 
 bool GW::PartyMgr::GetIsPartyTicked() {
@@ -55,26 +123,8 @@ bool GW::PartyMgr::GetIsPlayerTicked() {
 	return false;
 }
 
-void GW::PartyMgr::Tick(bool flag) {
-	CtoSMgr::Instance().SendPacket(0x8, 0xA9, flag);
-}
-
-void GW::PartyMgr::SetHardMode(bool flag) {
-    CtoSMgr::Instance().SendPacket(0x8, 0x95, flag);
-}
-
 void GW::PartyMgr::RespondToPartyRequest(bool accept) {
-    CtoSMgr::Instance().SendPacket(0x8, accept ? 0x96 : 0x98, 1);
-}
-
-DWORD __stdcall GW::PartyMgr::DetourTick(DWORD unk1) {
-	// this func is always called twice so use this hack to tick only once
-	static bool toggle = true;
-	toggle = !toggle;
-	if (toggle) return 4;
-
-	PartyMgr::Instance().Tick(!PartyMgr::Instance().GetIsPlayerTicked());
-	return 4;
+	CtoS::SendPacket(0x8, accept ? 0x96 : 0x98, 1);
 }
 
 void GW::PartyMgr::FlagHero(DWORD hero_index, GW::GamePos pos) {
@@ -84,11 +134,19 @@ void GW::PartyMgr::FlagHero(DWORD hero_index, GW::GamePos pos) {
 	static GW::Packet::CtoS::P019 pak;
 	pak.id = heroid;
 	pak.pos = pos;
-	CtoSMgr::Instance().SendPacket(&pak);
+	CtoS::SendPacket(&pak);
 }
 
 void GW::PartyMgr::FlagAll(GW::GamePos pos) {
 	static GW::Packet::CtoS::P020 pak;
 	pak.pos = pos;
-	CtoSMgr::Instance().SendPacket(&pak);
+	CtoS::SendPacket(&pak);
+}
+
+void GW::PartyMgr::UnflagHero(DWORD hero_index) {
+	FlagHero(hero_index, GW::GamePos(HUGE_VALF, HUGE_VALF, 0));
+}
+
+void GW::PartyMgr::UnflagAll() {
+	FlagAll(GW::GamePos(HUGE_VALF, HUGE_VALF, 0)); 
 }

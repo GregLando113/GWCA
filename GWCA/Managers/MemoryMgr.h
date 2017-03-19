@@ -16,11 +16,6 @@ namespace GW {
 		// Map Id
 		static BYTE* MapIDPtr;
 
-
-		// Send Packet Shit
-		static BYTE* GSObjectPtr;
-		static BYTE* CtoGSSendFunction;
-
 		// Base ptr to get context ptr for gameworld
 		static BYTE* BasePointerLocation;
 
@@ -79,6 +74,5 @@ namespace GW {
 		inline static DWORD GetContextPtr() { return (*(DWORD*)BasePointerLocation) + 0x18; }
 		inline static DWORD GetSkillTimer() { return GetTickCount() + *(DWORD*)SkillTimerPtr; }
 		inline static HWND GetGWWindowHandle() { return *(HWND*)WinHandlePtr; }
-		inline static DWORD GetGSObject() { return **(DWORD**)MemoryMgr::GSObjectPtr; }
 	};
 }

@@ -26,7 +26,7 @@ void GW::MapMgr::Travel(GW::Constants::MapID MapID,
 	pak->language = Language;
 	pak->unk = 0;
 
-	CtoSMgr::Instance().SendPacket<PAB_ZoneMap>(pak);
+	CtoS::SendPacket<PAB_ZoneMap>(pak);
 }
 
 void GW::MapMgr::Travel(GW::Constants::MapID MapID, GW::Constants::District district, int district_number) {

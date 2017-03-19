@@ -1,23 +1,28 @@
 #include <GWCA\Managers\CtoSMgr.h>
 
-#include <GWCA\Managers\MemoryMgr.h>
+#include <cstdio>
 
-typedef void __fastcall SendCtoGSPacket_t(DWORD ctogsobj, DWORD size, void* packet);
-static SendCtoGSPacket_t* gs_send_function_ = NULL;
+#include <GWCA\Utilities\PatternScanner.h>
 
-GW::CtoSMgr::CtoSMgr() {
-	gs_send_function_ = (SendCtoGSPacket_t*)MemoryMgr::CtoGSSendFunction;
+
+void GW::CtoS::SendPacket(DWORD size, void* buffer) {
+	typedef void (__fastcall *SendCtoGSPacket_t)(BYTE* ctogsobj, DWORD size, void* packet);
+	static SendCtoGSPacket_t gs_send_func = nullptr;
+	static BYTE* GSObject = nullptr;
+	if (!GSObject) {
+		GSObject = (BYTE*)Scanner::Find("\x56\x33\xF6\x3B\xCE\x74\x0E\x56\x33\xD2", "xxxxxxxxxx", -4);
+		printf("CtoGSObjectPtr = %X\n", (DWORD)GSObject);
+	}
+	if (!gs_send_func) {
+		gs_send_func = (SendCtoGSPacket_t)Scanner::Find("\x55\x8B\xEC\x83\xEC\x2C\x53\x56\x57\x8B\xF9\x85", "xxxxxxxxxxxx", 0);
+		printf("CtoGSSendFunction = %X\n", (DWORD)gs_send_func);
+	}
+	if (gs_send_func && GSObject) {
+		gs_send_func(GSObject, size, buffer);
+	}
 }
 
-void GW::CtoSMgr::SendPacket(DWORD size, ...) {
+void GW::CtoS::SendPacket(DWORD size, ...) {
 	DWORD* pak = &size + 1;
-	DWORD gs = MemoryMgr::GetGSObject();
-	if(gs)
-		gs_send_function_(gs, size, pak);
-}
-
-void GW::CtoSMgr::SendPacket(DWORD size, void* buffer) {
-	DWORD gs = MemoryMgr::GetGSObject();
-	if(gs)
-		gs_send_function_(gs, size, buffer);
+	SendPacket(size, pak);
 }

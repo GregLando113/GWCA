@@ -1,11 +1,28 @@
 #include <GWCA\Managers\PlayerMgr.h>
 
+#include <GWCA\Context\GameContext.h>
 #include <GWCA\Managers\CtoSMgr.h>
 
 void GW::PlayerMgr::SetActiveTitle(GW::Constants::TitleID id) {
-	CtoSMgr::Instance().SendPacket(0x8, 0x51, (DWORD)id);
+	CtoS::SendPacket(0x8, 0x51, (DWORD)id);
 }
 
 void GW::PlayerMgr::RemoveActiveTitle() {
-	CtoSMgr::Instance().SendPacket(0x4, 0x52);
+	CtoS::SendPacket(0x4, 0x52);
+}
+
+GW::PlayerArray& GW::PlayerMgr::GetPlayerArray() {
+	return GameContext::instance()->world->players;
+}
+
+GW::Player& GW::PlayerMgr::GetPlayerByID(PlayerID id) {
+	return GetPlayerArray()[id];
+}
+
+wchar_t* GW::PlayerMgr::GetPlayerName(PlayerID id) {
+	return GetPlayerArray()[id].Name;
+}
+
+void GW::PlayerMgr::SetPlayerName(PlayerID id, const wchar_t* replacename) {
+	wcscpy_s(GetPlayerArray()[id].Name1->Name, replacename);
 }

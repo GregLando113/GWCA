@@ -1,13 +1,9 @@
 #pragma once
 
-#include "GWCAManager.h"
-#include <GWCA\Context\GameContext.h>
+#include <Windows.h>
 
 namespace GW {
-    class TradeMgr : public GWCAManager<TradeMgr> {
-        friend class GWCAManager<TradeMgr>;
-
-    public:
+    namespace Trade {
         void OpenTradeWindow(DWORD agentId);
         void AcceptTrade();
         void CancelTrade();

@@ -9,58 +9,73 @@
 #include <GWCA\Context\GameContext.h>
 #include <GWCA\Context\PartyContext.h>
 
-BYTE* GW::AgentMgr::dialog_log_ret_ = NULL;
-DWORD GW::AgentMgr::last_dialog_id_ = 0;
-
-GW::AgentMgr::AgentMgr() : GWCAManager() {
-	change_target_ = (ChangeTarget_t)MemoryMgr::ChangeTargetFunction;
-	move_ = (Move_t)MemoryMgr::MoveFunction;
-	dialog_log_ret_ = (BYTE*)hk_dialog_log_.Detour(MemoryMgr::DialogFunc, (BYTE*)AgentMgr::detourDialogLog, 9);
+namespace {
+	GW::Hook dialoglog_hook;
+	BYTE* dialoglog_ret = nullptr;
+	DWORD last_dialog_id = 0;
+	void __declspec(naked) dialoglog_detour() {
+		_asm MOV last_dialog_id, ESI
+		_asm JMP dialoglog_ret
+	}
 }
 
-void GW::AgentMgr::RestoreHooks() {
-	hk_dialog_log_.Retour();
+void GW::Agents::SetupDialogHook() {
+	dialoglog_ret = (BYTE*)dialoglog_hook.Detour(MemoryMgr::DialogFunc, (BYTE*)dialoglog_detour, 9);
 }
 
-GW::AgentArray GW::AgentMgr::GetAgentArray() {
+DWORD GW::Agents::GetLastDialogId() { 
+	return last_dialog_id; 
+}
+
+void GW::Agents::RestoreDialogHook() {
+	dialoglog_hook.Retour();
+}
+
+GW::AgentArray GW::Agents::GetAgentArray() {
 	return *(GW::AgentArray*)MemoryMgr::agArrayPtr;
 }
 
-float GW::AgentMgr::GetDistance(Vector2f a, Vector2f b) {
+float GW::Agents::GetDistance(Vector2f a, Vector2f b) {
 	return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 
-float GW::AgentMgr::GetSqrDistance(Vector2f a, Vector2f b) {
+float GW::Agents::GetSqrDistance(Vector2f a, Vector2f b) {
 	return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 }
 
-void GW::AgentMgr::ChangeTarget(GW::Agent* Agent) {
-	change_target_(Agent->Id, 0);
+void GW::Agents::ChangeTarget(GW::Agent* Agent) {
+	typedef void(__fastcall *ChangeTarget_t)(DWORD AgentID, DWORD smth);
+	static ChangeTarget_t changetarget_func = nullptr;
+	if (changetarget_func == nullptr) {
+		PatternScanner scan("Gw.exe");
+		changetarget_func = (ChangeTarget_t)scan.FindPattern("\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
+	}
+	changetarget_func(Agent->Id, 0);
 }
 
-void GW::AgentMgr::Move(float X, float Y, DWORD ZPlane /*= 0*/) {
+void GW::Agents::Move(float X, float Y, DWORD ZPlane /*= 0*/) {
 	GW::GamePos pos;
 	pos.x = X;
 	pos.y = Y;
 	pos.zplane = ZPlane;
-	move_(&pos);
+	Agents::Move(pos);
 }
 
-void GW::AgentMgr::Move(const GW::GamePos& pos) {
-	move_(&pos);
+void GW::Agents::Move(const GW::GamePos& pos) {
+	typedef void(__fastcall *Move_t)(const GW::GamePos* Pos);
+	((Move_t)MemoryMgr::MoveFunction)(&pos);
 }
 
-void GW::AgentMgr::Dialog(DWORD id) {
+void GW::Agents::Dialog(DWORD id) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x35, id);
 }
 
-GW::MapAgentArray GW::AgentMgr::GetMapAgentArray() {
+GW::MapAgentArray GW::Agents::GetMapAgentArray() {
 	return GameContext::instance()->world->mapagents;
 }
 
-GW::Agent* GW::AgentMgr::GetPlayer() {
+GW::Agent* GW::Agents::GetAgentByID(DWORD id) {
 	GW::AgentArray agents = GetAgentArray();
-	int id = GetPlayerId();
 	if (agents.valid() && id > 0) {
 		return agents[id];
 	} else {
@@ -68,51 +83,36 @@ GW::Agent* GW::AgentMgr::GetPlayer() {
 	}
 }
 
-GW::Agent* GW::AgentMgr::GetTarget() {
-	GW::AgentArray agents = GetAgentArray();
-	int id = GetTargetId();
-	if (agents.valid() && id > 0) {
-		return agents[id];
-	} else {
-		return nullptr;
-	}
-}
-
-void GW::AgentMgr::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/) {
+void GW::Agents::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/) {
 	CtoSMgr::Instance().SendPacket(0xC, 0x33, Agent->Id, CallTarget);
 }
 
-void GW::AgentMgr::GoPlayer(GW::Agent* Agent) {
+void GW::Agents::GoPlayer(GW::Agent* Agent) {
 	CtoSMgr::Instance().SendPacket(0x8, 0x2D, Agent->Id);
 }
 
-void GW::AgentMgr::GoSignpost(GW::Agent* Agent, BOOL CallTarget /*= 0*/) {
+void GW::Agents::GoSignpost(GW::Agent* Agent, BOOL CallTarget /*= 0*/) {
 	CtoSMgr::Instance().SendPacket(0xC, 0x4B, Agent->Id, CallTarget);
 }
 
-void GW::AgentMgr::CallTarget(GW::Agent* Agent) {
+void GW::Agents::CallTarget(GW::Agent* Agent) {
 	CtoSMgr::Instance().SendPacket(0xC, 0x1C, 0xA, Agent->Id);
 }
 
-void __declspec(naked) GW::AgentMgr::detourDialogLog() {
-	_asm MOV AgentMgr::last_dialog_id_, ESI
-	_asm JMP AgentMgr::dialog_log_ret_
-}
-
-DWORD GW::AgentMgr::GetAmountOfPlayersInInstance() {
+DWORD GW::Agents::GetAmountOfPlayersInInstance() {
 	// -1 because the 1st array element is nil
 	return GameContext::instance()->world->players.size() - 1;
 }
 
-wchar_t* GW::AgentMgr::GetPlayerNameByLoginNumber(DWORD loginnumber) {
+wchar_t* GW::Agents::GetPlayerNameByLoginNumber(DWORD loginnumber) {
 	return GameContext::instance()->world->players[loginnumber].Name;
 }
 
-DWORD GW::AgentMgr::GetAgentIdByLoginNumber(DWORD loginnumber) {
+DWORD GW::Agents::GetAgentIdByLoginNumber(DWORD loginnumber) {
 	return GameContext::instance()->world->players[loginnumber].AgentID;
 }
 
-GW::AgentID GW::AgentMgr::GetHeroAgentID(DWORD heroindex) {
+GW::AgentID GW::Agents::GetHeroAgentID(DWORD heroindex) {
 	if (heroindex == 0) return GetPlayerId();
 
 	GW::GameContext* ctx = GameContext::instance();
@@ -126,10 +126,10 @@ GW::AgentID GW::AgentMgr::GetHeroAgentID(DWORD heroindex) {
 	return heroarray[--heroindex].agentid;
 }
 
-GW::PlayerArray GW::AgentMgr::GetPlayerArray() {
+GW::PlayerArray GW::Agents::GetPlayerArray() {
 	return GameContext::instance()->world->players;
 }
 
-GW::NPCArray GW::AgentMgr::GetNPCArray() {
+GW::NPCArray GW::Agents::GetNPCArray() {
 	return GameContext::instance()->world->npcs;
 }

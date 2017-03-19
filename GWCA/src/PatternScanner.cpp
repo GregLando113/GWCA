@@ -1,13 +1,20 @@
 #include "..\Utilities\PatternScanner.h"
+
+#include <Windows.h>
 #include <Psapi.h>
 
-DWORD GW::PatternScanner::FindPattern(char* pattern, char* mask, DWORD offset) {
+namespace {
+	uintptr_t g_base = 0;
+	size_t g_size    = 0;
+}
+
+uintptr_t GW::PatternScanner::FindPattern(char* pattern, char* mask, int offset) {
 	BYTE first = pattern[0];
 	int patternLength = strlen(mask);
 	bool found = false;
 
 	//For each byte from start to end
-	for (DWORD i = base_; i < base_ + size_ - patternLength; i++) {
+	for (DWORD i = g_base; i < g_base + g_size - patternLength; i++) {
 		if (*(BYTE*)i != first) {
 			continue;
 		}
@@ -27,27 +34,31 @@ DWORD GW::PatternScanner::FindPattern(char* pattern, char* mask, DWORD offset) {
 	return NULL;
 }
 
-GW::PatternScanner::PatternScanner(HMODULE _module) {
+GW::PatternScanner::Init(void* module) {
 	MODULEINFO info;
-	if (!GetModuleInformation(GetCurrentProcess(), _module, &info, sizeof(MODULEINFO)))
+	if (!GetModuleInformation(GetCurrentProcess(), (HMODULE)module, &info, sizeof(MODULEINFO)))
 		throw 1;
 
-	base_ = (DWORD)info.lpBaseOfDll;
-	size_ = (DWORD)info.SizeOfImage;
+	g_base = (DWORD)info.lpBaseOfDll;
+	g_size = (DWORD)info.SizeOfImage;
 }
 
-GW::PatternScanner::PatternScanner(char* moduleName /*= NULL*/) {
+GW::PatternScanner::Init(char* moduleName) {
 	HMODULE mod = GetModuleHandleA(moduleName);
 	LPVOID textSection = (LPVOID)((DWORD)mod + 0x1000);
 
 	MEMORY_BASIC_INFORMATION info = { 0 };
 
 	if (VirtualQuery(textSection, &info, sizeof(MEMORY_BASIC_INFORMATION))) {
-		base_ = (DWORD)textSection;
-		size_ = (DWORD)info.RegionSize;
+		g_base = (uintptr_t)textSection;
+		g_size = (DWORD)info.RegionSize;
 	} else {
 		throw 1;
 	}
 }
 
-GW::PatternScanner::PatternScanner(DWORD _start, DWORD _size) : base_(_start), size_(_size) {}
+void 
+GW::PatternScanner::Init(uintptr_t start, size_t size) {
+	g_base = start;
+	g_size = size;
+}

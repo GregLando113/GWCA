@@ -1,25 +1,22 @@
 #pragma once
 
-#include <Windows.h>
+#include <cstdint>
+
 
 namespace GW {
 
 	// class PatternScanner
 	// 32 bit pattern scanner for x86 programs.
 	// Credits to Zat & Midi12 @ unknowncheats.me for the functionality of this class.
-	class PatternScanner {
-	public:
+	namespace PatternScanner {
 
 		// Initializer to determine scan range.
-		PatternScanner(DWORD _start, DWORD _size);
-		PatternScanner(char* moduleName = NULL);
-		PatternScanner(HMODULE _module);
+		void Init(uintptr_t start, size_t size);
+		void Init(char* moduleName = NULL);
+		void Init(void* module);
 
 		// Actual pattern finder.
-		DWORD FindPattern(char* pattern, char* mask, DWORD offset);
+		uintptr_t FindPattern(char* pattern, char* mask, int offset);
 
-	private:
-		DWORD base_;
-		DWORD size_;
-	};
+	}
 }

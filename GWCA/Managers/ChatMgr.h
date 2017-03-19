@@ -31,6 +31,11 @@ namespace GW {
 
 	typedef DWORD Color;
 
+	namespace ChatNmsp {
+		void SetChatEventCallback(std::function<
+			void(DWORD, DWORD, wchar_t*, void*)> callback);
+	}
+
 	class ChatMgr : public GWCAManager<ChatMgr> {
 		friend class GWCAManager<ChatMgr>;
 

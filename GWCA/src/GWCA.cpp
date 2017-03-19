@@ -49,7 +49,6 @@ void GW::Api::Destruct() {
 GW::GameThreadMgr&	GW::Gamethread() { return GameThreadMgr::Instance(); }
 GW::CtoSMgr&		GW::CtoS() { return CtoSMgr::Instance(); }
 GW::StoCMgr&		GW::StoC() { return StoCMgr::Instance(); }
-GW::AgentMgr&		GW::Agents() { return AgentMgr::Instance(); }
 GW::PartyMgr&		GW::Partymgr() { return PartyMgr::Instance(); }
 GW::ItemMgr&		GW::Items() { return ItemMgr::Instance(); }
 GW::SkillbarMgr&	GW::Skillbarmgr() { return SkillbarMgr::Instance(); }

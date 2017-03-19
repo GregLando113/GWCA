@@ -87,7 +87,6 @@ namespace GW {
 	class GameThreadMgr;
 	class CtoSMgr;
 	class StoCMgr;
-	class AgentMgr;
 	class PartyMgr;
 	class ItemMgr;
 	class SkillbarMgr;
@@ -106,7 +105,6 @@ namespace GW {
 	GameThreadMgr& Gamethread();
 	CtoSMgr& CtoS();
 	StoCMgr& StoC();
-	AgentMgr& Agents();
 	PartyMgr& Partymgr();
 	ItemMgr& Items();
 	SkillbarMgr& Skillbarmgr();

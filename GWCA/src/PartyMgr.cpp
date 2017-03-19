@@ -6,8 +6,7 @@
 
 GW::PartyMgr::PartyMgr() {
 	BYTE* addr_tick = (BYTE*)0x0054E6B0;
-	DWORD tick_length = GW::Hook::CalculateDetourLength(addr_tick);
-	ori_tick_ = (Tick_t)hk_tick_.Detour(addr_tick, (BYTE*)DetourTick, tick_length);
+	ori_tick_ = (Tick_t)hk_tick_.Detour(addr_tick, (BYTE*)DetourTick);
 }
 
 void GW::PartyMgr::RestoreHooks() {
@@ -46,7 +45,7 @@ bool GW::PartyMgr::GetIsPlayerTicked() {
 	GW::PartyInfo* info = GetPartyInfo();
 	if (info == nullptr) return false;
 	if (!info->players.valid()) return false;
-	GW::Agent* me = AgentMgr::Instance().GetPlayer();
+	GW::Agent* me = Agents::GetPlayer();
 	if (me == nullptr) return false;
 	for (DWORD i = 0; i < info->players.size(); i++) {
 		if (info->players[i].loginnumber == me->LoginNumber) {
@@ -79,9 +78,9 @@ DWORD __stdcall GW::PartyMgr::DetourTick(DWORD unk1) {
 }
 
 void GW::PartyMgr::FlagHero(DWORD hero_index, GW::GamePos pos) {
-	DWORD heroid = AgentMgr::Instance().GetHeroAgentID(hero_index);
+	DWORD heroid = Agents::GetHeroAgentID(hero_index);
 	if (heroid == 0) return;
-	if (heroid == AgentMgr::Instance().GetPlayerId()) return;
+	if (heroid == Agents::GetPlayerId()) return;
 	static GW::Packet::CtoS::P019 pak;
 	pak.id = heroid;
 	pak.pos = pos;

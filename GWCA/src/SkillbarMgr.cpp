@@ -13,12 +13,12 @@ GW::Skill GW::SkillbarMgr::GetSkillConstantData(DWORD SkillID) {
 }
 
 void GW::SkillbarMgr::ChangeSecondary(DWORD profession, int heroindex) {
-	GW::AgentID id = AgentMgr::Instance().GetHeroAgentID(heroindex);
+	GW::AgentID id = Agents::GetHeroAgentID(heroindex);
 	CtoSMgr::Instance().SendPacket(0xC, 0x3B, id, profession);
 }
 
 void GW::SkillbarMgr::LoadSkillbar(DWORD * skillids, int heroindex) {
-	GW::AgentID id = AgentMgr::Instance().GetHeroAgentID(heroindex);
+	GW::AgentID id = Agents::GetHeroAgentID(heroindex);
 	CtoSMgr::Instance().SendPacket(0x2C, 0x56, id, 0x8, skillids[0], skillids[1], skillids[2], skillids[3], skillids[4], skillids[5], skillids[6], skillids[7]);
 }
 
@@ -35,7 +35,7 @@ void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, 
 
 	static tSetAttributes* set_attributes_buffer = new tSetAttributes();
 
-	GW::AgentID id = AgentMgr::Instance().GetHeroAgentID(heroindex);
+	GW::AgentID id = Agents::GetHeroAgentID(heroindex);
 
 	set_attributes_buffer->header = 0x9;
 
@@ -53,7 +53,7 @@ void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, 
 }
 
 void GW::SkillbarMgr::UseSkill(DWORD Slot, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/) {
-	UseSkill_(AgentMgr::Instance().GetPlayerId(), Slot, Target, CallTarget);
+	UseSkill_(Agents::GetPlayerId(), Slot, Target, CallTarget);
 }
 
 GW::SkillbarMgr::SkillbarMgr() {

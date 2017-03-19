@@ -4,50 +4,7 @@ extern "C" {
 #include "..\..\Dependencies\disasm\ld32.h"
 }
 
-void GW::Hook::Retour() {
-	DWORD old_protection;
-
-	VirtualProtect(source_, length_, PAGE_READWRITE, &old_protection);
-
-	memcpy(source_, retour_func_, length_);
-
-	VirtualProtect(source_, length_, old_protection, &old_protection);
-
-	delete[] retour_func_;
-}
-
-BYTE* GW::Hook::Detour(BYTE* _source, BYTE* _detour, const DWORD _length) {
-	DWORD old_protection;
-
-	source_ = _source;
-	length_ = _length;
-	retour_func_ = (BYTE*)malloc(length_ + 5);
-	VirtualProtect(retour_func_, length_ + 5, PAGE_EXECUTE_READWRITE, &old_protection);
-
-	memcpy(retour_func_, source_, length_);
-
-	retour_func_ += length_;
-
-	retour_func_[0] = 0xE9;
-	*(DWORD*)(retour_func_ + 1) = (DWORD)((source_ + length_) - (retour_func_ + 5));
-
-	VirtualProtect(source_, length_, PAGE_EXECUTE_READWRITE, &old_protection);
-
-	source_[0] = 0xE9;
-	*(DWORD*)(source_ + 1) = (DWORD)(_detour - (source_ + 5));
-
-	if (length_ != 5)
-		for (DWORD i = 5; i < length_; i++)
-			source_[i] = 0x90;
-
-	VirtualProtect(source_, length_, old_protection, &old_protection);
-
-	retour_func_ -= length_;
-
-	return retour_func_;
-}
-
-DWORD GW::Hook::CalculateDetourLength(BYTE* _source) {
+DWORD GW::HookInternal::CalculateDetourLength(BYTE* _source) {
 
 	DWORD len = 0;
 	DWORD current_op;
@@ -61,4 +18,40 @@ DWORD GW::Hook::CalculateDetourLength(BYTE* _source) {
 	} while (len < 5);
 
 	return len;
+}
+
+BYTE* GW::HookInternal::Detour(BYTE* source, BYTE* detour, const DWORD length) {
+	DWORD old_protection;
+
+	BYTE* retour_func = (BYTE*)malloc(length + 5);
+	VirtualProtect(retour_func, length + 5, PAGE_EXECUTE_READWRITE, &old_protection);
+
+	memcpy(retour_func, source, length);
+
+	retour_func += length;
+
+	retour_func[0] = 0xE9;
+	*(DWORD*)(retour_func + 1) = (DWORD)((source + length) - (retour_func + 5));
+
+	VirtualProtect(source, length, PAGE_EXECUTE_READWRITE, &old_protection);
+
+	source[0] = 0xE9;
+	*(DWORD*)(source + 1) = (DWORD)(detour - (source + 5));
+
+	if (length != 5)
+		for (DWORD i = 5; i < length; i++)
+			source[i] = 0x90;
+
+	VirtualProtect(source, length, old_protection, &old_protection);
+
+	retour_func -= length;
+
+	return retour_func;
+}
+
+void GW::HookInternal::Retour(BYTE* source, BYTE* retour_func, DWORD length) {
+	DWORD old_protection;
+	VirtualProtect(source, length, PAGE_READWRITE, &old_protection);
+	memcpy(source, retour_func, length);
+	VirtualProtect(source, length, old_protection, &old_protection);
 }

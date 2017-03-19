@@ -4,15 +4,36 @@
 
 namespace GW {
 
-	// v1 hooker by 4D 1
-	class Hook {
-		BYTE* retour_func_;
-		BYTE* source_;
-		DWORD length_;
-	public:
+	namespace HookInternal {
+		BYTE* Detour(BYTE* source, BYTE* detour, DWORD length);
+		void Retour(BYTE* source, BYTE* retour_func, DWORD length);
+		DWORD CalculateDetourLength(BYTE* _source);
+	}
 
-		static DWORD CalculateDetourLength(BYTE* _source);
-		BYTE* Detour(BYTE* _source, BYTE* _detour, const DWORD _length);
-		void Retour();
+	template <typename T>
+	class THook {
+		T retour_func_ = nullptr;
+		T source_ = nullptr;
+		DWORD length_ = 0;
+	public:
+		T Original() { return (T)retour_func_; };
+		bool Valid() { return retour_func_ != nullptr; };
+		bool Empty() { return retour_func_ == nullptr; };
+
+		T Detour(T _source, T _detour, const DWORD _length = 0) {
+			if (Valid()) return retour_func_;
+			source_ = _source;
+			length_ = (_length > 0 ? _length : HookInternal::CalculateDetourLength((BYTE*)_source));
+			return retour_func_ = (T)HookInternal::Detour((BYTE*)source_, (BYTE*)_detour, length_);
+		}
+
+		void Retour() {
+			if (Empty()) return;
+			HookInternal::Retour((BYTE*)source_, (BYTE*)retour_func_, length_);
+			delete[] retour_func_;
+			retour_func_ = source_ = nullptr;
+		}
 	};
+
+	typedef THook<BYTE*> Hook; // backward compatibility
 }

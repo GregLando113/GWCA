@@ -36,7 +36,6 @@ void GW::PartyMgr::RestoreTickToggle() {
 }
 
 void GW::PartyMgr::Tick(bool flag) {
-	printf("ticking -> %d\n", flag);
 	CtoS::SendPacket(0x8, 0xA9, flag);
 }
 

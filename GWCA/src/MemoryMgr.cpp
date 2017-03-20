@@ -25,12 +25,6 @@ BYTE* GW::MemoryMgr::GameLoopRestore = NULL;
 // Used to get precise skill recharge times.
 BYTE* GW::MemoryMgr::SkillTimerPtr = NULL;
 
-BYTE* GW::MemoryMgr::PostProcessEffectFunction = NULL;
-
-// Used to get skill information.
-BYTE* GW::MemoryMgr::SkillArray = NULL;
-BYTE* GW::MemoryMgr::UseSkillFunction = NULL;
-
 BYTE* GW::MemoryMgr::WinHandlePtr = NULL;
 
 BYTE* GW::MemoryMgr::MapInfoPtr = NULL;
@@ -95,34 +89,6 @@ bool GW::MemoryMgr::Scan() {
 		SkillTimerPtr = *(BYTE**)SkillTimerPtr;
 	} else {
 		printf("SkillTimerPtr = ERR\n");
-		return false;
-	}
-
-	// Skill array.
-	SkillArray = (BYTE*)Scanner::Find("\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 0);
-	if (SkillArray) {
-		printf("SkillArray = %X\n", (DWORD)SkillArray);
-		SkillArray = *(BYTE**)(SkillArray + 8);
-	} else {
-		printf("SkillArray = ERR\n");
-		return false;
-	}
-
-	// Use Skill Function.
-	UseSkillFunction = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x10\x53\x56\x8B\xD9\x57\x8B\xF2\x89\x5D\xF0", "xxxxxxxxxxxxxxxx", 0);
-	if (UseSkillFunction) {
-		printf("UseSkillFunction = %X\n", (DWORD)UseSkillFunction);
-	} else {
-		printf("UseSkillFunction = ERR\n");
-		return false;
-	}
-
-
-	PostProcessEffectFunction = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x10\x89\x4D\xF8\xC7\x45\xFC", "xxxxxxxxxxxx", 0);
-	if (PostProcessEffectFunction) {
-		printf("PostProcessEffectFunction = %X\n", (DWORD)PostProcessEffectFunction);
-	} else {
-		printf("PostProcessEffectFunction = ERR\n");
 		return false;
 	}
 

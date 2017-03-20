@@ -30,14 +30,6 @@ namespace GW {
 		// Skill timer for effects.
 		static BYTE* SkillTimerPtr;
 
-		// To extract alcohol level.
-		static BYTE* PostProcessEffectFunction;
-
-		// Skill structure array.
-
-		static BYTE* SkillArray;
-		static BYTE* UseSkillFunction;
-
 		static BYTE* WinHandlePtr;
 
 		static BYTE* MapInfoPtr;

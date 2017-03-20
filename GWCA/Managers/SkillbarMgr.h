@@ -2,16 +2,13 @@
 
 #include <Windows.h>
 
-#include "GWCAManager.h"
 #include <GWCA\Constants\Skills.h>
 #include <GWCA\GameEntities\Skill.h>
 
 namespace GW {
 
-	class SkillbarMgr : public GWCAManager<SkillbarMgr> {
-		friend class GWCAManager<SkillbarMgr>;
+	namespace SkillbarMgr {
 
-	public:
 		// Get the skill slot in the player bar of the player.
 		// Returns -1 if the skill is not there
 		int GetSkillSlot(Constants::SkillID SkillID);
@@ -31,14 +28,5 @@ namespace GW {
 		void LoadSkillbar(DWORD* skillids, int heroindex = 0);
 
 		void SetAttributes(DWORD attributecount, DWORD* attributeids, DWORD* attributevalues, int heroindex = 0);
-
-	private:
-		typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
-
-		SkillbarMgr();
-		void RestoreHooks() override {};
-
-		UseSkill_t UseSkill_;
-		GW::Skill* SkillConstants_;
 	};
 }

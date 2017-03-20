@@ -2,19 +2,24 @@
 
 #include <Windows.h>
 
-#include "GWCAManager.h"
-#include <GWCA\Utilities\Hooker.h>
 #include <GWCA\Constants\Skills.h>
 #include <GWCA\GameEntities\Skill.h>
 
-#define USE_ALCOHOL_LEVEL_HOOK 0
-
 namespace GW {
 
-	class EffectMgr : public GWCAManager<EffectMgr> {
-		friend class GWCAManager<EffectMgr>;
+	namespace Effects {
+		void RestoreHooks();
 
-	public:
+		// will save the alcohol level when it changes
+		void SetupPostProcessingEffectHook();
+
+		// Returns current level of intoxication, 0-5 scale.
+		// If > 0 then skills that benefit from drunk will work.
+		// Important: requires SetupPostProcessingEffectHook() above.
+		DWORD GetAlcoholLevel();
+
+		// Have fun with this ;))))))))))
+		void GetDrunkAf(DWORD Intensity, DWORD Tint);
 
 		// Get full array of effects and buffs for player and heroes.
 		GW::AgentEffectsArray GetPartyEffectArray();
@@ -33,27 +38,5 @@ namespace GW {
 
 		// Gets Buff struct of Buff on player with SkillID, returns Buff::Nil() if no match.
 		GW::Buff GetPlayerBuffBySkillId(Constants::SkillID SkillID);
-
-#if USE_ALCOHOL_LEVEL_HOOK
-	public:
-		// Returns current level of intoxication, 0-5 scale.
-		// If > 0 then skills that benefit from drunk will work.
-		DWORD GetAlcoholLevel() const { return alcohol_level_; }
-
-		// Have fun with this ;))))))))))
-		void GetDrunkAf(DWORD Intensity, DWORD Tint);
-
-	private:
-		typedef void(__fastcall *PPEFunc_t)(DWORD Intensity, DWORD Tint);
-		static void __fastcall AlcoholHandler(DWORD Intensity, DWORD Tint);
-
-		static PPEFunc_t ppe_retour_func_;
-		Hook hk_post_process_effect_;
-		static DWORD alcohol_level_;
-#endif
-
-	private:
-		EffectMgr();
-		void RestoreHooks() override;
 	};
 }

@@ -43,6 +43,7 @@ void GW::Api::Destruct() {
 	GW::PartyMgr::RestoreHooks();
 	GW::StoC::RestoreHooks();
 	GW::Agents::RestoreHooks();
+	GW::Effects::RestoreHooks();
 
 	Sleep(100);
 	for (GWCABaseManager* manager : managers) {
@@ -52,5 +53,3 @@ void GW::Api::Destruct() {
 
 // GWCA Module Accessors.
 GW::GameThreadMgr&	GW::Gamethread() { return GameThreadMgr::Instance(); }
-GW::SkillbarMgr&	GW::Skillbarmgr() { return SkillbarMgr::Instance(); }
-GW::EffectMgr&		GW::Effects() { return EffectMgr::Instance(); }

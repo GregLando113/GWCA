@@ -85,13 +85,9 @@ GWCA::Destruct()
 namespace GW {
 
 	class GameThreadMgr;
-	class SkillbarMgr;
-	class EffectMgr;
 
 	// GWCA Module Accessors.
 	GameThreadMgr& Gamethread();
-	SkillbarMgr& Skillbarmgr();
-	EffectMgr& Effects();
 
 	class Api {
 		friend class GWCABaseManager;

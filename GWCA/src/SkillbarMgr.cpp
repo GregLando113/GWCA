@@ -3,13 +3,26 @@
 #include <GWCA\Context\GameContext.h>
 #include <GWCA\Context\WorldContext.h>
 
-#include <GWCA\Managers\GameThreadMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\AgentMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
 
+namespace {
+	typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
+	UseSkill_t UseSkill;
+}
+
 GW::Skill GW::SkillbarMgr::GetSkillConstantData(DWORD SkillID) {
-	return SkillConstants_[SkillID];
+	static GW::Skill* skillconstants = nullptr;
+	if (skillconstants == nullptr) {
+		// Skill array.
+		GW::Skill** SkillArray = (GW::Skill**)Scanner::Find("\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 0);
+		printf("SkillArray = 0x%X\n", (DWORD)SkillArray);
+		if (SkillArray) {
+			skillconstants = *(SkillArray + 8);
+		}
+	}
+	return skillconstants[SkillID];
 }
 
 void GW::SkillbarMgr::ChangeSecondary(DWORD profession, int heroindex) {
@@ -53,12 +66,14 @@ void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, 
 }
 
 void GW::SkillbarMgr::UseSkill(DWORD Slot, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/) {
-	UseSkill_(Agents::GetPlayerId(), Slot, Target, CallTarget);
-}
-
-GW::SkillbarMgr::SkillbarMgr() {
-	SkillConstants_ = (GW::Skill*)MemoryMgr::SkillArray;
-	UseSkill_ = (UseSkill_t)MemoryMgr::UseSkillFunction;
+	static UseSkill_t useskill_func = nullptr;
+	if (useskill_func == nullptr) {
+		useskill_func = (UseSkill_t)Scanner::Find("\x55\x8B\xEC\x83\xEC\x10\x53\x56\x8B\xD9\x57\x8B\xF2\x89\x5D\xF0", "xxxxxxxxxxxxxxxx", 0);
+		printf("UseSkillFunction = 0x%X\n", (DWORD)useskill_func);
+	}
+	if (useskill_func) {
+		useskill_func(Agents::GetPlayerId(), Slot, Target, CallTarget);
+	}
 }
 
 void GW::SkillbarMgr::UseSkillByID(DWORD SkillID, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/) {

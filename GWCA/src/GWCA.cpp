@@ -42,6 +42,7 @@ void GW::Api::Destruct() {
 	GW::Chat::RestoreHooks();
 	GW::PartyMgr::RestoreHooks();
 	GW::StoC::RestoreHooks();
+	GW::Agents::RestoreHooks();
 
 	Sleep(100);
 	for (GWCABaseManager* manager : managers) {

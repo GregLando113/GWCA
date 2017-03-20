@@ -24,6 +24,7 @@ namespace GW {
 		// Returns last dialog id sent to the server. Requires the hook.
 		DWORD GetLastDialogId();
 
+		inline void RestoreHooks() { RestoreLastDialogHook(); }
 
 		// === Agent Array ===
 		// Get Current AgentID's of player or target.

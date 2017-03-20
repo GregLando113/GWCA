@@ -1,5 +1,6 @@
 #include <GWCA\Managers\MapMgr.h>
 
+#include <GWCA\Utilities\Scanner.h>
 #include <GWCA\Context\GameContext.h>
 #include <GWCA\Context\MapContext.h>
 #include <GWCA\Context\AgentContext.h>
@@ -7,7 +8,6 @@
 
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
-
 
 bool GW::Map::IsMapLoaded() {
 	return GameContext::instance()->map != nullptr;
@@ -78,15 +78,38 @@ DWORD GW::Map::GetInstanceTime() {
 }
 
 GW::Constants::MapID GW::Map::GetMapID() {
-	return static_cast<GW::Constants::MapID>(*(DWORD*)MemoryMgr::MapIDPtr);
+	static DWORD* mapid_ptr = nullptr;
+	if (mapid_ptr == nullptr) {
+		// For Map IDs
+		BYTE* addr = (BYTE*)Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0);
+		printf("MapIDPtr = %X\n", (DWORD)addr);
+		if (addr) {
+			mapid_ptr = *(DWORD**)(addr + 0x46);
+		}
+	}
+	return (GW::Constants::MapID)(*mapid_ptr);
+}
+
+namespace {
+	BYTE* GetMapInfoPtr() {
+		static BYTE* MapInfoPtr = nullptr;
+		if (MapInfoPtr == nullptr) {
+			MapInfoPtr = (BYTE*)GW::Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
+			if (MapInfoPtr) {
+				printf("MapInfoPtr = %X\n", (DWORD)MapInfoPtr);
+				MapInfoPtr = *(BYTE**)(MapInfoPtr + 7);
+			}
+		}
+		return MapInfoPtr;
+	}
 }
 
 int GW::Map::GetRegion() {
-	return *(int*)(MemoryMgr::MapInfoPtr + 0x10); 
+	return *(int*)(GetMapInfoPtr() + 0x10);
 }
 
 int GW::Map::GetLanguage() {
-	return *(int*)(MemoryMgr::MapInfoPtr + 0xC); 
+	return *(int*)(GetMapInfoPtr() + 0xC);
 }
 
 GW::Constants::InstanceType GW::Map::GetInstanceType() {

@@ -79,9 +79,6 @@
     <ClInclude Include="GWCA\Managers\GuildMgr.h">
       <Filter>Managers</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\Managers\GWCAManager.h">
-      <Filter>Managers</Filter>
-    </ClInclude>
     <ClInclude Include="GWCA\Managers\ItemMgr.h">
       <Filter>Managers</Filter>
     </ClInclude>
@@ -112,7 +109,6 @@
     <ClInclude Include="GWCA\Utilities\MemoryPatcher.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\Structures\GWStructures.h" />
     <ClInclude Include="GWCA\Packets\CtoS.h">
       <Filter>Packets</Filter>
     </ClInclude>
@@ -215,6 +211,7 @@
     <ClInclude Include="GWCA\Utilities\Scanner.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\GWStructures.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">
@@ -245,9 +242,6 @@
       <Filter>src\Managers</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\src\GuildMgr.cpp">
-      <Filter>src\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\src\GWCAManager.cpp">
       <Filter>src\Managers</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\src\ItemMgr.cpp">

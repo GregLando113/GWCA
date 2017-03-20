@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 
-#include "GWCAManager.h"
 #include <GWCA\Utilities\Hooker.h>
 
 namespace GW {

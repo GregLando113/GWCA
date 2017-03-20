@@ -50,53 +50,7 @@ THE SOFTWARE.
 
 \**********************************************************************************/
 
-/*
-Class used for GWCA initialization, access and destruction
-
-// start by calling
-GWCA::Initialize()
-
-// then access through GWCA object
-GWCA api;
-api().Agent().GetPlayer()
-
-// or directly through static call
-GWCA::Api().Agent().GetPlayer()
-
-// Finally destroy GWCA
-GWCA::Destruct()
-
-*/
-
-#include <Windows.h>
-#include <vector>
-
-// included memorymgr, gamethread and ctos since 
-// they are needed by most other managers
-
-#include "Managers\MemoryMgr.h"
-#include "Managers\GameThreadMgr.h"
-#include "Managers\CtoSMgr.h"
-
-// include agentmgr and mapmgr by default since they are used by most applications
-#include "Managers\AgentMgr.h"
-#include "Managers\MapMgr.h"
-
 namespace GW {
-
-	class GameThreadMgr;
-
-	// GWCA Module Accessors.
-	GameThreadMgr& Gamethread();
-
-	class Api {
-		friend class GWCABaseManager;
-
-	public:
-		static bool Initialize();
-		static void Destruct();
-
-	private:
-		static std::vector<GWCABaseManager*> managers;
-	};
+	bool Initialize();
+	void Terminate();
 }

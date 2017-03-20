@@ -9,12 +9,6 @@ namespace GW {
 
 		// Agent shit
 		static BYTE* agArrayPtr;
-		static BYTE* PlayerAgentIDPtr;
-		static BYTE* TargetAgentIDPtr;
-		static BYTE* MouseOverAgentIDPtr;
-
-		// Map Id
-		static BYTE* MapIDPtr;
 
 		// Base ptr to get context ptr for gameworld
 		static BYTE* BasePointerLocation;
@@ -31,10 +25,6 @@ namespace GW {
 		static BYTE* SkillTimerPtr;
 
 		static BYTE* WinHandlePtr;
-
-		static BYTE* MapInfoPtr;
-
-		static BYTE* DialogFunc;
 
 		static BYTE* GStoCBase;
 

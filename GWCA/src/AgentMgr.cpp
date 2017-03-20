@@ -17,10 +17,26 @@ namespace {
 		_asm MOV lastdialog_id, ESI
 		_asm JMP lastdialoglog_ret
 	}
+
+	DWORD* PlayerAgentIDPtr = nullptr;
+	DWORD* TargetAgentIDPtr = nullptr;
+	DWORD* MouseOverAgentIDPtr = nullptr;
+}
+
+void GW::Agents::Initialize() {
+	// Agent Array
+	BYTE* agArrayPtr = (BYTE*)MemoryMgr::agArrayPtr;
+	PlayerAgentIDPtr = (DWORD*)(agArrayPtr - 0x54);
+	TargetAgentIDPtr = (DWORD*)(agArrayPtr - 0x500);
+	MouseOverAgentIDPtr = (DWORD*)(agArrayPtr - 0x4F4);
 }
 
 void GW::Agents::SetupLastDialogHook() {
-	lastdialoglog_ret = (BYTE*)lastdialoglog_hook.Detour(MemoryMgr::DialogFunc, (BYTE*)dialoglog_detour, 9);
+	if (lastdialoglog_hook.Empty()) {
+		BYTE* DialogFunc = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x28\x53\x56\x57\x8B\xF2\x8B\xD9", "xxxxxxxxxxxxx", -0x28);
+		printf("DialogFunc = 0x%X\n", (DWORD)DialogFunc);
+		lastdialoglog_ret = (BYTE*)lastdialoglog_hook.Detour(DialogFunc, (BYTE*)dialoglog_detour, 9);
+	}
 }
 void GW::Agents::RestoreLastDialogHook() {
 	lastdialoglog_hook.Retour();
@@ -34,6 +50,12 @@ void GW::Agents::Dialog(DWORD id) {
 
 GW::AgentArray GW::Agents::GetAgentArray() {
 	return *(GW::AgentArray*)MemoryMgr::agArrayPtr;
+}
+DWORD GW::Agents::GetPlayerId() {
+	return *PlayerAgentIDPtr;
+}
+DWORD GW::Agents::GetTargetId() {
+	return *TargetAgentIDPtr;
 }
 
 float GW::Agents::GetDistance(Vector2f a, Vector2f b) {

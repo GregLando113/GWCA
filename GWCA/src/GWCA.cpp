@@ -2,30 +2,19 @@
 
 #include "..\Managers\MemoryMgr.h"
 #include "..\Managers\GameThreadMgr.h"
-#include "..\Managers\CtoSMgr.h"
 #include "..\Managers\AgentMgr.h"
 #include "..\Managers\PartyMgr.h"
-#include "..\Managers\ItemMgr.h"
-#include "..\Managers\SkillbarMgr.h"
 #include "..\Managers\EffectMgr.h"
-#include "..\Managers\MapMgr.h"
 #include "..\Managers\ChatMgr.h"
-#include "..\Managers\MerchantMgr.h"
-#include "..\Managers\GuildMgr.h"
-#include "..\Managers\FriendListMgr.h"
 #include "..\Managers\StoCMgr.h"
 #include "..\Managers\CameraMgr.h"
-#include "..\Managers\PlayerMgr.h"
-#include "..\Managers\TradeMgr.h"
-#include "..\Managers\GWCAManager.h"
 
-std::vector<GW::GWCABaseManager*> GW::Api::managers;
-
-bool GW::Api::Initialize() {
+bool GW::Initialize() {
 	if (MemoryMgr::Scan()) {
 
-		// force the construction of at least gamethread and ctos
-		Gamethread();
+		// force the initialization of gamethread
+		GameThread::Initialize();
+		Agents::Initialize();
 
 		return true;
 	} else {
@@ -33,11 +22,9 @@ bool GW::Api::Initialize() {
 	}
 }
 
-void GW::Api::Destruct() {
-	GW::Gamethread().calls_.clear();
-	for (GWCABaseManager* manager : managers) {
-		manager->RestoreHooks();
-	}
+void GW::Terminate() {
+	GW::GameThread::ClearCalls();
+
 	GW::CameraMgr::RestoreHooks();
 	GW::Chat::RestoreHooks();
 	GW::PartyMgr::RestoreHooks();
@@ -45,11 +32,5 @@ void GW::Api::Destruct() {
 	GW::Agents::RestoreHooks();
 	GW::Effects::RestoreHooks();
 
-	Sleep(100);
-	for (GWCABaseManager* manager : managers) {
-		delete manager;
-	}
+	GW::GameThread::RestoreHooks();
 }
-
-// GWCA Module Accessors.
-GW::GameThreadMgr&	GW::Gamethread() { return GameThreadMgr::Instance(); }

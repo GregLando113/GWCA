@@ -6,12 +6,6 @@
 
 // Agent Array
 BYTE* GW::MemoryMgr::agArrayPtr = NULL;
-BYTE* GW::MemoryMgr::PlayerAgentIDPtr = NULL;
-BYTE* GW::MemoryMgr::TargetAgentIDPtr = NULL;
-BYTE* GW::MemoryMgr::MouseOverAgentIDPtr = NULL;
-
-// Map ID
-BYTE* GW::MemoryMgr::MapIDPtr = NULL;
 
 // Base ptr to get context pointer, which houses basically
 BYTE* GW::MemoryMgr::BasePointerLocation = NULL;
@@ -27,10 +21,6 @@ BYTE* GW::MemoryMgr::SkillTimerPtr = NULL;
 
 BYTE* GW::MemoryMgr::WinHandlePtr = NULL;
 
-BYTE* GW::MemoryMgr::MapInfoPtr = NULL;
-
-BYTE* GW::MemoryMgr::DialogFunc = NULL;
-
 BYTE* GW::MemoryMgr::DecodeStringFunc = NULL;
 
 bool GW::MemoryMgr::Scan() {
@@ -42,9 +32,6 @@ bool GW::MemoryMgr::Scan() {
 	if (agArrayPtr) {
 		printf("agArrayPtr = %X\n", (DWORD)agArrayPtr);
 		agArrayPtr = *(BYTE**)agArrayPtr;
-		PlayerAgentIDPtr = (BYTE*)(agArrayPtr - 0x54);
-		TargetAgentIDPtr = (BYTE*)(agArrayPtr - 0x500);
-		MouseOverAgentIDPtr = (BYTE*)(agArrayPtr - 0x4F4);
 	} else {
 		printf("agArrayPtr = ERR\n");
 		return false;
@@ -72,16 +59,6 @@ bool GW::MemoryMgr::Scan() {
 		return false;
 	}
 
-	// For Map IDs
-	MapIDPtr = (BYTE*)Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0);
-	if (MapIDPtr) {
-		printf("MapIDPtr = %X\n", (DWORD)MapIDPtr);
-		MapIDPtr = *(BYTE**)(MapIDPtr + 0x46);
-	} else {
-		printf("MapIDPtr = ERR\n");
-		return false;
-	}
-
 	// Skill timer to use for exact effect times.
 	SkillTimerPtr = (BYTE*)Scanner::Find("\x85\xC0\x74\x11\x6A\x76\xBA", "xxxxxxx", -4);
 	if (SkillTimerPtr) {
@@ -98,24 +75,6 @@ bool GW::MemoryMgr::Scan() {
 		WinHandlePtr = *(BYTE**)(WinHandlePtr + 7);
 	} else {
 		printf("WinHandlePtr = ERR\n");
-		return false;
-	}
-
-	MapInfoPtr = (BYTE*)Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
-	if (MapInfoPtr) {
-		printf("MapInfoPtr = %X\n", (DWORD)MapInfoPtr);
-		MapInfoPtr = *(BYTE**)(MapInfoPtr + 7);
-	} else {
-		printf("MapInfoPtr = ERR\n");
-		return false;
-	}
-
-
-	DialogFunc = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x28\x53\x56\x57\x8B\xF2\x8B\xD9", "xxxxxxxxxxxxx", -0x28);
-	if (DialogFunc) {
-		printf("DialogFunc = %X\n", (DWORD)DialogFunc);
-	} else {
-		printf("DialogFunc = ERR\n");
 		return false;
 	}
 

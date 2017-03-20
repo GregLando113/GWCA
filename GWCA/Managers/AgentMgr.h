@@ -13,6 +13,7 @@
 
 namespace GW {
 	namespace Agents {
+		void Initialize();
 
 		// === Dialogs ===
 		// Same as pressing button (id) while talking to an NPC.
@@ -28,8 +29,8 @@ namespace GW {
 
 		// === Agent Array ===
 		// Get Current AgentID's of player or target.
-		inline DWORD GetPlayerId() { return *(DWORD*)MemoryMgr::PlayerAgentIDPtr; }
-		inline DWORD GetTargetId() { return *(DWORD*)MemoryMgr::TargetAgentIDPtr; }
+		DWORD GetPlayerId();
+		DWORD GetTargetId();
 
 		// Returns Agentstruct Array of agents in compass range, full structs.
 		GW::AgentArray GetAgentArray();

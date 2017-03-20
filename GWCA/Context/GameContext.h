@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GWCA\Utilities\PatternScanner.h>
+#include <GWCA\Utilities\Scanner.h>
 
 #include "AgentContext.h"
 #include "MapContext.h"

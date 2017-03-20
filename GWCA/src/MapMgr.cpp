@@ -9,11 +9,11 @@
 #include <GWCA\Managers\MemoryMgr.h>
 
 
-bool GW::MapMgr::IsMapLoaded() {
+bool GW::Map::IsMapLoaded() {
 	return GameContext::instance()->map != nullptr;
 }
 
-void GW::MapMgr::Travel(GW::Constants::MapID MapID,
+void GW::Map::Travel(GW::Constants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
 
 	if (GetInstanceType() == GW::Constants::InstanceType::Loading) return;
@@ -29,7 +29,7 @@ void GW::MapMgr::Travel(GW::Constants::MapID MapID,
 	CtoS::SendPacket<PAB_ZoneMap>(pak);
 }
 
-void GW::MapMgr::Travel(GW::Constants::MapID MapID, GW::Constants::District district, int district_number) {
+void GW::Map::Travel(GW::Constants::MapID MapID, GW::Constants::District district, int district_number) {
 	switch (district) {
 	case Constants::District::Current:
 		Travel(MapID, district_number, GetRegion(), GetLanguage());
@@ -73,30 +73,30 @@ void GW::MapMgr::Travel(GW::Constants::MapID MapID, GW::Constants::District dist
 	}
 }
 
-DWORD GW::MapMgr::GetInstanceTime() {
+DWORD GW::Map::GetInstanceTime() {
 	return GameContext::instance()->agent->instancetimer;
 }
 
-GW::Constants::MapID GW::MapMgr::GetMapID() {
+GW::Constants::MapID GW::Map::GetMapID() {
 	return static_cast<GW::Constants::MapID>(*(DWORD*)MemoryMgr::MapIDPtr);
 }
 
-int GW::MapMgr::GetRegion() { 
+int GW::Map::GetRegion() {
 	return *(int*)(MemoryMgr::MapInfoPtr + 0x10); 
 }
 
-int GW::MapMgr::GetLanguage() {
+int GW::Map::GetLanguage() {
 	return *(int*)(MemoryMgr::MapInfoPtr + 0xC); 
 }
 
-GW::Constants::InstanceType GW::MapMgr::GetInstanceType() {
+GW::Constants::InstanceType GW::Map::GetInstanceType() {
 	return *(GW::Constants::InstanceType*)(MemoryMgr::agArrayPtr - 0xF0);
 }
 
-GW::MissionMapIconArray GW::MapMgr::GetMissionMapIconArray() {
+GW::MissionMapIconArray GW::Map::GetMissionMapIconArray() {
 	return GameContext::instance()->world->missionmapicons;
 }
 
-GW::PathingMapArray GW::MapMgr::GetPathingMap() {
+GW::PathingMapArray GW::Map::GetPathingMap() {
 	return GameContext::instance()->map->sub1->sub2->pmaps;
 }

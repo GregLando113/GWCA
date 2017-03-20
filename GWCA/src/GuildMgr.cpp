@@ -2,9 +2,11 @@
 
 #include <GWCA\Context\GameContext.h>
 #include <GWCA\Context\GuildContext.h>
-#include <GWCA\Managers\MemoryMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 
+GW::GuildContext* GW::GuildMgr::GetGuildContext() {
+	return GameContext::instance()->guild;
+}
 
 wchar_t* GW::GuildMgr::GetPlayerGuildAnnouncer() {
 	return GameContext::instance()->guild->lastannouncementwriter;

@@ -85,30 +85,13 @@ GWCA::Destruct()
 namespace GW {
 
 	class GameThreadMgr;
-	class CtoSMgr;
-	class StoCMgr;
-	class ItemMgr;
 	class SkillbarMgr;
 	class EffectMgr;
-	class ChatMgr;
-	class MerchantMgr;
-	class GuildMgr;
-	class MapMgr;
-	class FriendListMgr;
-	class CameraMgr;
 
 	// GWCA Module Accessors.
 	GameThreadMgr& Gamethread();
-	StoCMgr& StoC();
-	ItemMgr& Items();
 	SkillbarMgr& Skillbarmgr();
 	EffectMgr& Effects();
-	ChatMgr& Chat();
-	MerchantMgr& Merchant();
-	GuildMgr& Guildmgr();
-	MapMgr& Map();
-	FriendListMgr& FriendListmgr();
-	CameraMgr& Cameramgr();
 
 	class Api {
 		friend class GWCABaseManager;

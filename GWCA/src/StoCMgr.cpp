@@ -1,21 +1,43 @@
 #include <GWCA\Managers\StoCMgr.h>
 
-#include <GWCA\Utilities\PatternScanner.h>
+#include <map>
 
-GW::StoCMgr::StoCHandlerArray GW::StoCMgr::game_server_handler_;
-GW::StoCMgr::StoCHandler* GW::StoCMgr::original_functions_ = NULL;
-std::map<DWORD, std::map<DWORD, GW::StoCMgr::CallbackFunc<GW::Packet::StoC::PacketBase>>> GW::StoCMgr::event_calls_;
-DWORD GW::StoCMgr::last_identifier_ = 0;
+#include <GWCA\Utilities\Scanner.h>
+#include <GWCA\GameContainers\gw_array.h>
 
-bool GW::StoCMgr::StoCHandlerFunc(Packet::StoC::PacketBase* pak) {
-	bool do_not_process = false;
-	for (auto call : event_calls_[pak->header]) {
-		if (call.second(pak)) do_not_process = true;
+
+namespace {
+	typedef bool(__fastcall *StoCHandler_t)(GW::Packet::StoC::PacketBase* pak);
+
+	struct StoCHandler {
+		DWORD* packettemplate;
+		int templatesize;
+		StoCHandler_t handlerfunc;
+	};
+
+	typedef GW::gw_array<StoCHandler> StoCHandlerArray;
+
+	StoCHandlerArray game_server_handler;
+	StoCHandler* original_functions = nullptr;
+	std::map<DWORD, std::map<DWORD, GW::StoC::CallbackFunc<GW::Packet::StoC::PacketBase>>> event_calls;
+	DWORD last_identifier = 0;
+
+	bool __fastcall StoCHandlerFunc(GW::Packet::StoC::PacketBase* pak) {
+		bool do_not_process = false;
+		for (auto call : event_calls[pak->header]) {
+			if (call.second(pak)) do_not_process = true;
+		}
+		return do_not_process ? true : original_functions[pak->header].handlerfunc(pak);
 	}
-	return do_not_process ? true : original_functions_[pak->header].handlerfunc(pak);
+
+
+	void OriginalHandler(GW::Packet::StoC::PacketBase* packet) {
+		original_functions[packet->header].handlerfunc(packet);
+	}
 }
 
-GW::StoCMgr::StoCMgr() : GWCAManager() {
+
+void GW::StoC::Initialize() {
 	// inb4 has rages at this
 	struct LSObjPtrChain {
 		struct {
@@ -35,20 +57,39 @@ GW::StoCMgr::StoCMgr() : GWCAManager() {
 		}*sub1;
 	} *lsobjbase = *(LSObjPtrChain**)Scanner::Find("\x8B\x56\x04\x85\xC0\x89\x57\x18", "xxxxxxxx", -4);
 
-	game_server_handler_ = lsobjbase->sub1->sub2->sub3->sub4->gshandlers;
+	game_server_handler = lsobjbase->sub1->sub2->sub3->sub4->gshandlers;
 
-	original_functions_ = new StoCHandler[game_server_handler_.size()];
+	original_functions = new StoCHandler[game_server_handler.size()];
 
-	for (DWORD i = 0; i < game_server_handler_.size(); ++i) {
-		original_functions_[i] = game_server_handler_[i];
+	for (DWORD i = 0; i < game_server_handler.size(); ++i) {
+		original_functions[i] = game_server_handler[i];
 	}
 
 }
 
-void GW::StoCMgr::RestoreHooks() {
-	for (DWORD i = 0; i < game_server_handler_.size(); ++i) {
-		game_server_handler_[i] = original_functions_[i];
-	}
+DWORD GW::StoC::AddCallback(DWORD header, std::function<bool(Packet::StoC::PacketBase*)> callback) {
+	if (original_functions == nullptr) Initialize();
+	last_identifier++;
+	event_calls[header][last_identifier] = callback;
+	game_server_handler[header].handlerfunc = StoCHandlerFunc;
+	return last_identifier;
+}
 
-	delete[] original_functions_;
+void GW::StoC::RemoveCallback(DWORD header, DWORD identifier) {
+	event_calls[header].erase(identifier);
+}
+
+void GW::StoC::EmulatePacket(Packet::StoC::PacketBase* packet) {
+	if (original_functions == nullptr) Initialize();
+	OriginalHandler(packet);
+}
+
+void GW::StoC::RestoreHooks() {
+	if (original_functions == nullptr) return;
+	for (DWORD i = 0; i < game_server_handler.size(); ++i) {
+		if (game_server_handler[i].handlerfunc != original_functions[i].handlerfunc) {
+			game_server_handler[i].handlerfunc = original_functions[i].handlerfunc;
+		}
+	}
+	delete[] original_functions;
 }

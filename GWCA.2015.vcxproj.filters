@@ -112,9 +112,6 @@
     <ClInclude Include="GWCA\Utilities\MemoryPatcher.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\Utilities\PatternScanner.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="GWCA\Structures\GWStructures.h" />
     <ClInclude Include="GWCA\Packets\CtoS.h">
       <Filter>Packets</Filter>
@@ -215,6 +212,9 @@
     <ClInclude Include="GWCA\Packets\StoC.h">
       <Filter>Packets</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Utilities\Scanner.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">
@@ -283,11 +283,11 @@
     <ClCompile Include="GWCA\src\MemoryPatcher.cpp">
       <Filter>src\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\src\PatternScanner.cpp">
-      <Filter>src\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="GWCA\src\TradeMgr.cpp">
       <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Scanner.cpp">
+      <Filter>src\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

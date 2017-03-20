@@ -27,9 +27,6 @@ namespace GW {
 		static BYTE* GameLoopReturn;
 		static BYTE* GameLoopRestore;
 
-		// For writing PM's in chat.
-		static BYTE* WriteChatFunction;
-
 		// Skill timer for effects.
 		static BYTE* SkillTimerPtr;
 

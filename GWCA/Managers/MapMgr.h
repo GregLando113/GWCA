@@ -2,14 +2,12 @@
 
 #include <Windows.h>
 
-#include "GWCAManager.h"
 #include <GWCA\Constants\Constants.h>
 #include <GWCA\GameEntities\Map.h>
 #include <GWCA\GameEntities\Pathing.h>
 
 namespace GW {
-	class MapMgr : public GWCAManager<MapMgr> {
-		friend class GWCAManager<MapMgr>;
+	namespace Map {
 
 		struct PAB_ZoneMap {
 			const DWORD header = 0xAB;
@@ -19,7 +17,7 @@ namespace GW {
 			int language;
 			DWORD unk;
 		};
-	public:
+
 		bool IsMapLoaded();
 
 		// Get current map ID.
@@ -47,9 +45,5 @@ namespace GW {
 
 		// Returns pointer of collision trapezoid array.
 		GW::PathingMapArray GetPathingMap();
-
-	private:
-		MapMgr() {}
-		void RestoreHooks() override {}
 	};
 }

@@ -1,50 +1,55 @@
 #include <GWCA\Managers\ItemMgr.h>
 
-#include <GWCA\Constants\Constants.h>
-
 #include <GWCA\Context\GameContext.h>
-#include <GWCA\Context\ItemContext.h>
-#include <GWCA\Managers\GameThreadMgr.h>
 #include <GWCA\Managers\StoCMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
-#include <GWCA\Managers\MapMgr.h>
-#include <GWCA\Managers\MemoryMgr.h>
 
-void GW::ItemMgr::OpenXunlaiWindow() {
+void GW::Items::OpenXunlaiWindow() {
 	static DWORD ecxbuf[4] = { 119, 0, 0, 3 };
-	StoCMgr::Instance().EmulatePacket((Packet::StoC::PacketBase*)ecxbuf);
+	StoC::EmulatePacket((Packet::StoC::PacketBase*)ecxbuf);
 }
 
-void GW::ItemMgr::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
+void GW::Items::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
 	CtoS::SendPacket(0xC, 0x39, item->AgentId, CallTarget);
 }
 
-void GW::ItemMgr::DropItem(GW::Item* item, DWORD quantity) {
+void GW::Items::DropItem(GW::Item* item, DWORD quantity) {
 	CtoS::SendPacket(0xC, 0x26, item->ItemId, quantity);
 }
 
-void GW::ItemMgr::EquipItem(GW::Item* item) {
+void GW::Items::EquipItem(GW::Item* item) {
 	CtoS::SendPacket(0x8, 0x2A, item->ItemId);
 }
 
-void GW::ItemMgr::UseItem(GW::Item* item) {
+void GW::Items::UseItem(GW::Item* item) {
 	CtoS::SendPacket(0x8, 0x78, item->ItemId);
 }
 
-GW::Bag** GW::ItemMgr::GetBagArray() {
+GW::Bag** GW::Items::GetBagArray() {
 	return GameContext::instance()->items->inventory->bags;
 }
 
-GW::ItemArray GW::ItemMgr::GetItemArray() {
+GW::ItemArray GW::Items::GetItemArray() {
 	return GameContext::instance()->items->itemarray;
 }
 
-GW::ItemMgr::ItemMgr() {}
+void GW::Items::DropGold(DWORD Amount /*= 1*/) {
+	CtoS::SendPacket(0x8, 0x29, Amount);
+}
 
-bool GW::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+DWORD GW::Items::GetGoldAmountOnCharacter() {
+	return GameContext::instance()->items->inventory->gold_character;
+}
 
-	if (MapMgr::Instance().GetInstanceType() == GW::Constants::InstanceType::Loading) return false;
+DWORD GW::Items::GetGoldAmountInStorage() {
+	return GameContext::instance()->items->inventory->gold_storage;
+}
 
+void GW::Items::OpenLockedChest() {
+	CtoS::SendPacket(0x8, 0x4D, 0x2);
+}
+
+bool GW::Items::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 	GW::Bag** bags = GetBagArray();
 	if (bags == NULL) return false;
 
@@ -71,11 +76,7 @@ bool GW::ItemMgr::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const B
 	return false;
 }
 
-void GW::ItemMgr::DropGold(DWORD Amount /*= 1*/) {
-	CtoS::SendPacket(0x8, 0x29, Amount);
-}
-
-DWORD GW::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+DWORD GW::Items::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 	DWORD itemcount = 0;
 	GW::Bag** bags = GetBagArray();
 	GW::Bag* bag = NULL;
@@ -97,7 +98,7 @@ DWORD GW::ItemMgr::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, cons
 	return itemcount;
 }
 
-GW::Item* GW::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+GW::Item* GW::Items::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
 	GW::Bag** bags = GetBagArray();
 	GW::Bag* bag = NULL;
 
@@ -116,16 +117,4 @@ GW::Item* GW::ItemMgr::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, co
 	}
 
 	return NULL;
-}
-
-DWORD GW::ItemMgr::GetGoldAmountOnCharacter() {
-	return GameContext::instance()->items->inventory->gold_character;
-}
-
-DWORD GW::ItemMgr::GetGoldAmountInStorage() {
-	return GameContext::instance()->items->inventory->gold_storage;
-}
-
-void GW::ItemMgr::OpenLockedChest() {
-	CtoS::SendPacket(0x8, 0x4D, 0x2);
 }

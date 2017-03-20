@@ -5,10 +5,13 @@
 
 namespace GW {
 	namespace PartyMgr {
+
 		// set or unset the fact that ticking will work as a toggle instead
 		// of showing a drop-down menu
 		void SetTickToggle();
 		void RestoreTickToggle();
+
+		inline void RestoreHooks() { RestoreTickToggle(); }
 
 		// Set party ready status.
 		void Tick(bool flag = true);

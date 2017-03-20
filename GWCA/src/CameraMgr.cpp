@@ -1,41 +1,83 @@
 #include <GWCA\Managers\CameraMgr.h>
 
-#include <GWCA\Utilities\PatternScanner.h>
+#include <GWCA\Utilities\Scanner.h>
+#include <GWCA\Utilities\MemoryPatcher.h>
 
-GW::CameraMgr::CameraMgr() {
-	DWORD scancamclass = Scanner::Find("\x75\x0B\x51\xB9", "xxxx", 4);
-	if (scancamclass) {
-		cam_class_ = *(GW::Camera**)scancamclass;
-	} else {
-		cam_class_ = NULL;
+namespace {
+	GW::MemoryPatcher *patch_maxdist;
+	GW::MemoryPatcher *patch_camupdate;
+	GW::MemoryPatcher *patch_fog;
+	GW::MemoryPatcher *patch_fov;
+}
+
+GW::Camera* GW::CameraMgr::GetCamera() {
+	static GW::Camera* camera = nullptr;
+	if (camera == nullptr) {
+		DWORD scancamclass = Scanner::Find("\x75\x0B\x51\xB9", "xxxx", 4);
+		if (scancamclass) {
+			camera = *(GW::Camera**)scancamclass;
+		}
 	}
-	DWORD scanprojmatrix = Scanner::Find("\x89\x4D\xCC\x89\x45\xD4\x8B\x56\x08", "xxxxxxxxx", -4);
-	if (scancamclass) {
-		projection_matrix_ = (*(float**)scanprojmatrix) + 0x68;
-	} else {
-		projection_matrix_ = NULL;
+	return camera;
+}
+
+float* GW::CameraMgr::GetProjectionMatrix() {
+	static float* proj_matrix = nullptr;
+	if (proj_matrix == nullptr) {
+		DWORD scanprojmatrix = Scanner::Find("\x89\x4D\xCC\x89\x45\xD4\x8B\x56\x08", "xxxxxxxxx", -4);
+		if (scanprojmatrix) {
+			proj_matrix = (*(float**)scanprojmatrix) + 0x68;
+		}
 	}
+	return proj_matrix;
+}
 
-	LPVOID patch_maxdist_addr = (LPVOID)Scanner::Find("\x8B\x45\x08\x89\x41\x68\x5D", "xxxxxxx", 3);
-	patch_maxdist = new MemoryPatcher(patch_maxdist_addr, (BYTE*)"\xEB\x01", 2);
-	patch_maxdist->TooglePatch(true);
+void GW::CameraMgr::SetMaxDist(float dist) {
+	if (patch_maxdist == nullptr) {
+		LPVOID patch_maxdist_addr = (LPVOID)Scanner::Find("\x8B\x45\x08\x89\x41\x68\x5D", "xxxxxxx", 3);
+		patch_maxdist = new MemoryPatcher(patch_maxdist_addr, (BYTE*)"\xEB\x01", 2);
+		patch_maxdist->TooglePatch(true);
+	}
+	GetCamera()->maxdistance2 = dist;
+}
 
-	LPVOID patch_camupdate_addr = (LPVOID)Scanner::Find("\x89\x0E\x89\x56\x04\x89\x7E\x08", "xxxxxxxx", 0);
-	patch_camupdate = new MemoryPatcher(patch_camupdate_addr, (BYTE*)"\xEB\x06", 2);
+void GW::CameraMgr::SetFieldOfView(float fov) {
+	if (patch_fog == nullptr) {
+		LPVOID patch_fov_addr = (LPVOID)Scanner::Find("\x8B\x45\x0C\x89\x41\x04\xD9", "xxxxxxx", -0xC);
+		patch_fov = new MemoryPatcher(patch_fov_addr, (BYTE*)"\xC3", 1);
+		patch_fov->TooglePatch(true);
+	}
+	GetCamera()->fieldofview = fov;
+}
 
-	LPVOID patch_fog_addr = (LPVOID)Scanner::Find("\x83\xE2\x01\x52\x6A\x1C\x50", "xxxxxxx", 2);
-	patch_fog = new MemoryPatcher(patch_fog_addr, (BYTE*)"\x00", 1);
+bool GW::CameraMgr::UnlockCam(bool flag) {
+	if (patch_camupdate == nullptr) {
+		LPVOID patch_camupdate_addr = (LPVOID)Scanner::Find("\x89\x0E\x89\x56\x04\x89\x7E\x08", "xxxxxxxx", 0);
+		patch_camupdate = new MemoryPatcher(patch_camupdate_addr, (BYTE*)"\xEB\x06", 2);
+	}
+	return patch_camupdate->TooglePatch(flag);
+}
+bool GW::CameraMgr::GetCameraUnlock() {
+	if (patch_camupdate) {
+		return patch_camupdate->GetPatchState();
+	} else {
+		return false;
+	}
+}
 
-	LPVOID patch_fov_addr = (LPVOID)Scanner::Find("\x8B\x45\x0C\x89\x41\x04\xD9", "xxxxxxx", -0xC);
-	patch_fov = new MemoryPatcher(patch_fov_addr, (BYTE*)"\xC3", 1);
-	patch_fov->TooglePatch(true);
+bool GW::CameraMgr::SetFog(bool flag) {
+	if (patch_fog == nullptr) {
+		LPVOID patch_fog_addr = (LPVOID)Scanner::Find("\x83\xE2\x01\x52\x6A\x1C\x50", "xxxxxxx", 2);
+		patch_fog = new MemoryPatcher(patch_fog_addr, (BYTE*)"\x00", 1);
+	}
+	return patch_fog->TooglePatch(!flag);
 }
 
 void GW::CameraMgr::RestoreHooks() {
-	delete patch_maxdist;
-	delete patch_camupdate;
-	delete patch_fog;
-	delete patch_fov;
+	if (patch_maxdist) delete patch_maxdist;
+	if (patch_camupdate) delete patch_camupdate;
+	if (patch_fog) delete patch_fog;
+	if (patch_fov) delete patch_fov;
 }
 
 GW::Vector3f GW::CameraMgr::ComputeCamPos(float dist) {
@@ -43,10 +85,10 @@ GW::Vector3f GW::CameraMgr::ComputeCamPos(float dist) {
 
 	Vector3f newPos = GetLookAtTarget();
 
-	float pitchX = sqrt(1.f - cam_class_->pitch*cam_class_->pitch);
-	newPos.x -= dist * pitchX * cos(cam_class_->yaw);
-	newPos.y -= dist * pitchX * sin(cam_class_->yaw);
-	newPos.z -= dist * 0.95f * cam_class_->pitch; // 0.95 is the max pitch, not 1.0
+	float pitchX = sqrt(1.f - GetCamera()->pitch*GetCamera()->pitch);
+	newPos.x -= dist * pitchX * cos(GetCamera()->yaw);
+	newPos.y -= dist * pitchX * sin(GetCamera()->yaw);
+	newPos.z -= dist * 0.95f * GetCamera()->pitch; // 0.95 is the max pitch, not 1.0
 
 	return newPos;
 }

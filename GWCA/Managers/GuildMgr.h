@@ -2,15 +2,14 @@
 
 #include <Windows.h>
 
-#include "GWCAManager.h"
+#include <GWCA\Context\GuildContext.h>
 #include <GWCA\GameEntities\Guild.h>
 
 namespace GW {
 
-	class GuildMgr : public GWCAManager<GuildMgr> {
-		friend class GWCAManager<GuildMgr>;
+	namespace GuildMgr {
 
-	public:
+		GW::GuildContext* GetGuildContext();
 
 		// Array of guilds, holds basically everything about a guild. Can get structs of all players in outpost ;)
 		GW::GuildArray GetGuildArray();
@@ -29,9 +28,5 @@ namespace GW {
 		void TravelGH(GW::GHKey key);
 
 		void LeaveGH();
-
-	private:
-		GuildMgr() {}
-		void RestoreHooks() override {}
 	};
 }

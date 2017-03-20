@@ -10,9 +10,7 @@
 
 namespace {
 	typedef DWORD(__stdcall *Tick_t)(DWORD unk1);
-	Tick_t addr_tick = (Tick_t)0x0054E6B0;
 	GW::THook<Tick_t> hk_tick_;
-	Tick_t ori_tick_;
 
 	// Parameter is always 1 or 2 creating "Ready" or "Not ready"
 	DWORD __stdcall DetourTick(DWORD unk1) {
@@ -27,7 +25,10 @@ namespace {
 }
 
 void GW::PartyMgr::SetTickToggle() {
-	ori_tick_ = (Tick_t)hk_tick_.Detour(addr_tick, DetourTick);
+	if (hk_tick_.Empty()) {
+		Tick_t addr_tick = (Tick_t)0x0054E6B0; // Need scan!
+		hk_tick_.Detour(addr_tick, DetourTick);
+	}
 }
 
 void GW::PartyMgr::RestoreTickToggle() {
@@ -35,6 +36,7 @@ void GW::PartyMgr::RestoreTickToggle() {
 }
 
 void GW::PartyMgr::Tick(bool flag) {
+	printf("ticking -> %d\n", flag);
 	CtoS::SendPacket(0x8, 0xA9, flag);
 }
 

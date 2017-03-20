@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include <GWCA\Utilities\PatternScanner.h>
+#include <GWCA\Utilities\Scanner.h>
 
 // Agent Array
 BYTE* GW::MemoryMgr::agArrayPtr = NULL;
@@ -21,9 +21,6 @@ BYTE* GW::MemoryMgr::RenderLoopLocation = NULL;
 BYTE* GW::MemoryMgr::GameLoopLocation = NULL;
 BYTE* GW::MemoryMgr::GameLoopReturn = NULL;
 BYTE* GW::MemoryMgr::GameLoopRestore = NULL;
-
-// Chat function for simple debug/notifications
-BYTE* GW::MemoryMgr::WriteChatFunction = NULL;
 
 // Used to get precise skill recharge times.
 BYTE* GW::MemoryMgr::SkillTimerPtr = NULL;
@@ -88,15 +85,6 @@ bool GW::MemoryMgr::Scan() {
 		MapIDPtr = *(BYTE**)(MapIDPtr + 0x46);
 	} else {
 		printf("MapIDPtr = ERR\n");
-		return false;
-	}
-
-	// To write info / Debug as a PM in chat
-	WriteChatFunction = (BYTE*)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
-	if (WriteChatFunction) {
-		printf("WriteChatFunction = %X\n", (DWORD)WriteChatFunction);
-	} else {
-		printf("WriteChatFunction = ERR\n");
 		return false;
 	}
 

@@ -1,4 +1,4 @@
-#include "..\Utilities\PatternScanner.h"
+#include "..\Utilities\Scanner.h"
 
 #include <Windows.h>
 #include <Psapi.h>

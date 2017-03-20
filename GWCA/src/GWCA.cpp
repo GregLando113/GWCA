@@ -38,6 +38,11 @@ void GW::Api::Destruct() {
 	for (GWCABaseManager* manager : managers) {
 		manager->RestoreHooks();
 	}
+	GW::CameraMgr::RestoreHooks();
+	GW::Chat::RestoreHooks();
+	GW::PartyMgr::RestoreHooks();
+	GW::StoC::RestoreHooks();
+
 	Sleep(100);
 	for (GWCABaseManager* manager : managers) {
 		delete manager;
@@ -46,13 +51,5 @@ void GW::Api::Destruct() {
 
 // GWCA Module Accessors.
 GW::GameThreadMgr&	GW::Gamethread() { return GameThreadMgr::Instance(); }
-GW::StoCMgr&		GW::StoC() { return StoCMgr::Instance(); }
-GW::ItemMgr&		GW::Items() { return ItemMgr::Instance(); }
 GW::SkillbarMgr&	GW::Skillbarmgr() { return SkillbarMgr::Instance(); }
 GW::EffectMgr&		GW::Effects() { return EffectMgr::Instance(); }
-GW::ChatMgr&		GW::Chat() { return ChatMgr::Instance(); }
-GW::MerchantMgr&	GW::Merchant() { return MerchantMgr::Instance(); }
-GW::GuildMgr&		GW::Guildmgr() { return GuildMgr::Instance(); }
-GW::MapMgr&			GW::Map() { return MapMgr::Instance(); }
-GW::FriendListMgr&	GW::FriendListmgr() { return FriendListMgr::Instance(); }
-GW::CameraMgr&		GW::Cameramgr() { return CameraMgr::Instance(); }

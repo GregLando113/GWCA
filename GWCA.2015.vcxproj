@@ -65,7 +65,7 @@
     <ClInclude Include="GWCA\Utilities\MemoryPatcher.h" />
     <ClInclude Include="GWCA\Managers\MerchantMgr.h" />
     <ClInclude Include="GWCA\Managers\PartyMgr.h" />
-    <ClInclude Include="GWCA\Utilities\PatternScanner.h" />
+    <ClInclude Include="GWCA\Utilities\Scanner.h" />
     <ClInclude Include="GWCA\Managers\PlayerMgr.h" />
     <ClInclude Include="GWCA\Managers\SkillbarMgr.h" />
     <ClInclude Include="GWCA\Managers\StoCMgr.h" />
@@ -77,7 +77,7 @@
     <ClCompile Include="GWCA\src\PlayerMgr.cpp" />
     <ClCompile Include="GWCA\src\Hooker.cpp" />
     <ClCompile Include="GWCA\src\MemoryPatcher.cpp" />
-    <ClCompile Include="GWCA\src\PatternScanner.cpp" />
+    <ClCompile Include="GWCA\src\Scanner.cpp" />
     <ClCompile Include="GWCA\src\AgentMgr.cpp" />
     <ClCompile Include="GWCA\src\CameraMgr.cpp" />
     <ClCompile Include="GWCA\src\ChatMgr.cpp" />

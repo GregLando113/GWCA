@@ -53,6 +53,6 @@ void GW::HookInternal::Retour(BYTE* source, BYTE* retour_func, DWORD length) {
 	DWORD old_protection;
 	VirtualProtect(source, length, PAGE_READWRITE, &old_protection);
 	memcpy(source, retour_func, length);
-	delete[](BYTE*)retour_func;
+	free(retour_func);
 	VirtualProtect(source, length, old_protection, &old_protection);
 }

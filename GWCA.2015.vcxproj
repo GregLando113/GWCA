@@ -53,6 +53,7 @@
     <ClInclude Include="GWCA\Managers\FriendListMgr.h" />
     <ClInclude Include="GWCA\Managers\GameThreadMgr.h" />
     <ClInclude Include="GWCA\Managers\GuildMgr.h" />
+    <ClInclude Include="GWCA\Managers\Render.h" />
     <ClInclude Include="GWCA\Managers\TradeMgr.h" />
     <ClInclude Include="GWCA\Packets\CtoS.h" />
     <ClInclude Include="GWCA\Packets\StoC.h" />
@@ -72,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c" />
+    <ClCompile Include="GWCA\src\Render.cpp" />
     <ClCompile Include="GWCA\src\Skill.cpp" />
     <ClCompile Include="GWCA\src\PlayerMgr.cpp" />
     <ClCompile Include="GWCA\src\Hooker.cpp" />

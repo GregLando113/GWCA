@@ -8,6 +8,7 @@
 #include "..\Managers\ChatMgr.h"
 #include "..\Managers\StoCMgr.h"
 #include "..\Managers\CameraMgr.h"
+#include "..\Managers\Render.h"
 
 bool GW::Initialize() {
 	if (MemoryMgr::Scan()) {
@@ -31,6 +32,7 @@ void GW::Terminate() {
 	GW::StoC::RestoreHooks();
 	GW::Agents::RestoreHooks();
 	GW::Effects::RestoreHooks();
+	GW::Render::RestoreHooks();
 
 	GW::GameThread::RestoreHooks();
 }

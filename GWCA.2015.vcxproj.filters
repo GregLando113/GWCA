@@ -212,6 +212,7 @@
       <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="GWCA\GWStructures.h" />
+    <ClInclude Include="GWCA\Managers\Render.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">
@@ -282,6 +283,9 @@
     </ClCompile>
     <ClCompile Include="GWCA\src\Scanner.cpp">
       <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\Render.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

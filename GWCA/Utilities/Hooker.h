@@ -21,17 +21,20 @@ namespace GW {
 		bool Empty() { return retour_func_ == nullptr; };
 
 		T Detour(T _source, T _detour, const DWORD _length = 0) {
-			if (Valid()) return retour_func_;
-			source_ = _source;
-			length_ = (_length > 0 ? _length : HookInternal::CalculateDetourLength((BYTE*)_source));
-			return retour_func_ = (T)HookInternal::Detour((BYTE*)source_, (BYTE*)_detour, length_);
+			if (Empty()) {
+				source_ = _source;
+				length_ = (_length > 0 ? _length : HookInternal::CalculateDetourLength((BYTE*)_source));
+				retour_func_ = (T)HookInternal::Detour((BYTE*)source_, (BYTE*)_detour, length_);
+			}
+			return retour_func_;
 		}
 
-		void Retour() {
-			if (Empty()) return;
-			HookInternal::Retour((BYTE*)source_, (BYTE*)retour_func_, length_);
-			delete[] (BYTE*)retour_func_;
-			retour_func_ = source_ = nullptr;
+		T Retour(bool do_cleanup = true) {
+			if (Valid()) {
+				HookInternal::Retour((BYTE*)source_, (BYTE*)retour_func_, length_);
+				retour_func_ = nullptr;
+			}
+			return source_;
 		}
 	};
 

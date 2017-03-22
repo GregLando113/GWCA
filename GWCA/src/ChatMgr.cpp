@@ -98,6 +98,15 @@ namespace {
 		if (chatevent_callback) chatevent_callback(id, type, info, unk);
 		chatevent_hook.Original()(id, type, info, unk);
 	}
+
+    typedef void(__fastcall *LocalMessage_t)(int channel, wchar_t *message);
+    GW::THook<LocalMessage_t> localmessage_hook;
+    std::function<bool(int, wchar_t*)> localmessage_callback;
+    void __fastcall localmessage_detour(int channel, wchar_t *message) {
+        if (localmessage_callback && !localmessage_callback(channel, message))
+            return;
+        localmessage_hook.Original()(channel, message);
+    }
 }
 
 void GW::Chat::SetChatEventCallback(std::function<void(DWORD, DWORD, wchar_t*, void*)> callback) {
@@ -107,6 +116,15 @@ void GW::Chat::SetChatEventCallback(std::function<void(DWORD, DWORD, wchar_t*, v
 		chatevent_hook.Detour((ChatEvent_t)addr, chatevent_detour);
 	}
 	chatevent_callback = callback;
+}
+
+void GW::Chat::SetLocalMessageCallback(std::function<bool(int, wchar_t*)> callback) {
+    if (localmessage_hook.Empty()) {
+        LocalMessage_t addr = (LocalMessage_t)0x007DEF00;
+        printf("LocalMessage Func address = 0x%X\n", (DWORD)addr);
+        localmessage_hook.Detour((LocalMessage_t)addr, localmessage_detour);
+    }
+    localmessage_callback = callback;
 }
 
 void GW::Chat::RegisterCommand(const String& command, Callback callback) {

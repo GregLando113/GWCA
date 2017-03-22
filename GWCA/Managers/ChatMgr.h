@@ -72,5 +72,8 @@ namespace GW {
 
 		void SetChatEventCallback(std::function<
 			void(DWORD, DWORD, wchar_t*, void*)> callback);
+
+		void SetLocalMessageCallback(std::function<
+			bool(int, wchar_t*)> callback);
 	};
 }

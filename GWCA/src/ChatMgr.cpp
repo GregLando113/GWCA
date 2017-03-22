@@ -185,6 +185,7 @@ void GW::Chat::RestoreHooks() {
     sendercolor_hook.Retour();
 	messagecolor_hook.Retour();
 	chatevent_hook.Retour();
+    localmessage_hook.Retour();
 }
 
 void GW::Chat::SendChat(const wchar_t* msg, wchar_t channel) {

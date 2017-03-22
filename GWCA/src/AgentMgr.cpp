@@ -73,7 +73,8 @@ void GW::Agents::ChangeTarget(GW::AgentID agentid) {
 		changetarget_func = (ChangeTarget_t)Scanner::Find("\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
 		printf("ChangeTargetFunction = %X\n", (DWORD)changetarget_func);
 	}
-	if (changetarget_func) changetarget_func(agentid, 0);
+	auto& arr = GetAgentArray();
+	if (changetarget_func && arr.valid() && arr[agentid] != nullptr) changetarget_func(agentid, 0);
 }
 
 void GW::Agents::Move(float X, float Y, DWORD ZPlane /*= 0*/) {

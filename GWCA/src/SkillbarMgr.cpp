@@ -16,10 +16,10 @@ GW::Skill GW::SkillbarMgr::GetSkillConstantData(DWORD SkillID) {
 	static GW::Skill* skillconstants = nullptr;
 	if (skillconstants == nullptr) {
 		// Skill array.
-		GW::Skill** SkillArray = (GW::Skill**)Scanner::Find("\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 0);
-		printf("SkillArray = 0x%X\n", (DWORD)SkillArray);
+		BYTE* SkillArray = (BYTE*)Scanner::Find("\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 0);
+		printf("SkillArray Addr = 0x%X\n", (DWORD)SkillArray);
 		if (SkillArray) {
-			skillconstants = *(SkillArray + 8);
+			skillconstants = *(GW::Skill**)(SkillArray + 8);
 		}
 	}
 	return skillconstants[SkillID];

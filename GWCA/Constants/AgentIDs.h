@@ -14,7 +14,6 @@ namespace GW {
             const int Quicksand = 5714;
             const int Lacerate = 4228;
 
-			const int SkeletonOfDhuum = 2338;
 			const int Boo = 7445;
 			const int MiniatureGuildLord = 347;
 			const int MiniatureHighPriestZhang = 348;
@@ -99,6 +98,9 @@ namespace GW {
 
 			namespace UW {
 				const int KeeperOfSouls = 2319;
+				const int Slayer = 2337;
+				const int SkeletonOfDhuum = 2338;
+				const int FourHorseman = 2325; // all four share the same id
 			}
 
 			namespace FoW {

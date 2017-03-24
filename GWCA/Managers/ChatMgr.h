@@ -43,7 +43,7 @@ namespace GW {
 
 		typedef std::wstring String;
 		typedef std::vector<String> StringArray;
-		typedef bool(*Callback)(String& command, StringArray& args);
+		typedef std::function<bool(String& command, StringArray& args)> Callback;
 
 		void Initialize();
 		void RestoreHooks();

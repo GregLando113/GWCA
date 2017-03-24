@@ -300,7 +300,9 @@ namespace {
 
 	void __fastcall opentemplate_detour(DWORD unk, ChatTemplate* info) {
 		if (open_links
-			&& info->template_name != nullptr
+			&& info
+			&& info->template_code
+			&& info->template_name
 			&& (!wcsncmp(info->template_name, L"http://", 7)
 				|| !wcsncmp(info->template_name, L"https://", 8))) {
 			ShellExecuteW(NULL, L"open", info->template_name, NULL, NULL, SW_SHOWNORMAL);

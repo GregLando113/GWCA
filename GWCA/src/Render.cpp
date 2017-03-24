@@ -6,7 +6,8 @@
 #include "../Utilities/Scanner.h"
 
 namespace {
-	struct gwdx {
+	struct gwdx
+	{
 		char pad_0000[24]; //0x0000
 		void* unk; //0x0018 might not be a func pointer, seems like it tho lol
 		char pad_001C[44]; //0x001C
@@ -22,8 +23,10 @@ namespace {
 	typedef bool(__fastcall *GwReset_t)(gwdx* ctx);
 
 	GwEndScene_t endscene_original = nullptr;
+	GwEndScene_t screen_capture_original = nullptr;
 
 	GW::THook<GwEndScene_t> endscene_hook;
+	GW::THook<GwEndScene_t> screen_capture_hook;
 	GW::THook<GwReset_t> reset_hook;
 
 	std::function<void(IDirect3DDevice9*)> render_callback;
@@ -42,6 +45,15 @@ namespace {
 		reset_callback(ctx->device);
 		return reset_hook.Original()(ctx);
 	}
+
+	bool __fastcall screen_capture_detour(gwdx* ctx, void* unk) {
+		render_callback(ctx->device);
+		if (screen_capture_hook.Valid()) {
+			return screen_capture_hook.Original()(ctx, unk);
+		} else {
+			return screen_capture_original(ctx, unk);
+		}
+	}
 }
 
 void GW::Render::SetRenderCallback(std::function<void(IDirect3DDevice9*)> callback) {
@@ -49,6 +61,11 @@ void GW::Render::SetRenderCallback(std::function<void(IDirect3DDevice9*)> callba
 		endscene_original = (GwEndScene_t)GW::Scanner::Find("\x55\x8B\xEC\x83\xEC\x28\x56\x8B\xF1\x57\x89\x55\xF8", "xxxxxxxxxxxxx", 0);
 		printf("GwEndScene address = 0x%X\n", (DWORD)endscene_original);
 		endscene_hook.Detour(endscene_original, endscene_detour);
+	}
+	if (screen_capture_hook.Empty()) {
+		screen_capture_original = (GwEndScene_t)GW::Scanner::Find("\xC3\x39\x86\x94\x00\x00\x00\x74\x0C", "xxxxxxxxx", -69);
+		printf("GwScreenCapture address = 0x%X\n", (DWORD)screen_capture_original);
+		screen_capture_hook.Detour(screen_capture_original, screen_capture_detour);
 	}
 	render_callback = callback;
 }
@@ -65,4 +82,5 @@ void GW::Render::SetResetCallback(std::function<void(IDirect3DDevice9* device)> 
 void GW::Render::RestoreHooks() {
 	endscene_hook.Retour();
 	reset_hook.Retour();
+	screen_capture_hook.Retour();
 }

@@ -45,5 +45,8 @@ namespace GW {
 
 		// Returns pointer of collision trapezoid array.
 		GW::PathingMapArray GetPathingMap();
+
+		DWORD GetFoesKilled();
+		DWORD GetFoesToKill();
 	};
 }

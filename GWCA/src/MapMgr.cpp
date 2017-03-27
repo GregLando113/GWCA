@@ -123,3 +123,11 @@ GW::MissionMapIconArray GW::Map::GetMissionMapIconArray() {
 GW::PathingMapArray GW::Map::GetPathingMap() {
 	return GameContext::instance()->map->sub1->sub2->pmaps;
 }
+
+DWORD GW::Map::GetFoesKilled() {
+	return GameContext::instance()->world->foes_killed;
+}
+
+DWORD GW::Map::GetFoesToKill() {
+	return GameContext::instance()->world->foes_to_kill;
+}

@@ -112,6 +112,9 @@ namespace GW {
 		NPCArray npcs; // 0x7FC
 		PlayerArray players; // 0x80C
 		TitleArray titles; // 0x81C
+		BYTE pad9[0x20]; // 0x82C
+		DWORD foes_killed; // 0x84C
+		DWORD foes_to_kill; // 0x850
 		//... couple more arrays after this
 	};
 }

@@ -76,7 +76,7 @@ namespace {
 	typedef void(__fastcall *SendChat_t)(const wchar_t* message);
 	void __fastcall sendchat_detour(const wchar_t *_message);
 	GW::THook<SendChat_t> sendchat_hook;
-	std::map< std::wstring, GW::Chat::Callback> sendchat_callbacks;
+	std::map<std::wstring, GW::Chat::Callback> sendchat_callbacks;
 
 	typedef void(__fastcall *OpenTemplate_t)(DWORD unk, GW::Chat::ChatTemplate* info);
 	void __fastcall opentemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info);
@@ -99,14 +99,14 @@ namespace {
 		chatevent_hook.Original()(id, type, info, unk);
 	}
 
-    typedef void(__fastcall *LocalMessage_t)(int channel, wchar_t *message);
-    GW::THook<LocalMessage_t> localmessage_hook;
-    std::function<bool(int, wchar_t*)> localmessage_callback;
-    void __fastcall localmessage_detour(int channel, wchar_t *message) {
-        if (localmessage_callback && !localmessage_callback(channel, message))
-            return;
-        localmessage_hook.Original()(channel, message);
-    }
+	typedef void(__fastcall *LocalMessage_t)(int channel, wchar_t *message);
+	GW::THook<LocalMessage_t> localmessage_hook;
+	std::function<bool(int, wchar_t*)> localmessage_callback;
+	void __fastcall localmessage_detour(int channel, wchar_t *message) {
+		if (localmessage_callback && !localmessage_callback(channel, message))
+			return;
+		localmessage_hook.Original()(channel, message);
+	}
 }
 
 void GW::Chat::SetChatEventCallback(std::function<void(DWORD, DWORD, wchar_t*, void*)> callback) {
@@ -119,12 +119,12 @@ void GW::Chat::SetChatEventCallback(std::function<void(DWORD, DWORD, wchar_t*, v
 }
 
 void GW::Chat::SetLocalMessageCallback(std::function<bool(int, wchar_t*)> callback) {
-    if (localmessage_hook.Empty()) {
-        LocalMessage_t addr = (LocalMessage_t)0x007DEF00;
-        printf("LocalMessage Func address = 0x%X\n", (DWORD)addr);
-        localmessage_hook.Detour((LocalMessage_t)addr, localmessage_detour);
-    }
-    localmessage_callback = callback;
+	if (localmessage_hook.Empty()) {
+		LocalMessage_t addr = (LocalMessage_t)0x007DEF00;
+		printf("LocalMessage Func address = 0x%X\n", (DWORD)addr);
+		localmessage_hook.Detour((LocalMessage_t)addr, localmessage_detour);
+	}
+	localmessage_callback = callback;
 }
 
 void GW::Chat::RegisterCommand(const String& command, Callback callback) {
@@ -171,7 +171,7 @@ void GW::Chat::Initialize() {
 	GwSendChat = (decltype(GwSendChat))Scanner::Find("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
 	printf("Send Chat Func = 0x%X\n", (DWORD)GwSendChat);
 
-    GwSendMessage = (decltype(GwSendMessage))0x00605AC0;
+	GwSendMessage = (decltype(GwSendMessage))0x00605AC0;
 	printf("Send Message Func = 0x%X\n", (DWORD)GwSendMessage);
 
 	GwWriteChat = (decltype(GwWriteChat))Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
@@ -181,87 +181,87 @@ void GW::Chat::Initialize() {
 
 void GW::Chat::RestoreHooks() {
 	sendchat_hook.Retour();
-    opentemplate_hook.Retour();
-    sendercolor_hook.Retour();
+	opentemplate_hook.Retour();
+	sendercolor_hook.Retour();
 	messagecolor_hook.Retour();
 	chatevent_hook.Retour();
-    localmessage_hook.Retour();
+	localmessage_hook.Retour();
 }
 
 void GW::Chat::SendChat(const wchar_t* msg, wchar_t channel) {
 	if (GwSendChat == nullptr) Initialize();
-    wchar_t buffer[140] = {channel};
-    wcscpy_s(&buffer[1], 139, msg);
-    GwSendChat(buffer);
+	wchar_t buffer[140] = {channel};
+	wcscpy_s(&buffer[1], 139, msg);
+	GwSendChat(buffer);
 }
 
 void GW::Chat::SendChat(const char* msg, char channel) {
 	if (GwSendChat == nullptr) Initialize();
-    wchar_t buffer[140];
-    wchar_t* buf = buffer;
-    *buf++ = static_cast<wchar_t>(channel);
-    for (int i = 1; i < 139 && *msg; ++i) {
-        *buf++ = static_cast<wchar_t>(*msg++);
-    }
-    *buf = L'\0';
-    GwSendChat(buffer);
+	wchar_t buffer[140];
+	wchar_t* buf = buffer;
+	*buf++ = static_cast<wchar_t>(channel);
+	for (int i = 1; i < 139 && *msg; ++i) {
+		*buf++ = static_cast<wchar_t>(*msg++);
+	}
+	*buf = L'\0';
+	GwSendChat(buffer);
 }
 
 void GW::Chat::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
-    va_list vl;
-    va_start(vl, format);
-    size_t szbuf = _vscwprintf(format, vl) + 1;
-    wchar_t* chat = new wchar_t[szbuf];
-    vswprintf_s(chat, szbuf, format, vl);
-    va_end(vl);
-    
-    WriteChat(from, chat);
-    delete[] chat;
+	va_list vl;
+	va_start(vl, format);
+	size_t szbuf = _vscwprintf(format, vl) + 1;
+	wchar_t* chat = new wchar_t[szbuf];
+	vswprintf_s(chat, szbuf, format, vl);
+	va_end(vl);
+	
+	WriteChat(from, chat);
+	delete[] chat;
 }
 
 void GW::Chat::WriteChat(const wchar_t* from, const wchar_t* msg) {
 	if (GwWriteChat == nullptr) Initialize();
-    GwWriteChat(0, from, msg);
+	GwWriteChat(0, from, msg);
 }
 
 void GW::Chat::WriteChat(Channel channel, const wchar_t *message) {
 	if (GwSendMessage == nullptr) Initialize();
 
-    wchar_t *buffer = new wchar_t[wcslen(message) + 4];
-    
-    RawMessage msg;
-    msg.channel = channel;
-    msg.message = buffer;
-    msg.player_id = 0;
-    
-    *buffer++ = 0x0108;
-    *buffer++ = 0x0107;
-    while (*message != L'\0') *buffer++ = *message++;
-    *buffer++ = 0x0001;
-    *buffer++ = 0;
-    
-    GwSendMessage(0x1000007E, &msg, NULL);
-    delete[] msg.message;
+	wchar_t *buffer = new wchar_t[wcslen(message) + 4];
+	
+	RawMessage msg;
+	msg.channel = channel;
+	msg.message = buffer;
+	msg.player_id = 0;
+	
+	*buffer++ = 0x0108;
+	*buffer++ = 0x0107;
+	while (*message != L'\0') *buffer++ = *message++;
+	*buffer++ = 0x0001;
+	*buffer++ = 0;
+	
+	GwSendMessage(0x1000007E, &msg, NULL);
+	delete[] msg.message;
 }
 
 void GW::Chat::WriteChat(Channel channel, const char* message) {
 	if (GwSendMessage == nullptr) Initialize();
 
-    wchar_t* buffer = new wchar_t[strlen(message) + 4];
-    
-    RawMessage msg;
-    msg.channel = channel;
-    msg.message = buffer;
-    msg.player_id = 0;
-    
-    *buffer++ = 0x0108;
-    *buffer++ = 0x0107;
-    while (*message != L'\0') *buffer++ = static_cast<wchar_t>(*message++);
-    *buffer++ = 0x0001;
-    *buffer++ = 0;
-    
-    GwSendMessage(0x1000007E, &msg, NULL);
-    delete[] msg.message;
+	wchar_t* buffer = new wchar_t[strlen(message) + 4];
+	
+	RawMessage msg;
+	msg.channel = channel;
+	msg.message = buffer;
+	msg.player_id = 0;
+	
+	*buffer++ = 0x0108;
+	*buffer++ = 0x0107;
+	while (*message != L'\0') *buffer++ = static_cast<wchar_t>(*message++);
+	*buffer++ = 0x0001;
+	*buffer++ = 0;
+	
+	GwSendMessage(0x1000007E, &msg, NULL);
+	delete[] msg.message;
 }
 
 namespace {
@@ -294,6 +294,8 @@ namespace {
 				if (callback->second(command, args))
 					return;
 			}
+		} else {
+			
 		}
 		sendchat_hook.Original()(message);
 	}
@@ -324,8 +326,8 @@ namespace {
 
 static void __fastcall det_write_buffer(WCHAR *message, DWORD channel)
 {
-    // @Robustness, Change to non static address.
-    static ChatBuffer **buffer = (ChatBuffer**)0x00D560F0;
-    GetLocalTime(&Timestamps[(*buffer)->next]);
-    return DetWriteBuffer(message, channel);
+	// @Robustness, Change to non static address.
+	static ChatBuffer **buffer = (ChatBuffer**)0x00D560F0;
+	GetLocalTime(&Timestamps[(*buffer)->next]);
+	return DetWriteBuffer(message, channel);
 }

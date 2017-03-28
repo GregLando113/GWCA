@@ -76,20 +76,18 @@ namespace {
 	typedef void(__fastcall *SendChat_t)(const wchar_t* message);
 	void __fastcall sendchat_detour(const wchar_t *_message);
 	GW::THook<SendChat_t> sendchat_hook;
-	std::map<std::wstring, GW::Chat::Callback> sendchat_callbacks;
+	std::map<std::wstring, GW::Chat::Callback> commands_callbacks;
 
 	typedef void(__fastcall *OpenTemplate_t)(DWORD unk, GW::Chat::ChatTemplate* info);
 	void __fastcall opentemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info);
 	GW::THook<OpenTemplate_t> opentemplate_hook;
 	bool open_links = false;
 
-	typedef Color* (__fastcall *SenderColor_t)(Color* color, Channel chan);
+	typedef Color* (__fastcall *GetChannelColor_t)(Color* color, Channel chan);
 	Color* __fastcall sendercolor_detour(Color *color, Channel chan);
-	GW::THook<SenderColor_t> sendercolor_hook;
-
-	typedef Color* (__fastcall *MessageColor_t)(Color* color, Channel chan);
 	Color* __fastcall messagecolor_detour(Color *color, Channel chan);
-	GW::THook<MessageColor_t> messagecolor_hook;
+	GW::THook<GetChannelColor_t> sendercolor_hook;
+	GW::THook<GetChannelColor_t> messagecolor_hook;
 
 	typedef void(__fastcall *ChatEvent_t)(DWORD id, DWORD type, wchar_t* info, void* unk);
 	GW::THook<ChatEvent_t> chatevent_hook;
@@ -132,10 +130,10 @@ void GW::Chat::RegisterCommand(const String& command, Callback callback) {
 		if (GwSendChat == nullptr) Initialize();
 		sendchat_hook.Detour(GwSendChat, sendchat_detour);
 	}
-	sendchat_callbacks[command] = callback;
+	commands_callbacks[command] = callback;
 }
 void GW::Chat::DeleteCommand(const String& command) {
-	sendchat_callbacks.erase(command);
+	commands_callbacks.erase(command);
 }
 
 void GW::Chat::SetOpenLinks(bool b) {
@@ -149,7 +147,7 @@ void GW::Chat::SetOpenLinks(bool b) {
 
 GW::Chat::Color GW::Chat::SetSenderColor(Channel chan, Color col) {
 	if (sendercolor_hook.Empty()) {
-		SenderColor_t addr = (SenderColor_t)0x00481650; // Need scan!
+		GetChannelColor_t addr = (GetChannelColor_t)0x00481650; // Need scan!
 		sendercolor_hook.Detour(addr, sendercolor_detour);
 	}
 	Color old = SenderColor[chan];
@@ -159,7 +157,7 @@ GW::Chat::Color GW::Chat::SetSenderColor(Channel chan, Color col) {
 
 GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 	if (messagecolor_hook.Empty()) {
-		MessageColor_t addr = (MessageColor_t)0x00481570; // Need scan!
+		GetChannelColor_t addr = (GetChannelColor_t)0x00481570; // Need scan!
 		messagecolor_hook.Detour(addr, messagecolor_detour);
 	}
 	Color old = MessageColor[chan];
@@ -289,8 +287,8 @@ namespace {
 				}
 			}
 
-			auto callback = sendchat_callbacks.find(command);
-			if (callback != sendchat_callbacks.end()) {
+			auto callback = commands_callbacks.find(command);
+			if (callback != commands_callbacks.end()) {
 				if (callback->second(command, args))
 					return;
 			}

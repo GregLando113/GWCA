@@ -5,6 +5,7 @@
 #include <GWCA\Utilities\Scanner.h>
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
+#include <GWCA\Constants\Constants.h>
 
 #define COLOR_ARGB(a, r, g, b) (GW::Chat::Color)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
 #define COLOR_RGB(r, g, b) COLOR_ARGB(0xff, r, g, b)
@@ -77,6 +78,7 @@ namespace {
 	void __fastcall sendchat_detour(const wchar_t *_message);
 	GW::THook<SendChat_t> sendchat_hook;
 	std::map<std::wstring, GW::Chat::Callback> commands_callbacks;
+	std::function<void(Channel chan, wchar_t msg[139])> sendchat_callback;
 
 	typedef void(__fastcall *OpenTemplate_t)(DWORD unk, GW::Chat::ChatTemplate* info);
 	void __fastcall opentemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info);
@@ -123,6 +125,14 @@ void GW::Chat::SetLocalMessageCallback(std::function<bool(int, wchar_t*)> callba
 		localmessage_hook.Detour((LocalMessage_t)addr, localmessage_detour);
 	}
 	localmessage_callback = callback;
+}
+
+void GW::Chat::SetSendChatCallback(std::function<void(Channel chan, wchar_t msg[139])> callback) {
+	if (sendchat_hook.Empty()) {
+		if (GwSendChat == nullptr) Initialize();
+		sendchat_hook.Detour(GwSendChat, sendchat_detour);
+	}
+	sendchat_callback = callback;
 }
 
 void GW::Chat::RegisterCommand(const String& command, Callback callback) {
@@ -265,7 +275,20 @@ void GW::Chat::WriteChat(Channel channel, const char* message) {
 namespace {
 	using namespace GW::Chat;
 
-	void __fastcall sendchat_detour(const wchar_t *message) {
+	Channel GetChannel(wchar_t opcode) {
+		switch (opcode) {
+			case '!': return CHANNEL_ALL;
+			case '@': return CHANNEL_GUILD;
+			case '#': return CHANNEL_GROUP;
+			case '$': return CHANNEL_TRADE;
+			case '%': return CHANNEL_ALLIANCE;
+			case '"': return CHANNEL_WHISPER;
+			case '/': return CHANNEL_COMMAND;
+			default: return CHANNEL_UNKNOW;
+		}
+	}
+
+	void __fastcall sendchat_detour(wchar_t *message) {
 		if (*message == '/') {
 			String msg = &message[1];
 
@@ -292,9 +315,9 @@ namespace {
 				if (callback->second(command, args))
 					return;
 			}
-		} else {
-			
 		}
+
+		if (sendchat_callback) sendchat_callback(GetChannel(*message), &message[1]);
 		sendchat_hook.Original()(message);
 	}
 

@@ -26,8 +26,11 @@ namespace GW {
 			CHANNEL_TRADE		= 12,
 			CHANNEL_ADVISORY	= 13,
 			CHANNEL_WHISPER		= 14,
+			CHANNEL_COUNT,
 
-			CHANNEL_COUNT
+			// non-standard channel, but usefull.
+			CHANNEL_COMMAND,
+			CHANNEL_UNKNOW = -1
 		};
 
 		typedef DWORD Color;
@@ -64,6 +67,11 @@ namespace GW {
 
 		void RegisterCommand(const String& command, Callback callback);
 		void DeleteCommand(const String& command);
+
+		// SendChat callback can modify the msg before it is send.
+		// Pay attention to not overflow the buffer.
+		void SetSendChatCallback(std::function<
+			void(Channel chan, wchar_t msg[139])>);
 
 		void SetOpenLinks(bool b);
 

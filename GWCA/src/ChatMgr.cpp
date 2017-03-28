@@ -75,7 +75,7 @@ namespace {
 	void(__fastcall *DetWriteBuffer)(WCHAR *message, DWORD channel) = nullptr;
 
 	typedef void(__fastcall *SendChat_t)(const wchar_t* message);
-	void __fastcall sendchat_detour(const wchar_t *_message);
+	void __fastcall sendchat_detour(wchar_t *_message);
 	GW::THook<SendChat_t> sendchat_hook;
 	std::map<std::wstring, GW::Chat::Callback> commands_callbacks;
 	std::function<void(Channel chan, wchar_t msg[139])> sendchat_callback;

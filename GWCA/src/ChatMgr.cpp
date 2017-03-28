@@ -67,14 +67,14 @@ namespace {
 		COLOR_RGB(0xe0, 0xe0, 0xe0)
 	};
 
-	void(__fastcall *GwSendChat)(const wchar_t *message) = nullptr;
+	void(__fastcall *GwSendChat)(wchar_t *message) = nullptr;
 	void(__fastcall *GwWriteChat)(int, const wchar_t*, const wchar_t*) = nullptr;
 	void(__fastcall *GwSendMessage)(int id, const RawMessage* msg, void *extended) = nullptr;
 
 	void(__fastcall *GwWriteBuffer)(WCHAR *message, DWORD channel) = nullptr;
 	void(__fastcall *DetWriteBuffer)(WCHAR *message, DWORD channel) = nullptr;
 
-	typedef void(__fastcall *SendChat_t)(const wchar_t* message);
+	typedef void(__fastcall *SendChat_t)(wchar_t* message);
 	void __fastcall sendchat_detour(wchar_t *_message);
 	GW::THook<SendChat_t> sendchat_hook;
 	std::map<std::wstring, GW::Chat::Callback> commands_callbacks;

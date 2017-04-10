@@ -5,6 +5,7 @@
 #include <GWCA\Context\GameContext.h>
 #include <GWCA\Context\WorldContext.h>
 #include <GWCA\Managers\GameThreadMgr.h>
+#include <GWCA\Managers\AgentMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 
 namespace {
@@ -16,6 +17,29 @@ namespace {
 		alcohol_level = Intensity;
 		ppe_hook.Original()(Intensity, Tint);
 	}
+
+	struct MSG_EFFECT_APPLIED {
+		DWORD header = 54;
+		DWORD agent_id;
+		DWORD skill_id; // skill id that will define the image shown.
+		DWORD effect_type;
+		DWORD effect_id; // sync with server, but it's not an index of a array so can be anything (I think ?).
+		float duration; // in seconds.
+	};
+
+	struct MSG_EFFECT_REAPPLIED {
+		DWORD header = 55;
+		DWORD agent_id;
+		DWORD effect_type;
+		DWORD effect_id; // sync with server, but it's not an index of a array so can be anything (I think ?).
+		float duration; // in seconds.
+	};
+
+	struct MSG_EFFECT_REMOVED {
+		DWORD header = 56;
+		DWORD agent_id;
+		DWORD effect_id;
+	};
 }
 
 void GW::Effects::SetupPostProcessingEffectHook() {
@@ -94,4 +118,48 @@ GW::BuffArray GW::Effects::GetPlayerBuffArray() {
 
 void GW::Effects::DropBuff(DWORD buffId) {
 	CtoS::SendPacket(0x8, 0x23, buffId);
+}
+
+MSG_EFFECT_APPLIED applied_effect;
+void GW::Effects::CreateEffect(DWORD effect_id, DWORD skill_id, float duration) {
+	applied_effect.header = 54;
+	applied_effect.agent_id = GW::Agents::GetPlayerId();
+	applied_effect.skill_id = skill_id;
+	applied_effect.effect_type = 0;
+	applied_effect.effect_id = effect_id;
+	applied_effect.duration = duration;
+
+	GW::GameThread::Enqueue([](){
+		typedef bool (__fastcall *EffectApplied_t)(MSG_EFFECT_APPLIED *effect);
+		EffectApplied_t EffectApplied = (EffectApplied_t)0x00888020;
+		EffectApplied(&applied_effect);
+	});
+}
+
+MSG_EFFECT_REAPPLIED reapplied_effect;
+void GW::Effects::ReapplieEffect(DWORD effect_id, float duration) {
+	reapplied_effect.header = 55;
+	reapplied_effect.agent_id = GW::Agents::GetPlayerId();
+	reapplied_effect.effect_type = 0;
+	reapplied_effect.effect_id = effect_id;
+	reapplied_effect.duration = duration;
+
+	GW::GameThread::Enqueue([]() {
+		typedef bool(__fastcall *EffectReapplied_t)(MSG_EFFECT_REAPPLIED *effect);
+		EffectReapplied_t EffectReapplied = (EffectReapplied_t)0x00888040;
+		EffectReapplied(&reapplied_effect);
+	});
+}
+
+MSG_EFFECT_REMOVED removed_effect;
+void GW::Effects::RemoveEffect(DWORD effect_id) {
+	removed_effect.header = 56;
+	removed_effect.agent_id = GW::Agents::GetPlayerId();
+	removed_effect.effect_id = effect_id;
+
+	GW::GameThread::Enqueue([]() {
+		typedef bool(__fastcall *EffectRemoved_t)(MSG_EFFECT_REMOVED *effect);
+		EffectRemoved_t EffectRemoved = (EffectRemoved_t)0x00888060;
+		EffectRemoved(&removed_effect);
+	});
 }

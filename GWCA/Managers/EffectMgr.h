@@ -38,5 +38,9 @@ namespace GW {
 
 		// Gets Buff struct of Buff on player with SkillID, returns Buff::Nil() if no match.
 		GW::Buff GetPlayerBuffBySkillId(Constants::SkillID SkillID);
+
+		void CreateEffect(DWORD effect_id, DWORD skill_id, float duration);
+		void ReapplieEffect(DWORD effect_id, float duration);
+		void RemoveEffect(DWORD effect_id);
 	};
 }

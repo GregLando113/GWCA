@@ -83,5 +83,8 @@ namespace GW {
 
 		void SetLocalMessageCallback(std::function<
 			bool(int, wchar_t*)> callback);
+
+		void SetWhisperCallback(std::function<
+			void(const wchar_t[20], const wchar_t[140])> callback);
 	};
 }

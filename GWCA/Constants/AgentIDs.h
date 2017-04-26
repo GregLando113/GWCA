@@ -105,6 +105,8 @@ namespace GW {
 
 			namespace FoW {
 				const int ShardWolf = 2831;
+				const int Abyssal = 2806;
+				const int SeedOfCorruption = 2807;
 			}
 		}
 	}

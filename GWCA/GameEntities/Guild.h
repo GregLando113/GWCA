@@ -30,14 +30,14 @@ namespace GW {
 	struct Guild {
 		GHKey key;
 
-		inline wchar_t* name() const { return (wchar_t*)(this + 0x30); }
-		inline wchar_t* tag() const { return (wchar_t*)(this + 0x80); }
+		inline wchar_t* name() const { return (wchar_t*)((BYTE*)this + 0x30); }
+		inline wchar_t* tag() const { return (wchar_t*)((BYTE*)this + 0x80); }
 
-		inline DWORD& factioncount() const { return *(DWORD*)(this + 0x78); }
+		inline DWORD& factioncount() const { return *(DWORD*)((BYTE*)this + 0x78); }
 
-		inline DWORD& rating() const { return *(DWORD*)(this + 0x70); }
-		inline DWORD& rank() const { return *(DWORD*)(this + 0x28); }
-		inline DWORD& qualifierpoints() const { return *(DWORD*)(this + 0x7C); }
+		inline DWORD& rating() const { return *(DWORD*)((BYTE*)this + 0x70); }
+		inline DWORD& rank() const { return *(DWORD*)((BYTE*)this + 0x28); }
+		inline DWORD& qualifierpoints() const { return *(DWORD*)((BYTE*)this + 0x7C); }
 	};
 
 	using GuildArray = gw_array<Guild*>;

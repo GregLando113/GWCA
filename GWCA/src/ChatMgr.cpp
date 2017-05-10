@@ -14,9 +14,9 @@ namespace {
 	using namespace GW::Chat;
 
 	struct RawMessage {
-		int channel;
+		uint32_t channel;
 		wchar_t *message;
-		int player_id;
+		uint32_t player_id;
 	};
 
 	struct ChatMessage {
@@ -145,14 +145,14 @@ void GW::Chat::SetSendChatCallback(std::function<void(Channel chan, wchar_t msg[
 	SendChat_callback = callback;
 }
 
-void GW::Chat::RegisterCommand(const String& command, Callback callback) {
+void GW::Chat::RegisterCommand(const std::wstring& command, Callback callback) {
 	if (SendChat_hook.Empty()) {
 		if (SendChat_addr == nullptr) Initialize();
 		SendChat_hook.Detour(SendChat_addr, SendChat_detour);
 	}
 	commands_callbacks[command] = callback;
 }
-void GW::Chat::DeleteCommand(const String& command) {
+void GW::Chat::DeleteCommand(const std::wstring& command) {
 	commands_callbacks.erase(command);
 }
 
@@ -285,12 +285,27 @@ void GW::Chat::WriteChat(Channel channel, const char* message) {
 	
 	*buffer++ = 0x0108;
 	*buffer++ = 0x0107;
-	while (*message != L'\0') *buffer++ = static_cast<wchar_t>(*message++);
+	while (*message != 0) *buffer++ = static_cast<wchar_t>(*message++);
 	*buffer++ = 0x0001;
 	*buffer++ = 0;
 	
 	GwSendMessage(0x1000007E, &msg, NULL);
 	delete[] msg.message;
+}
+
+std::vector<std::wstring> GW::Chat::SplitString(const std::wstring& str, wchar_t c) {
+	std::vector<std::wstring> result;
+	size_t size = str.size();
+	size_t start = 0, end;
+	for (size_t i = 0; i < size; i++) {
+		if (str[i] == c) {
+			end = i;
+			result.push_back(str.substr(start, end - start));
+			start = end + 1;
+		}
+	}
+	if (start < size) result.push_back(str.substr(start, size));
+	return result;
 }
 
 namespace {
@@ -311,25 +326,13 @@ namespace {
 
 	void __fastcall SendChat_detour(wchar_t *message) {
 		if (*message == '/') {
-			String msg = &message[1];
+			std::wstring msg = &message[1];
 
 			size_t index = msg.find(' ');
-			String command = msg.substr(0, index);
-			StringArray args;
-
-			if (index != String::npos) {
-				++index;
-				while (index < msg.size()) {
-					size_t end = msg.find(' ', index);
-					if (end == String::npos) {
-						args.push_back(msg.substr(index, end));
-						index = end;
-					} else {
-						args.push_back(msg.substr(index, end - index));
-						index = end + 1;
-					}
-				}
-			}
+			std::wstring command = msg.substr(0, index);
+			for (index += 1; index < msg.size(); index++)
+				if (msg[index] != ' ') break;
+			std::wstring args = msg.substr(index);
 
 			auto callback = commands_callbacks.find(command);
 			if (callback != commands_callbacks.end()) {

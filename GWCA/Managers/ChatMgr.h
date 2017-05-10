@@ -44,9 +44,7 @@ namespace GW {
 			wchar_t* template_name;
 		};
 
-		typedef std::wstring String;
-		typedef std::vector<String> StringArray;
-		typedef std::function<bool(String& command, StringArray& args)> Callback;
+		typedef std::function<bool(std::wstring& command, std::wstring& args)> Callback;
 
 		void Initialize();
 		void RestoreHooks();
@@ -65,8 +63,10 @@ namespace GW {
 		void WriteChat(Channel channel, const wchar_t *message);
 		void WriteChat(Channel channel, const char* message);
 
-		void RegisterCommand(const String& command, Callback callback);
-		void DeleteCommand(const String& command);
+		void RegisterCommand(const std::wstring& command, Callback callback);
+		void DeleteCommand(const std::wstring& command);
+
+		std::vector<std::wstring> SplitString(const std::wstring& str, wchar_t c = ' ');
 
 		// SendChat callback can modify the msg before it is send.
 		// Pay attention to not overflow the buffer.

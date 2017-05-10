@@ -327,12 +327,18 @@ namespace {
 	void __fastcall SendChat_detour(wchar_t *message) {
 		if (*message == '/') {
 			std::wstring msg = &message[1];
+			std::wstring args;
 
 			size_t index = msg.find(' ');
 			std::wstring command = msg.substr(0, index);
-			for (index += 1; index < msg.size(); index++)
-				if (msg[index] != ' ') break;
-			std::wstring args = msg.substr(index);
+
+			if (index == std::wstring::npos) {
+				args = L"";
+			} else {
+				for (index += 1; index < msg.size(); index++)
+					if (msg[index] != ' ') break;
+				args = msg.substr(index);
+			}
 
 			auto callback = commands_callbacks.find(command);
 			if (callback != commands_callbacks.end()) {

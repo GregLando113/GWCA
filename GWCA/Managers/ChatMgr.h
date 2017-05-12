@@ -12,14 +12,14 @@ namespace GW {
 
 		enum Channel {
 			CHANNEL_ALLIANCE	= 0,
-			CHANNEL_NPC			= 1,
+			CHANNEL_ALLIES		= 1, // coop with two groups for instance.
 			CHANNEL_GWCA1		= 2,
 			CHANNEL_ALL			= 3,
 			CHANNEL_GWCA2		= 4,
 			CHANNEL_MODERATOR	= 5,
-			CHANNEL_GWCA3		= 6,
+			CHANNEL_EMOTE		= 6,
 			CHANNEL_WARNING		= 7, // shows in the middle of the screen and does not parse <c> tags
-			CHANNEL_GWCA4		= 8,
+			CHANNEL_GWCA3		= 8,
 			CHANNEL_GUILD		= 9,
 			CHANNEL_GLOBAL		= 10,
 			CHANNEL_GROUP		= 11,

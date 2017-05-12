@@ -78,7 +78,7 @@ namespace GW {
 		};
 
 		enum class AgentType {
-			Living = 0xDB, Chest_Signpost = 0x200, Item = 0x400
+			Living = 0xDB, Gadget = 0x200, Item = 0x400
 		};
 
 		enum class ItemType {
@@ -96,7 +96,7 @@ namespace GW {
 			Merc4, Merc5, Merc6, Merc7, Merc8, Miku, ZeiRi
 		};
 
-		enum HeroState : DWORD {
+		enum HeroBehavior : DWORD {
 			Fight, Guard, AvoidCombat
 		};
 

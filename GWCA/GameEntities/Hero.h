@@ -11,7 +11,7 @@ namespace GW {
 		GW::Constants::HeroID hero;
 		AgentID heroid;
 		DWORD unk1;
-		GW::Constants::HeroState state;
+		GW::Constants::HeroBehavior state;
 		GamePos flag;
 		DWORD unk2;
 		AgentID lockedtargetid;

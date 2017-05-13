@@ -83,6 +83,7 @@ void GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 
 	// HEADER
 	int header = _ReadBits(&it, 4);
+	if (header != 0 && header != 14) return;
 	if (header == 14) _ReadBits(&it, 4);
 	int bits_per_prof = 2*_ReadBits(&it, 2) + 4;
 	int prof1 = _ReadBits(&it, bits_per_prof);

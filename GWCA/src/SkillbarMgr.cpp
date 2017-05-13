@@ -5,11 +5,41 @@
 
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\AgentMgr.h>
+#include <GWCA\Managers\PlayerMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
 
 namespace {
 	typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
 	UseSkill_t UseSkill;
+}
+
+static const char _Base64ToValue[128] = {
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [16,  32)
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63, // [32,  48)
+	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1, // [48,  64)
+	-1, 0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, // [64,  80)
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1, // [80,  96)
+	-1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, // [96,  112)
+	41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, // [112, 128)
+};
+
+void _WriteBits(int val, char buff[6]) {
+	buff[0] = ((val >> 0) & 1);
+	buff[1] = ((val >> 1) & 1);
+	buff[2] = ((val >> 2) & 1);
+	buff[3] = ((val >> 3) & 1);
+	buff[4] = ((val >> 4) & 1);
+	buff[5] = ((val >> 5) & 1);
+}
+
+int _ReadBits(char **str, int n) {
+	int val = 0;
+	char *s = *str;
+	for (int i = 0; i < n; i++)
+		val |= (*s++ << i);
+	*str = s;
+	return val;
 }
 
 GW::Skill GW::SkillbarMgr::GetSkillConstantData(DWORD SkillID) {
@@ -30,9 +60,55 @@ void GW::SkillbarMgr::ChangeSecondary(DWORD profession, int heroindex) {
 	CtoS::SendPacket(0xC, 0x3B, id, profession);
 }
 
-void GW::SkillbarMgr::LoadSkillbar(DWORD * skillids, int heroindex) {
+void GW::SkillbarMgr::LoadSkillbar(DWORD skillids[8], int heroindex) {
 	GW::AgentID id = Agents::GetHeroAgentID(heroindex);
 	CtoS::SendPacket(0x2C, 0x56, id, 0x8, skillids[0], skillids[1], skillids[2], skillids[3], skillids[4], skillids[5], skillids[6], skillids[7]);
+}
+
+void GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
+	size_t len = strlen(temp);
+	char *bitStr = new char[len * 6];
+	for (size_t i = 0; i < len; i++)
+		_WriteBits(_Base64ToValue[temp[i]], bitStr + (6*i));
+
+	DWORD AttribIDs[10] = {0};
+	DWORD AttribVal[10] = {0};
+	DWORD AttribCount = 0;
+
+	DWORD SkillIDs[8] = {0};
+	DWORD SkillCount = 0;
+
+	char *it = bitStr;
+	char *end = bitStr + 6*len;
+
+	// HEADER
+	int header = _ReadBits(&it, 4);
+	if (header == 14) _ReadBits(&it, 4);
+	int bits_per_prof = 2*_ReadBits(&it, 2) + 4;
+	int prof1 = _ReadBits(&it, bits_per_prof);
+	int prof2 = _ReadBits(&it, bits_per_prof);
+
+	// ATTRIBUTES
+	AttribCount = _ReadBits(&it, 4);
+	int bits_per_attr = _ReadBits(&it, 4) + 4;
+	for (DWORD i = 0; i < AttribCount; i++) {
+		AttribIDs[i] = _ReadBits(&it, bits_per_attr);
+		AttribVal[i] = _ReadBits(&it, 4);
+	}
+
+	// SKILLS
+	int bits_per_skill = _ReadBits(&it, 4) + 8;
+	for (SkillCount = 0; SkillCount < 8; SkillCount++) {
+		SkillIDs[SkillCount] = _ReadBits(&it, bits_per_skill);
+		if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
+	}
+
+	Agent *me = GW::Agents::GetPlayer();
+	if (me && me->Primary == prof1) {
+		GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2);
+		LoadSkillbar(SkillIDs);
+		SetAttributes(AttribCount, AttribIDs, AttribVal);
+	}
 }
 
 void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, DWORD * attributevalues, int heroindex) {

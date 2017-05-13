@@ -23,7 +23,6 @@ namespace GW {
 		DWORD GetPartyHeroCount();
 		DWORD GetPartyHenchmanCount();
 
-
 		bool GetIsPartyDefeated();
 
 		void SetHardMode(bool flag);

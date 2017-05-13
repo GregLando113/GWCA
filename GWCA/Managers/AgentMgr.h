@@ -44,13 +44,11 @@ namespace GW {
 		// Holds limited info and needs to be explored more.
 		GW::MapAgentArray GetMapAgentArray();
 
-
 		// === Other Arrays ===
 		GW::PlayerArray GetPlayerArray();
 
 		GW::NPCArray GetNPCArray();
 		inline GW::NPC& GetNPCByID(DWORD id) { return GetNPCArray()[id]; }
-
 
 		// Computes distance between the two agents in game units
 		float GetDistance(Vector2f a, const Vector2f b);

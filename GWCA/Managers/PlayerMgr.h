@@ -17,5 +17,7 @@ namespace GW {
 		wchar_t* GetPlayerName(PlayerID id);
 
 		void SetPlayerName(PlayerID id, const wchar_t* replacename);
+
+		void ChangeSecondProfession(GW::Constants::Profession prof, DWORD heroindex = 0);
 	};
 }

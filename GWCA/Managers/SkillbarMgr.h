@@ -26,6 +26,7 @@ namespace GW {
 		void ChangeSecondary(DWORD profession, int heroindex = 0);
 
 		void LoadSkillbar(DWORD* skillids, int heroindex = 0);
+		void LoadSkillTemplate(const char *temp);
 
 		void SetAttributes(DWORD attributecount, DWORD* attributeids, DWORD* attributevalues, int heroindex = 0);
 	};

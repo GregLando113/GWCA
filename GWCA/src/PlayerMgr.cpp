@@ -1,6 +1,8 @@
 #include <GWCA\Managers\PlayerMgr.h>
 
 #include <GWCA\Context\GameContext.h>
+
+#include <GWCA\Managers\AgentMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 
 void GW::PlayerMgr::SetActiveTitle(GW::Constants::TitleID id) {
@@ -25,4 +27,8 @@ wchar_t* GW::PlayerMgr::GetPlayerName(PlayerID id) {
 
 void GW::PlayerMgr::SetPlayerName(PlayerID id, const wchar_t* replacename) {
 	wcscpy_s(GetPlayerArray()[id].Name1->Name, replacename);
+}
+
+void GW::PlayerMgr::ChangeSecondProfession(GW::Constants::Profession prof, DWORD heroindex) {
+	CtoS::SendPacket(12, 0x3B, GW::Agents::GetHeroAgentID(heroindex), prof);
 }

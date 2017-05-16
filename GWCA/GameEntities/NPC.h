@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct NPC {
@@ -11,5 +11,5 @@ namespace GW {
 		DWORD npcflags; //0x0010 
 		char pad_0x0014[0x1C]; //0x0014
 	}; //Size=0x0030
-	using NPCArray = gw_array<NPC>;
+	using NPCArray = Array<NPC>;
 }

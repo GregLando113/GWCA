@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct MissionMapIcon { // MapOverlay from GWCA
@@ -18,5 +18,5 @@ namespace GW {
 		void* unknown5; // May concern the name
 	};
 
-	using MissionMapIconArray = gw_array<MissionMapIcon>;
+	using MissionMapIconArray = Array<MissionMapIcon>;
 }

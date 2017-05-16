@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 #include <GWCA\GameEntities\Party.h>
 
 namespace GW {
@@ -10,7 +10,7 @@ namespace GW {
 	class PartyContext {
 	public:
 		char pad_0x0000[0x4]; //0x0000
-		gw_array<void*> unk1_arr; //0x0004
+		Array<void*> unk1_arr; //0x0004
 		class PartyState { //0x0014
 			DWORD state;
 		public:

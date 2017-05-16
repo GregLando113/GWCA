@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct Friend {
@@ -14,7 +14,7 @@ namespace GW {
 		DWORD zoneId;
 	};
 
-	using FriendsListArray = gw_array<Friend*>;
+	using FriendsListArray = Array<Friend*>;
 
 	struct FriendList {
 		FriendsListArray friends;

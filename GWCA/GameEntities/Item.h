@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 
@@ -11,7 +11,7 @@ namespace GW {
 	struct Bag;
 	struct Item;
 
-	using ItemArray = gw_array<Item*>;
+	using ItemArray = Array<Item*>;
 
 	struct Bag {							// total : 24 BYTEs
 		BYTE unknown1[4];					// 0000	|--4 BYTEs--|
@@ -70,6 +70,6 @@ namespace GW {
 		DWORD gold_storage;
 	};
 
-	using MerchItemArray = gw_array<ItemID>;
+	using MerchItemArray = Array<ItemID>;
 
 }

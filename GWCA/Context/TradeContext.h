@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 #include <GWCA\GameEntities\Item.h>
 
 namespace GW {
@@ -21,7 +21,7 @@ namespace GW {
 
 		struct Trader {
 			DWORD gold;
-			gw_array<TradeContext::Item> items;
+			Array<TradeContext::Item> items;
 		};
 
 		State state;

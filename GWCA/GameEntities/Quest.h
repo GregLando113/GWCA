@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct Quest {
@@ -16,5 +16,5 @@ namespace GW {
 		void* unk3[2];
 	};
 
-	using QuestLog = gw_array<Quest>;
+	using QuestLog = Array<Quest>;
 }

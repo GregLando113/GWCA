@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 #include <GWCA\GameEntities\Agent.h>
 #include <GWCA\GameEntities\Item.h>
 #include <GWCA\GameEntities\Attribute.h>
@@ -25,7 +25,7 @@ namespace GW {
 			wchar_t* name;
 			//...
 		} *sub1; // 0x0
-		gw_array<wchar_t> message_buff; // 0x4 Last chat message recieved via gameserver
+		Array<wchar_t> message_buff; // 0x4 Last chat message recieved via gameserver
 		BYTE pad1[0x10]; // 0x14
 		MerchItemArray merchitems; // 0x24
 		BYTE pad1_1[0x48]; // 0x34
@@ -35,42 +35,42 @@ namespace GW {
 		BYTE pad3[0x4]; // 0xA8
 		PartyAttributeArray attributes; // 0xAC
 		BYTE pad4[0x3FC]; // 0xBC
-		gw_array<void*> unk1_array; // 0x4B8
-		gw_array<void*> unk2_array; // 0x4C8
+		Array<void*> unk1_array; // 0x4B8
+		Array<void*> unk2_array; // 0x4C8
 		BYTE pad5[0x4]; // 0x4D8
-		gw_array<void*> unk3_array; // 0x4DC
+		Array<void*> unk3_array; // 0x4DC
 		BYTE pad6[0x1C]; // 0x4EC
 		AgentEffectsArray partyeffects; // 0x508
-		gw_array<void*> unk4_array; // 0x518
+		Array<void*> unk4_array; // 0x518
 		DWORD activequestid; // 0x528
 		QuestLog questlog; // 0x52C
 		BYTE pad7[0x38]; // 0x53C
-		gw_array<DWORD> unk5_array; // 0x574 - Seems like agent/item ids (only appears in outpost?)
+		Array<DWORD> unk5_array; // 0x574 - Seems like agent/item ids (only appears in outpost?)
 		HeroFlagArray hero_flags; // 0x584
-		gw_array<void*> unk6_array; // 0x594
-		gw_array<void*> unk7_array; // 0x5A4 - Struct size = 0x20
+		Array<void*> unk6_array; // 0x594
+		Array<void*> unk7_array; // 0x5A4 - Struct size = 0x20
 		DWORD unk2[2]; // 0x5B4
-		gw_array<void*> unk8_array; // 0x5BC
-		gw_array<void*> unk9_array; // 0x5CC
-		gw_array<void*> unk10_array; // 0x5DC
-		gw_array<void*> unk11_array; // 0x5EC
-		gw_array<void*> unk12_array; // 0x5FC
-		gw_array<void*> unk13_array; // 0x60C
+		Array<void*> unk8_array; // 0x5BC
+		Array<void*> unk9_array; // 0x5CC
+		Array<void*> unk10_array; // 0x5DC
+		Array<void*> unk11_array; // 0x5EC
+		Array<void*> unk12_array; // 0x5FC
+		Array<void*> unk13_array; // 0x60C
 		DWORD unk3[4]; // 0x61C
-		gw_array<void*> unk14_array; // 0x62C
+		Array<void*> unk14_array; // 0x62C
 		BYTE pad8[0x44]; // 0x63C
-		gw_array<void*> unk15_array; // 0x680 - Struct size = 0x138 i think, has a vtable
+		Array<void*> unk15_array; // 0x680 - Struct size = 0x138 i think, has a vtable
 		DWORD salvagesessionid; // 0x690
 		DWORD unk4[0xA]; // 0x694
-		gw_array<void*> unk16_array; // 0x6BC
-		gw_array<void*> unk17_array; // 0x6CC
+		Array<void*> unk16_array; // 0x6BC
+		Array<void*> unk17_array; // 0x6CC
 		DWORD unk5; // 0x6DC
-		gw_array<void*> unk18_array; // 0x6E0
+		Array<void*> unk18_array; // 0x6E0
 		SkillbarArray skillbar; // 0x6F0
-		gw_array<void*> unk19_array; // 0x700
-		gw_array<void*> unk20_array; // 0x710
-		gw_array<void*> unk21_array; // 0x720
-		gw_array<void*> unk22_array; // 0x730
+		Array<void*> unk19_array; // 0x700
+		Array<void*> unk20_array; // 0x710
+		Array<void*> unk21_array; // 0x720
+		Array<void*> unk22_array; // 0x730
 		DWORD experience; // 0x740
 		DWORD experience_dupe; // 0x744
 		DWORD currentkurzick; // 0x748
@@ -106,8 +106,8 @@ namespace GW {
 		DWORD maxbalth; // 0x7C0
 		DWORD maximperial; // 0x7C4
 		DWORD unk6; // 0x7C8
-		gw_array<void*> unk23_array; // 0x7CC
-		gw_array<void*> unk24_array; // 0x7DC
+		Array<void*> unk23_array; // 0x7CC
+		Array<void*> unk24_array; // 0x7DC
 		MissionMapIconArray missionmapicons; // 0x7EC
 		NPCArray npcs; // 0x7FC
 		PlayerArray players; // 0x80C

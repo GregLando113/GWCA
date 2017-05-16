@@ -37,10 +37,10 @@ namespace GW {
 
 		struct ChatTemplate {
 			DWORD unk1[2];
-			wchar_t* template_code; // Is actually part of a gw_array<wchar_t>
-			DWORD templatecode_sizealloc; // Is actually part of a gw_array<wchar_t>
-			DWORD templatecode_size; // Is actually part of a gw_array<wchar_t>
-			DWORD unk_identifier; // Is actually part of a gw_array<wchar_t>
+			wchar_t* template_code; // Is actually part of a Array<wchar_t>
+			DWORD templatecode_sizealloc; // Is actually part of a Array<wchar_t>
+			DWORD templatecode_size; // Is actually part of a Array<wchar_t>
+			DWORD unk_identifier; // Is actually part of a Array<wchar_t>
 			wchar_t* template_name;
 		};
 

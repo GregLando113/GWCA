@@ -3,7 +3,7 @@
 #include <map>
 
 #include <GWCA\Utilities\Scanner.h>
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 
 namespace {
@@ -15,7 +15,7 @@ namespace {
 		StoCHandler_t handlerfunc;
 	};
 
-	typedef GW::gw_array<StoCHandler> StoCHandlerArray;
+	typedef GW::Array<StoCHandler> StoCHandlerArray;
 
 	StoCHandlerArray game_server_handler;
 	StoCHandler* original_functions = nullptr;

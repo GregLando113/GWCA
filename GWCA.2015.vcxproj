@@ -26,7 +26,7 @@
     <ClInclude Include="GWCA\Context\PartyContext.h" />
     <ClInclude Include="GWCA\Context\TradeContext.h" />
     <ClInclude Include="GWCA\Context\WorldContext.h" />
-    <ClInclude Include="GWCA\GameContainers\gw_array.h" />
+    <ClInclude Include="GWCA\GameContainers\Array.h" />
     <ClInclude Include="GWCA\GameEntities\Agent.h" />
     <ClInclude Include="GWCA\GameEntities\Attribute.h" />
     <ClInclude Include="GWCA\GameEntities\Camera.h" />

@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct PlayerPartyMember {
@@ -30,16 +30,16 @@ namespace GW {
 		DWORD level;
 	};
 
-	using PlayerPartyMemberArray = gw_array<PlayerPartyMember>;
-	using HeroPartyMemberArray = gw_array<HeroPartyMember>;
-	using HenchmanPartyMemberArray = gw_array<HenchmanPartyMember>;
+	using PlayerPartyMemberArray = Array<PlayerPartyMember>;
+	using HeroPartyMemberArray = Array<HeroPartyMember>;
+	using HenchmanPartyMemberArray = Array<HenchmanPartyMember>;
 
 	struct PartyInfo {
 		char pad_0x0000[0x4]; //0x0000
-		gw_array<PlayerPartyMember> players; //0x0004
-		gw_array<HenchmanPartyMember> henchmen; //0x0014
-		gw_array<HeroPartyMember> heroes; //0x0024
-		gw_array<DWORD> others; //0x0034, agent id of allies, minions, pets.
+		Array<PlayerPartyMember> players; //0x0004
+		Array<HenchmanPartyMember> henchmen; //0x0014
+		Array<HeroPartyMember> heroes; //0x0024
+		Array<DWORD> others; //0x0034, agent id of allies, minions, pets.
 	};
 
 }

@@ -160,9 +160,6 @@
     <ClInclude Include="GWCA\GameEntities\Title.h">
       <Filter>GameEntities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\GameContainers\gw_array.h">
-      <Filter>GameContainers</Filter>
-    </ClInclude>
     <ClInclude Include="GWCA\Context\AgentContext.h">
       <Filter>Context</Filter>
     </ClInclude>
@@ -214,6 +211,9 @@
     <ClInclude Include="GWCA\GWStructures.h" />
     <ClInclude Include="GWCA\Managers\Render.h">
       <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\GameContainers\Array.h">
+      <Filter>GameContainers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

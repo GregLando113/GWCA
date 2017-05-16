@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct Attribute {
@@ -17,5 +17,5 @@ namespace GW {
 		Attribute Attribute[49];
 	};
 
-	using PartyAttributeArray = gw_array<PartyAttribute>;
+	using PartyAttributeArray = Array<PartyAttribute>;
 }

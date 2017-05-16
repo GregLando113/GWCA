@@ -2,7 +2,7 @@
 #include <Windows.h>
 
 #include <GWCA\Constants\Constants.h>
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 #include <GWCA\Utilities\Maybe.h>
 
 namespace GW {
@@ -77,7 +77,7 @@ namespace GW {
         Maybe<SkillbarSkill> GetSkillById(Constants::SkillID skillId);
 	};
 
-	struct SkillbarArray : gw_array<Skillbar> {
+	struct SkillbarArray : Array<Skillbar> {
 		// Get array of skillbars, [0] = player [1-7] = heroes.
 		static SkillbarArray GetSkillbarArray();
 	};
@@ -105,8 +105,8 @@ namespace GW {
 		Buff() : SkillId(0), Unknown1(0), BuffId(0), TargetAgentId(0) {}
 	};
 
-	using EffectArray = gw_array<Effect>;
-	using BuffArray = gw_array<Buff>;
+	using EffectArray = Array<Effect>;
+	using BuffArray = Array<Buff>;
 
 
 	struct AgentEffects {
@@ -115,5 +115,5 @@ namespace GW {
 		EffectArray Effects;
 	};
 
-	using AgentEffectsArray = gw_array<AgentEffects>;
+	using AgentEffectsArray = Array<AgentEffects>;
 }

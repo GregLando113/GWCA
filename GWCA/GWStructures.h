@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 
-#include "GameContainers\gw_array.h"
+#include "GameContainers\Array.h"
 
 #include "GameEntities\Agent.h"
 #include "GameEntities\Attribute.h"

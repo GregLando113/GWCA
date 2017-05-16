@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct GHKey { DWORD k[4]; };
@@ -17,7 +17,7 @@ namespace GW {
 		wchar_t promotername[20]; // name of player that last modified rank
 	};
 
-	using GuildRoster = gw_array<GuildPlayer*>;
+	using GuildRoster = Array<GuildPlayer*>;
 
 	struct GuildHistoryEvent {
 		DWORD time1; // Guessing one of these is time in ms
@@ -25,7 +25,7 @@ namespace GW {
 		wchar_t name[0x100]; // Name of added/kicked person, then the adder/kicker, they seem to be in the same array
 	};
 
-	using GuildHistory = gw_array<GuildHistoryEvent*>;
+	using GuildHistory = Array<GuildHistoryEvent*>;
 
 	struct Guild {
 		GHKey key;
@@ -40,5 +40,5 @@ namespace GW {
 		inline DWORD& qualifierpoints() const { return *(DWORD*)((BYTE*)this + 0x7C); }
 	};
 
-	using GuildArray = gw_array<Guild*>;
+	using GuildArray = Array<Guild*>;
 }

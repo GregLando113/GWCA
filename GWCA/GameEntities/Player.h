@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 
@@ -25,6 +25,6 @@ namespace GW {
 		char pad_0x003C[0x10]; //0x003C
 	};//Size=0x004C
 
-	using PlayerArray = gw_array<Player>;
+	using PlayerArray = Array<Player>;
 
 }

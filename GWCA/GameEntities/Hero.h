@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 #include <GWCA\Constants\Constants.h>
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 
@@ -17,5 +17,5 @@ namespace GW {
 		AgentID lockedtargetid;
 	};
 
-	using HeroFlagArray = gw_array<HeroFlag>;
+	using HeroFlagArray = Array<HeroFlag>;
 }

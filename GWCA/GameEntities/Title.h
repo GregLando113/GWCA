@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct Title {
@@ -16,5 +16,5 @@ namespace GW {
 		void* unk5[2]; // Pretty sure these are ptrs to title hash strings
 	}; // size = 0x28
 
-	using TitleArray = gw_array<Title>;
+	using TitleArray = Array<Title>;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 #include "Position.h"
 
@@ -194,7 +194,7 @@ namespace GW {
 		};
 	};
 
-	using AgentArray = gw_array<Agent*>;
-	using MapAgentArray = gw_array<MapAgent>;
-	using AgentMovementArray = gw_array<AgentMovement*>;
+	using AgentArray = Array<Agent*>;
+	using MapAgentArray = Array<MapAgent>;
+	using AgentMovementArray = Array<AgentMovement*>;
 }

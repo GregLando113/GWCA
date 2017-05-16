@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-#include <GWCA\GameContainers\gw_array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	struct PathingTrapezoid {
@@ -28,6 +28,6 @@ namespace GW {
 		DWORD restunknown[0xD];
 	};
 
-	using PathingMapArray = gw_array<PathingMap>;
+	using PathingMapArray = Array<PathingMap>;
 
 }

@@ -8,10 +8,8 @@
 #include <GWCA\Managers\PlayerMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
 
-namespace {
-	typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
-	UseSkill_t UseSkill;
-}
+typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
+static UseSkill_t UseSkill;
 
 static const char _Base64ToValue[128] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
@@ -24,7 +22,7 @@ static const char _Base64ToValue[128] = {
 	41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, // [112, 128)
 };
 
-void _WriteBits(int val, char buff[6]) {
+static void _WriteBits(int val, char buff[6]) {
 	buff[0] = ((val >> 0) & 1);
 	buff[1] = ((val >> 1) & 1);
 	buff[2] = ((val >> 2) & 1);
@@ -33,7 +31,7 @@ void _WriteBits(int val, char buff[6]) {
 	buff[5] = ((val >> 5) & 1);
 }
 
-int _ReadBits(char **str, int n) {
+static int _ReadBits(char **str, int n) {
 	int val = 0;
 	char *s = *str;
 	for (int i = 0; i < n; i++)
@@ -88,6 +86,7 @@ void GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 	int bits_per_prof = 2*_ReadBits(&it, 2) + 4;
 	int prof1 = _ReadBits(&it, bits_per_prof);
 	int prof2 = _ReadBits(&it, bits_per_prof);
+	if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) return;
 
 	// ATTRIBUTES
 	AttribCount = _ReadBits(&it, 4);
@@ -95,6 +94,7 @@ void GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 	for (DWORD i = 0; i < AttribCount; i++) {
 		AttribIDs[i] = _ReadBits(&it, bits_per_attr);
 		AttribVal[i] = _ReadBits(&it, 4);
+		if (AttribIDs[i] < 0 || AttribIDs[i] > 44) return;
 	}
 
 	// SKILLS

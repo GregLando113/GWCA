@@ -93,7 +93,7 @@ const static unsigned int prefix_t[] = {
 
 /* CHECK_MODRM2 */
 #if defined(USE_T) && (USE_T & MODRM2_T)
-const static unsigned int modrm2_t[] = {
+const static int modrm2_t[] = {
            /* 0 1 2 3 4 5 6 7  8 9 a b c d e f */
     BITMASK32(1,1,1,1,0,0,0,0, 0,0,0,0,0,0,0,0,  /* 0 */
               0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0), /* 1 */
@@ -130,7 +130,7 @@ const static unsigned int modrm2_t[] = {
 
 /* CHECK_MODRM */
 #if defined(USE_T) && (USE_T & MODRM_T)
-const static unsigned int modrm_t[] = {
+const static int modrm_t[] = {
            /* 0 1 2 3 4 5 6 7  8 9 a b c d e f */
     BITMASK32(1,1,1,1,0,0,0,0, 1,1,1,1,0,0,0,0,  /* 0 */
               1,1,1,1,0,0,0,0, 1,1,1,1,0,0,0,0), /* 1 */
@@ -164,7 +164,7 @@ const static unsigned int modrm_t[] = {
 
 /* CHECK_DATA1 */
 #if defined(USE_T) && (USE_T & DATA1_T)
-const static unsigned int data1_t[] = {
+const static int data1_t[] = {
            /* 0 1 2 3 4 5 6 7  8 9 a b c d e f */
     BITMASK32(0,0,0,0,1,0,0,0, 0,0,0,0,1,0,0,0,  /* 0 */
               0,0,0,0,1,0,0,0, 0,0,0,0,1,0,0,0), /* 1 */
@@ -222,7 +222,7 @@ const static unsigned int data2_t[] = {
 
 /* CHECK_DATA66 */
 #if defined(USE_T) && (USE_T & DATA66_T)
-const static unsigned int data66_t[] = {
+const static int data66_t[] = {
            /* 0 1 2 3 4 5 6 7  8 9 a b c d e f */
     BITMASK32(0,0,0,0,0,1,0,0, 0,0,0,0,0,1,0,0,  /* 0 */
               0,0,0,0,0,1,0,0, 0,0,0,0,0,1,0,0), /* 1 */

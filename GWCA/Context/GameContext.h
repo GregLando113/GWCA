@@ -29,28 +29,28 @@ namespace GW {
 			return *(GameContext**)((*(BYTE**)baseptr) + 0x18);
 		}
 
-		void* unkcontext1;
-		void* unkcontext2;
-		AgentContext* agent; // Most functions that access are prefixed with Agent.
-		void* unkcontext4;
-		void* nullcontext1;
-		MapContext* map; // Static object/collision data
-		void* unkcontext5;
-		void* nullcontext2;
-		DWORD somenumber; // 0x30 for me at the moment.
-		void* unkcontext6;
-		void* unkcontext7;
-		WorldContext* world; // Best name to fit it that I can think of.
-		void* unkcontext8;
-		void* nullcontext3;
-		void* unkcontext9;
-		GuildContext* guild;
-		ItemContext* items;
-		CharContext* character;
-		void* nullcontext4;
-		PartyContext* party;
-		void* nullcontext5;
-		void* nullcontext6;
-		TradeContext* trade;
+		/* +h0000 */ void* unkcontext1;
+		/* +h0004 */ void* unkcontext2;
+		/* +h0008 */ AgentContext* agent; // Most functions that access are prefixed with Agent.
+		/* +h000C */ void* unkcontext4;
+		/* +h0010 */ void* nullcontext1;
+		/* +h0014 */ MapContext* map; // Static object/collision data
+		/* +h0018 */ void* unkcontext5;
+		/* +h001C */ void* nullcontext2;
+		/* +h0020 */ DWORD somenumber; // 0x30 for me at the moment.
+		/* +h0024 */ void* unkcontext6;
+		/* +h0028 */ void* unkcontext7;
+		/* +h002C */ WorldContext* world; // Best name to fit it that I can think of.
+		/* +h0030 */ void* unkcontext8;
+		/* +h0034 */ void* nullcontext3;
+		/* +h0038 */ void* unkcontext9;
+		/* +h003C */ GuildContext* guild;
+		/* +h0040 */ ItemContext* items;
+		/* +h0044 */ CharContext* character;
+		/* +h0048 */ void* nullcontext4;
+		/* +h004C */ PartyContext* party;
+		/* +h0050 */ void* nullcontext5;
+		/* +h0054 */ void* nullcontext6;
+		/* +h0058 */ TradeContext* trade;
 	};
 }

@@ -158,3 +158,21 @@ GW::PlayerArray GW::Agents::GetPlayerArray() {
 GW::NPCArray GW::Agents::GetNPCArray() {
 	return GameContext::instance()->world->npcs;
 }
+
+static void __fastcall __decode_str(wchar_t *s, GW::Agents::DecodeStrCb_t callback) {
+	const std::wstring str(s);
+	callback(s);
+}
+
+std::wstring GW::Agents::GetAgentNameAsync(GW::Agent *agent, DecodeStrCb_t cb) {
+	Array<AgentInfo> agentInfos = GameContext::instance()->world->agentInfos;
+	if (!agent || !agentInfos.valid()) return L"";
+	wchar_t *name = agentInfos[agent->Id].nameString;
+	
+	typedef void (__fastcall *Callback_t)(wchar_t *s, DecodeStrCb_t param);
+	typedef void (__fastcall *AsyncDecodeStr_t)(wchar_t *s, Callback_t cb, void *param);
+	AsyncDecodeStr_t AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
+	if (!name || !AsyncDecodeStr) return L"";
+
+	AsyncDecodeStr(name, __decode_str, cb);
+}

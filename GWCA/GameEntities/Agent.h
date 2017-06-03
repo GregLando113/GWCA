@@ -194,7 +194,13 @@ namespace GW {
 		};
 	};
 
+	struct AgentInfo {
+		BYTE unk1[52];
+		wchar_t	*nameString;
+	};
+
 	using AgentArray = Array<Agent*>;
 	using MapAgentArray = Array<MapAgent>;
 	using AgentMovementArray = Array<AgentMovement*>;
+	using AgentInfoArray = Array<AgentInfo>;
 }

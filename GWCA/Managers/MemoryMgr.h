@@ -28,7 +28,7 @@ namespace GW {
 
 		static BYTE* GStoCBase;
 
-        static BYTE* DecodeStringFunc;
+        static BYTE* AsyncDecodeStringPtr;
 
 		// Basics
 		static bool Scan();

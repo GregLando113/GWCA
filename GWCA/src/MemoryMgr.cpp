@@ -21,7 +21,7 @@ BYTE* GW::MemoryMgr::SkillTimerPtr = NULL;
 
 BYTE* GW::MemoryMgr::WinHandlePtr = NULL;
 
-BYTE* GW::MemoryMgr::DecodeStringFunc = NULL;
+BYTE* GW::MemoryMgr::AsyncDecodeStringPtr = NULL;
 
 bool GW::MemoryMgr::Scan() {
 	Scanner::Initialize(0x401000, 0x49a000);
@@ -78,12 +78,12 @@ bool GW::MemoryMgr::Scan() {
 		return false;
 	}
 
-    DecodeStringFunc = (BYTE*)Scanner::Find("\x8D\x7C\x46\x02\x8B\xCE\x6A\x01", "xxxxxxxx", -136);
-    if (DecodeStringFunc) {
-        printf("DecodeStringFunc = %X\n", (DWORD)DecodeStringFunc);
+	AsyncDecodeStringPtr = (BYTE*)Scanner::Find("\x8D\x7C\x46\x02\x8B\xCE\x6A\x01", "xxxxxxxx", -136);
+    if (AsyncDecodeStringPtr) {
+        printf("AsyncDecodeStringPtr = %X\n", (DWORD)AsyncDecodeStringPtr);
     }
     else {
-        printf("DecodeStringFunc = ERR\n");
+        printf("AsyncDecodeStringPtr = ERR\n");
         return false;
     }
 

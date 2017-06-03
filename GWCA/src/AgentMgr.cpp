@@ -161,7 +161,7 @@ GW::NPCArray GW::Agents::GetNPCArray() {
 
 static void __fastcall __decode_str(wchar_t *s, GW::Agents::DecodeStrCb_t callback) {
 	const std::wstring str(s);
-	callback(s);
+	callback(str);
 }
 
 std::wstring GW::Agents::GetAgentNameAsync(GW::Agent *agent, DecodeStrCb_t cb) {

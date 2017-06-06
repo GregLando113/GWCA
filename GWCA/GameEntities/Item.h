@@ -38,38 +38,37 @@ namespace GW {
 		DWORD mod_;
 	};
 
-	struct Item {							// total : 50 BYTEs
-		DWORD ItemId;						// 0000
-		DWORD AgentId;						// 0004
-		BYTE unknown1[4];					// 0008	|--4 BYTEs--|
-		Bag* bag;							// 000C
-		ItemModifier* ModStruct;						// 0010						pointer to an array of mods
-		DWORD ModStructSize;				// 0014						size of this array
-		wchar_t* Customized;				// 0018
-		DWORD modelfileid;
-		BYTE type;
-		BYTE unk7;
-		short extraId;
-		short value;
-		BYTE unknown4[4];
-		short interaction;
-		long ModelId;
-		BYTE* modString;
-		BYTE unknown5[4];
-		BYTE* extraItemInfo;
-		BYTE unknown6[15];
-		BYTE Quantity;
-		BYTE equipped;
-		BYTE profession;
-		BYTE slot;						// 004F
+	struct Item { // total : 0x50/80 BYTEs
+		/* +h0000 */ DWORD	ItemId;
+		/* +h0004 */ DWORD	AgentId;
+		/* +h0008 */ BYTE	h0008[4];
+		/* +h000C */ Bag   *Bag;
+		/* +h0010 */ ItemModifier* ModStruct; // Pointer to an array of mods.
+		/* +h0014 */ DWORD	ModStructSize; // Size of this array.
+		/* +h0018 */ WCHAR *Customized;
+		/* +h001C */ DWORD	ModelFileID;
+		/* +h0020 */ BYTE	Type;
+		/* +h0021 */ BYTE	h0021;
+		/* +h0022 */ WORD	extraId;
+		/* +h0024 */ WORD	value;
+		/* +h0026 */ BYTE	h0026[4];
+		/* +h002A */ WORD	Interaction;
+		/* +h002C */ DWORD	ModelId;
+		/* +h0030 */ WCHAR *InfoString;
+		/* +h0034 */ BYTE	h0034[4];
+		/* +h0038 */ WCHAR *NameString;
+		/* +h003C */ BYTE	h003C[15];
+		/* +h004B */ BYTE	Quantity;
+		/* +h004C */ BYTE	Equipped;
+		/* +h004D */ BYTE	Profession;
+		/* +h004E */ BYTE	Slot;
 	};
 
 	struct Inventory {
-		Bag* bags[0x1F];
+		Bag  *bags[0x1F];
 		DWORD gold_character;
 		DWORD gold_storage;
 	};
 
 	using MerchItemArray = Array<ItemID>;
-
 }

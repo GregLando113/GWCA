@@ -164,34 +164,16 @@ namespace GW {
 	};
 
 	struct AgentMovement {
-		BYTE unknown1[12];
-		long AgentId;
-		BYTE unknown2[40];
-		long Moving1; //tells if you are stuck even if your client doesn't know
-		BYTE unknown3[8];
-		long Moving2; //exactly same as Moving1
-		BYTE unknown4[28];
-		union {
-			struct {
-				float X2;
-				float Y2;
-				DWORD Ground2;
-			};
-			struct {
-				GamePos pos2;
-			};
-		};
-		byte unknown5[4];
-		union {
-			struct {
-				float X;
-				float Y;
-				DWORD Ground;
-			};
-			struct {
-				GamePos pos;
-			};
-		};
+		/* +h0000 */ BYTE    unk1[12];
+		/* +h000C */ DWORD   AgentId;
+		/* +h0010 */ BYTE    unk2[40];
+		/* +h0038 */ DWORD   Moving1; //tells if you are stuck even if your client doesn't know
+		/* +h003C */ BYTE    unknown3[8];
+		/* +h0044 */ DWORD   Moving2; //exactly same as Moving1
+		/* +h0048 */ BYTE    unk4[28];
+		/* +h0064 */ GamePos unk5;
+		/* +h0070 */ BYTE    unk6[4];
+		/* +h0074 */ GamePos unk7;
 	};
 
 	struct AgentInfo {

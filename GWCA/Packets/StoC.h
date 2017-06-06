@@ -610,12 +610,12 @@ namespace GW {
 
 			enum ChatChannel {
 				Alliance,	// sender: orange		message: white
-				Unk1,		// sender: dark blue	message: white
+				Allies,		// sender: dark blue	message: white
 				Unk2,		// sender: light blue	message: light blue
 				All,		// sender: yellow		message: white
 				Unk4,		// sender: light grey	message: dark grey
-				Unk5,		// sender: Cyan			message: cyan
-				Unk6,		// sender: white		message: white
+				Moderator,	// sender: Cyan			message: cyan
+				Emote,		// sender: white		message: white
 				Warning,	// sender: -none-		message: red (in middle of screen)
 				Unk8,		// sender: light grey	message: cyan
 				Guild,		// sender: green		message: white

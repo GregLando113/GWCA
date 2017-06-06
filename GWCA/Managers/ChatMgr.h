@@ -71,7 +71,7 @@ namespace GW {
 		// SendChat callback can modify the msg before it is send.
 		// Pay attention to not overflow the buffer.
 		void SetSendChatCallback(std::function<
-			void(Channel chan, wchar_t msg[139])>);
+			void(Channel chan, wchar_t msg[140])>);
 
 		void SetOpenLinks(bool b);
 

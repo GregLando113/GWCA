@@ -67,7 +67,8 @@ namespace {
 		COLOR_RGB(0xe0, 0xe0, 0xe0)
 	};
 
-	void(__fastcall *GwSendMessage)(int id, const RawMessage* msg, void *extended) = nullptr;
+	typedef void (__fastcall *SendMessage_t)(int id, const RawMessage *msg, void *extended);
+	SendMessage_t GwSendMessage = nullptr;
 
 	#if 0
 	void(__fastcall *GwWriteBuffer)(WCHAR *message, DWORD channel) = nullptr;
@@ -78,8 +79,8 @@ namespace {
 	typedef void(__fastcall *SendChat_t)(wchar_t* message);
 	SendChat_t SendChat_addr = nullptr;
 	GW::THook<SendChat_t> SendChat_hook;
-	std::map<std::wstring, GW::Chat::Callback> commands_callbacks;
-	std::function<void(Channel chan, wchar_t msg[139])> SendChat_callback;
+	std::map<std::wstring, GW::Chat::Callback> Commands_callbacks;
+	std::function<void(Channel chan, wchar_t msg[140])> SendChat_callback;
 
 	typedef void(__fastcall *OpenTemplate_t)(DWORD unk, GW::Chat::ChatTemplate* info);
 	void __fastcall OpenTemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info);
@@ -137,7 +138,7 @@ void GW::Chat::SetLocalMessageCallback(std::function<bool(int, wchar_t*)> callba
 	LocalMessage_callback = callback;
 }
 
-void GW::Chat::SetSendChatCallback(std::function<void(Channel chan, wchar_t msg[139])> callback) {
+void GW::Chat::SetSendChatCallback(std::function<void(Channel chan, wchar_t msg[140])> callback) {
 	if (SendChat_hook.Empty()) {
 		if (SendChat_addr == nullptr) Initialize();
 		SendChat_hook.Detour(SendChat_addr, SendChat_detour);
@@ -150,10 +151,10 @@ void GW::Chat::RegisterCommand(const std::wstring& command, Callback callback) {
 		if (SendChat_addr == nullptr) Initialize();
 		SendChat_hook.Detour(SendChat_addr, SendChat_detour);
 	}
-	commands_callbacks[command] = callback;
+	Commands_callbacks[command] = callback;
 }
 void GW::Chat::DeleteCommand(const std::wstring& command) {
-	commands_callbacks.erase(command);
+	Commands_callbacks.erase(command);
 }
 
 void GW::Chat::SetOpenLinks(bool b) {
@@ -199,7 +200,7 @@ void GW::Chat::Initialize() {
 	SendChat_addr = (SendChat_t)Scanner::Find("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
 	printf("Send Chat Func = 0x%X\n", (DWORD)SendChat_addr);
 
-	GwSendMessage = (decltype(GwSendMessage))0x00605AC0;
+	GwSendMessage = (SendMessage_t)0x00605AC0;
 	printf("Send Message Func = 0x%X\n", (DWORD)GwSendMessage);
 
 	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
@@ -340,8 +341,8 @@ namespace {
 				args = msg.substr(index);
 			}
 
-			auto callback = commands_callbacks.find(command);
-			if (callback != commands_callbacks.end()) {
+			auto callback = Commands_callbacks.find(command);
+			if (callback != Commands_callbacks.end()) {
 				if (callback->second(command, args))
 					return;
 			}

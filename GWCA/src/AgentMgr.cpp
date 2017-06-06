@@ -159,20 +159,34 @@ GW::NPCArray GW::Agents::GetNPCArray() {
 	return GameContext::instance()->world->npcs;
 }
 
-static void __fastcall __decode_str(wchar_t *s, GW::Agents::DecodeStrCb_t callback) {
-	const std::wstring str(s);
-	callback(str);
+// GetAgentName stuff.
+typedef void(__fastcall *Callback_t)(wchar_t *buff, wchar_t *str);
+typedef void(__fastcall *AsyncDecodeStr_t)(wchar_t *s, Callback_t cb, void *param);
+static void __fastcall __decode_str_callback(wchar_t *buff, wchar_t *str) {
+	while (*str) *buff++ = *str++;
+	*buff = 0;
 }
 
-std::wstring GW::Agents::GetAgentNameAsync(GW::Agent *agent, DecodeStrCb_t cb) {
-	Array<AgentInfo> agentInfos = GameContext::instance()->world->agentInfos;
-	if (!agent || !agentInfos.valid()) return L"";
-	wchar_t *name = agentInfos[agent->Id].nameString;
-	
-	typedef void (__fastcall *Callback_t)(wchar_t *s, DecodeStrCb_t param);
-	typedef void (__fastcall *AsyncDecodeStr_t)(wchar_t *s, Callback_t cb, void *param);
-	AsyncDecodeStr_t AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
-	if (!name || !AsyncDecodeStr) return L"";
+std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
+	if (!agent || agent->Type != 0xDB) return L"";
 
-	AsyncDecodeStr(name, __decode_str, cb);
+	if (agent->TypeMap & 0x400000) {
+		GW::PlayerArray players = GameContext::instance()->world->players;
+		if (!players.valid()) return L"";
+
+		GW::Player *player = &players[agent->PlayerNumber];
+		if (!player) return L"";
+		return std::wstring(player->Name);
+	} else {
+		AgentInfoArray agentInfos = GameContext::instance()->world->agentInfos;
+		if (!agentInfos.valid()) return L"";
+
+		wchar_t dec_name[256] = { 0 };
+		wchar_t *enc_name = agentInfos[agent->Id].nameString;
+		AsyncDecodeStr_t AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
+
+		if (!enc_name || !AsyncDecodeStr) return L"";
+		AsyncDecodeStr(enc_name, __decode_str_callback, dec_name);
+		return std::wstring(dec_name);
+	}
 }

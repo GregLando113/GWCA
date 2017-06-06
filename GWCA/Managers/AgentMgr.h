@@ -89,7 +89,6 @@ namespace GW {
 
 		GW::AgentID GetHeroAgentID(DWORD heroindex);
 
-		typedef void (*DecodeStrCb_t)(const std::wstring& str);
-		std::wstring GetAgentNameAsync(GW::Agent *Agent, DecodeStrCb_t cb);
+		std::wstring GetAgentName(GW::Agent *Agent);
 	};
 }

@@ -24,7 +24,7 @@ namespace GW {
 		/* +h0058 */ DWORD pad6[11];
 		/* +h0084 */ Array<void*> unk2_array;
 		/* +h0094 */   DWORD unk1; // this field and the next array are link together in a structure.
-		/* +h0098 */   Array<void*> unk3_array;
+		/* +h0098 */   Array<void*> unk3_array; // elements are of size 12. {ptr, func, ptr}
 		/* +h00A8 */ Array<void*> unk4_array;
 		/* +h00B8 */ Array<void*> unk5_array;
 		/* +h00C8 */ DWORD rand1; // Number seems to be randomized quite a bit o.o seems to be accessed by textparser.cpp

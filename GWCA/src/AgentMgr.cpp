@@ -183,7 +183,7 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 		GW::NPCArray npcs = GameContext::instance()->world->npcs;
 		if (!npcs.valid()) return L"";
 
-		wchar_t *enc_name = npcs[agent->PlayerNumber].nameString;
+		wchar_t *enc_name = npcs[agent->PlayerNumber].NameString;
 		if (!enc_name || !AsyncDecodeStr) return L"";
 
 		AsyncDecodeStr(enc_name, __decode_str_callback, dec_name);

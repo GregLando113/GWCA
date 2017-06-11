@@ -49,8 +49,8 @@ namespace GW {
 		/* +h001C */ DWORD	ModelFileID;
 		/* +h0020 */ BYTE	Type;
 		/* +h0021 */ BYTE	h0021;
-		/* +h0022 */ WORD	extraId;
-		/* +h0024 */ WORD	value;
+		/* +h0022 */ WORD	ExtraId;
+		/* +h0024 */ WORD	Value;
 		/* +h0026 */ BYTE	h0026[4];
 		/* +h002A */ WORD	Interaction;
 		/* +h002C */ DWORD	ModelId;

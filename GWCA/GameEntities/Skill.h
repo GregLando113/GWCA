@@ -6,43 +6,46 @@
 #include <GWCA\Utilities\Maybe.h>
 
 namespace GW {
-	struct Skill {							// total : A0 BYTEs
-		DWORD SkillId;						// 0000
-		BYTE Unknown1[4];					// 0004
-		long Campaign;						// 0008
-		long Type;							// 000C
-		DWORD Special;
-		long ComboReq;						// 0014
-		DWORD Effect1;
-		DWORD Condition;
-		DWORD Effect2;
-		DWORD WeaponReq;
-		BYTE Profession;					// 0028
-		BYTE Attribute;						// 0029
-		BYTE Unknown2[2];					// 002A
-		long SkillId_PvP;					// 002C
-		BYTE Combo;							// 0030
-		BYTE Target;						// 0031
-		BYTE unknown3;						// 0032
-		BYTE SkillEquipType;				// 0033
-		BYTE Unknown4;						// 0034
-		BYTE EnergyCost;
-		BYTE HealthCost;
-		BYTE Unknown7;
-		DWORD Adrenaline;					// 0038
-		float Activation;					// 003C
-		float Aftercast;					// 0040
-		long Duration0;						// 0044
-		long Duration15;					// 0048
-		long Recharge;						// 004C
-		BYTE Unknown5[12];					// 0050
-		long Scale0;						// 005C
-		long Scale15;						// 0060
-		long BonusScale0;					// 0064
-		long BonusScale15;					// 0068
-		float AoERange;						// 006C
-		float ConstEffect;					// 0070
-		BYTE unknown6[44];					// 0074
+	struct Skill { // total : A0 BYTEs
+		/* +h0000 */ DWORD SkillId;
+		/* +h0004 */ DWORD h0004;
+		/* +h0008 */ DWORD Campaign;
+		/* +h000C */ DWORD Type;
+		/* +h0010 */ DWORD Special;
+		/* +h0014 */ DWORD ComboReq;
+		/* +h0018 */ DWORD Effect1;
+		/* +h001C */ DWORD Condition;
+		/* +h0020 */ DWORD Effect2;
+		/* +h0024 */ DWORD WeaponReq;
+		/* +h0028 */ BYTE Profession;
+		/* +h0029 */ BYTE Attribute;
+		/* +h002A */ BYTE h002A[2];
+		/* +h002C */ DWORD SkillId_PvP;
+		/* +h0030 */ BYTE Combo;
+		/* +h0031 */ BYTE Target;
+		/* +h0032 */ BYTE h0032;
+		/* +h0033 */ BYTE SkillEquipType;
+		/* +h0034 */ BYTE h0034;
+		/* +h0035 */ BYTE EnergyCost;
+		/* +h0036 */ BYTE HealthCost;
+		/* +h0037 */ BYTE h0037;
+		/* +h0038 */ DWORD Adrenaline;
+		/* +h003C */ float Activation;
+		/* +h0040 */ float Aftercast;
+		/* +h0044 */ DWORD Duration0;
+		/* +h0048 */ DWORD Duration15;
+		/* +h004C */ DWORD Recharge;
+		/* +h0050 */ BYTE h0050[12];
+		/* +h005C */ DWORD Scale0;
+		/* +h0060 */ DWORD Scale15;
+		/* +h0064 */ DWORD BonusScale0;
+		/* +h0068 */ DWORD BonusScale15;
+		/* +h006C */ float AoERange;
+		/* +h0070 */ float ConstEffect;
+		/* +h0074 */ BYTE h0074[32];
+		/* +h0094 */ DWORD Name; // String id
+		/* +h0098 */ DWORD h0098;
+		/* +h009C */ DWORD Description; // String id
 
 		BYTE GetEnergyCost() {
 			switch (EnergyCost) {

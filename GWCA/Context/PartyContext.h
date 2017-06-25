@@ -1,25 +1,24 @@
-#pragma once
+#ifndef _PARTY_CONTEXT_INC
+#define _PARTY_CONTEXT_INC
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\Array.h>
-#include <GWCA\GameEntities\Party.h>
+#include <GWCA\Array.h>
+#include <GWCA\Entities\Party.h>
 
 namespace GW {
+    struct PartyContext { // total: 0x58/88
+        /* +h0000 */ DWORD h0000;
+        /* +h0004 */ Array<void*> h0004;
+        /* +h0014 */ DWORD flag;
+        /* +h0018 */ DWORD h0018[4];
+        /* +h0028 */ DWORD InviteCount;
+        /* +h002C */ char pad_0x002C[0x28];
+        /* +h0054 */ PartyInfo *partyinfo;
 
-	class PartyContext {
-	public:
-		char pad_0x0000[0x4]; //0x0000
-		Array<void*> unk1_arr; //0x0004
-		class PartyState { //0x0014
-			DWORD state;
-		public:
-			bool InHardMode() { return (state & 0x10) > 0; }
-			bool IsDefeated() { return (state & 0x20) > 0; }
-		}partystate;
-		char pad_0x0018[0x10]; //0x0018
-		DWORD invitecount; // 0x0028
-		char pad_0x002C[0x28]; // 0x002C
-		PartyInfo* partyinfo; //0x0054
-	};//Size=0x0058
+        bool InHardMode() { return (flag & 0x10) > 0; }
+        bool IsDefeated() { return (flag & 0x20) > 0; }
+    };
 }
+
+#endif // _PARTY_CONTEXT_INC

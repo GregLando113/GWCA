@@ -1,120 +1,120 @@
-#pragma once
+#ifndef _WORLD_CONTEXT_INC
+#define _WORLD_CONTEXT_INC
 
 #include <Windows.h>
 
-#include <GWCA\GameContainers\Array.h>
-#include <GWCA\GameEntities\Agent.h>
-#include <GWCA\GameEntities\Item.h>
-#include <GWCA\GameEntities\Attribute.h>
-#include <GWCA\GameEntities\Hero.h>
-#include <GWCA\GameEntities\NPC.h>
-#include <GWCA\GameEntities\Player.h>
-#include <GWCA\GameEntities\Skill.h>
-#include <GWCA\GameEntities\Title.h>
-#include <GWCA\GameEntities\Quest.h>
-#include <GWCA\GameEntities\Map.h>
+#include <GWCA\Array.h>
+#include <GWCA\Entities\Agent.h>
+#include <GWCA\Entities\Item.h>
+#include <GWCA\Entities\Attribute.h>
+#include <GWCA\Entities\Hero.h>
+#include <GWCA\Entities\NPC.h>
+#include <GWCA\Entities\Player.h>
+#include <GWCA\Entities\Skill.h>
+#include <GWCA\Entities\Title.h>
+#include <GWCA\Entities\Quest.h>
+#include <GWCA\Entities\Map.h>
 
 namespace GW {
 
-	class WorldContext {
-	public:
-		WorldContext() {}
-		WorldContext(const WorldContext&) {}
+    struct WorldContext {
+        struct sub1 {
+            wchar_t* name;
+            //...
+        } *sub1; // 0x0
 
-		struct sub1 {
-			wchar_t* name;
-			//...
-		} *sub1; // 0x0
-		Array<wchar_t> message_buff; // 0x4 Last chat message recieved via gameserver
-		BYTE pad1[0x10]; // 0x14
-		MerchItemArray merchitems; // 0x24
-		BYTE pad1_1[0x48]; // 0x34
-		MapAgentArray mapagents; // 0x7C
-		BYTE pad2[0x10]; // 0x8C
-		GamePos all_flag; // 0x9C
-		BYTE pad3[0x4]; // 0xA8
-		PartyAttributeArray attributes; // 0xAC
-		BYTE pad4[0x3FC]; // 0xBC
-		Array<void*> unk1_array; // 0x4B8
-		Array<void*> unk2_array; // 0x4C8
-		BYTE pad5[0x4]; // 0x4D8
-		Array<void*> unk3_array; // 0x4DC
-		BYTE pad6[0x1C]; // 0x4EC
-		AgentEffectsArray partyeffects; // 0x508
-		Array<void*> unk4_array; // 0x518
-		DWORD activequestid; // 0x528
-		QuestLog questlog; // 0x52C
-		BYTE pad7[0x38]; // 0x53C
-		Array<DWORD> unk5_array; // 0x574 - Seems like agent/item ids (only appears in outpost?)
-		HeroFlagArray hero_flags; // 0x584
-		Array<void*> unk6_array; // 0x594
-		Array<void*> unk7_array; // 0x5A4 - Struct size = 0x20
-		DWORD unk2[2]; // 0x5B4
-		Array<void*> unk8_array; // 0x5BC
-		Array<void*> unk9_array; // 0x5CC
-		Array<void*> unk10_array; // 0x5DC
-		Array<void*> unk11_array; // 0x5EC
-		Array<void*> unk12_array; // 0x5FC
-		Array<void*> unk13_array; // 0x60C
-		DWORD unk3[4]; // 0x61C
-		Array<void*> unk14_array; // 0x62C
-		BYTE pad8[0x44]; // 0x63C
-		Array<void*> unk15_array; // 0x680 - Struct size = 0x138 i think, has a vtable
-		DWORD salvagesessionid; // 0x690
-		DWORD unk4[0xA]; // 0x694
-		Array<void*> unk16_array; // 0x6BC
-		Array<void*> unk17_array; // 0x6CC
-		DWORD unk5; // 0x6DC
-		Array<void*> unk18_array; // 0x6E0
-		SkillbarArray skillbar; // 0x6F0
-		Array<void*> unk19_array; // 0x700
-		Array<void*> unk20_array; // 0x710
-		Array<void*> unk21_array; // 0x720
-		Array<void*> unk22_array; // 0x730
-		DWORD experience; // 0x740
-		DWORD experience_dupe; // 0x744
-		DWORD currentkurzick; // 0x748
-		DWORD currentkurzick_dupe; // 0x74C
-		DWORD totalearnedkurzick; // 0x750
-		DWORD totalearnedkurzick_dupe; // 0x754
-		DWORD currentluxon; // 0x758
-		DWORD currentluxon_dupe; // 0x75C
-		DWORD totalearnedluxon; // 0x760
-		DWORD totalearnedluxon_dupe; // 0x764
-		DWORD currentimperial; // 0x768
-		DWORD currentimperial_dupe; // 0x76C
-		DWORD totalearnedimperial; // 0x770
-		DWORD totalearnedimperial_dupe; // 0x774
-		DWORD unkfaction4; // 0x778
-		DWORD unkfaction4_dupe; // 0x77C
-		DWORD unkfaction5; // 0x780
-		DWORD unkfaction5_dupe; // 0x784
-		DWORD level; // 0x788
-		DWORD level_dupe; // 0x78C
-		DWORD unkfaction6; // 0x790
-		DWORD unkfaction6_dupe; // 0x794
-		DWORD currentbalth; // 0x798
-		DWORD currentbalth_dupe; // 0x79C
-		DWORD totalearnedbalth; // 0x7A0
-		DWORD totalearnedbalth_dupe; // 0x7A4
-		DWORD currentskillpoints; // 0x7A8
-		DWORD currentskillpoints_dupe; // 0x7AC
-		DWORD totalearnedskillpoints; // 0x7B0
-		DWORD totalearnedskillpoints_dupe; // 0x7B4
-		DWORD maxkurzick; // 0x7B8
-		DWORD maxluxon; // 0x7BC
-		DWORD maxbalth; // 0x7C0
-		DWORD maximperial; // 0x7C4
-		DWORD unk6; // 0x7C8
-		AgentInfoArray agentInfos; // 0x7CC
-		Array<void*> unk24_array; // 0x7DC
-		MissionMapIconArray missionmapicons; // 0x7EC
-		NPCArray npcs; // 0x7FC
-		PlayerArray players; // 0x80C
-		TitleArray titles; // 0x81C
-		BYTE pad9[0x20]; // 0x82C
-		DWORD foes_killed; // 0x84C
-		DWORD foes_to_kill; // 0x850
-		//... couple more arrays after this
-	};
+        /* +h0004 */ Array<wchar> message_buff;
+        /* +h0014 */ BYTE h0014[0x10];
+        /* +h0024 */ MerchItemArray merchitems;
+        /* +h0034 */ BYTE h0034[0x48];
+        /* +h007C */ MapAgentArray mapagents;
+        /* +h008C */ BYTE h008C[0x10];
+        /* +h009C */ Vec3f all_flag;
+        /* +h00A8 */ BYTE h00A8[0x4];
+        /* +h00AC */ PartyAttributeArray attributes;
+        /* +h00BC */ BYTE h00BC[0x3FC];
+        /* +h04B8 */ Array<void*> h04B8;
+        /* +h04C8 */ Array<void*> h04C8;
+        /* +h04D8 */ BYTE h04D8[0x4];
+        /* +h04DC */ Array<void*> h04DC;
+        /* +h04EC */ BYTE h04EC[0x1C];
+        /* +h0508 */ AgentEffectsArray partyeffects;
+        /* +h0518 */ Array<void*> h0518;
+        /* +h0528 */ DWORD activequestid;
+        /* +h052C */ QuestLog questlog;
+        /* +h053C */ BYTE h053C[0x38];
+        /* +h0574 */ Array<DWORD> h0574; // Seems like agent/item ids (only appears in outpost?)
+        /* +h0584 */ HeroFlagArray hero_flags;
+        /* +h0594 */ Array<void*> h0594;
+        /* +h05A4 */ Array<void*> h05A4; // Struct size = 0x20
+        /* +h05B4 */ DWORD h05B4[2];
+        /* +h05BC */ Array<void*> h05BC;
+        /* +h05CC */ Array<void*> h05CC;
+        /* +h05DC */ Array<void*> h05DC;
+        /* +h05EC */ Array<void*> h05EC;
+        /* +h05FC */ Array<void*> h05FC;
+        /* +h060C */ Array<void*> h060C;
+        /* +h061C */ DWORD h061C[4];
+        /* +h062C */ Array<void*> h062C;
+        /* +h063C */ BYTE h063C[0x44];
+        /* +h0680 */ Array<void*> h0680; // Struct size = 0x138 i think, has a vtable
+        /* +h0690 */ DWORD salvagesessionid;
+        /* +h0694 */ DWORD h0694[0xA];
+        /* +h06BC */ Array<void*> h06BC;
+        /* +h06CC */ Array<void*> h06CC;
+        /* +h06DC */ DWORD h06DC;
+        /* +h06E0 */ Array<void*> h06E0;
+        /* +h06F0 */ SkillbarArray skillbar;
+        /* +h0700 */ Array<void*> h0700;
+        /* +h0710 */ Array<void*> h0710;
+        /* +h0720 */ Array<void*> h0720;
+        /* +h0730 */ Array<void*> h0730;
+        /* +h0740 */ DWORD experience;
+        /* +h0744 */ DWORD experience_dupe;
+        /* +h0748 */ DWORD currentkurzick;
+        /* +h074C */ DWORD currentkurzick_dupe;
+        /* +h0750 */ DWORD totalearnedkurzick;
+        /* +h0754 */ DWORD totalearnedkurzick_dupe;
+        /* +h0758 */ DWORD currentluxon;
+        /* +h075C */ DWORD currentluxon_dupe;
+        /* +h0760 */ DWORD totalearnedluxon;
+        /* +h0764 */ DWORD totalearnedluxon_dupe;
+        /* +h0768 */ DWORD currentimperial;
+        /* +h076C */ DWORD currentimperial_dupe;
+        /* +h0770 */ DWORD totalearnedimperial;
+        /* +h0774 */ DWORD totalearnedimperial_dupe;
+        /* +h0778 */ DWORD unkfaction4;
+        /* +h077C */ DWORD unkfaction4_dupe;
+        /* +h0780 */ DWORD unkfaction5;
+        /* +h0784 */ DWORD unkfaction5_dupe;
+        /* +h0788 */ DWORD level;
+        /* +h078C */ DWORD level_dupe;
+        /* +h0790 */ DWORD unkfaction6;
+        /* +h0794 */ DWORD unkfaction6_dupe;
+        /* +h0798 */ DWORD currentbalth;
+        /* +h079C */ DWORD currentbalth_dupe;
+        /* +h07A0 */ DWORD totalearnedbalth;
+        /* +h07A4 */ DWORD totalearnedbalth_dupe;
+        /* +h07A8 */ DWORD currentskillpoints;
+        /* +h07AC */ DWORD currentskillpoints_dupe;
+        /* +h07B0 */ DWORD totalearnedskillpoints;
+        /* +h07B4 */ DWORD totalearnedskillpoints_dupe;
+        /* +h07B8 */ DWORD maxkurzick;
+        /* +h07BC */ DWORD maxluxon;
+        /* +h07C0 */ DWORD maxbalth;
+        /* +h07C4 */ DWORD maximperial;
+        /* +h07C8 */ DWORD unk6;
+        /* +h07CC */ AgentInfoArray agentInfos;
+        /* +h07DC */ Array<void*> unk24_array;
+        /* +h07EC */ MissionMapIconArray missionmapicons;
+        /* +h07FC */ NPCArray npcs;
+        /* +h080C */ PlayerArray players;
+        /* +h081C */ TitleArray titles;
+        /* +h082C */ BYTE pad9[0x20];
+        /* +h084C */ DWORD foes_killed;
+        /* +h0850 */ DWORD foes_to_kill;
+        //... couple more arrays after this
+    };
 }
+
+#endif // _WORLD_CONTEXT_INC

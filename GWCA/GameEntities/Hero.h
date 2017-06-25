@@ -1,21 +1,21 @@
-#pragma once
+#ifndef _ENTITIE_HERO_INC
+#define _ENTITIE_HERO_INC
 
-#include <Windows.h>
-
-#include <GWCA\Constants\Constants.h>
 #include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 
-	struct HeroFlag {
-		GW::Constants::HeroID hero;
-		AgentID heroid;
+    struct HeroFlag {
+		DWORD HeroID;
+        AgentID heroid;
 		DWORD unk1;
-		GW::Constants::HeroBehavior state;
-		GamePos flag;
+		DWORD HeroBehavior;
+        Vec2f flag;
 		DWORD unk2;
-		AgentID lockedtargetid;
-	};
+        AgentID lockedtargetid;
+    };
 
-	using HeroFlagArray = Array<HeroFlag>;
+    using HeroFlagArray = Array<HeroFlag>;
 }
+
+#endif // _ENTITIE_HERO_INC

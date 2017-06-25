@@ -25,8 +25,8 @@ wchar_t* GW::PlayerMgr::GetPlayerName(PlayerID id) {
 	return GetPlayerArray()[id].Name;
 }
 
-void GW::PlayerMgr::SetPlayerName(PlayerID id, const wchar_t* replacename) {
-	wcscpy_s(GetPlayerArray()[id].Name1->Name, replacename);
+void GW::PlayerMgr::SetPlayerName(PlayerID id, const wchar *replacename) {
+	wcscpy_s(GetPlayerArray()[id].NameEnc + 2, 20, replacename);
 }
 
 void GW::PlayerMgr::ChangeSecondProfession(GW::Constants::Profession prof, DWORD heroindex) {

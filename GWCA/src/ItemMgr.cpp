@@ -26,7 +26,7 @@ void GW::Items::UseItem(GW::Item* item) {
 }
 
 GW::Bag** GW::Items::GetBagArray() {
-	return GameContext::instance()->items->inventory->bags;
+	return GameContext::instance()->items->inventory->Bags;
 }
 
 GW::ItemArray GW::Items::GetItemArray() {
@@ -38,11 +38,11 @@ void GW::Items::DropGold(DWORD Amount /*= 1*/) {
 }
 
 DWORD GW::Items::GetGoldAmountOnCharacter() {
-	return GameContext::instance()->items->inventory->gold_character;
+	return GameContext::instance()->items->inventory->GoldCharacter;
 }
 
 DWORD GW::Items::GetGoldAmountInStorage() {
-	return GameContext::instance()->items->inventory->gold_storage;
+	return GameContext::instance()->items->inventory->GoldStorage;
 }
 
 void GW::Items::OpenLockedChest() {

@@ -3,6 +3,8 @@
 #include <GWCA\Utilities\Scanner.h>
 #include <GWCA\Context\GameContext.h>
 
+#include <stdio.h>
+
 namespace {
 	typedef void __fastcall TransactItem_t(
 		DWORD type,

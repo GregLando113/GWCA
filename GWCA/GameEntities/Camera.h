@@ -1,44 +1,49 @@
-#pragma once
+#ifndef _ENTITIE_CAMERA_INC
+#define _ENTITIE_CAMERA_INC
 
 #include <Windows.h>
-
-#include "Position.h"
+#include <GWCA\GameEntities\Position.h>
 
 namespace GW {
-	struct Camera {
-		DWORD lookAtAgentID;
-		DWORD unk1;
-		float unk2[2];
-		float maxdistance; // Max distance camera can go, usually constant @ 750 unless max zoom changed
-		float unk3;
-		float yaw; // left/right camera angle, radians w/ origin @ east
-		float pitch; // up/down camera angle, range of [-1,1]
-		float distance; // current distance from players head.
-		DWORD unk4[4];
-		float yaw_rightclick; // Only changes when you move camera using right click, keyboard movement does not effect.
-		float yaw_rightclick2; // ^
-		float pitch_rightclick; // ^
-		float distance2;
-		float accelerationconstant; // According to http://www.gamerevision.com/showthread.php?217-Guild-Wars-WorldToSreen-by-Cronos&p=20003&viewfull=1#post20003
-		float timesincelastkeyboardrotation; // In seconds it seems.
-		float timesincelastmouserotation;
-		float timesincelastmousemove;
-		float timesincelastagentselection;
-		float timeinthemap;
-		float timeinthedistrict;
-		float yaw_togo;
-		float pitch_togo;
-		float dist_togo;
-		float maxdistance2;
-		float unk5[2];
-		Vector3f camerapos;
-		Vector3f camerapos_togo;
-		Vector3f campos_inverted;
-		Vector3f campos_inverted_togo;
-		Vector3f LookAtTarget;
-		Vector3f LookAt_togo;
-		float fieldofview;
-		float fieldofview2;
-		// ...
-	};
+	using Vec3f = Vector3f;
+
+    struct Camera {
+        /* +h0000 */ DWORD LookAtAgentID;
+        /* +h0004 */ DWORD h0004;
+        /* +h0008 */ float h0008;
+        /* +h000C */ float h000C;
+        /* +h0010 */ float MaxDistance;
+        /* +h0014 */ float h0014;
+        /* +h0018 */ float Yaw; // left/right camera angle, radians w/ origin @ east
+        /* +h001C */ float Pitch; // up/down camera angle, range of [-1,1]
+        /* +h0020 */ float Distance; // current distance from players head.
+        /* +h0024 */ DWORD h0024[4];
+        /* +h0034 */ float yaw_rightclick;
+        /* +h0038 */ float yaw_rightclick2;
+        /* +h003C */ float pitch_rightclick;
+        /* +h0040 */ float distance2;
+        /* +h0044 */ float accelerationconstant;
+        /* +h0048 */ float timesincelastkeyboardrotation; // In seconds it seems.
+        /* +h004C */ float timesincelastmouserotation;
+        /* +h0050 */ float timesincelastmousemove;
+        /* +h0054 */ float timesincelastagentselection;
+        /* +h0058 */ float timeinthemap;
+        /* +h005C */ float timeinthedistrict;
+        /* +h0060 */ float yaw_togo;
+        /* +h0064 */ float pitch_togo;
+        /* +h0068 */ float dist_togo;
+        /* +h006C */ float maxdistance2;
+        /* +h0070 */ float h0070[2];
+        /* +h0078 */ Vec3f Position;
+        /* +h0084 */ Vec3f camerapos_togo;
+        /* +h0090 */ Vec3f campos_inverted;
+        /* +h009C */ Vec3f campos_inverted_togo;
+        /* +h00A8 */ Vec3f LookAtTarget;
+        /* +h00B4 */ Vec3f LookAt_togo;
+        /* +h00C0 */ float fieldofview;
+        /* +h00C4 */ float fieldofview2;
+        // ...
+    };
 }
+
+#endif // _ENTITIE_CAMERA_INC

@@ -85,10 +85,10 @@ GW::Vector3f GW::CameraMgr::ComputeCamPos(float dist) {
 
 	Vector3f newPos = GetLookAtTarget();
 
-	float pitchX = sqrt(1.f - GetCamera()->pitch*GetCamera()->pitch);
-	newPos.x -= dist * pitchX * cos(GetCamera()->yaw);
-	newPos.y -= dist * pitchX * sin(GetCamera()->yaw);
-	newPos.z -= dist * 0.95f * GetCamera()->pitch; // 0.95 is the max pitch, not 1.0
+	float pitchX = sqrt(1.f - GetCamera()->Pitch*GetCamera()->Pitch);
+	newPos.x -= dist * pitchX * cos(GetCamera()->Yaw);
+	newPos.y -= dist * pitchX * sin(GetCamera()->Yaw);
+	newPos.z -= dist * 0.95f * GetCamera()->Pitch; // 0.95 is the max pitch, not 1.0
 
 	return newPos;
 }

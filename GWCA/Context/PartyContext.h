@@ -3,8 +3,8 @@
 
 #include <Windows.h>
 
-#include <GWCA\Array.h>
-#include <GWCA\Entities\Party.h>
+#include <GWCA\GameContainers\Array.h>
+#include <GWCA\GameEntities\Party.h>
 
 namespace GW {
     struct PartyContext { // total: 0x58/88

@@ -3,17 +3,17 @@
 
 #include <Windows.h>
 
-#include <GWCA\Array.h>
-#include <GWCA\Entities\Agent.h>
-#include <GWCA\Entities\Item.h>
-#include <GWCA\Entities\Attribute.h>
-#include <GWCA\Entities\Hero.h>
-#include <GWCA\Entities\NPC.h>
-#include <GWCA\Entities\Player.h>
-#include <GWCA\Entities\Skill.h>
-#include <GWCA\Entities\Title.h>
-#include <GWCA\Entities\Quest.h>
-#include <GWCA\Entities\Map.h>
+#include <GWCA\GameContainers\Array.h>
+#include <GWCA\GameEntities\Agent.h>
+#include <GWCA\GameEntities\Item.h>
+#include <GWCA\GameEntities\Attribute.h>
+#include <GWCA\GameEntities\Hero.h>
+#include <GWCA\GameEntities\NPC.h>
+#include <GWCA\GameEntities\Player.h>
+#include <GWCA\GameEntities\Skill.h>
+#include <GWCA\GameEntities\Title.h>
+#include <GWCA\GameEntities\Quest.h>
+#include <GWCA\GameEntities\Map.h>
 
 namespace GW {
 

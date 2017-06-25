@@ -10,6 +10,8 @@
 #include "PartyContext.h"
 #include "TradeContext.h"
 
+#include <GWCA\Utilities\Scanner.h>
+
 namespace GW {
 
     struct GameContext {

@@ -72,14 +72,14 @@ DWORD GW::PartyMgr::GetPartyHenchmanCount() {
 }
 
 bool GW::PartyMgr::GetIsPartyDefeated() {
-	return GameContext::instance()->party->partystate.IsDefeated(); 
+	return GameContext::instance()->party->IsDefeated(); 
 }
 
 void GW::PartyMgr::SetHardMode(bool flag) {
 	CtoS::SendPacket(0x8, 0x95, flag);
 }
 bool GW::PartyMgr::GetIsPartyInHardMode() {
-	return GameContext::instance()->party->partystate.InHardMode();
+	return GameContext::instance()->party->InHardMode();
 }
 
 bool GW::PartyMgr::GetIsPartyTicked() {

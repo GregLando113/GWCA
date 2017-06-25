@@ -3,7 +3,7 @@
 
 #include <Windows.h>
 
-#include <GWCA\Array.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 	typedef wchar_t wchar;

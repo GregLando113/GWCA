@@ -3,8 +3,8 @@
 
 #include <Windows.h>
 
-#include <GWCA\Array.h>
-#include <GWCA\Entities\Item.h>
+#include <GWCA\GameContainers\Array.h>
+#include <GWCA\GameEntities\Item.h>
 
 namespace GW {
     struct ItemContext { // total: 0x10C/268 BYTEs

@@ -3,15 +3,11 @@
 
 #include <Windows.h>
 
-#include <GWCA\Entities\Agent.h>
-#include <GWCA\Array.h>
+#include <GWCA\GameEntities\Agent.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
-    class AgentContext {
-        AgentContext() {}
-        AgentContext(const AgentContext&) {}
-
-    public:
+    struct AgentContext {
         /* +h0000 */ Array<void*> unk1_array;
         /* +h0010 */ DWORD pad1[5];
         /* +h0024 */ void* function1;

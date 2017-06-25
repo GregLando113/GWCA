@@ -5,10 +5,13 @@
 #include <map>
 
 #include <GWCA\Utilities\Hooker.h>
+#include <GWCA\GameContainers\Array.h>
 
 namespace GW {
 
 	namespace Chat {
+		using Color = DWORD;
+		using wchar = wchar_t;
 
 		enum Channel {
 			CHANNEL_ALLIANCE	= 0,
@@ -36,12 +39,10 @@ namespace GW {
 		typedef DWORD Color;
 
 		struct ChatTemplate {
-			DWORD unk1[2];
-			wchar_t* template_code; // Is actually part of a Array<wchar_t>
-			DWORD templatecode_sizealloc; // Is actually part of a Array<wchar_t>
-			DWORD templatecode_size; // Is actually part of a Array<wchar_t>
-			DWORD unk_identifier; // Is actually part of a Array<wchar_t>
-			wchar_t* template_name;
+			DWORD unk0;
+			DWORD type; // 0 = build, 1 = equipement
+			Array<wchar> code;
+			wchar *name;
 		};
 
 		typedef std::function<bool(std::wstring& command, std::wstring& args)> Callback;

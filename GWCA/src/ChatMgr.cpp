@@ -355,11 +355,11 @@ namespace {
 	void __fastcall OpenTemplate_detour(DWORD unk, ChatTemplate* info) {
 		if (open_links
 			&& info
-			&& info->template_code
-			&& info->template_name
-			&& (!wcsncmp(info->template_name, L"http://", 7)
-				|| !wcsncmp(info->template_name, L"https://", 8))) {
-			ShellExecuteW(NULL, L"open", info->template_name, NULL, NULL, SW_SHOWNORMAL);
+			&& info->code.valid()
+			&& info->name
+			&& (!wcsncmp(info->name, L"http://", 7)
+				|| !wcsncmp(info->name, L"https://", 8))) {
+			ShellExecuteW(NULL, L"open", info->name, NULL, NULL, SW_SHOWNORMAL);
 		} else {
 			OpenTemplate_hook.Original()(unk, info);
 		}

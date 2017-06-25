@@ -28,3 +28,6 @@ GWCA_d.lib
 
 GWCAd\.lib
 *.lib
+
+# Sublime Text stuff
+*.sublime-project*

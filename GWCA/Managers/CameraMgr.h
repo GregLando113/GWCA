@@ -68,7 +68,7 @@ namespace GW {
 		// Manual computation of the position of the Camera. (As close as possible to the original)
 		Vec3f ComputeCamPos(float dist = 0); // 2.f is the first person dist (const by gw)
 		inline void UpdateCameraPos() {
-			SetCameraPos(ComputeCamPos());
+			CameraMgr::SetCameraPos(ComputeCamPos());
 		}
 
 		// ==== Projection matrix ====

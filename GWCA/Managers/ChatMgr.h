@@ -36,8 +36,6 @@ namespace GW {
 			CHANNEL_UNKNOW = -1
 		};
 
-		typedef DWORD Color;
-
 		struct ChatTemplate {
 			DWORD unk0;
 			DWORD type; // 0 = build, 1 = equipement

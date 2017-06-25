@@ -18,128 +18,91 @@
 
 using namespace GW;
 
-Agent* GetPlayer() {
-    return Agents::GetPlayer();
-}
-Agent* GetTarget() {
-    return Agents::GetTarget();
-}
-Agent* GetAgentByID(DWORD id) {
-    return Agents::GetAgentByID(id);
-}
+GWAPI GW::Agent* GWCA::GetPlayer() { return Agents::GetPlayer(); }
+GWAPI GW::Agent* GWCA::GetTarget() { return Agents::GetTarget(); }
+
+GWAPI GW::Agent* GWCA::GetAgentByID(DWORD id) { return Agents::GetAgentByID(id); }
 
 // Get Current AgentID's of player or target.
-DWORD GetPlayerId() {
-    return Agents::GetPlayerId();
-}
-DWORD GetTargetId() {
-    return Agents::GetTargetId();
-}
+GWAPI DWORD GWCA::GetPlayerId() { return Agents::GetPlayerId(); }
+GWAPI DWORD GWCA::GetTargetId() { return Agents::GetTargetId(); }
 
 // Returns array of alternate agent array that can be read beyond compass range.
 // Holds limited info and needs to be explored more.
-GW::MapAgentArray GetMapAgentArray() {
-    return Agents::GetMapAgentArray();
-}
+GWAPI GW::MapAgentArray GWCA::GetMapAgentArray() { return Agents::GetMapAgentArray(); }
 
 // Returns Agentstruct Array of agents in compass range, full structs.
-GW::AgentArray GetAgentArray() {
-    return Agents::GetAgentArray();
-}
+GWAPI GW::AgentArray GWCA::GetAgentArray() { return Agents::GetAgentArray(); }
 
-GW::PlayerArray GetPlayerArray() {
-    return Agents::GetPlayerArray();
-}
+GWAPI GW::PlayerArray GWCA::GetPlayerArray() { return Agents::GetPlayerArray(); }
 
-GW::NPCArray GetNPCArray() {
-    return Agents::GetNPCArray();
-}
-GW::NPC& GetNPCByID(DWORD id) {
-    return Agents::GetNPCByID(id);
-}
+GWAPI GW::NPCArray GWCA::GetNPCArray() { return Agents::GetNPCArray(); }
+
+GWAPI GW::NPC& GWCA::GetNPCByID(DWORD id) { return Agents::GetNPCByID(id); }
 
 // Computes distance between the two agents in game units
-float GetDistance(Vector2f a, const Vector2f b) {
-    return Agents::GetDistance(a,b);
-}
+// GWAPI float GWCA::GetDistance(Vec2f a, Vec2f b) { return Agents::GetDistance(a,b); }
 
 // Computes squared distance between the two agents in game units
-float GetSqrDistance(Vector2f a, const Vector2f b) {
-    return Agents::GetSqrDistance(a,b);
-}
+// GWAPI float GWCA::GetSqrDistance(Vec2f a, Vec2f b) { return Agents::GetSqrDistance(a,b); }
 
 // Change targeted agent to (Agent)
-void ChangeTarget(GW::Agent* agent) {
-    return Agents::ChangeTarget(agent);
-}
+GWAPI void GWCA::ChangeTarget(GW::Agent* agent) { return Agents::ChangeTarget(agent); }
 
 // Move to specified coordinates.
 // Note: will do nothing if coordinate is outside the map!
-void Move(float X, float Y, DWORD ZPlane = 0) {
-    return Agents::Move(X,Y,ZPlane);
-}
+GWAPI void GWCA::Move(float X, float Y, DWORD ZPlane = 0) { return Agents::Move(X, Y, ZPlane); }
 
-void Move(const GW::GamePos& pos) {
-    return Agents::Move(pos);
-}
+// @Try
+// GWAPI void GWCA::Move(Vec2f pos) { return Agents::Move(pos); }
 
 // Same as pressing button (id) while talking to an NPC.
-void Dialog(DWORD id) {
-    return Agents::Dialog(id);
-}
+GWAPI void GWCA::Dialog(DWORD id) { return Agents::Dialog(id); }
 
 // Go to an NPC and begin interaction.
-void GoNPC(GW::Agent* Agent, DWORD CallTarget = 0) {
-    return Agents::GoNPC(Agent,CallTarget);
-}
+GWAPI void GWCA::GoNPC(GW::Agent* Agent, DWORD CallTarget = 0) { return Agents::GoNPC(Agent, CallTarget); }
 
 // Walk to a player.
-void GoPlayer(GW::Agent* Agent) {
-    return Agents::GoPlayer(Agent);
-}
+GWAPI void GWCA::GoPlayer(GW::Agent* Agent) { return Agents::GoPlayer(Agent); }
 
 // Go to a chest/signpost (yellow nametag) specified by (Agent).
 // Also sets agent as your open chest target.
-void GoSignpost(GW::Agent* Agent, BOOL CallTarget = 0) {
-    return Agents::GoSignpost(Agent,CallTarget);
-}
+GWAPI void GWCA::GoSignpost(GW::Agent* Agent, BOOL CallTarget = 0) { return Agents::GoSignpost(Agent, CallTarget); }
 
 // Call target of specified agent without interacting with the agent.
-void CallTarget(GW::Agent* Agent) {
-    return Agents::CallTarget(Agent);
-}
+GWAPI void GWCA::CallTarget(GW::Agent* Agent) { return Agents::CallTarget(Agent); }
 
 // Returns last dialog id sent to the server.
-DWORD GetLastDialogId() {
+GWAPI DWORD GWCA::GetLastDialogId() {
     return Agents::GetLastDialogId();
 }
 
 // Uses size of player array. Needs testing.
-DWORD GetAmountOfPlayersInInstance() {
+GWAPI DWORD GetAmountOfPlayersInInstance() {
     return Agents::GetAmountOfPlayersInInstance();
 }
 
 // Returns name of player with selected loginnumber.
-wchar_t* GetPlayerNameByLoginNumber(DWORD loginnumber) {
+GWAPI wchar* GetPlayerNameByLoginNumber(DWORD loginnumber) {
     return Agents::GetPlayerNameByLoginNumber(loginnumber);
 }
 
 // Returns AgentID of player with selected loginnumber.
-DWORD GetAgentIdByLoginNumber(DWORD loginnumber) {
+GWAPI DWORD GetAgentIdByLoginNumber(DWORD loginnumber) {
     return Agents::GetAgentIdByLoginNumber(loginnumber);
 }
 
-GW::AgentID GetHeroAgentID(DWORD heroindex) {
+GWAPI GW::AgentID GetHeroAgentID(DWORD heroindex) {
     return Agents::GetHeroAgentID(heroindex);
 }
 
 // Get full array of items sorted by ItemID.
-GW::ItemArray GetItemArray() {
+GWAPI GW::ItemArray GetItemArray() {
     return Items::GetItemArray();
 }
 
 // Get bag array [1-4] = inventory bags, [8-16] = storage, more in gr wiki.
-GW::Bag** GetBagArray() {
+GWAPI GW::Bag** GetBagArray() {
     return Items::GetBagArray();
 }
 
@@ -292,12 +255,12 @@ DWORD GetPlayerGuildIndex() {
 }
 
 // Announcement in guild at the moment.
-wchar_t* GetPlayerGuildAnnouncement() {
+wchar* GetPlayerGuildAnnouncement() {
     return GuildMgr::GetPlayerGuildAnnouncement();
 }
 
 // Name of player who last edited the announcement.
-wchar_t* GetPlayerGuildAnnouncer() {
+wchar* GetPlayerGuildAnnouncer() {
     return GuildMgr::GetPlayerGuildAnnouncer();
 }
 
@@ -362,10 +325,6 @@ GW::MissionMapIconArray GetMissionMapIconArray() {
 GW::PathingMapArray GetPathingMap() {
     return Map::GetPathingMap();
 }
-
-// send packet via a buffer
-void SendPacket(DWORD len,void* packet);
-
 // X,Y,Z of camera in game world.
 GW::Vector3f GetCameraPosition() {
     return CameraMgr::GetCameraPosition();
@@ -498,17 +457,17 @@ void SetFriendListStatus(Constants::OnlineStatus status){
 }
 
 // Send a message to an in-game channel (! for all, @ for guild, etc)
-void SendChat(const wchar_t* msg, wchar_t channel) {
+void SendChat(const wchar* msg, wchar channel) {
     return Chat::SendChat(msg,channel);
 }
 
 // Write to chat as a PM with printf style arguments.
-void WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
+void WriteChatF(const wchar* from, const wchar* format, ...) {
     
 }
 
 // Simple write to chat as a PM
-void WriteChat(const wchar_t* from, const wchar_t* msg) {
+void WriteChat(const wchar* from, const wchar* msg) {
     return Chat::WriteChat(from,msg);
 }
 
@@ -522,7 +481,7 @@ Chat::Color SetMessageColor(Chat::Channel chan, Chat::Color col) {
 DWORD WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved) {
     if (dwReason == DLL_PROCESS_ATTACH) {
         if(!GW::Initialize())
-            return FALSE;
+            return FALSE; 
     }
     else if (dwReason == DLL_PROCESS_DETACH) {
         GW::Terminate();

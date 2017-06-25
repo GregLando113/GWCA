@@ -1,129 +1,176 @@
 #ifndef GWCA_API_H
 #define GWCA_API_H
 
+#include <Windows.h>
+#include <stdint.h>
+#include <string>
+
+// @TODO, fix thoses includes.
 #include <GWCA\GWStructures.h>
 #include <GWCA\Constants\Constants.h>
 #include <GWCA\Constants\Skills.h>
 #include <GWCA\Constants\Maps.h>
 
-namespace GW {
+#define GWCA_MAJOR (36604)
+#define GWCA_MINOR (0)
+
+#define DllExport __declspec(dllexport)
+#define DllImport __declspec(dllimport)
+
+#if defined(GWCA_LIB)
+#  if defined(GWCA_BUILD_DLL)
+#    define GWAPI DllExport
+#  else
+#    define GWAPI extern
+#  endif
+#else
+#  define GWAPI DllImport
+#endif
+
+namespace GWCA {
+    using wchar = wchar_t;
+    using Color = uint32_t;
+
+    using CString = std::wstring;
+
+    struct Vec2f { float x, y; };
+    struct Vec3f { float x, y, z; };
+
+    enum Event {
+        EVENT_TICK,
+
+        EVENT_PACKET_RECEIVED,
+
+        EVENT_MESSAGE_RECEIVED,
+
+        EVENT_COUNT
+    };
+
+    GWAPI void RegisterEvent  (HMODULE plugin, Event e);
+    GWAPI void UnregisterEvent(HMODULE plugin, Event e);
+
+    GWAPI HMODULE LoadPlugin(CString path);
+    GWAPI void    UnloadPlugin(HMODULE plugin);
+
+    GWAPI CString GetPluginsDir();
+    GWAPI DWORD   GetGlobalTime();
+
     //////////////////////////////
     //          Agent
     //////////////////////////////
 
-    // Get Agent stuffs
-    Agent* GetPlayer();
-    Agent* GetTarget();
-    Agent* GetAgentByID(DWORD id);
+    // Get GW::Agent stuffs
+    GWAPI GW::Agent* GetPlayer();
+    GWAPI GW::Agent* GetTarget();
+    GWAPI GW::Agent* GetAgentByID(DWORD id);
     
-    // Get Current AgentID's of player or target.
-    DWORD GetPlayerId();
-    DWORD GetTargetId();
+    // Get Current GW::AgentID's of player or target.
+    GWAPI DWORD GetPlayerId();
+    GWAPI DWORD GetTargetId();
     
-    // Returns array of alternate agent array that can be read beyond compass range.
+    // Returns array of alternate GW::Agent array that can be read beyond compass range.
     // Holds limited info and needs to be explored more.
-    GW::MapAgentArray GetMapAgentArray();
+    GWAPI GW::MapAgentArray GetMapAgentArray();
     
-    // Returns Agentstruct Array of agents in compass range, full structs.
-    GW::AgentArray GetAgentArray();
+    // Returns GW::Agentstruct Array of GW::Agents in compass range, full structs.
+    GWAPI GW::AgentArray GetAgentArray();
     
-    GW::PlayerArray GetPlayerArray();
+    GWAPI GW::PlayerArray GetPlayerArray();
     
-    GW::NPCArray GetNPCArray();
-    GW::NPC& GetNPCByID(DWORD id);
+    GWAPI GW::NPCArray GetNPCArray();
+    GWAPI GW::NPC& GetNPCByID(DWORD id);
     
-    // Computes distance between the two agents in game units
-    float GetDistance(Vector2f a, const Vector2f b);
+    // Computes distance between the two GW::Agents in game units
+    GWAPI float GetDistance(Vec2f a, Vec2f b);
     
-    // Computes squared distance between the two agents in game units
-    float GetSqrDistance(Vector2f a, const Vector2f b);
+    // Computes squared distance between the two GW::Agents in game units
+    GWAPI float GetSqrDistance(Vec2f a, const Vec2f b);
     
-    // Change targeted agent to (Agent)
-    void ChangeTarget(GW::Agent* Agent);
+    // Change targeted GW::Agent to (GW::Agent)
+    GWAPI void ChangeTarget(GW::Agent* Agent);
     
     // Move to specified coordinates.
     // Note: will do nothing if coordinate is outside the map!
-    void Move(float X, float Y, DWORD ZPlane);
-    
-    void Move(const GW::GamePos& pos);
+    GWAPI void Move(float x, float y, DWORD ZPlane);
+    GWAPI void Move(Vec2f pos);
     
     // Same as pressing button (id) while talking to an NPC.
-    void Dialog(DWORD id);
+    GWAPI void Dialog(DWORD id);
     
     // Go to an NPC and begin interaction.
-    void GoNPC(GW::Agent* Agent, DWORD CallTarget);
+    GWAPI void GoNPC(GW::Agent* Agent, DWORD CallTarget);
     
     // Walk to a player.
-    void GoPlayer(GW::Agent* Agent);
+    GWAPI void GoPlayer(GW::Agent* Agent);
     
-    // Go to a chest/signpost (yellow nametag) specified by (Agent).
-    // Also sets agent as your open chest target.
-    void GoSignpost(GW::Agent* Agent, BOOL CallTarget);
+    // Go to a chest/signpost (yellow nametag) specified by (GW::Agent).
+    // Also sets GW::Agent as your open chest target.
+    GWAPI void GoSignpost(GW::Agent* Agent, BOOL CallTarget);
     
-    // Call target of specified agent without interacting with the agent.
-    void CallTarget(GW::Agent* Agent);
+    // Call target of specified GW::Agent without interacting with the GW::Agent.
+    GWAPI void CallTarget(GW::Agent* Agent);
     
     // Returns last dialog id sent to the server.
-    DWORD GetLastDialogId();
+    GWAPI DWORD GetLastDialogId();
     
     // Uses size of player array. Needs testing.
-    DWORD GetAmountOfPlayersInInstance();
+    GWAPI DWORD GetAmountOfPlayersInInstance();
     
     // Returns name of player with selected loginnumber.
-    wchar_t* GetPlayerNameByLoginNumber(DWORD loginnumber);
+    GWAPI wchar* GetPlayerNameByLoginNumber(DWORD loginnumber);
     
-    // Returns AgentID of player with selected loginnumber.
-    DWORD GetAgentIdByLoginNumber(DWORD loginnumber);
+    // Returns GW::AgentID of player with selected loginnumber.
+    GWAPI DWORD GetAgentIdByLoginNumber(DWORD loginnumber);
     
-    GW::AgentID GetHeroAgentID(DWORD heroindex);
+    GWAPI GW::AgentID GetHeroAgentID(DWORD heroindex);
         
     //////////////////////////////
     //          Item
     //////////////////////////////
     
     // Get full array of items sorted by ItemID.
-    GW::ItemArray GetItemArray();
+    GWAPI GW::ItemArray GetItemArray();
     
     // Get bag array [1-4] = inventory bags, [8-16] = storage, more in gr wiki.
-    GW::Bag** GetBagArray();
+    GWAPI GW::Bag** GetBagArray();
     
     // Use given item if usable.
-    void UseItem(GW::Item* item);
+    GWAPI void UseItem(GW::Item* item);
     
     // Find item in selected bags with said modelid, then use it.
     // return: True if found and used, false if not.
-    bool UseItemByModelId(DWORD modelid, BYTE bagStart = 1, const BYTE bagEnd = 4);
+    GWAPI bool UseItemByModelId(DWORD modelid, BYTE bagStart = 1, BYTE bagEnd = 4);
     
     // Returns the amount of item with said modelid in given bags.
-    DWORD CountItemByModelId(DWORD modelid, BYTE bagStart = 1, const BYTE bagEnd = 4);
+    GWAPI DWORD CountItemByModelId(DWORD modelid, BYTE bagStart = 1, BYTE bagEnd = 4);
     
     // Returns item struct of item with given modelid.
-    GW::Item* GetItemByModelId(DWORD modelid, BYTE bagStart = 1, const BYTE bagEnd = 4);
+    GWAPI GW::Item* GetItemByModelId(DWORD modelid, BYTE bagStart = 1, BYTE bagEnd = 4);
     
     // Equip item if equippable.
-    void EquipItem(GW::Item* item);
+    GWAPI void EquipItem(GW::Item* item);
     
     // Drop item if droppable.
-    void DropItem(GW::Item* item, DWORD quantity);
+    GWAPI void DropItem(GW::Item* item, DWORD quantity);
     
     // Pick up selected item off the ground.
-    void PickUpItem(GW::Item* item, DWORD CallTarget);
+    GWAPI void PickUpItem(GW::Item* item, DWORD CallTarget);
     
     // Opens the storage window from anywhere.
     // Can only interact with the storage in an outpost with a xunlai chest inside, sorry no exploiting.
-    void OpenXunlaiWindow();
+    GWAPI void OpenXunlaiWindow();
     
     // Drop amount gold on ground.
-    void DropGold(DWORD Amount = 1);
+    GWAPI void DropGold(DWORD Amount = 1);
     
     // Get amount of gold on character.
-    DWORD GetGoldAmountOnCharacter();
+    GWAPI DWORD GetGoldAmountOnCharacter();
     
     // Get amount of gold in storage.
-    DWORD GetGoldAmountInStorage();
+    GWAPI DWORD GetGoldAmountInStorage();
     
     // Open locked chest, raw packet, first send a GoSignpost packet to select chest.
-    void OpenLockedChest();
+    GWAPI void OpenLockedChest();
         
     //////////////////////////////
     //        Skillbar
@@ -131,205 +178,206 @@ namespace GW {
     
     // Get the skill slot in the player bar of the player.
     // Returns 0 if the skill is not there
-    int GetSkillSlot(Constants::SkillID SkillID);
+    GWAPI int GetSkillSlot(GW::Constants::SkillID SkillID);
     
-    // Use Skill in slot (Slot) on (Agent), optionally call that you are using said skill.
-    void UseSkill(DWORD Slot, DWORD Target, DWORD CallTarget);
+    // Use Skill in slot (Slot) on (GW::Agent), optionally call that you are using said skill.
+    GWAPI void UseSkill(DWORD Slot, DWORD Target, DWORD CallTarget);
     
     // Send raw packet to use skill with ID (SkillID). 
     // Same as above except the skillbar client struct will not be registered as casting.
-    void UseSkillByID(DWORD SkillID, DWORD Target, DWORD CallTarget);
+    GWAPI void UseSkillByID(DWORD SkillID, DWORD Target, DWORD CallTarget);
     
     // Get skill structure of said id, houses pretty much everything you would want to know about the skill.
-    GW::Skill GetSkillConstantData(DWORD SkillID);
+    GWAPI GW::Skill GetSkillConstantData(DWORD SkillID);
     
-    void ChangeSecondary(DWORD profession, int heroindex);
+    GWAPI void ChangeSecondary(DWORD profession, int heroindex);
     
-    void LoadSkillbar(DWORD* skillids, int heroindex);
+    GWAPI void LoadSkillbar(DWORD* skillids, int heroindex);
     
-    void SetAttributes(DWORD attributecount, DWORD* attributeids, DWORD* attributevalues, int heroindex);
+    GWAPI void SetAttributes(DWORD attributecount, DWORD* attributeids, DWORD* attributevalues, int heroindex);
     
     //////////////////////////////
     //        Effects
     //////////////////////////////
     // Get full array of effects and buffs for player and heroes.
-    GW::AgentEffectsArray GetPartyEffectArray();
+    GWAPI GW::AgentEffectsArray GetPartyEffectArray();
     
     // Get array of effects on the player.
-    GW::EffectArray GetPlayerEffectArray();
+    GWAPI GW::EffectArray GetPlayerEffectArray();
     
     // Get array of buffs on the player.
-    GW::BuffArray GetPlayerBuffArray();
+    GWAPI GW::BuffArray GetPlayerBuffArray();
     
     // Drop buffid buff.
-    void DropBuff(DWORD buffId);
+    GWAPI void DropBuff(DWORD buffId);
     
     // Gets effect struct of effect on player with SkillID, returns Effect::Nil() if no match.
-    GW::Effect GetPlayerEffectById(GW::Constants::SkillID SkillID);
+    GWAPI GW::Effect GetPlayerEffectById(GW::Constants::SkillID SkillID);
     
     // Gets Buff struct of Buff on player with SkillID, returns Buff::Nil() if no match.
-    GW::Buff GetPlayerBuffBySkillId(GW::Constants::SkillID SkillID);
+    GWAPI GW::Buff GetPlayerBuffBySkillId(GW::Constants::SkillID SkillID);
     
     // Returns current level of intoxication, 0-5 scale.
     // If > 0 then skills that benefit from drunk will work.
-    DWORD GetAlcoholLevel();
+    GWAPI DWORD GetAlcoholLevel();
     
     // Have fun with this ;))))))))))
-    void GetDrunkAf(DWORD Intensity, DWORD Tint);
+    GWAPI void GetDrunkAf(DWORD Intensity, DWORD Tint);
     
     //////////////////////////////
     //           Guild
     //////////////////////////////
     // Array of guilds, holds basically everything about a guild. Can get structs of all players in outpost ;)
-    GW::GuildArray GetGuildArray();
+    GWAPI GW::GuildArray GetGuildArray();
     
     // Index in guild array of player guild.
-    DWORD GetPlayerGuildIndex();
+    GWAPI DWORD GetPlayerGuildIndex();
     
     // Announcement in guild at the moment.
-    wchar_t* GetPlayerGuildAnnouncement();
+    GWAPI wchar* GetPlayerGuildAnnouncement();
     
     // Name of player who last edited the announcement.
-    wchar_t* GetPlayerGuildAnnouncer();
+    GWAPI wchar* GetPlayerGuildAnnouncer();
     
     // Travels to players Guild Hall
-    void TravelGH();
+    GWAPI void TravelGH();
     
     // Travels to Guild Hall with specified Guild GUID
-    void TravelGH(GW::GHKey key);
+    GWAPI void TravelGH(GW::GHKey key);
     
-    void LeaveGH();
+    GWAPI void LeaveGH();
     
     //////////////////////////////
     //           Map
     //////////////////////////////
-    bool IsMapLoaded();
+    GWAPI bool IsMapLoaded();
     
     // Get current map ID.
-    GW::Constants::MapID GetMapID();
+    GWAPI GW::Constants::MapID GetMapID();
     
     // Get current region you are in.
-    int GetRegion();
+    GWAPI int GetRegion();
     
     // Get current language you are in.
-    int GetLanguage();
+    GWAPI int GetLanguage();
     
     // Get time, in ms, since the instance you are residing in has been created.
-    DWORD GetInstanceTime();
+    GWAPI DWORD GetInstanceTime();
     
     // Get the instance type (Outpost, Explorable or Loading)
-    Constants::InstanceType GetInstanceType();
+    GWAPI GW::Constants::InstanceType GetInstanceType();
     
     // Travel to specified outpost.
-    void Travel(GW::Constants::MapID MapID, int District, int Region, int Language);
-    void Travel(GW::Constants::MapID MapID, Constants::District district, int district_number);
+    GWAPI void Travel(GW::Constants::MapID MapID, int District, int Region, int Language);
+    GWAPI void Travel(GW::Constants::MapID MapID, GW::Constants::District district, int district_number);
     
     // Returns array of icons (res shrines, quarries, traders, etc) on mission map.
     // Look at MissionMapIcon struct for more info.
-    GW::MissionMapIconArray GetMissionMapIconArray();
+    GWAPI GW::MissionMapIconArray GetMissionMapIconArray();
     
     // Returns pointer of collision trapezoid array.
-    GW::PathingMapArray GetPathingMap();
+    GWAPI GW::PathingMapArray GetPathingMap();
     
     //////////////////////////////
     //           CtoS
     //////////////////////////////
     // send packet via a buffer
-    void SendPacket(DWORD len, void* packet);
+    // template <typename T>
+    // GWAPI void SendPacket(Packet<T> *p);
 
     //////////////////////////////
     //         Camera
     //////////////////////////////
+
     // X,Y,Z of camera in game world.
-	GW::Vector3f GetCameraPosition();
-    
+	GWAPI Vec3f GetCameraPosition();
+
     // LookAt Target (players head if not modified) of camera.
-    GW::Vector3f GetLookAtTarget();
+    GWAPI Vec3f GetLookAtTarget();
+
+    GWAPI void FlipCameraYaw(float degree); 
     
     // camera yaw in radians from east
-    float GetYaw();
+    GWAPI float GetYaw();
     
     // camera pitch
-    float GetPitch();
+    GWAPI float GetPitch();
     
     // Distance of camera from lookat target (player)
-    float GetCameraZoom();
+    GWAPI float GetCameraZoom();
     
     // Horizonal Field of View
-    float GetFieldOfView();
+    GWAPI float GetFieldOfView();
     
     // Returns (possible?) projection matrix of the game. Needs to be delved into.
-    float* GetProjectionMatrix();
+    GWAPI float* GetProjectionMatrix();
     
     // Set yaw, radian angle
-    void SetYaw(float yaw);
+    GWAPI void SetYaw(float yaw);
     
     // Set pitch (sin(angle))
-    void SetPitch(float pitch);
+    GWAPI void SetPitch(float pitch);
     
     // Manual computation of the position of the Camera. (As close as possible to the original)
-    void UpdateCameraPos();
-    Vector3f ComputeCamPos(float dist); // 2.f is the first person dist (const by gw)
-    void SetCameraPos(Vector3f const& newPos);
+    GWAPI void UpdateCameraPos();
+    GWAPI Vec3f ComputeCamPos(float dist); // 2.f is the first person dist (const by gw)
+    GWAPI void SetCameraPos(Vec3f newPos);
     
     // Change max zoom dist
-    void SetMaxDist(float dist);
+    GWAPI void SetMaxDist(float dist);
     
     // Unlock camera & return the new state of it
-    bool UnlockCam(bool flag);
-    bool GetCameraUnlock();
+    GWAPI bool UnlockCam(bool flag);
+    GWAPI bool GetCameraUnlock();
     
-    void SetLookAtTarget(Vector3f const& newPos);
+    GWAPI void SetLookAtTarget(Vec3f newPos);
     
-    void ForwardMovement(float amount);
-    void SideMovement(float amount);
-    void VerticalMovement(float amount);
+    GWAPI void ForwardMovement(float amount);
+    GWAPI void SideMovement(float amount);
+    GWAPI void VerticalMovement(float amount);
     
     // Enable or Disable the fog & return the state of it
-    bool SetFog(bool flag);
+    GWAPI bool SetFog(bool flag);
     
-    void SetFieldOfView(float fov);
+    GWAPI void SetFieldOfView(float fov);
 
     //////////////////////////////
     //         Merchant
     //////////////////////////////
-    GW::MerchItemArray GetMerchantItemsArray();
+    GWAPI GW::MerchItemArray GetMerchantItemsArray();
     
-    GW::Item* GetMerchantItemByModelID(DWORD modelid);
+    GWAPI GW::Item* GetMerchantItemByModelID(DWORD modelid);
     
-    void BuyMerchantItem(DWORD modelid, DWORD quantity = 1);
+    GWAPI void BuyMerchantItem(DWORD modelid, DWORD quantity = 1);
     
-    void SellMerchantItem(GW::Item* itemtosell, DWORD sellquantity = NULL);
+    GWAPI void SellMerchantItem(GW::Item* itemtosell, DWORD sellquantity = NULL);
     
     //////////////////////////////
     //        FriendList
     //////////////////////////////
-    GW::Friend* getFriend(DWORD index);
-    DWORD getNumberOfFriends();
-    DWORD getNumberOfIgnores();
-    DWORD getNumberOfPartners();
-    DWORD getNumberOfTraders();
+    GWAPI GW::Friend* GetFriend(CString name);
+    GWAPI DWORD GetFriendsCount();
+    GWAPI DWORD GetIgnoresCount();
     
-    DWORD getMyStatus();
+    GWAPI DWORD GetPlayerStatus();
     
     // void SetFriendListStatus(Constants::OnlineStatus status);
 
     //////////////////////////////
     //           Chat
     //////////////////////////////
-    typedef DWORD Color;
-    typedef DWORD Channel;
-
     // Send a message to an in-game channel (! for all, @ for guild, etc)
-    void SendChat(const wchar_t* msg, wchar_t channel);
+    GWAPI void SendChat(const wchar *msg, wchar channel);
     
     // Write to chat as a PM with printf style arguments.
-    void WriteChatF(const wchar_t* from, const wchar_t* format, ...);
+    GWAPI void WriteChatF(const wchar *from, const wchar *format, ...);
     
     // Simple write to chat as a PM
-    void WriteChat(const wchar_t* from, const wchar_t* msg);
+    GWAPI void WriteChat(const wchar *from, const wchar *msg);
     
-    Color SetSenderColor(Channel chan, Color col);
-    Color SetMessageColor(Channel chan, Color col);
+	enum Channel; // @Remove
+    GWAPI Color SetSenderColor(Channel chan, Color col);
+    GWAPI Color SetMessageColor(Channel chan, Color col);
 } // namespace GW
+
 #endif // GWCA_API_H

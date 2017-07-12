@@ -28,16 +28,17 @@ namespace GW {
     using GuildHistory = Array<GuildHistoryEvent*>;
 
     struct Guild {
-        GHKey key;
-
-        inline wchar_t* name() const { return (wchar_t*)((BYTE*)this + 0x30); }
-        inline wchar_t* tag() const { return (wchar_t*)((BYTE*)this + 0x80); }
-
-        inline DWORD& factioncount() const { return *(DWORD*)((BYTE*)this + 0x78); }
-
-        inline DWORD& rating() const { return *(DWORD*)((BYTE*)this + 0x70); }
-        inline DWORD& rank() const { return *(DWORD*)((BYTE*)this + 0x28); }
-        inline DWORD& qualifierpoints() const { return *(DWORD*)((BYTE*)this + 0x7C); }
+        /* +h0000 */ GHKey key;
+        /* +h0010 */ DWORD h0004[24];
+        /* +h0028 */ DWORD rank;
+        /* +h002C */ DWORD h002C;
+        /* +h0030 */ wchar name[32];
+        /* +h0050 */ DWORD h0050[8];
+        /* +h0070 */ DWORD rating;
+        /* +h0074 */ DWORD h0074;
+        /* +h0078 */ DWORD faction_point;
+        /* +h007C */ DWORD qualifier_point;
+        /* +h0080 */ wchar tag[4];
     };
 
     using GuildArray = Array<Guild*>;

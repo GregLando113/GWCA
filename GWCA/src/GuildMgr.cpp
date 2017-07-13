@@ -9,11 +9,11 @@ GW::GuildContext* GW::GuildMgr::GetGuildContext() {
 }
 
 wchar_t* GW::GuildMgr::GetPlayerGuildAnnouncer() {
-	return GameContext::instance()->guild->lastannouncementwriter;
+	return GameContext::instance()->guild->AnnouncementAuthor;
 }
 
 wchar_t* GW::GuildMgr::GetPlayerGuildAnnouncement() {
-	return GameContext::instance()->guild->guildannouncement;
+	return GameContext::instance()->guild->Announcement;
 }
 
 DWORD GW::GuildMgr::GetPlayerGuildIndex() {

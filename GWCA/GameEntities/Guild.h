@@ -5,7 +5,7 @@
 
 namespace GW {
     struct GHKey { DWORD k[4]; };
-	using wchar = wchar_t;
+    using wchar = wchar_t;
 
     struct GuildPlayer { // total: 0x5C/92
         /* +h0000 */ void* vtable;
@@ -35,7 +35,7 @@ namespace GW {
         /* +h0030 */ wchar name[32];
         /* +h0050 */ DWORD h0050[8];
         /* +h0070 */ DWORD rating;
-        /* +h0074 */ DWORD h0074;
+        /* +h0074 */ DWORD faction; // 0=kurzick, 1=luxon
         /* +h0078 */ DWORD faction_point;
         /* +h007C */ DWORD qualifier_point;
         /* +h0080 */ wchar tag[4];

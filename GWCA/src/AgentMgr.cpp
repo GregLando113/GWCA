@@ -102,7 +102,7 @@ GW::MapAgentArray GW::Agents::GetMapAgentArray() {
 
 GW::Agent* GW::Agents::GetAgentByID(DWORD id) {
 	GW::AgentArray agents = GetAgentArray();
-	if (agents.valid() && id > 0) {
+	if (agents.valid() && id > 0 && id < agents.size()) {
 		return agents[id];
 	} else {
 		return nullptr;

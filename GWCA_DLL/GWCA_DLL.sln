@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA_DLL", "GWCA_DLL.vcxproj", "{C9611D17-35CA-4F49-A676-CF770973204D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA", "..\GWCA.2015.vcxproj", "{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9611D17-35CA-4F49-A676-CF770973204D}.Debug|x64.ActiveCfg = Debug|x64
+		{C9611D17-35CA-4F49-A676-CF770973204D}.Debug|x64.Build.0 = Debug|x64
+		{C9611D17-35CA-4F49-A676-CF770973204D}.Debug|x86.ActiveCfg = Debug|Win32
+		{C9611D17-35CA-4F49-A676-CF770973204D}.Debug|x86.Build.0 = Debug|Win32
+		{C9611D17-35CA-4F49-A676-CF770973204D}.Release|x64.ActiveCfg = Release|x64
+		{C9611D17-35CA-4F49-A676-CF770973204D}.Release|x64.Build.0 = Release|x64
+		{C9611D17-35CA-4F49-A676-CF770973204D}.Release|x86.ActiveCfg = Release|Win32
+		{C9611D17-35CA-4F49-A676-CF770973204D}.Release|x86.Build.0 = Release|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x64.ActiveCfg = Debug|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x86.ActiveCfg = Debug|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x86.Build.0 = Debug|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x64.ActiveCfg = Release|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x86.ActiveCfg = Release|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

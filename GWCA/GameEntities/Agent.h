@@ -33,8 +33,14 @@ namespace GW {
         /* +h0068 */ float h0068;
         /* +h006C */ float h006C;
         /* +h0070 */ BYTE  h0070[4];
-        /* +h0074 */ Vec2f pos;
+        union {
+            struct {
+        /* +h0074 */ float X;
+        /* +h0078 */ float Y;
         /* +h007C */ DWORD plane;
+            };
+        /* +h0074 */ GamePos pos;          
+        };
         /* +h0080 */ BYTE  h0080[4];
         /* +h0084 */ float NameTagX; // Exactly the same as X above
         /* +h0088 */ float NameTagY; // Exactly the same as Y above

@@ -47,26 +47,26 @@ GWAPI void GWCA::PrintChat(Channel channel, const wchar *msg) {
 }
 
 GWAPI void GWCA::CreateCommand(std::wstring cmd, CmdCB callback) {
-    GW::Chat::RegisterCommand(cmd, callback);
+    // GW::Chat::RegisterCommand(cmd, callback);
 }
 
 GWAPI void GWCA::DeleteCommand(std::wstring cmd) {
-	GW::Chat::DeleteCommand(cmd);
+	// GW::Chat::DeleteCommand(cmd);
 }
 
 static void (*_OnEvent)(GWCA::Event e, ...);
 
 static bool _OnLocalMessage(int chan, wchar *msg) {
-    _OnEvent(GWCA::Event::OnMessageReceived, chan, L"", msg);
+    _OnEvent(GWCA::Event::OnChatMessage, chan, L"", msg);
 	return false;
 }
 
 static void _OnWhisperMessage(const wchar sender[20], const wchar msg[140]) {
-    _OnEvent(GWCA::Event::OnMessageReceived, GWCA::Channel::Whisper, sender, msg);
+    _OnEvent(GWCA::Event::OnChatMessage, GWCA::CHANNEL_WHISPER, sender, msg);
 }
 
 static bool _OnPacketRecv(GW::Packet::StoC::PacketBase *p) {
-    _OnEvent(GWCA::Event::OnPacketReceived, p->header, p);
+    _OnEvent(GWCA::Event::OnServerMessage, p->header, p);
 	return false;
 }
 

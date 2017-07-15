@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 #include <Windows.h>
 #include <string>
 #include <vector>
@@ -51,36 +50,40 @@ namespace GWCA {
 
     Color COLOR_RGB(int r, int g, int b) { return COLOR_ARGB(0xff, r, g, b); }
 
-    enum class Channel {
-        Alliance    = 0,
-        Allies      = 1,
-        GWCA1       = 2,
-        All         = 3,
-        GWCA2       = 4,
-        Moderator   = 5,
-        Emote       = 6,
-        Warning     = 7, // shows in the middle of the screen and does not parse <c> tags
-        GWCA3       = 8,
-        Guild       = 9,
-        Global      = 10,
-        Group       = 11,
-        Trade       = 12,
-        Advisory    = 13,
-        Whisper     = 14,
-
-        Count,
+    enum Channel {
+        CHANNEL_ALLIANCE    = 0,
+        CHANNEL_ALLIES      = 1,
+        CHANNEL_GWCA1       = 2,
+        CHANNEL_ALL         = 3,
+        CHANNEL_GWCA2       = 4,
+        CHANNEL_MODERATOR   = 5,
+        CHANNEL_EMOTE       = 6,
+        CHANNEL_WARNING     = 7, // shows in the middle of the screen and does not parse <c> tags
+        CHANNEL_GWCA3       = 8,
+        CHANNEL_GUILD       = 9,
+        CHANNEL_GLOBAL      = 10,
+        CHANNEL_GROUP       = 11,
+        CHANNEL_TRADE       = 12,
+        CHANNEL_ADVISORY    = 13,
+        CHANNEL_WHISPER     = 14,
+        CHANNEL_COUNT
     };
-    constexpr int CHANNEL_COUNT = (int)Channel::Count;
 
     enum class Event {
         OnTick,
-        OnPacketReceived,
 
-        OnMessageReceived,
+        OnServerMessage,
 
-        Count
+        OnAgentSpawned,
+        OnAgentDespawned,
+        OnAgentHealthChange,
+
+        OnItemPickup,
+
+        OnQuestCompleted,
+
+		OnChatMessage,
     };
-    constexpr int EVENT_COUNT = (int)Event::Count;
 
     GWAPI void RegisterEvent  (HMODULE plugin, Event e);
     GWAPI void UnregisterEvent(HMODULE plugin, Event e);
@@ -89,7 +92,7 @@ namespace GWCA {
     GWAPI void UnloadPlugin(HMODULE plugin);
 
     GWAPI CString GetPluginsDir(void);
-    GWAPI DWORD   TimeGetMs(void);
+    GWAPI DWORD   GetGameTime(void);
 
     //////////////////////////////
     //           Chat           //
@@ -103,8 +106,7 @@ namespace GWCA {
     GWAPI void PrintChat(Channel channel, const char *msg);
     GWAPI void PrintChat(Channel channel, const char *sender, const char *msg);
 
-    // @Cleanup, CmdCB shouldn't return something. We have to change that in ChatMgr.
-    typedef bool (*CmdCB)(CString cmd, CString args);
+    typedef void (*CmdCB)(CString cmd, CString args);
     GWAPI void CreateCommand(CString cmd, CmdCB callback);
     GWAPI void DeleteCommand(CString cmd);
 
@@ -119,6 +121,6 @@ namespace GWCA {
 
     GWAPI DWORD GetPlayerId();
     GWAPI DWORD GetTargetId();
-} // namespace GW
+} // namespace GWCA
 
 #endif // GWCA_API_H

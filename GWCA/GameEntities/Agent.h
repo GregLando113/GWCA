@@ -123,7 +123,7 @@ namespace GW {
         inline bool GetHasQuest()           { return (TypeMap & 0x000002) != 0; } // if agent has quest marker
         inline bool GetIsDeadByTypeMap()    { return (TypeMap & 0x000008) != 0; }
         inline bool GetIsFemale()           { return (TypeMap & 0x000200) != 0; }
-        inline bool GetHasBossGlow()        { return (TypeMap & 0x000400) != 0; }
+        inline bool GetHasBossGlow()		{ return (TypeMap & 0x000400) != 0; }
         inline bool GetIsHidingCape()       { return (TypeMap & 0x001000) != 0; }
         inline bool GetCanBeViewedInPartyWindow() { return (TypeMap & 0x20000) != 0; }
         inline bool GetIsSpawned()          { return (TypeMap & 0x040000) != 0; }

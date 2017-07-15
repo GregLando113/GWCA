@@ -33,7 +33,6 @@ namespace GW {
         /* +h0028 */ DWORD rank;
         /* +h002C */ DWORD h002C;
         /* +h0030 */ wchar name[32];
-        /* +h0050 */ DWORD h0050[8];
         /* +h0070 */ DWORD rating;
         /* +h0074 */ DWORD faction; // 0=kurzick, 1=luxon
         /* +h0078 */ DWORD faction_point;

@@ -29,7 +29,7 @@ namespace GW {
 
     struct Guild {
         /* +h0000 */ GHKey key;
-        /* +h0010 */ DWORD h0004[24];
+        /* +h0010 */ DWORD h0004[6];
         /* +h0028 */ DWORD rank;
         /* +h002C */ DWORD h002C;
         /* +h0030 */ wchar name[32];

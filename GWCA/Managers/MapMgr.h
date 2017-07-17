@@ -50,5 +50,7 @@ namespace GW {
 		DWORD GetFoesToKill();
 
 		GW::AreaInfo& GetMapInfo(Constants::MapID MapID);
+
+		inline GW::AreaInfo& GetCurrentMapInfo() { return GetMapInfo(GetMapID()); }
 	};
 }

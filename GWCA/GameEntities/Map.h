@@ -4,20 +4,37 @@
 #include <GWCA\GameContainers\Array.h>
 
 namespace GW {
-    struct MissionMapIcon { // MapOverlay from GWCA
-        long index;
-        float X;
-        float Y;
-        long unknown1; // = 0
-        long unknown2; // = 0
-        long option; // Affilitation/color. Enum { 0 = gray, blue, red, yellow, teal, purple, green, gray };
-        long unknown3; // = 0
-        long modelId; // Model of the displayed icon in the Minimap
-        long unknown4; // = 0
-        void* unknown5; // May concern the name
+    struct MissionMapIcon { // total: 0x28/40
+        /* +h0000 */ DWORD index;
+        /* +h0004 */ float X;
+        /* +h0008 */ float Y;
+        /* +h000C */ DWORD h000C; // = 0
+        /* +h0010 */ DWORD h0010; // = 0
+        /* +h0014 */ DWORD option; // Affilitation/color. gray = 0, blue, red, yellow, teal, purple, green, gray
+        /* +h0018 */ DWORD h0018; // = 0
+        /* +h001C */ DWORD modelId; // Model of the displayed icon in the Minimap
+        /* +h0020 */ DWORD h0020; // = 0
+        /* +h0024 */ DWORD h0024; // May concern the name
     };
 
     using MissionMapIconArray = Array<MissionMapIcon>;
+
+    // https://github.com/entice/gw-interface/blob/master/GuildWarsInterface/Datastructures/Const/AreaInfo.cs
+    struct AreaConst { // total: 0x7C/120
+        /* +h0000 */ DWORD h0000;
+        /* +h0004 */ DWORD Continent;
+        /* +h0008 */ DWORD Region;
+        /* +h000C */ DWORD Type;
+        /* +h0010 */ DWORD Flags;
+        /* +h0014 */ DWORD ThumbmailID;
+        /* +h0018 */ DWORD PartySize;
+        /* +h001C */ DWORD h001C[9];
+        /* +h0040 */ DWORD X; // icon position on map.
+        /* +h0044 */ DWORD Y;
+        /* +h0048 */ DWORD h0048[11];
+        /* +h0074 */ DWORD NameID;
+        /* +h0078 */ DWORD Description;
+    };
 }
 
 #endif // _MAP_INC

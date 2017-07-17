@@ -180,7 +180,7 @@ namespace GW {
 
     struct AgentInfo {
         BYTE h0000[52];
-        wchar *NameString;
+        wchar_t *NameString;
     };
 
     using AgentArray = Array<Agent*>;

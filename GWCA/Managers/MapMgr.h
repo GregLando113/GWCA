@@ -48,5 +48,7 @@ namespace GW {
 
 		DWORD GetFoesKilled();
 		DWORD GetFoesToKill();
+
+		GW::AreaInfo& GetMapInfo(Constants::MapID MapID);
 	};
 }

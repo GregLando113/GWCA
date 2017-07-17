@@ -19,12 +19,68 @@ namespace GW {
 
     using MissionMapIconArray = Array<MissionMapIcon>;
 
+    enum class RegionType {
+        AllianceBattle,
+        Arena,
+        ExplorableZone,
+        GuildBattleArea,
+        GuildHall,
+        MissionOutpost,
+        CooperativeMission,
+        CompetitiveMission,
+        EliteMission,
+        Challenge,
+        Outpost,
+        ZaishenBattle,
+        HeroesAscent,
+        City,
+        MissionArea,
+        HeroBattleOutpost,
+        HeroBattleArea,
+        EotnMission,
+        Dungeon,
+        Marketplace,
+        Unknown,
+        DevRegion
+    };
+
+    enum class Region {
+        Kryta,
+        Maguuma,
+        Ascalon,
+        NorthernShiverpeaks,
+        HeroesAscent,
+        CrystalDesert,
+        FissureOfWoe,
+        Presearing,
+        Kaineng,
+        Kurzick,
+        Luxon,
+        ShingJea,
+        Kourna,
+        Vaabi,
+        Desolation,
+        Istan,
+        DomainOfAnguish,
+        TarnishedCoast,
+        DepthsOfTyria,
+        FarShiverpeaks,
+        CharrHomelands,
+        BattleIslands,
+        TheBattleOfJahai,
+        TheFlightNorth,
+        TheTenguAccords,
+        TheRiseOfTheWhiteMantle,
+        Swat,
+        DevRegion
+    };
+
     // https://github.com/entice/gw-interface/blob/master/GuildWarsInterface/Datastructures/Const/AreaInfo.cs
-    struct AreaConst { // total: 0x7C/120
+    struct AreaInfo { // total: 0x7C/120
         /* +h0000 */ DWORD h0000;
         /* +h0004 */ DWORD Continent;
-        /* +h0008 */ DWORD Region;
-        /* +h000C */ DWORD Type;
+        /* +h0008 */ Region Region;
+        /* +h000C */ RegionType Type;
         /* +h0010 */ DWORD Flags;
         /* +h0014 */ DWORD ThumbmailID;
         /* +h0018 */ DWORD PartySize;
@@ -33,7 +89,9 @@ namespace GW {
         /* +h0044 */ DWORD Y;
         /* +h0048 */ DWORD h0048[11];
         /* +h0074 */ DWORD NameID;
-        /* +h0078 */ DWORD Description;
+        /* +h0078 */ DWORD DescriptionID;
+
+        inline bool GetHasEnterButton() { return (Flags & 0x1000000) != 0; }
     };
 }
 

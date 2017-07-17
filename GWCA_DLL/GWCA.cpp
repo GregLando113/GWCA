@@ -74,11 +74,6 @@ DWORD WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved) {
     if (dwReason == DLL_PROCESS_ATTACH) {
         if(!GW::Initialize())
             return FALSE;
-
-        GW::Chat::SetLocalMessageCallback(_OnLocalMessage);
-        GW::Chat::SetWhisperCallback(_OnWhisperMessage);
-        for (int i = 0; i < 481; i++)
-            GW::StoC::AddCallback(i, _OnPacketRecv);
     }
     else if (dwReason == DLL_PROCESS_DETACH) {
         GW::Terminate();

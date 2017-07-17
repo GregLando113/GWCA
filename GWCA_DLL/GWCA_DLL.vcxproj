@@ -115,11 +115,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GWCA.h" />
-    <ClInclude Include="Plugin.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA.cpp" />
-    <ClCompile Include="Plugin.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

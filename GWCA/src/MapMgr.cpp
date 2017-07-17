@@ -131,3 +131,8 @@ DWORD GW::Map::GetFoesKilled() {
 DWORD GW::Map::GetFoesToKill() {
 	return GameContext::instance()->world->foes_to_kill;
 }
+
+GW::AreaInfo& GW::Map::GetMapInfo(Constants::MapID MapID) {
+	static GW::AreaInfo *AreasInfo = (GW::AreaInfo*)0x8b6ee0;
+	return AreasInfo[(DWORD)MapID];
+}

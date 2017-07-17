@@ -5,7 +5,7 @@
 #include <GWCA\GameEntities\Position.h>
 
 namespace GW {
-	using Vec3f = Vector3f;
+    using Vec3f = Vector3f;
 
     struct Camera {
         /* +h0000 */ DWORD LookAtAgentID;

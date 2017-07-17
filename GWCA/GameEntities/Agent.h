@@ -7,8 +7,8 @@
 
 namespace GW {
     using AgentID = DWORD;
-	using Vec2f = Vector2f;
-	using Vec3f = Vector3f;
+    using Vec2f = Vector2f;
+    using Vec3f = Vector3f;
 
     struct Agent {
         /* +h0000 */ DWORD* vtable;
@@ -166,21 +166,21 @@ namespace GW {
     };
 
     struct AgentMovement {
-        /* +h0000 */ BYTE   h0000[12];
+        /* +h0000 */ DWORD  h0000[3];
         /* +h000C */ DWORD  AgentId;
-        /* +h0010 */ BYTE   h0010[40];
+        /* +h0010 */ DWORD  h0010[10];
         /* +h0038 */ DWORD  Moving1; //tells if you are stuck even if your client doesn't know
-        /* +h003C */ BYTE   h003C[8];
+        /* +h003C */ DWORD  h003C[2];
         /* +h0044 */ DWORD  Moving2; //exactly same as Moving1
-        /* +h0048 */ BYTE   h0048[28];
+        /* +h0048 */ DWORD  h0048[7];
         /* +h0064 */ Vec3f  h0064;
-        /* +h0070 */ BYTE   h0070[4];
+        /* +h0070 */ DWORD  h0070;
         /* +h0074 */ Vec3f  h0074;
     };
 
     struct AgentInfo {
         BYTE h0000[52];
-        wchar_t *NameString;
+        wchar *NameString;
     };
 
     using AgentArray = Array<Agent*>;

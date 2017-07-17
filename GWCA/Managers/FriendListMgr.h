@@ -12,14 +12,14 @@ namespace GW {
 		GW::FriendList* GetFriendList();
 
 		inline GW::Friend* GetFriend(DWORD index) { 
-			return GetFriendList()->friends[index + 1]; }
-		inline DWORD size() { return GetFriendList()->size(); }
-		inline DWORD GetNumberOfFriends() { return GetFriendList()->nFriend; }
-		inline DWORD GetNumberOfIgnores() { return GetFriendList()->nIgnore; }
-		inline DWORD GetNumberOfPartners() { return GetFriendList()->nPlayed; }
-		inline DWORD GetNumberOfTraders() { return GetFriendList()->nTrade; }
+			return GetFriendList()->Friends[index + 1]; }
 
-		inline DWORD GetMyStatus() { return GetFriendList()->myStatus; }
+		inline DWORD GetNumberOfFriends() { return GetFriendList()->NumberOfFriend; }
+		inline DWORD GetNumberOfIgnores() { return GetFriendList()->NumberOfIgnore; }
+		inline DWORD GetNumberOfPartners() { return GetFriendList()->NumberOfPartner; }
+		inline DWORD GetNumberOfTraders() { return GetFriendList()->NumberOfTrade; }
+
+		inline DWORD GetMyStatus() { return GetFriendList()->PlayerStatus; }
 
 		void SetFriendListStatus(Constants::OnlineStatus status);
 	};

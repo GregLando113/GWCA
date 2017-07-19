@@ -8,7 +8,6 @@
 #include <GWCA\GameContainers\Array.h>
 
 namespace GW {
-
 	namespace Chat {
 		using Color = DWORD;
 		using wchar = wchar_t;
@@ -39,31 +38,32 @@ namespace GW {
 		struct ChatTemplate {
 			DWORD unk0;
 			DWORD type; // 0 = build, 1 = equipement
-			Array<wchar> code;
+			GW::Array<wchar> code;
 			wchar *name;
 		};
+		
+		// void SetChatChannelColor(Channel channel, Color sender, Color message);
+		// void RegisterEvent(Event e);
 
-		typedef std::function<bool(std::wstring& command, std::wstring& args)> Callback;
+		// Send a message to an in-game channel (! for all, @ for guild, etc)
+		void SendChat(char channel, const wchar *msg);
+		void SendChat(char channel, const char  *msg);
+
+		// Emulates a message in a given channel.
+		void WriteChat(Channel channel, const wchar *message);
+		void WriteChat(Channel channel, const char  *message);
+
+		void WriteChat(Channel channel, const wchar *sender, const wchar *msg);
+		void WriteChat(Channel channel, const char  *sender, const char  *msg);
+
+		void WriteChatF(Channel channel, const wchar *sender, const char *fmt, ...);
+
+		typedef std::function<void(std::wstring& command, std::wstring& args)> CmdCB;
+		void CreateCommand(std::wstring cmd, CmdCB callback);
+		void DeleteCommand(std::wstring cmd);
 
 		void Initialize();
 		void RestoreHooks();
-
-		// Send a message to an in-game channel (! for all, @ for guild, etc)
-		void SendChat(const wchar_t* msg, wchar_t channel);
-		void SendChat(const char* msg, char channel);
-
-		// Write to chat as a PM with printf style arguments.
-		void WriteChatF(const wchar_t* from, const wchar_t* format, ...);
-
-		// Simple write to chat as a PM
-		void WriteChat(const wchar_t* from, const wchar_t* msg);
-
-		// Emulates a message in a given channel.
-		void WriteChat(Channel channel, const wchar_t *message);
-		void WriteChat(Channel channel, const char* message);
-
-		void RegisterCommand(const std::wstring& command, Callback callback);
-		void DeleteCommand(const std::wstring& command);
 
 		std::vector<std::wstring> SplitString(const std::wstring& str, wchar_t c = ' ');
 

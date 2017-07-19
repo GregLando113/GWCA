@@ -13,15 +13,9 @@
 namespace {
 	using namespace GW::Chat;
 
-	struct RawMessage {
-		uint32_t channel;
-		wchar_t *message;
-		uint32_t player_id;
-	};
-
 	struct ChatMessage {
 		uint32_t channel;
-		wchar_t string;
+		wchar_t *message;
 	};
 
 	struct ChatBuffer {
@@ -29,67 +23,63 @@ namespace {
 		uint32_t unk;
 		ChatMessage messages[256];
 	};
+
 	SYSTEMTIME Timestamps[256];
 
-	Color SenderColor[] = {
-		COLOR_RGB(0xff, 0xc0, 0x60),
-		COLOR_RGB(0x60, 0xa0, 0xff),
-		COLOR_RGB(0xc0, 0xd0, 0xff),
-		COLOR_RGB(0xff, 0xff, 0x80),
-		COLOR_RGB(0xcc, 0xcc, 0xcc),
-		COLOR_RGB(0xff, 0x50, 0xdf),
-		COLOR_RGB(0xff, 0xff, 0xff),
-		COLOR_RGB(0xcc, 0xcc, 0xcc),
-		COLOR_RGB(0xcc, 0xcc, 0xcc),
-		COLOR_RGB(0x00, 0xff, 0x60),
-		COLOR_RGB(0x80, 0xff, 0x80),
-		COLOR_RGB(0x80, 0xc0, 0xff),
-		COLOR_RGB(0xff, 0xc0, 0xc4),
-		COLOR_RGB(0xff, 0x90, 0x20),
-		COLOR_RGB(0x80, 0xc0, 0xff)
+	GW::Chat::Color SenderColor[] = {
+		COLOR_RGB(0xFF, 0xC0, 0x60),
+		COLOR_RGB(0x60, 0xA0, 0xFF),
+		COLOR_RGB(0xC0, 0xD0, 0xFF),
+		COLOR_RGB(0xFF, 0xFF, 0x80),
+		COLOR_RGB(0xCC, 0xCC, 0xCC),
+		COLOR_RGB(0xFF, 0x50, 0xDF),
+		COLOR_RGB(0xFF, 0xFF, 0xFF),
+		COLOR_RGB(0xCC, 0xCC, 0xCC),
+		COLOR_RGB(0xCC, 0xCC, 0xCC),
+		COLOR_RGB(0x00, 0xFF, 0x60),
+		COLOR_RGB(0x80, 0xFF, 0x80),
+		COLOR_RGB(0x80, 0xC0, 0xFF),
+		COLOR_RGB(0xFF, 0xC0, 0xC4),
+		COLOR_RGB(0xFF, 0x90, 0x20),
+		COLOR_RGB(0x80, 0xC0, 0xFF)
 	};
 
-	Color MessageColor[] = {
-		COLOR_RGB(0xe0, 0xe0, 0xe0),
-		COLOR_RGB(0xe0, 0xe0, 0xe0),
-		COLOR_RGB(0xc0, 0xd0, 0xff),
-		COLOR_RGB(0xff, 0xff, 0xff),
-		COLOR_RGB(0xb0, 0xb0, 0xb0),
-		COLOR_RGB(0x50, 0xff, 0xdf),
-		COLOR_RGB(0xff, 0xff, 0xff),
-		COLOR_RGB(0xcc, 0xcc, 0xcc),
-		COLOR_RGB(0x50, 0xff, 0xdf),
-		COLOR_RGB(0xe0, 0xe0, 0xe0),
-		COLOR_RGB(0x80, 0xff, 0x80),
-		COLOR_RGB(0xe0, 0xe0, 0xe0),
-		COLOR_RGB(0xff, 0xc4, 0xc0),
-		COLOR_RGB(0xff, 0x90, 0x20),
-		COLOR_RGB(0xe0, 0xe0, 0xe0)
+	GW::Chat::Color MessageColor[] = {
+		COLOR_RGB(0xE0, 0xE0, 0xE0),
+		COLOR_RGB(0xE0, 0xE0, 0xE0),
+		COLOR_RGB(0xC0, 0xD0, 0xFF),
+		COLOR_RGB(0xFF, 0xFF, 0xFF),
+		COLOR_RGB(0xB0, 0xB0, 0xB0),
+		COLOR_RGB(0x50, 0xFF, 0xDF),
+		COLOR_RGB(0xFF, 0xFF, 0xFF),
+		COLOR_RGB(0xCC, 0xCC, 0xCC),
+		COLOR_RGB(0x50, 0xFF, 0xDF),
+		COLOR_RGB(0xE0, 0xE0, 0xE0),
+		COLOR_RGB(0x80, 0xFF, 0x80),
+		COLOR_RGB(0xE0, 0xE0, 0xE0),
+		COLOR_RGB(0xFF, 0xC4, 0xC0),
+		COLOR_RGB(0xFF, 0x90, 0x20),
+		COLOR_RGB(0xE0, 0xE0, 0xE0)
 	};
 
-	typedef void (__fastcall *SendMessage_t)(int id, const RawMessage *msg, void *extended);
-	SendMessage_t GwSendMessage = nullptr;
-
-	#if 0
-	void(__fastcall *GwWriteBuffer)(WCHAR *message, DWORD channel) = nullptr;
-	void(__fastcall *DetWriteBuffer)(WCHAR *message, DWORD channel) = nullptr;
-	#endif
+	typedef void (__fastcall *SendUIMessage_t)(int id, void *p1, void *p2);
+	SendUIMessage_t SendUIMessage = nullptr;
 
 	void __fastcall SendChat_detour(wchar_t *_message);
 	typedef void(__fastcall *SendChat_t)(wchar_t* message);
 	SendChat_t SendChat_addr = nullptr;
 	GW::THook<SendChat_t> SendChat_hook;
-	std::map<std::wstring, GW::Chat::Callback> Commands_callbacks;
-	std::function<void(Channel chan, wchar_t msg[140])> SendChat_callback;
+	std::map<std::wstring, GW::Chat::CmdCB> SlashCmdList;
+	std::function<void(GW::Chat::Channel chan, wchar_t msg[140])> SendChat_callback;
 
 	typedef void(__fastcall *OpenTemplate_t)(DWORD unk, GW::Chat::ChatTemplate* info);
 	void __fastcall OpenTemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info);
 	GW::THook<OpenTemplate_t> OpenTemplate_hook;
 	bool open_links = false;
 
-	typedef Color* (__fastcall *GetChannelColor_t)(Color* color, Channel chan);
-	Color* __fastcall SenderColor_detour(Color *color, Channel chan);
-	Color* __fastcall MessageColor_detour(Color *color, Channel chan);
+	typedef GW::Chat::Color* (__fastcall *GetChannelColor_t)(GW::Chat::Color *color, GW::Chat::Channel chan);
+	GW::Chat::Color* __fastcall SenderColor_detour(GW::Chat::Color *color, GW::Chat::Channel chan);
+	GW::Chat::Color* __fastcall MessageColor_detour(GW::Chat::Color *color, GW::Chat::Channel chan);
 	GW::THook<GetChannelColor_t> SenderColor_hook;
 	GW::THook<GetChannelColor_t> MessageColor_hook;
 
@@ -138,23 +128,12 @@ void GW::Chat::SetLocalMessageCallback(std::function<bool(int, wchar_t*)> callba
 	LocalMessage_callback = callback;
 }
 
-void GW::Chat::SetSendChatCallback(std::function<void(Channel chan, wchar_t msg[140])> callback) {
-	if (SendChat_hook.Empty()) {
+void GW::Chat::SetSendChatCallback(std::function<void(GW::Chat::Channel chan, wchar_t msg[140])> callback) {
+	if (::SendChat_hook.Empty()) {
 		if (SendChat_addr == nullptr) Initialize();
-		SendChat_hook.Detour(SendChat_addr, SendChat_detour);
+		::SendChat_hook.Detour(SendChat_addr, SendChat_detour);
 	}
 	SendChat_callback = callback;
-}
-
-void GW::Chat::RegisterCommand(const std::wstring& command, Callback callback) {
-	if (SendChat_hook.Empty()) {
-		if (SendChat_addr == nullptr) Initialize();
-		SendChat_hook.Detour(SendChat_addr, SendChat_detour);
-	}
-	Commands_callbacks[command] = callback;
-}
-void GW::Chat::DeleteCommand(const std::wstring& command) {
-	Commands_callbacks.erase(command);
 }
 
 void GW::Chat::SetOpenLinks(bool b) {
@@ -169,20 +148,20 @@ void GW::Chat::SetOpenLinks(bool b) {
 GW::Chat::Color GW::Chat::SetSenderColor(Channel chan, Color col) {
 	if (SenderColor_hook.Empty()) {
 		GetChannelColor_t addr = (GetChannelColor_t)0x00481650; // Need scan!
-		SenderColor_hook.Detour(addr, SenderColor_detour);
+		SenderColor_hook.Detour(addr, ::SenderColor_detour);
 	}
-	Color old = SenderColor[chan];
-	SenderColor[chan] = col;
+	Color old = SenderColor[(int)chan];
+	SenderColor[(int)chan] = col;
 	return old;
 }
 
 GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 	if (MessageColor_hook.Empty()) {
 		GetChannelColor_t addr = (GetChannelColor_t)0x00481570; // Need scan!
-		MessageColor_hook.Detour(addr, MessageColor_detour);
+		MessageColor_hook.Detour(addr, ::MessageColor_detour);
 	}
-	Color old = MessageColor[chan];
-	MessageColor[chan] = col;
+	Color old = MessageColor[(int)chan];
+	MessageColor[(int)chan] = col;
 	return old;
 }
 
@@ -200,8 +179,8 @@ void GW::Chat::Initialize() {
 	SendChat_addr = (SendChat_t)Scanner::Find("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
 	printf("Send Chat Func = 0x%X\n", (DWORD)SendChat_addr);
 
-	GwSendMessage = (SendMessage_t)0x00605AC0;
-	printf("Send Message Func = 0x%X\n", (DWORD)GwSendMessage);
+	SendUIMessage = (SendUIMessage_t)0x00605AC0;
+	printf("SendUIMessage Func = 0x%X\n", (DWORD)SendUIMessage);
 
 	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
 	printf("Write Whisper Func = 0x%X\n", (DWORD)WriteWhisper_addr);
@@ -218,25 +197,42 @@ void GW::Chat::RestoreHooks() {
 	WriteWhisper_hook.Retour();
 }
 
-void GW::Chat::SendChat(const wchar_t* msg, wchar_t channel) {
+void GW::Chat::SendChat(char channel, const wchar *msg) {
 	if (SendChat_addr == nullptr) Initialize();
-	wchar_t buffer[140] = {channel};
-	wcscpy_s(&buffer[1], 139, msg);
+	// assert(GW::SendChat);
+	wchar buffer[140];
+
+	// We could take 140 char long, but the chat only allow 120 ig.
+	size_t len = wcslen(msg);
+	len = len > 120 ? 120 : len;
+
+	buffer[0] = channel;
+	buffer[len + 1] = 0;
+	for (size_t i = 0; i < len; i++)
+		buffer[i + 1] = msg[i];
+
 	SendChat_addr(buffer);
 }
 
-void GW::Chat::SendChat(const char* msg, char channel) {
+void GW::Chat::SendChat(char channel, const char *msg) {
 	if (SendChat_addr == nullptr) Initialize();
-	wchar_t buffer[140];
-	wchar_t* buf = buffer;
-	*buf++ = static_cast<wchar_t>(channel);
-	for (int i = 1; i < 139 && *msg; ++i) {
-		*buf++ = static_cast<wchar_t>(*msg++);
-	}
-	*buf = L'\0';
+	// assert(GW::SendChat);
+	wchar buffer[140];
+
+	size_t len = strlen(msg);
+	len = len > 120 ? 120 : len;
+
+	buffer[0] = channel;
+	buffer[len + 1] = 0;
+	for (size_t i = 0; i < len; i++)
+		buffer[i + 1] = msg[i];
+
 	SendChat_addr(buffer);
 }
 
+// Change to WriteChatF(Channel chan, const wchar *from, const wchar *frmt, ..)
+// and       WriteChat(Channel chan, const wchar *from, const wchar *msg) 
+/*
 void GW::Chat::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
 	va_list vl;
 	va_start(vl, format);
@@ -249,49 +245,68 @@ void GW::Chat::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
 	delete[] chat;
 }
 
-void GW::Chat::WriteChat(const wchar_t* from, const wchar_t* msg) {
+void GW::Chat::WriteChat(const wchar_t *from, const wchar_t *msg) {
 	if (WriteWhisper_addr == nullptr) Initialize();
 	WriteWhisper_addr(0, from, msg);
 }
+*/
 
-void GW::Chat::WriteChat(Channel channel, const wchar_t *message) {
-	if (GwSendMessage == nullptr) Initialize();
+void GW::Chat::WriteChat(Channel channel, const wchar *msg) {
+	// assert(GW::SendUIMessage);
+	if (SendUIMessage == nullptr) Initialize();
 
-	wchar_t *buffer = new wchar_t[wcslen(message) + 4];
-	
-	RawMessage msg;
-	msg.channel = channel;
-	msg.message = buffer;
-	msg.player_id = 0;
-	
-	*buffer++ = 0x0108;
-	*buffer++ = 0x0107;
-	while (*message != L'\0') *buffer++ = *message++;
-	*buffer++ = 0x0001;
-	*buffer++ = 0;
-	
-	GwSendMessage(0x1000007E, &msg, NULL);
-	delete[] msg.message;
+	size_t len = wcslen(msg);
+	wchar *buffer = new wchar[len + 4];
+
+	ChatMessage param;
+	param.channel = (int)channel;
+	param.message = buffer;
+
+	buffer[0] = 0x108;
+	buffer[1] = 0x107;
+	for (size_t i = 0; i < len; i++)
+		buffer[i + 2] = msg[i];
+
+	buffer[len + 2] = 1;
+	buffer[len + 3] = 0;
+
+	SendUIMessage(0x1000007E, &param, NULL);
+	delete[] buffer;
 }
 
-void GW::Chat::WriteChat(Channel channel, const char* message) {
-	if (GwSendMessage == nullptr) Initialize();
+void GW::Chat::WriteChat(Channel channel, const char *msg) {
+	// assert(GW::SendUIMessage);
+	if (SendUIMessage == nullptr) Initialize();
 
-	wchar_t* buffer = new wchar_t[strlen(message) + 4];
-	
-	RawMessage msg;
-	msg.channel = channel;
-	msg.message = buffer;
-	msg.player_id = 0;
-	
-	*buffer++ = 0x0108;
-	*buffer++ = 0x0107;
-	while (*message != 0) *buffer++ = static_cast<wchar_t>(*message++);
-	*buffer++ = 0x0001;
-	*buffer++ = 0;
-	
-	GwSendMessage(0x1000007E, &msg, NULL);
-	delete[] msg.message;
+	size_t len = strlen(msg);
+	wchar *buffer = new wchar[len + 4];
+
+	ChatMessage param;
+	param.channel = (int)channel;
+	param.message = buffer;
+
+	buffer[0] = 0x108;
+	buffer[1] = 0x107;
+	for (size_t i = 0; i < len; i++)
+		buffer[i + 2] = msg[i];
+
+	buffer[len + 2] = 1;
+	buffer[len + 3] = 0;
+
+	SendUIMessage(0x1000007E, &param, NULL);
+	delete[] buffer;
+}
+
+void GW::Chat::CreateCommand(std::wstring cmd, CmdCB callback) {
+	if (::SendChat_hook.Empty()) {
+		if (SendChat_addr == nullptr) Initialize();
+		::SendChat_hook.Detour(SendChat_addr, SendChat_detour);
+	}
+	SlashCmdList[cmd] = callback;
+}
+
+void GW::Chat::DeleteCommand(std::wstring cmd) {
+	SlashCmdList.erase(cmd);
 }
 
 std::vector<std::wstring> GW::Chat::SplitString(const std::wstring& str, wchar_t c) {
@@ -310,9 +325,9 @@ std::vector<std::wstring> GW::Chat::SplitString(const std::wstring& str, wchar_t
 }
 
 namespace {
-	using namespace GW::Chat;
+	using namespace GW;
 
-	Channel GetChannel(wchar_t opcode) {
+	GW::Chat::Channel GetChannel(wchar_t opcode) {
 		switch (opcode) {
 			case '!': return CHANNEL_ALL;
 			case '@': return CHANNEL_GUILD;
@@ -321,7 +336,7 @@ namespace {
 			case '%': return CHANNEL_ALLIANCE;
 			case '"': return CHANNEL_WHISPER;
 			case '/': return CHANNEL_COMMAND;
-			default: return CHANNEL_UNKNOW;
+			default:  return CHANNEL_UNKNOW;
 		}
 	}
 
@@ -341,10 +356,11 @@ namespace {
 				args = msg.substr(index);
 			}
 
-			auto callback = Commands_callbacks.find(command);
-			if (callback != Commands_callbacks.end()) {
-				if (callback->second(command, args))
-					return;
+			auto callback = SlashCmdList.find(command);
+			if (callback != SlashCmdList.end()) {
+				callback->second(command, args);
+				// Doesn't seem to have any reason to foward the function call to it's original.
+				return;
 			}
 		}
 
@@ -352,7 +368,7 @@ namespace {
 		SendChat_hook.Original()(message);
 	}
 
-	void __fastcall OpenTemplate_detour(DWORD unk, ChatTemplate* info) {
+	void __fastcall OpenTemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info) {
 		if (open_links
 			&& info
 			&& info->code.valid()
@@ -365,23 +381,13 @@ namespace {
 		}
 	}
 
-	Color* __fastcall SenderColor_detour(Color *color, Channel chan) {
-		*color = SenderColor[chan];
+	GW::Chat::Color* __fastcall SenderColor_detour(GW::Chat::Color *color, GW::Chat::Channel chan) {
+		*color = SenderColor[(int)chan];
 		return color;
 	};
 
-	Color* __fastcall MessageColor_detour(Color *color, Channel chan) {
-		*color = MessageColor[chan];
+	GW::Chat::Color* __fastcall MessageColor_detour(GW::Chat::Color *color, GW::Chat::Channel chan) {
+		*color = MessageColor[(int)chan];
 		return color;
 	};
 }
-
-#if 0
-static void __fastcall det_write_buffer(WCHAR *message, DWORD channel)
-{
-	// @Robustness, Change to non static address.
-	static ChatBuffer **buffer = (ChatBuffer**)0x00D560F0;
-	GetLocalTime(&Timestamps[(*buffer)->next]);
-	return DetWriteBuffer(message, channel);
-}
-#endif

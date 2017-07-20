@@ -10,6 +10,11 @@
 #define COLOR_ARGB(a, r, g, b) (GW::Chat::Color)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
 #define COLOR_RGB(r, g, b) COLOR_ARGB(0xff, r, g, b)
 
+#define GWCALL __fastcall
+
+bool GW::Chat::ShowTimestamp = true;
+bool GW::Chat::KeepChatLog   = true;
+
 namespace {
 	using namespace GW::Chat;
 
@@ -24,7 +29,11 @@ namespace {
 		ChatMessage messages[256];
 	};
 
+	// 08 01 07 01 [Time] 01 00 02 00
+	ChatBuffer **ChatBufferAddr;
 	SYSTEMTIME Timestamps[256];
+	int  reprint_index;
+	bool reprint_chat;
 
 	GW::Chat::Color SenderColor[] = {
 		COLOR_RGB(0xFF, 0xC0, 0x60),
@@ -62,15 +71,22 @@ namespace {
 		COLOR_RGB(0xE0, 0xE0, 0xE0)
 	};
 
-	typedef void (__fastcall *SendUIMessage_t)(int id, void *p1, void *p2);
-	SendUIMessage_t SendUIMessage = nullptr;
+	// There is maybe more.
+	// Though, we can probably fix this.
+	bool ChannelThatParseColorTag[] = {
+		true, true, true, true, true, true, true,
+		false, // WARNING
+		true, true, true, true, true,
+		false, // ADVISORY
+		true
+	};
 
 	void __fastcall SendChat_detour(wchar_t *_message);
 	typedef void(__fastcall *SendChat_t)(wchar_t* message);
 	SendChat_t SendChat_addr = nullptr;
 	GW::THook<SendChat_t> SendChat_hook;
 	std::map<std::wstring, GW::Chat::CmdCB> SlashCmdList;
-	std::function<void(GW::Chat::Channel chan, wchar_t msg[140])> SendChat_callback;
+	std::function<void(GW::Chat::Channel chan, wchar msg[120])> SendChat_callback;
 
 	typedef void(__fastcall *OpenTemplate_t)(DWORD unk, GW::Chat::ChatTemplate* info);
 	void __fastcall OpenTemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info);
@@ -100,13 +116,83 @@ namespace {
 		LocalMessage_hook.Original()(channel, message);
 	}
 
-	typedef void(__fastcall *WriteWhisper_t)(int, const wchar_t*, const wchar_t*);
+	typedef void(__fastcall *WriteWhisper_t)(int, wchar*, wchar*);
 	WriteWhisper_t WriteWhisper_addr = nullptr;
 	GW::THook<WriteWhisper_t> WriteWhisper_hook;
-	std::function<void(const wchar_t[20], const wchar_t[140])> WriteWhisper_callback;
-	void __fastcall WriteWhisper_detour(int unk, const wchar_t *from, const wchar_t *msg) {
+	std::function<void(wchar[20], wchar[140])> WriteWhisper_callback;
+	void __fastcall WriteWhisper_detour(int unk, wchar *from, wchar *msg) {
 		if (WriteWhisper_callback) WriteWhisper_callback(from, msg);
 		WriteWhisper_hook.Original()(unk, from, msg);
+	}
+
+	// This is used for more than just Chat stuff, but for now we only used it here.
+	typedef void (GWCALL *SendUIMessage_t)(int id, void *param1, void *param2);
+	SendUIMessage_t SendUIMessage = nullptr;
+
+	typedef void (GWCALL *InitChatLog_t)(void);
+	InitChatLog_t InitChatLog;
+	GW::THook<InitChatLog_t> InitChatLog_hook;
+
+	void GWCALL InitChatLog_detour(void) {
+		// assert(ChatBufferAddr);
+		ChatBuffer *buff = *ChatBufferAddr;
+		if (!KeepChatLog || !buff)
+			InitChatLog_hook.Original()();
+	}
+
+	// PrintChatBuffer tell us when the chat is reprinted.
+	// WriteChatBuffer is used to save messages timestamps.
+	// PrintChat is used to chnage the message printed.
+	typedef void (GWCALL *PrintChatLog_t)(void *ctx, int thiscall, int unk);
+	typedef void (GWCALL *WriteChatLog_t)(Channel channel, wchar *encStr);
+	typedef void (GWCALL *PrintChat_t)(void *ctx, int thiscall, Channel channel, wchar *str, int reprint);
+
+	PrintChatLog_t PrintChatLog;
+	WriteChatLog_t WriteChatLog;
+	PrintChat_t    PrintChat;
+
+	GW::THook<PrintChatLog_t> PrintChatLog_hook;
+	GW::THook<WriteChatLog_t> WriteChatLog_hook;
+	GW::THook<PrintChat_t>    PrintChat_hook;
+
+	void GWCALL PrintChatLog_detour(void *ctx, int thiscall, int unk) {
+		reprint_chat = true;
+		reprint_index = 0;
+		PrintChatLog_hook.Original()(ctx, thiscall, unk);
+		reprint_chat = false;
+	}
+
+	void GWCALL WriteChatLog_detour(Channel channel, wchar *encStr) {
+		// assert(ChatBufferAddr);
+		ChatBuffer *buff = *ChatBufferAddr;
+		GetSystemTime(&Timestamps[buff->next]);
+		WriteChatLog_hook.Original()(channel, encStr);
+	}
+
+	void GWCALL PrintChat_detour(void *ctx, int thiscall, Channel channel, wchar *str, int reprint) {
+		// assert(ChatBufferAddr && 0 <= channel && channel < CHANNEL_COUNT);
+		SYSTEMTIME *time = nullptr;
+		ChatBuffer *buff = *ChatBufferAddr;
+
+		if (!ShowTimestamp)
+			PrintChat_hook.Original()(ctx, thiscall, channel, str, reprint);
+
+		if (reprint) {
+			time = &Timestamps[reprint_index];
+			reprint_index++;
+		} else {
+			// @Fix, add the mod 256.
+			time = &Timestamps[buff->next - 1];
+		}
+
+		// @Robustness, Buffer size, might create error.
+		wchar buffer[1024];
+		if (ChannelThatParseColorTag[channel]) {
+			wsprintf(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", COLOR_RGB(0xFF, 0xFF, 0xFF), time->wHour, time->wMinute, str);
+		} else {
+			wsprintf(buffer, L"\x108\x107[%02d:%02d] \x01\x02%s", time->wHour, time->wMinute, str);
+		}
+		PrintChat_hook.Original()(ctx, thiscall, channel, buffer, reprint);
 	}
 }
 
@@ -185,6 +271,16 @@ void GW::Chat::Initialize() {
 	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
 	printf("Write Whisper Func = 0x%X\n", (DWORD)WriteWhisper_addr);
 
+	ChatBufferAddr = (ChatBuffer**)0x00D560F0; // Need scan!
+	InitChatLog  = (InitChatLog_t)(0x007DE400); // Need scan!
+	PrintChatLog = (PrintChatLog_t)(0x004A5C00); // Need scan!
+	WriteChatLog = (WriteChatLog_t)(0x007DE520); // Need scan!
+	PrintChat    = (PrintChat_t)(0x004A5880); // Need scan!
+
+	InitChatLog_hook.Detour(InitChatLog, InitChatLog_detour);
+	PrintChatLog_hook.Detour(PrintChatLog, PrintChatLog_detour);
+	WriteChatLog_hook.Detour(WriteChatLog, WriteChatLog_detour);
+	PrintChat_hook.Detour(PrintChat, PrintChat_detour);
 }
 
 void GW::Chat::RestoreHooks() {
@@ -195,6 +291,11 @@ void GW::Chat::RestoreHooks() {
 	ChatEvent_hook.Retour();
 	LocalMessage_hook.Retour();
 	WriteWhisper_hook.Retour();
+
+	InitChatLog_hook.Retour();
+	PrintChatLog_hook.Retour();
+	WriteChatLog_hook.Retour();
+	PrintChat_hook.Retour();
 }
 
 void GW::Chat::SendChat(char channel, const wchar *msg) {

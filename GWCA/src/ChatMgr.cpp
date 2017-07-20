@@ -174,8 +174,10 @@ namespace {
 		SYSTEMTIME *time = nullptr;
 		ChatBuffer *buff = *ChatBufferAddr;
 
-		if (!ShowTimestamp)
+		if (!ShowTimestamp) {
 			PrintChat_hook.Original()(ctx, thiscall, channel, str, reprint);
+			return;
+		}
 
 		if (reprint) {
 			time = &Timestamps[reprint_index];

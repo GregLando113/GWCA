@@ -12,8 +12,10 @@
 
 #define GWCALL __fastcall
 
-bool GW::Chat::ShowTimestamp = true;
-bool GW::Chat::KeepChatLog   = true;
+bool GW::Chat::ShowTimestamps  = true;
+bool GW::Chat::KeepChatHistory = true;
+
+GW::Chat::Color GW::Chat::TimestampsColor = COLOR_RGB(0xff, 0xff, 0xff);
 
 namespace {
 	using namespace GW::Chat;
@@ -35,7 +37,17 @@ namespace {
 	int  reprint_index;
 	bool reprint_chat;
 
-	GW::Chat::Color SenderColor[] = {
+	// There is maybe more.
+	// Though, we can probably fix this.
+	bool ChannelThatParseColorTag[] = {
+		true, true, true, true, true, true, true,
+		false, // WARNING
+		true, true, true, true, true,
+		false, // ADVISORY
+		true
+	};
+
+	GW::Chat::Color ChatSenderColor[] = {
 		COLOR_RGB(0xFF, 0xC0, 0x60),
 		COLOR_RGB(0x60, 0xA0, 0xFF),
 		COLOR_RGB(0xC0, 0xD0, 0xFF),
@@ -53,7 +65,7 @@ namespace {
 		COLOR_RGB(0x80, 0xC0, 0xFF)
 	};
 
-	GW::Chat::Color MessageColor[] = {
+	GW::Chat::Color ChatMessageColor[] = {
 		COLOR_RGB(0xE0, 0xE0, 0xE0),
 		COLOR_RGB(0xE0, 0xE0, 0xE0),
 		COLOR_RGB(0xC0, 0xD0, 0xFF),
@@ -69,16 +81,6 @@ namespace {
 		COLOR_RGB(0xFF, 0xC4, 0xC0),
 		COLOR_RGB(0xFF, 0x90, 0x20),
 		COLOR_RGB(0xE0, 0xE0, 0xE0)
-	};
-
-	// There is maybe more.
-	// Though, we can probably fix this.
-	bool ChannelThatParseColorTag[] = {
-		true, true, true, true, true, true, true,
-		false, // WARNING
-		true, true, true, true, true,
-		false, // ADVISORY
-		true
 	};
 
 	void __fastcall SendChat_detour(wchar_t *_message);
@@ -136,7 +138,7 @@ namespace {
 	void GWCALL InitChatLog_detour(void) {
 		// assert(ChatBufferAddr);
 		ChatBuffer *buff = *ChatBufferAddr;
-		if (!KeepChatLog || !buff)
+		if (!KeepChatHistory || !buff)
 			InitChatLog_hook.Original()();
 	}
 
@@ -174,7 +176,7 @@ namespace {
 		SYSTEMTIME *time = nullptr;
 		ChatBuffer *buff = *ChatBufferAddr;
 
-		if (!ShowTimestamp) {
+		if (!ShowTimestamps) {
 			PrintChat_hook.Original()(ctx, thiscall, channel, str, reprint);
 			return;
 		}
@@ -183,16 +185,24 @@ namespace {
 			time = &Timestamps[reprint_index];
 			reprint_index++;
 		} else {
-			// @Fix, add the mod 256.
+			if (!buff->next) buff->next = 256;
 			time = &Timestamps[buff->next - 1];
 		}
 
-		// @Robustness, Buffer size, might create error.
+		// @Robustness, Buffer size, might create errors.
 		wchar buffer[1024];
 		if (ChannelThatParseColorTag[channel]) {
-			wsprintf(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", COLOR_RGB(0xFF, 0xFF, 0xFF), time->wHour, time->wMinute, str);
+			if (time->wYear == 0) {
+				wsprintf(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, str);
+			} else {
+				wsprintf(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", TimestampsColor, time->wHour, time->wMinute, str);
+			}
 		} else {
-			wsprintf(buffer, L"\x108\x107[%02d:%02d] \x01\x02%s", time->wHour, time->wMinute, str);
+			if (time->wYear == 0) {
+				wsprintf(buffer, L"\x108\x107[--:--] \x01\x02%s", TimestampsColor, str);
+			} else {
+				wsprintf(buffer, L"\x108\x107[%02d:%02d] \x01\x02%s", time->wHour, time->wMinute, str);
+			}
 		}
 		PrintChat_hook.Original()(ctx, thiscall, channel, buffer, reprint);
 	}
@@ -238,8 +248,8 @@ GW::Chat::Color GW::Chat::SetSenderColor(Channel chan, Color col) {
 		GetChannelColor_t addr = (GetChannelColor_t)0x00481650; // Need scan!
 		SenderColor_hook.Detour(addr, ::SenderColor_detour);
 	}
-	Color old = SenderColor[(int)chan];
-	SenderColor[(int)chan] = col;
+	Color old = ChatSenderColor[(int)chan];
+	ChatSenderColor[(int)chan] = col;
 	return old;
 }
 
@@ -248,8 +258,8 @@ GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 		GetChannelColor_t addr = (GetChannelColor_t)0x00481570; // Need scan!
 		MessageColor_hook.Detour(addr, ::MessageColor_detour);
 	}
-	Color old = MessageColor[(int)chan];
-	MessageColor[(int)chan] = col;
+	Color old = ChatMessageColor[(int)chan];
+	ChatMessageColor[(int)chan] = col;
 	return old;
 }
 
@@ -485,12 +495,12 @@ namespace {
 	}
 
 	GW::Chat::Color* __fastcall SenderColor_detour(GW::Chat::Color *color, GW::Chat::Channel chan) {
-		*color = SenderColor[(int)chan];
+		*color = ChatSenderColor[(int)chan];
 		return color;
 	};
 
 	GW::Chat::Color* __fastcall MessageColor_detour(GW::Chat::Color *color, GW::Chat::Channel chan) {
-		*color = MessageColor[(int)chan];
+		*color = ChatMessageColor[(int)chan];
 		return color;
 	};
 }

@@ -62,8 +62,9 @@ namespace GW {
 		void CreateCommand(std::wstring cmd, CmdCB callback);
 		void DeleteCommand(std::wstring cmd);
 
-		extern bool ShowTimestamp;
-		extern bool KeepChatLog;
+		extern bool ShowTimestamps;
+		extern bool KeepChatHistory;
+		extern Color TimestampsColor;
 
 		void Initialize();
 		void RestoreHooks();

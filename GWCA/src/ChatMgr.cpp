@@ -28,7 +28,7 @@ namespace {
 	struct ChatBuffer {
 		uint32_t next;
 		uint32_t unk;
-		ChatMessage messages[256];
+		ChatMessage *messages[256];
 	};
 
 	// 08 01 07 01 [Time] 01 00 02 00
@@ -158,8 +158,14 @@ namespace {
 	GW::THook<PrintChat_t>    PrintChat_hook;
 
 	void GWCALL PrintChatLog_detour(void *ctx, int thiscall, int unk) {
+		// assert(ChatBufferAddr);
+		ChatBuffer *buff = *ChatBufferAddr;
+		uint32_t first = buff->next;
+		if (!buff->messages[first])
+			first = 0;
+
 		reprint_chat = true;
-		reprint_index = 0;
+		reprint_index = first;
 		PrintChatLog_hook.Original()(ctx, thiscall, unk);
 		reprint_chat = false;
 	}
@@ -181,12 +187,13 @@ namespace {
 			return;
 		}
 
-		if (reprint) {
+		if (reprint_chat) {
 			time = &Timestamps[reprint_index];
-			reprint_index++;
+			reprint_index = (reprint_index + 1) % 256;
 		} else {
-			if (!buff->next) buff->next = 256;
-			time = &Timestamps[buff->next - 1];
+			int tmp = buff->next;
+			if (!tmp) tmp = 256;
+			time = &Timestamps[tmp - 1];
 		}
 
 		// @Robustness, Buffer size, might create errors.

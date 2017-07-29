@@ -7,7 +7,7 @@
 void PrintCoords() {
 
 	// Get Player Agent Structure.
-	GWCA::GW::Agent* player = GWCA::Agents().GetPlayer();
+	GW::Agent* player = GW::Agents::GetPlayer();
 
 	// Print coords.
 	printf("Player: %f %f", player->pos.x, player->pos.y);
@@ -33,7 +33,7 @@ void init(HMODULE hModule) {
 
 	main();
 
-	GWCA::Api::Destruct();
+	GW::Terminate();
 	FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
 }
 
@@ -49,7 +49,7 @@ BOOL WINAPI DllMain(_In_ HMODULE _HDllHandle, _In_ DWORD _Reason, _In_opt_ LPVOI
 		}
 
 		// Initialize API, exit out if it failed.
-		if (!GWCA::Api::Initialize()) {
+		if (!GW::Initialize()) {
 			return FALSE;
 		}
 

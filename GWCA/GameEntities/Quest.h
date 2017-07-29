@@ -16,7 +16,7 @@ namespace GW {
         /* +h0024 */ DWORD h0024;
         /* +h0028 */ DWORD mapto;
         /* +h002C */ DWORD h002C; // namestring reward
-        /* +h0030 */ DWORD h0030; // namestring 
+        /* +h0030 */ DWORD h0030; // namestring objective
     };
 
     using QuestLog = Array<Quest>;

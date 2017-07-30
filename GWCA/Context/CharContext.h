@@ -4,6 +4,7 @@
 #include <Windows.h>
 
 #include <GWCA\GameContainers\Array.h>
+#include <GWCA\GameEntities\Match.h>
 
 namespace GW {
 	typedef wchar_t wchar;
@@ -26,7 +27,7 @@ namespace GW {
         /* +h01BC */ DWORD currentmapid;
         /* +h01C0 */ DWORD currentmapid_dupe;
         /* +h01C4 */ char h01C4[0x8];
-        /* +h01CC */ Array<void*> h01CC;
+        /* +h01CC */ Array<ObserverMatch*> ObserverMatchs;
         /* +h01DC */ char h001DC[0x14C];
         /* +h0328 */ wchar playeremail[64];
     };

@@ -215,6 +215,9 @@
     <ClInclude Include="GWCA\GameContainers\Array.h">
       <Filter>GameContainers</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\GameEntities\Match.h">
+      <Filter>GameEntities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">

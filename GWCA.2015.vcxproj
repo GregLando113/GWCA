@@ -35,6 +35,7 @@
     <ClInclude Include="GWCA\GameEntities\Hero.h" />
     <ClInclude Include="GWCA\GameEntities\Item.h" />
     <ClInclude Include="GWCA\GameEntities\Map.h" />
+    <ClInclude Include="GWCA\GameEntities\Match.h" />
     <ClInclude Include="GWCA\GameEntities\NPC.h" />
     <ClInclude Include="GWCA\GameEntities\Party.h" />
     <ClInclude Include="GWCA\GameEntities\Pathing.h" />

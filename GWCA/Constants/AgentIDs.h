@@ -99,11 +99,11 @@ namespace GW {
 			const int MiniatureMOX = 302;					// Miniature M.O.X. (green)
 
 			//const int Unknown303 = 303;
-			//const int Unknown303 = 304;
-			//const int Unknown303 = 305;
-			//const int Unknown303 = 306;
-			//const int Unknown303 = 307;
-			//const int Unknown303 = 308;
+			//const int Unknown304 = 304;
+			//const int Unknown305 = 305;
+			//const int Unknown306 = 306;
+			//const int Unknown307 = 307;
+			//const int Unknown308 = 308;
 			const int CollectorsEditionKuunavangDoll = 309;	// Miniature Kuunavang (green)
 			//const int Unknown310 = 310;
 			//const int Unknown311 = 311;

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _TRADE_CONTEXT_INC
+#define _TRADE_CONTEXT_INC
 
 #include <Windows.h>
 
@@ -7,11 +8,7 @@
 
 namespace GW {
 
-	class TradeContext {
-		TradeContext() {}
-		TradeContext(const TradeContext&) {}
-
-	public:
+	struct TradeContext {
 		enum State : DWORD { NO_TRADE, TRADE_INITIATED, OFFER_ACCEPTED = 3 };
 
 		struct Item {
@@ -24,9 +21,16 @@ namespace GW {
 			Array<TradeContext::Item> items;
 		};
 
-		State state;
-		DWORD pad1[3]; // Seemingly 3 null dwords
-		Trader player;
-		Trader partner;
+		/* +h0000 */ State  state;
+		/* +h0004 */ DWORD  h0004[3]; // Seemingly 3 null dwords
+		/* +h0010 */ Trader player;
+		/* +h0020 */ Trader partner;
+
+		// bool GetPartnerAccepted();
+		// bool GetPartnerOfferSent();
+
+		bool GetIsTradeInitiated() { return state >= TRADE_INITIATED; }
 	};
 }
+
+#endif // _TRADE_CONTEXT_INC

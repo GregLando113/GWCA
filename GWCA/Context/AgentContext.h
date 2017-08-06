@@ -7,33 +7,39 @@
 #include <GWCA\GameContainers\Array.h>
 
 namespace GW {
+    struct AgentToGadget {
+        DWORD h0000;
+        DWORD h0004;
+        DWORD GadgetId;
+    };
+
     struct AgentContext {
-        /* +h0000 */ Array<void*> unk1_array;
-        /* +h0010 */ DWORD pad1[5];
-        /* +h0024 */ void* function1;
-        /* +h0028 */ DWORD pad2[2];
-        /* +h0030 */ void* function2;
-        /* +h0034 */ DWORD pad3[2];
-        /* +h003C */ void* function3;
-        /* +h0040 */ DWORD pad4[2];
-        /* +h0048 */ void* function4;
-        /* +h004C */ DWORD pad5[2];
-        /* +h0054 */ void* function5;
-        /* +h0058 */ DWORD pad6[11];
-        /* +h0084 */ Array<void*> unk2_array;
-        /* +h0094 */   DWORD unk1; // this field and the next array are link together in a structure.
-        /* +h0098 */   Array<void*> unk3_array; // elements are of size 12. {ptr, func, ptr}
-        /* +h00A8 */ Array<void*> unk4_array;
-        /* +h00B8 */ Array<void*> unk5_array;
+        /* +h0000 */ Array<void*> h0000;
+        /* +h0010 */ DWORD h0010[5];
+        /* +h0024 */ DWORD h0024; // function
+        /* +h0028 */ DWORD h0028[2];
+        /* +h0030 */ DWORD h0030; // function
+        /* +h0034 */ DWORD h0034[2];
+        /* +h003C */ DWORD h003C; // function
+        /* +h0040 */ DWORD h0040[2];
+        /* +h0048 */ DWORD h0048; // function
+        /* +h004C */ DWORD h004C[2];
+        /* +h0054 */ DWORD h0054; // function
+        /* +h0058 */ DWORD h0058[11];
+        /* +h0084 */ Array<void*> h0084;
+        /* +h0094 */   DWORD h0094; // this field and the next array are link together in a structure.
+        /* +h0098 */   Array<AgentToGadget> GadgetData; // elements are of size 12. {ptr, func, ptr}
+        /* +h00A8 */ Array<void*> h00A8;
+        /* +h00B8 */ Array<void*> h00B8;
         /* +h00C8 */ DWORD rand1; // Number seems to be randomized quite a bit o.o seems to be accessed by textparser.cpp
         /* +h00CC */ DWORD rand2;
-        /* +h00D0 */ BYTE pad7[24];
+        /* +h00D0 */ BYTE h00D0[24];
         /* +h00E8 */ Array<AgentMovement*> agentmovement;
-        /* +h00F8 */ Array<void*> unk6_array;
-        /* +h0108 */ BYTE pad8[68];
-        /* +h014C */ Array<void*> unk7_array;
-        /* +h015C */ Array<void*> unk8_array;
-        /* +h016C */ BYTE pad9[64];
+        /* +h00F8 */ Array<void*> h00F8;
+        /* +h0108 */ BYTE h0108[68];
+        /* +h014C */ Array<void*> h014C;
+        /* +h015C */ Array<void*> h015C;
+        /* +h016C */ BYTE h016C[64];
         /* +h01AC */ DWORD instancetimer;
         //... more but meh
     };

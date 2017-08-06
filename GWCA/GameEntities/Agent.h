@@ -12,8 +12,10 @@ namespace GW {
 
     struct Agent {
         /* +h0000 */ DWORD* vtable;
-        /* +h0004 */ BYTE h0004[24];
-        /* +h001C */ BYTE h001C[4]; // This actually points to the agent before but with a small offset
+        /* +h0004 */ DWORD h0004;
+        /* +h0008 */ DWORD h0008;
+        /* +h000C */ DWORD h000C[4];
+        /* +h001C */ DWORD h001C; // This actually points to the agent before but with a small offset
         /* +h0020 */ Agent *NextAgent; // Pointer to the next agent (by id)
         /* +h0024 */ BYTE h0024[8];
         /* +h002C */ AgentID Id; // AgentId
@@ -166,16 +168,16 @@ namespace GW {
     };
 
     struct AgentMovement {
-        /* +h0000 */ DWORD  h0000[3];
-        /* +h000C */ DWORD  AgentId;
-        /* +h0010 */ DWORD  h0010[10];
-        /* +h0038 */ DWORD  Moving1; //tells if you are stuck even if your client doesn't know
-        /* +h003C */ DWORD  h003C[2];
-        /* +h0044 */ DWORD  Moving2; //exactly same as Moving1
-        /* +h0048 */ DWORD  h0048[7];
-        /* +h0064 */ Vec3f  h0064;
-        /* +h0070 */ DWORD  h0070;
-        /* +h0074 */ Vec3f  h0074;
+        /* +h0000 */ DWORD h0000[3];
+        /* +h000C */ DWORD AgentId;
+        /* +h0010 */ DWORD h0010[10];
+        /* +h0038 */ DWORD Moving1; //tells if you are stuck even if your client doesn't know
+        /* +h003C */ DWORD h003C[2];
+        /* +h0044 */ DWORD Moving2; //exactly same as Moving1
+        /* +h0048 */ DWORD h0048[7];
+        /* +h0064 */ Vec3f h0064;
+        /* +h0070 */ DWORD h0070;
+        /* +h0074 */ Vec3f h0074;
     };
 
     struct AgentInfo {

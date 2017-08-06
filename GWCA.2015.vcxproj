@@ -19,6 +19,7 @@
     <ClInclude Include="GWCA\Constants\Skills.h" />
     <ClInclude Include="GWCA\Context\AgentContext.h" />
     <ClInclude Include="GWCA\Context\CharContext.h" />
+    <ClInclude Include="GWCA\Context\GadgetContext.h" />
     <ClInclude Include="GWCA\Context\GameContext.h" />
     <ClInclude Include="GWCA\Context\GuildContext.h" />
     <ClInclude Include="GWCA\Context\ItemContext.h" />

@@ -218,6 +218,9 @@
     <ClInclude Include="GWCA\GameEntities\Match.h">
       <Filter>GameEntities</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Context\GadgetContext.h">
+      <Filter>Context</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">

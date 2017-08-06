@@ -9,6 +9,7 @@
 #include "CharContext.h"
 #include "PartyContext.h"
 #include "TradeContext.h"
+#include "GadgetContext.h"
 
 #include <GWCA\Utilities\Scanner.h>
 
@@ -40,7 +41,7 @@ namespace GW {
         /* +h002C */ WorldContext* world; // Best name to fit it that I can think of.
         /* +h0030 */ void* unkcontext8;
         /* +h0034 */ void* nullcontext3;
-        /* +h0038 */ void* unkcontext9;
+        /* +h0038 */ GadgetContext* gadget;
         /* +h003C */ GuildContext* guild;
         /* +h0040 */ ItemContext* items;
         /* +h0044 */ CharContext* character;

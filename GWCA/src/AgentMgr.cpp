@@ -194,7 +194,14 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 			return std::wstring(buffer);
 		}
 	} else if (agent->GetIsGadgetType()) {
-		return L"Gadget";
+		AgentContext *ctx = GameContext::instance()->agent;
+		GadgetContext *gadget = GameContext::instance()->gadget;
+		if (!ctx || !gadget) return L"";
+
+		size_t id = ctx->GadgetData[agent->Id].GadgetId;
+		str = gadget->GadgetInfo[id].NameString;
+		AsyncDecodeStr(str, __decode_str_callback, buffer);
+		return std::wstring(buffer);
 	} else if (agent->GetIsItemType()) {
 		GW::ItemArray items = GW::Items::GetItemArray();
 		if (!items.valid()) return L"";

@@ -160,6 +160,8 @@ namespace {
 	void GWCALL PrintChatLog_detour(void *ctx, int thiscall, int unk) {
 		// assert(ChatBufferAddr);
 		ChatBuffer *buff = *ChatBufferAddr;
+		if (!buff) return;
+
 		uint32_t first = buff->next;
 		if (!buff->messages[first])
 			first = 0;
@@ -174,6 +176,7 @@ namespace {
 		// assert(ChatBufferAddr);
 		ChatBuffer *buff = *ChatBufferAddr;
 		if (!buff) return;
+
 		GetLocalTime(&Timestamps[buff->next]);
 		WriteChatLog_hook.Original()(channel, encStr);
 	}
@@ -182,6 +185,7 @@ namespace {
 		// assert(ChatBufferAddr && 0 <= channel && channel < CHANNEL_COUNT);
 		SYSTEMTIME *time = nullptr;
 		ChatBuffer *buff = *ChatBufferAddr;
+		if (!buff) return;
 
 		if (!ShowTimestamps) {
 			PrintChat_hook.Original()(ctx, thiscall, channel, str, reprint);

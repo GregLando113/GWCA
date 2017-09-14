@@ -173,6 +173,7 @@ namespace {
 	void GWCALL WriteChatLog_detour(Channel channel, wchar *encStr) {
 		// assert(ChatBufferAddr);
 		ChatBuffer *buff = *ChatBufferAddr;
+		if (!buff) return;
 		GetLocalTime(&Timestamps[buff->next]);
 		WriteChatLog_hook.Original()(channel, encStr);
 	}

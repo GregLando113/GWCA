@@ -9,8 +9,6 @@ namespace GW {
     protected:
         TLink<T> *prevLink; // +h0000
         T        *nextNode; // +h0004
-        T        *self;     // +h0008
-        DWORD     useless;  // +h000C
     };
 
     template <typename T>

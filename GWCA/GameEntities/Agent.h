@@ -3,6 +3,8 @@
 
 #include <Windows.h>
 #include <GWCA\GameEntities\Position.h>
+
+#include <GWCA\GameContainers\List.h>
 #include <GWCA\GameContainers\Array.h>
 
 namespace GW {
@@ -15,9 +17,7 @@ namespace GW {
         /* +h0004 */ DWORD h0004;
         /* +h0008 */ DWORD h0008;
         /* +h000C */ DWORD h000C[4];
-        /* +h001C */ DWORD h001C; // This actually points to the agent before but with a small offset
-        /* +h0020 */ Agent *NextAgent; // Pointer to the next agent (by id)
-        /* +h0024 */ BYTE h0024[8];
+        /* +h001C */ TLink<Agent> link;
         /* +h002C */ AgentID Id; // AgentId
         /* +h0030 */ float Z; // Z coord in float
         /* +h0034 */ float Width1;  // Width of the model's box

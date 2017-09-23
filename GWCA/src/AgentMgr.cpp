@@ -22,6 +22,8 @@ namespace {
 	DWORD* PlayerAgentIDPtr = nullptr;
 	DWORD* TargetAgentIDPtr = nullptr;
 	DWORD* MouseOverAgentIDPtr = nullptr;
+
+	GW::AgentList *AgentListPtr = nullptr;
 }
 
 void GW::Agents::Initialize() {
@@ -30,6 +32,8 @@ void GW::Agents::Initialize() {
 	PlayerAgentIDPtr = (DWORD*)(agArrayPtr - 0x54);
 	TargetAgentIDPtr = (DWORD*)(agArrayPtr - 0x500);
 	MouseOverAgentIDPtr = (DWORD*)(agArrayPtr - 0x4F4);
+
+	AgentListPtr = (AgentList*)(agArrayPtr - 0x40);
 }
 
 void GW::Agents::SetupLastDialogHook() {

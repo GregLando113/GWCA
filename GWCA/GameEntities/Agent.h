@@ -18,7 +18,7 @@ namespace GW {
         /* +h0008 */ DWORD h0008;
         /* +h000C */ DWORD h000C[4];
         /* +h001C */ TLink<Agent> link;
-        /* +h0024 */ DWORD h0024[2]; // h0024 = (size_t)h0020 + 1
+        /* +h0024 */ TLink<Agent> link2; // Not used.
         /* +h002C */ AgentID Id; // AgentId
         /* +h0030 */ float Z; // Z coord in float
         /* +h0034 */ float Width1;  // Width of the model's box
@@ -187,6 +187,8 @@ namespace GW {
     };
 
     using AgentArray = Array<Agent*>;
+    using AgentList  = TList<Agent>;
+
     using MapAgentArray = Array<MapAgent>;
     using AgentMovementArray = Array<AgentMovement*>;
     using AgentInfoArray = Array<AgentInfo>;

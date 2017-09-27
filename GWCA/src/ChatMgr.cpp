@@ -211,7 +211,7 @@ namespace {
 			}
 		} else {
 			if (time->wYear == 0) {
-				wsprintf(buffer, L"\x108\x107[--:--] \x01\x02%s", TimestampsColor, str);
+				wsprintf(buffer, L"\x108\x107[--:--] \x01\x02%s", str);
 			} else {
 				wsprintf(buffer, L"\x108\x107[%02d:%02d] \x01\x02%s", time->wHour, time->wMinute, str);
 			}

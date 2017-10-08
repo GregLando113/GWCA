@@ -295,7 +295,7 @@ void GW::Chat::Initialize() {
 	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
 	printf("Write Whisper Func = 0x%X\n", (DWORD)WriteWhisper_addr);
 
-	ChatBufferAddr = (ChatBuffer**)0x00D560F0; // Need scan!
+	ChatBufferAddr = (ChatBuffer**)(0x00D560E8); // Need scan!
 	InitChatLog  = (InitChatLog_t)(0x007DE400); // Need scan!
 	PrintChatLog = (PrintChatLog_t)(0x004A5C00); // Need scan!
 	WriteChatLog = (WriteChatLog_t)(0x007DE520); // Need scan!

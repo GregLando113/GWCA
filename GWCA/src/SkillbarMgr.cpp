@@ -63,11 +63,21 @@ void GW::SkillbarMgr::LoadSkillbar(DWORD skillids[8], int heroindex) {
 	CtoS::SendPacket(0x2C, 0x56, id, 0x8, skillids[0], skillids[1], skillids[2], skillids[3], skillids[4], skillids[5], skillids[6], skillids[7]);
 }
 
-void GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
+bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
+	const int SKILL_COUNT = 3410;
+	const int PROFESSION_COUNT = 11;
+
 	size_t len = strlen(temp);
-	char *bitStr = new char[len * 6];
-	for (size_t i = 0; i < len; i++)
-		_WriteBits(_Base64ToValue[temp[i]], bitStr + (6*i));
+	char *bitStr = new char[len * 6]; // @Enhancement, this doesn't need to be a heap alloc.
+
+	for (size_t i = 0; i < len; i++) {
+		int numeric_value = _Base64ToValue[temp[i]];
+		if (numeric_value == -1) {
+			printf("Unvalid base64 character '%c' in string '%s'\n", temp[i], temp);
+			return false;
+		}
+		_WriteBits(numeric_value, bitStr + (6 * i));
+	}
 
 	DWORD AttribIDs[10] = {0};
 	DWORD AttribVal[10] = {0};
@@ -81,12 +91,12 @@ void GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 
 	// HEADER
 	int header = _ReadBits(&it, 4);
-	if (header != 0 && header != 14) return;
+	if (header != 0 && header != 14) return false;
 	if (header == 14) _ReadBits(&it, 4);
 	int bits_per_prof = 2*_ReadBits(&it, 2) + 4;
 	int prof1 = _ReadBits(&it, bits_per_prof);
 	int prof2 = _ReadBits(&it, bits_per_prof);
-	if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) return;
+	if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) return false;
 
 	// ATTRIBUTES
 	AttribCount = _ReadBits(&it, 4);
@@ -94,7 +104,7 @@ void GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 	for (DWORD i = 0; i < AttribCount; i++) {
 		AttribIDs[i] = _ReadBits(&it, bits_per_attr);
 		AttribVal[i] = _ReadBits(&it, 4);
-		if (AttribIDs[i] < 0 || AttribIDs[i] > 44) return;
+		if (AttribIDs[i] < 0 || AttribIDs[i] > 44) return false;
 	}
 
 	// SKILLS
@@ -110,6 +120,7 @@ void GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		LoadSkillbar(SkillIDs);
 		SetAttributes(AttribCount, AttribIDs, AttribVal);
 	}
+	return true;
 }
 
 void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, DWORD * attributevalues, int heroindex) {

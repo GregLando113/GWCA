@@ -105,7 +105,7 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		AttribIDs[i] = _ReadBits(&it, bits_per_attr);
 		AttribVal[i] = _ReadBits(&it, 4);
 		if (AttribIDs[i] > ATTRIBUTE_MAX) {
-			fprintf_s(stderr, "Attribute id %d out of range. (max = %d)\n", AttribIDs[i], 44);
+			fprintf_s(stderr, "Attribute id %d is out of range. (max = %d)\n", AttribIDs[i], 44);
 			return false;
 		}
 	}

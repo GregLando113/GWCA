@@ -64,8 +64,8 @@ void GW::SkillbarMgr::LoadSkillbar(DWORD skillids[8], int heroindex) {
 }
 
 bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
-	const int SKILL_COUNT = 3410;
-	const int PROFESSION_COUNT = 11;
+	const int SKILL_MAX = 3410; // @Move
+	const int ATTRIBUTE_MAX = 44; // @Move
 
 	size_t len = strlen(temp);
 	char *bitStr = new char[len * 6]; // @Enhancement, this doesn't need to be a heap alloc.
@@ -73,18 +73,18 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 	for (size_t i = 0; i < len; i++) {
 		int numeric_value = _Base64ToValue[temp[i]];
 		if (numeric_value == -1) {
-			printf("Unvalid base64 character '%c' in string '%s'\n", temp[i], temp);
+			fprintf_s(stderr, "Unvalid base64 character '%c' in string '%s'\n", temp[i], temp);
 			return false;
 		}
 		_WriteBits(numeric_value, bitStr + (6 * i));
 	}
 
-	DWORD AttribIDs[10] = {0};
-	DWORD AttribVal[10] = {0};
-	DWORD AttribCount = 0;
+	int AttribIDs[10] = {0};
+	int AttribVal[10] = {0};
+	int AttribCount = 0;
 
-	DWORD SkillIDs[8] = {0};
-	DWORD SkillCount = 0;
+	int SkillIDs[8] = {0};
+	int SkillCount = 0;
 
 	char *it = bitStr;
 	char *end = bitStr + 6*len;
@@ -101,24 +101,31 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 	// ATTRIBUTES
 	AttribCount = _ReadBits(&it, 4);
 	int bits_per_attr = _ReadBits(&it, 4) + 4;
-	for (DWORD i = 0; i < AttribCount; i++) {
+	for (int i = 0; i < AttribCount; i++) {
 		AttribIDs[i] = _ReadBits(&it, bits_per_attr);
 		AttribVal[i] = _ReadBits(&it, 4);
-		if (AttribIDs[i] < 0 || AttribIDs[i] > 44) return false;
+		if (AttribIDs[i] > ATTRIBUTE_MAX) {
+			fprintf_s(stderr, "Attribute id %d out of range. (max = %d)\n", AttribIDs[i], 44);
+			return false;
+		}
 	}
 
 	// SKILLS
 	int bits_per_skill = _ReadBits(&it, 4) + 8;
 	for (SkillCount = 0; SkillCount < 8; SkillCount++) {
 		SkillIDs[SkillCount] = _ReadBits(&it, bits_per_skill);
+		if (SkillIDs[SkillCount] > SKILL_MAX) {
+			fprintf_s(stderr, "Skill id %d is out of range. (max = %d)\n", SkillIDs[SkillCount], SKILL_MAX);
+			return false;
+		}
 		if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
 	}
 
 	Agent *me = GW::Agents::GetPlayer();
 	if (me && me->Primary == prof1) {
 		GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2);
-		LoadSkillbar(SkillIDs);
-		SetAttributes(AttribCount, AttribIDs, AttribVal);
+		LoadSkillbar((DWORD *)SkillIDs);
+		SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);
 	}
 	return true;
 }

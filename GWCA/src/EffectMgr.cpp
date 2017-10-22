@@ -131,7 +131,7 @@ void GW::Effects::CreateEffect(DWORD effect_id, DWORD skill_id, float duration) 
 
 	GW::GameThread::Enqueue([](){
 		typedef bool (__fastcall *EffectApplied_t)(MSG_EFFECT_APPLIED *effect);
-		EffectApplied_t EffectApplied = (EffectApplied_t)0x00888020;
+		EffectApplied_t EffectApplied = (EffectApplied_t)0x00888020; // Need scan!
 		EffectApplied(&applied_effect);
 	});
 }
@@ -146,7 +146,7 @@ void GW::Effects::ReapplieEffect(DWORD effect_id, float duration) {
 
 	GW::GameThread::Enqueue([]() {
 		typedef bool(__fastcall *EffectReapplied_t)(MSG_EFFECT_REAPPLIED *effect);
-		EffectReapplied_t EffectReapplied = (EffectReapplied_t)0x00888040;
+		EffectReapplied_t EffectReapplied = (EffectReapplied_t)0x00888040; // Need scan!
 		EffectReapplied(&reapplied_effect);
 	});
 }
@@ -159,7 +159,7 @@ void GW::Effects::RemoveEffect(DWORD effect_id) {
 
 	GW::GameThread::Enqueue([]() {
 		typedef bool(__fastcall *EffectRemoved_t)(MSG_EFFECT_REMOVED *effect);
-		EffectRemoved_t EffectRemoved = (EffectRemoved_t)0x00888060;
+		EffectRemoved_t EffectRemoved = (EffectRemoved_t)0x00888060; // Need scan!
 		EffectRemoved(&removed_effect);
 	});
 }

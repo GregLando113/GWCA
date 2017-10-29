@@ -1,4 +1,5 @@
 #include <GWCA\Managers\ChatMgr.h>
+#include <assert.h>
 
 #include <sstream>
 
@@ -136,7 +137,7 @@ namespace {
 	GW::THook<InitChatLog_t> InitChatLog_hook;
 
 	void GWCALL InitChatLog_detour(void) {
-		// assert(ChatBufferAddr);
+		assert(ChatBufferAddr);
 		ChatBuffer *buff = *ChatBufferAddr;
 		if (!KeepChatHistory || !buff)
 			InitChatLog_hook.Original()();
@@ -158,7 +159,7 @@ namespace {
 	GW::THook<PrintChat_t>    PrintChat_hook;
 
 	void GWCALL PrintChatLog_detour(void *ctx, int thiscall, int unk) {
-		// assert(ChatBufferAddr);
+		assert(ChatBufferAddr);
 		ChatBuffer *buff = *ChatBufferAddr;
 		if (!buff) return;
 
@@ -173,7 +174,7 @@ namespace {
 	}
 
 	void GWCALL WriteChatLog_detour(Channel channel, wchar *encStr) {
-		// assert(ChatBufferAddr);
+		assert(ChatBufferAddr);
 		ChatBuffer *buff = *ChatBufferAddr;
 		if (!buff) return;
 
@@ -182,7 +183,7 @@ namespace {
 	}
 
 	void GWCALL PrintChat_detour(void *ctx, int thiscall, Channel channel, wchar *str, int reprint) {
-		// assert(ChatBufferAddr && 0 <= channel && channel < CHANNEL_COUNT);
+		assert(ChatBufferAddr && 0 <= channel && channel < CHANNEL_COUNT);
 		SYSTEMTIME *time = nullptr;
 		ChatBuffer *buff = *ChatBufferAddr;
 		if (!buff) return;
@@ -323,8 +324,8 @@ void GW::Chat::RestoreHooks() {
 }
 
 void GW::Chat::SendChat(char channel, const wchar *msg) {
-	if (SendChat_addr == nullptr) Initialize();
-	// assert(GW::SendChat);
+	// if (SendChat_addr == nullptr) Initialize();
+	assert(SendChat_addr);
 	wchar buffer[140];
 
 	// We could take 140 char long, but the chat only allow 120 ig.
@@ -340,8 +341,8 @@ void GW::Chat::SendChat(char channel, const wchar *msg) {
 }
 
 void GW::Chat::SendChat(char channel, const char *msg) {
-	if (SendChat_addr == nullptr) Initialize();
-	// assert(GW::SendChat);
+	// if (SendChat_addr == nullptr) Initialize();
+	assert(SendChat_addr);
 	wchar buffer[140];
 
 	size_t len = strlen(msg);
@@ -377,7 +378,7 @@ void GW::Chat::WriteChat(const wchar_t *from, const wchar_t *msg) {
 */
 
 void GW::Chat::WriteChat(Channel channel, const wchar *msg) {
-	// assert(GW::SendUIMessage);
+	assert(SendUIMessage);
 	if (SendUIMessage == nullptr) Initialize();
 
 	size_t len = wcslen(msg);
@@ -400,8 +401,8 @@ void GW::Chat::WriteChat(Channel channel, const wchar *msg) {
 }
 
 void GW::Chat::WriteChat(Channel channel, const char *msg) {
-	// assert(GW::SendUIMessage);
-	if (SendUIMessage == nullptr) Initialize();
+	assert(SendUIMessage);
+	// if (SendUIMessage == nullptr) Initialize();
 
 	size_t len = strlen(msg);
 	wchar *buffer = new wchar[len + 4];

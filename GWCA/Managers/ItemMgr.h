@@ -3,6 +3,7 @@
 #include <Windows.h>
 
 #include <GWCA\GameEntities\Item.h>
+#include <functional>
 
 namespace GW {
 
@@ -47,13 +48,15 @@ namespace GW {
 		// === Complex functions ===
 		// Find item in selected bags with said modelid, then use it.
 		// return: True if found and used, false if not.
-		bool UseItemByModelId(DWORD modelid, BYTE bagStart = 1, const BYTE bagEnd = 4);
+		bool UseItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
 		// Returns the amount of item with said modelid in given bags.
-		DWORD CountItemByModelId(DWORD modelid, BYTE bagStart = 1, const BYTE bagEnd = 4);
+		DWORD CountItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
 		// Returns item struct of item with given modelid.
-		GW::Item* GetItemByModelId(DWORD modelid, BYTE bagStart = 1, const BYTE bagEnd = 4);
+		GW::Item* GetItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
+		// The callback should return false if it want to foward the info to Gw.
+		void SetOnItemClick(std::function<bool(GW::Item*, GW::Bag*)> callback);
 	};
 }

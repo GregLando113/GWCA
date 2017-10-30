@@ -4,6 +4,8 @@
 #include <GWCA\Managers\StoCMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 
+#include <GWCA\Utilities\Hooker.h>
+
 void GW::Items::OpenXunlaiWindow() {
 	static DWORD ecxbuf[4] = { 119, 0, 0, 3 };
 	StoC::EmulatePacket((Packet::StoC::PacketBase*)ecxbuf);
@@ -49,7 +51,7 @@ void GW::Items::OpenLockedChest() {
 	CtoS::SendPacket(0x8, 0x4D, 0x2);
 }
 
-bool GW::Items::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+bool GW::Items::UseItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
 	GW::Bag** bags = GetBagArray();
 	if (bags == NULL) return false;
 
@@ -76,7 +78,7 @@ bool GW::Items::UseItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYT
 	return false;
 }
 
-DWORD GW::Items::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+DWORD GW::Items::CountItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
 	DWORD itemcount = 0;
 	GW::Bag** bags = GetBagArray();
 	GW::Bag* bag = NULL;
@@ -98,7 +100,7 @@ DWORD GW::Items::CountItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const 
 	return itemcount;
 }
 
-GW::Item* GW::Items::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, const BYTE bagEnd /*= 4*/) {
+GW::Item* GW::Items::GetItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
 	GW::Bag** bags = GetBagArray();
 	GW::Bag* bag = NULL;
 
@@ -117,4 +119,33 @@ GW::Item* GW::Items::GetItemByModelId(DWORD modelid, BYTE bagStart /*= 1*/, cons
 	}
 
 	return NULL;
+}
+
+typedef void (__fastcall *ItemClick_t)(int *bag_id, int unk, int slot);
+static GW::THook<ItemClick_t> ItemClickHook;
+static std::function<bool(GW::Item*, GW::Bag*)> ItemClickCallback;
+
+static void __fastcall OnItemClick(int *bag_id, int unk, int slot)
+{
+	using namespace GW;
+
+	if (ItemClickCallback) {
+		Bag **bags = Items::GetBagArray();
+		Bag *bag = bags[*bag_id];
+		Item *item = bag->Items[slot];
+
+		if (ItemClickCallback(item, bag))
+			return;
+	}
+
+	ItemClickHook.Original()(bag_id, unk, slot);
+}
+
+void GW::Items::SetOnItemClick(std::function<bool(GW::Item*, GW::Bag*)> callback) {
+	if (ItemClickHook.Empty()) {
+		ItemClick_t ItemClick = (ItemClick_t)Scanner::Find("\xF7\x43\x0C\x00\x00\x00\x01\x74\x11", "xxxxxxxxx", -79);
+		printf("ItemClick = %p\n", ItemClick);
+		ItemClickHook.Detour(ItemClick, OnItemClick);
+	}
+	ItemClickCallback = callback;
 }

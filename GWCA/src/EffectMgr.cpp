@@ -7,6 +7,7 @@
 #include <GWCA\Managers\GameThreadMgr.h>
 #include <GWCA\Managers\AgentMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
+#include <GWCA\Managers\StoCMgr.h>
 
 namespace {
 	DWORD alcohol_level = 0;
@@ -130,9 +131,12 @@ void GW::Effects::CreateEffect(DWORD effect_id, DWORD skill_id, float duration) 
 	applied_effect.duration = duration;
 
 	GW::GameThread::Enqueue([](){
+		/*
 		typedef bool (__fastcall *EffectApplied_t)(MSG_EFFECT_APPLIED *effect);
-		EffectApplied_t EffectApplied = (EffectApplied_t)0x00888020; // Need scan!
+		EffectApplied_t EffectApplied = (EffectApplied_t)0x00888020; // Emulate SMSG_054
 		EffectApplied(&applied_effect);
+		*/
+		GW::StoC::EmulatePacket((Packet::StoC::PacketBase*)&applied_effect);
 	});
 }
 
@@ -145,9 +149,12 @@ void GW::Effects::ReapplieEffect(DWORD effect_id, float duration) {
 	reapplied_effect.duration = duration;
 
 	GW::GameThread::Enqueue([]() {
+		/*
 		typedef bool(__fastcall *EffectReapplied_t)(MSG_EFFECT_REAPPLIED *effect);
-		EffectReapplied_t EffectReapplied = (EffectReapplied_t)0x00888040; // Need scan!
+		EffectReapplied_t EffectReapplied = (EffectReapplied_t)0x00888040; // Emulate SMSG_055
 		EffectReapplied(&reapplied_effect);
+		*/
+		GW::StoC::EmulatePacket((Packet::StoC::PacketBase*)&reapplied_effect);
 	});
 }
 
@@ -158,8 +165,11 @@ void GW::Effects::RemoveEffect(DWORD effect_id) {
 	removed_effect.effect_id = effect_id;
 
 	GW::GameThread::Enqueue([]() {
+		/*
 		typedef bool(__fastcall *EffectRemoved_t)(MSG_EFFECT_REMOVED *effect);
-		EffectRemoved_t EffectRemoved = (EffectRemoved_t)0x00888060; // Need scan!
+		EffectRemoved_t EffectRemoved = (EffectRemoved_t)0x00888060; // Emulate SMSG_056
 		EffectRemoved(&removed_effect);
+		*/
+		GW::StoC::EmulatePacket((Packet::StoC::PacketBase*)&removed_effect);
 	});
 }

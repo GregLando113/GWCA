@@ -250,7 +250,7 @@ void GW::Chat::SetSendChatCallback(std::function<void(GW::Chat::Channel chan, wc
 void GW::Chat::SetOpenLinks(bool b) {
 	if (b && OpenTemplate_hook.Empty()) {
 		OpenTemplate_t addr = (OpenTemplate_t)Scanner::Find("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
-		printf("OpenTemplateFunc = %X\n", (DWORD)addr);
+		printf("OpenTemplate = %p\n", addr);
 		OpenTemplate_hook.Detour(addr, OpenTemplate_detour);
 	}
 	open_links = b;
@@ -258,7 +258,8 @@ void GW::Chat::SetOpenLinks(bool b) {
 
 GW::Chat::Color GW::Chat::SetSenderColor(Channel chan, Color col) {
 	if (SenderColor_hook.Empty()) {
-		GetChannelColor_t addr = (GetChannelColor_t)0x00481650; // Need scan!
+		GetChannelColor_t addr = (GetChannelColor_t)Scanner::Find("\x56\x83\xFA\x0E\x8B\xF1\x0F\x87\x96", "xxxxxxxxx", 0);
+		printf("GetSenderColor = %p\n", addr);
 		SenderColor_hook.Detour(addr, ::SenderColor_detour);
 	}
 	Color old = ChatSenderColor[(int)chan];
@@ -268,7 +269,8 @@ GW::Chat::Color GW::Chat::SetSenderColor(Channel chan, Color col) {
 
 GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 	if (MessageColor_hook.Empty()) {
-		GetChannelColor_t addr = (GetChannelColor_t)0x00481570; // Need scan!
+		GetChannelColor_t addr = (GetChannelColor_t)Scanner::Find("\x83\xFA\x0E\x8B\xC1\x0F\x87\x83", "xxxxxxxx", 0);
+		printf("GetMessageColor = %p\n", addr);
 		MessageColor_hook.Detour(addr, ::MessageColor_detour);
 	}
 	Color old = ChatMessageColor[(int)chan];
@@ -288,19 +290,31 @@ void GW::Chat::SetWhisperCallback(std::function<void(const wchar_t[20], const wc
 
 void GW::Chat::Initialize() {
 	SendChat_addr = (SendChat_t)Scanner::Find("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
-	printf("Send Chat Func = 0x%X\n", (DWORD)SendChat_addr);
+	printf("SendChat = %p\n", SendChat_addr);
 
-	SendUIMessage = (SendUIMessage_t)0x00605AC0;
-	printf("SendUIMessage Func = 0x%X\n", (DWORD)SendUIMessage);
+	SendUIMessage = (SendUIMessage_t)0x00605AC0; // need scan!
+	printf("SendUIMessage = %p\n", SendUIMessage);
 
-	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
-	printf("Write Whisper Func = 0x%X\n", (DWORD)WriteWhisper_addr);
+	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x83\xC6\x2E\x8B\xC6\x83\xC0\x03", "xxxxxxxx", -22);
+	printf("WriteWhisper = %p\n", WriteWhisper_addr);
 
-	ChatBufferAddr = (ChatBuffer**)(0x00D560E8); // Need scan!
-	InitChatLog  = (InitChatLog_t)(0x007DE400); // Need scan!
-	PrintChatLog = (PrintChatLog_t)(0x004A5C00); // Need scan!
-	WriteChatLog = (WriteChatLog_t)(0x007DE520); // Need scan!
-	PrintChat    = (PrintChat_t)(0x004A5880); // Need scan!
+	InitChatLog = (InitChatLog_t)Scanner::Find("\x33\xD2\xB9\x38\x04\x00\x00\xE8", "xxxxxxxx", -35);
+	printf("InitChatLog = %p\n", InitChatLog);
+
+	PrintChatLog = (PrintChatLog_t)Scanner::Find("\x6A\x00\xBA\x80\x48\x02\x00\xE8", "xxxxxxxx", -32);
+	printf("PrintChatLog = %p\n", PrintChatLog);
+
+	PrintChat = (PrintChat_t)Scanner::Find("\x83\xEC\x28\x56\x8B\xF1\x57\x81", "xxxxxxxx", -3);
+	printf("PrintChat = %p\n", PrintChat);
+
+	{
+		DWORD tmp = Scanner::Find("\x8B\xF2\x85\xC0\x8B\xF9\x75\x05\x5F", "xxxxxxxxx", -6);
+		ChatBufferAddr = *(ChatBuffer***)tmp;
+		printf("ChatBufferAddr = %p\n", ChatBufferAddr);
+
+		WriteChatLog = (WriteChatLog_t)(tmp - 65);
+		printf("WriteChatLog = %p\n", WriteChatLog);
+	}
 
 	InitChatLog_hook.Detour(InitChatLog, InitChatLog_detour);
 	PrintChatLog_hook.Detour(PrintChatLog, PrintChatLog_detour);
@@ -379,7 +393,7 @@ void GW::Chat::WriteChat(const wchar_t *from, const wchar_t *msg) {
 
 void GW::Chat::WriteChat(Channel channel, const wchar *msg) {
 	assert(SendUIMessage);
-	if (SendUIMessage == nullptr) Initialize();
+	// if (SendUIMessage == nullptr) Initialize();
 
 	size_t len = wcslen(msg);
 	wchar *buffer = new wchar[len + 4];

@@ -224,17 +224,17 @@ namespace {
 void GW::Chat::SetChatEventCallback(std::function<void(DWORD, DWORD, wchar_t*, void*)> callback) {
 	if (ChatEvent_hook.Empty()) {
 		ChatEvent_t addr = (ChatEvent_t)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x28);
-		printf("Chat Event Func address = 0x%X\n", (DWORD)addr);
-		ChatEvent_hook.Detour((ChatEvent_t)addr, ChatEvent_detour);
+		printf("Chat Event = %p\n", addr);
+		ChatEvent_hook.Detour(addr, ChatEvent_detour);
 	}
 	ChatEvent_callback = callback;
 }
 
 void GW::Chat::SetLocalMessageCallback(std::function<bool(int, wchar_t*)> callback) {
 	if (LocalMessage_hook.Empty()) {
-		LocalMessage_t addr = (LocalMessage_t)0x007DEF00;
-		printf("LocalMessage Func address = 0x%X\n", (DWORD)addr);
-		LocalMessage_hook.Detour((LocalMessage_t)addr, LocalMessage_detour);
+		LocalMessage_t addr = (LocalMessage_t)Scanner::Find("\x8D\x55\xF8\xB9\x7E\x00\x00\x10\x6A\x00", "xxxxxxxxxx", -59);
+		printf("LocalMessage = %p\n", addr);
+		LocalMessage_hook.Detour(addr, LocalMessage_detour);
 	}
 	LocalMessage_callback = callback;
 }
@@ -281,7 +281,7 @@ GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 void GW::Chat::SetWhisperCallback(std::function<void(const wchar_t[20], const wchar_t[140])> callback) {
 	if (!WriteWhisper_addr) {
 		WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
-		printf("Write Whisper Func = 0x%X\n", (DWORD)WriteWhisper_addr);
+		printf("WriteWhisper = %p\n", (DWORD)WriteWhisper_addr);
 	}
 	if (WriteWhisper_hook.Empty())
 		WriteWhisper_hook.Detour(WriteWhisper_addr, WriteWhisper_detour);
@@ -292,7 +292,7 @@ void GW::Chat::Initialize() {
 	SendChat_addr = (SendChat_t)Scanner::Find("\xC7\x85\xE4\xFE\xFF\xFF\x5E", "xxxxxxx", -25);
 	printf("SendChat = %p\n", SendChat_addr);
 
-	SendUIMessage = (SendUIMessage_t)0x00605AC0; // need scan!
+	SendUIMessage = (SendUIMessage_t)Scanner::Find("\x1B\xF6\xF7\xDE\x4E\x83\xFF\x40", "xxxxxxxx", -13);
 	printf("SendUIMessage = %p\n", SendUIMessage);
 
 	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x83\xC6\x2E\x8B\xC6\x83\xC0\x03", "xxxxxxxx", -22);

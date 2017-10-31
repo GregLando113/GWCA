@@ -208,7 +208,7 @@ namespace {
 			if (time->wYear == 0) {
 				wsprintf(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, str);
 			} else {
-				wsprintf(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", TimestampsColor, time->wHour, time->wMinute, str);
+				wsprintf(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), time->wHour, time->wMinute, str);
 			}
 		} else {
 			if (time->wYear == 0) {

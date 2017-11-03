@@ -42,6 +42,7 @@ namespace GW {
         }
 
         bool valid() { return Buff != nullptr; }
+		void clear() { Size = 0; }
 
         DWORD size()     const { return Size; }
         DWORD capacity() const { return Capacity; }

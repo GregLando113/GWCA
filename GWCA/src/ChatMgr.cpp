@@ -281,7 +281,7 @@ GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 void GW::Chat::SetWhisperCallback(std::function<void(const wchar_t[20], const wchar_t[140])> callback) {
 	if (!WriteWhisper_addr) {
 		WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
-		printf("WriteWhisper = %p\n", (DWORD)WriteWhisper_addr);
+		printf("WriteWhisper = %p\n", WriteWhisper_addr);
 	}
 	if (WriteWhisper_hook.Empty())
 		WriteWhisper_hook.Detour(WriteWhisper_addr, WriteWhisper_detour);

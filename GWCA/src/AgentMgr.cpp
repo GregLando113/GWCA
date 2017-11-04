@@ -202,7 +202,7 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 		GadgetContext *gadget = GameContext::instance()->gadget;
 		if (!ctx || !gadget) return L"";
 
-		size_t id = ctx->GadgetData[agent->Id].GadgetId;
+		size_t id = ctx->GadgetData[agent->Id].GadgetIds->GadgetId;
 		str = gadget->GadgetInfo[id].NameString;
 		AsyncDecodeStr(str, __decode_str_callback, buffer);
 		return std::wstring(buffer);

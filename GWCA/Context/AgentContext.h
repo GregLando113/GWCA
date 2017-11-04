@@ -8,9 +8,15 @@
 
 namespace GW {
     struct AgentToGadget {
+		struct GadgetID {
+			DWORD h0000;
+			DWORD h0004;
+			DWORD GadgetId;
+		};
+
         DWORD h0000;
         DWORD h0004;
-        DWORD GadgetId;
+		GadgetID *GadgetIds;
     };
 
     struct AgentContext {

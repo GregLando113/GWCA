@@ -482,26 +482,18 @@ namespace {
 
 	void __fastcall SendChat_detour(wchar_t *message) {
 		if (*message == '/') {
-			std::wstring msg = &message[1];
-			std::wstring args;
+			int argc;
+			LPWSTR *argv;
+			argv = CommandLineToArgvW(message + 1, &argc);
 
-			size_t index = msg.find(' ');
-			std::wstring command = msg.substr(0, index);
-
-			if (index == std::wstring::npos) {
-				args = L"";
-			} else {
-				for (index += 1; index < msg.size(); index++)
-					if (msg[index] != ' ') break;
-				args = msg.substr(index);
-			}
-
-			auto callback = SlashCmdList.find(command);
+			auto callback = SlashCmdList.find(argv[0]);
 			if (callback != SlashCmdList.end()) {
-				callback->second(command, args);
+				callback->second(argc, argv);
 				// Doesn't seem to have any reason to foward the function call to it's original.
+				LocalFree(argv);
 				return;
 			}
+			LocalFree(argv);
 		}
 
 		if (SendChat_callback) SendChat_callback(GetChannel(*message), &message[1]);

@@ -58,7 +58,7 @@ namespace GW {
 
 		void WriteChatF(Channel channel, const wchar *sender, const char *fmt, ...);
 
-		typedef std::function<void(std::wstring& command, std::wstring& args)> CmdCB;
+		typedef std::function<void(int argc, LPWSTR *argv)> CmdCB;
 		void CreateCommand(std::wstring cmd, CmdCB callback);
 		void DeleteCommand(std::wstring cmd);
 

@@ -203,6 +203,7 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 		if (!ctx || !gadget) return L"";
 
 		size_t id = ctx->GadgetData[agent->Id].GadgetIds->GadgetId;
+		if (gadget->GadgetInfo.size() <= id) return L"";
 		str = gadget->GadgetInfo[id].NameString;
 		AsyncDecodeStr(str, __decode_str_callback, buffer);
 		return std::wstring(buffer);

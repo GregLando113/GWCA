@@ -19,9 +19,12 @@ namespace GW {
         /* +h0074 */ wchar playername[20];
         /* +h009C */ char h009C[0x50];
         /* +h00EC */ Array<void*> h00EC;
-        /* +h00FC */ char h00FC[0x30];
+        /* +h00FC */ char h00FC[0x28];
+        /* +h0124 */ DWORD h0124;
+        /* +h0128 */ DWORD token2; // player unique id in the world
         /* +h012C */ DWORD mapidagain;
-        /* +h0130 */ char h0130[0x60];
+        /* +h0130 */ DWORD is_explorable;
+        /* +h0134 */ char h0130[0x5C];
         /* +h0190 */ DWORD currentmapid_again;
         /* +h0194 */ char h0194[0x28];
         /* +h01BC */ DWORD currentmapid;

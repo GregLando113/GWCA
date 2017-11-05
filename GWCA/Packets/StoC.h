@@ -2903,15 +2903,15 @@ namespace GW {
 			};
 			const DWORD Packet<P405>::STATIC_HEADER = 405;
 
-			struct P406 : Packet<P406> {
-				// <Field occurs="24" prefixType="int16" static="true" type="int8"/>
-				// DWORD
-				// BYTE
-				// WORD
-				// BYTE
-				// DWORD
+			struct P406_GameSrvTransfer : Packet<P406_GameSrvTransfer> {
+				BYTE host[24]; // ip of the game server
+				DWORD token1; // world id
+				DWORD region; // BYTE
+				DWORD map_id; // BYTE
+				DWORD is_outpost; // BYTE
+				DWORD token2; // player id
 			};
-			const DWORD Packet<P406>::STATIC_HEADER = 406;
+			const DWORD Packet<P406_GameSrvTransfer>::STATIC_HEADER = 406;
 
 			struct P407 : Packet<P407> {
 				// BYTE

@@ -69,8 +69,6 @@ namespace GW {
 		void Initialize();
 		void RestoreHooks();
 
-		std::vector<std::wstring> SplitString(const std::wstring& str, wchar_t c = ' ');
-
 		// SendChat callback can modify the msg before it is send.
 		// Pay attention to not overflow the buffer.
 		void SetSendChatCallback(std::function<

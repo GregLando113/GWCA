@@ -449,21 +449,6 @@ void GW::Chat::DeleteCommand(std::wstring cmd) {
 	SlashCmdList.erase(cmd);
 }
 
-std::vector<std::wstring> GW::Chat::SplitString(const std::wstring& str, wchar_t c) {
-	std::vector<std::wstring> result;
-	size_t size = str.size();
-	size_t start = 0, end;
-	for (size_t i = 0; i < size; i++) {
-		if (str[i] == c) {
-			end = i;
-			result.push_back(str.substr(start, end - start));
-			start = end + 1;
-		}
-	}
-	if (start < size) result.push_back(str.substr(start, size));
-	return result;
-}
-
 namespace {
 	using namespace GW;
 

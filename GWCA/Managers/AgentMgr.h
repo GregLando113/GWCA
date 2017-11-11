@@ -31,6 +31,7 @@ namespace GW {
 		// Get Current AgentID's of player or target.
 		DWORD GetPlayerId();
 		DWORD GetTargetId();
+		DWORD GetMouseoverId();
 
 		// Returns Agentstruct Array of agents in compass range, full structs.
 		GW::AgentArray GetAgentArray();

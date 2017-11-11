@@ -337,8 +337,17 @@ void GW::Chat::RestoreHooks() {
 	PrintChat_hook.Retour();
 }
 
+bool GW::Chat::IsTyping() {
+	static DWORD *addr;
+	if (!addr) {
+		DWORD **tmp = (DWORD**)GW::Scanner::Find("\xC3\xA1\x00\x00\x00\x00\x85\xC0\x74\x10\xE8", "xx????xxxxx", -8);
+		if (tmp) addr = *tmp;
+	}
+	assert(addr);
+	return (*addr == 1);
+}
+
 void GW::Chat::SendChat(char channel, const wchar *msg) {
-	// if (SendChat_addr == nullptr) Initialize();
 	assert(SendChat_addr);
 	wchar buffer[140];
 
@@ -355,7 +364,6 @@ void GW::Chat::SendChat(char channel, const wchar *msg) {
 }
 
 void GW::Chat::SendChat(char channel, const char *msg) {
-	// if (SendChat_addr == nullptr) Initialize();
 	assert(SendChat_addr);
 	wchar buffer[140];
 
@@ -393,7 +401,6 @@ void GW::Chat::WriteChat(const wchar_t *from, const wchar_t *msg) {
 
 void GW::Chat::WriteChat(Channel channel, const wchar *msg) {
 	assert(SendUIMessage);
-	// if (SendUIMessage == nullptr) Initialize();
 
 	size_t len = wcslen(msg);
 	wchar *buffer = new wchar[len + 4];
@@ -416,7 +423,6 @@ void GW::Chat::WriteChat(Channel channel, const wchar *msg) {
 
 void GW::Chat::WriteChat(Channel channel, const char *msg) {
 	assert(SendUIMessage);
-	// if (SendUIMessage == nullptr) Initialize();
 
 	size_t len = strlen(msg);
 	wchar *buffer = new wchar[len + 4];

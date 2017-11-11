@@ -62,6 +62,9 @@ DWORD GW::Agents::GetPlayerId() {
 DWORD GW::Agents::GetTargetId() {
 	return *TargetAgentIDPtr;
 }
+DWORD GW::Agents::GetMouseoverId() {
+	return *MouseOverAgentIDPtr;
+}
 
 float GW::Agents::GetDistance(Vector2f a, Vector2f b) {
 	return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));

@@ -45,6 +45,8 @@ namespace GW {
 		// void SetChatChannelColor(Channel channel, Color sender, Color message);
 		// void RegisterEvent(Event e);
 
+		bool IsTyping();
+
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
 		void SendChat(char channel, const wchar *msg);
 		void SendChat(char channel, const char  *msg);

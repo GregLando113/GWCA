@@ -25,6 +25,7 @@
     <ClInclude Include="GWCA\Context\ItemContext.h" />
     <ClInclude Include="GWCA\Context\MapContext.h" />
     <ClInclude Include="GWCA\Context\PartyContext.h" />
+    <ClInclude Include="GWCA\Context\TextParser.h" />
     <ClInclude Include="GWCA\Context\TradeContext.h" />
     <ClInclude Include="GWCA\Context\WorldContext.h" />
     <ClInclude Include="GWCA\GameContainers\Array.h" />

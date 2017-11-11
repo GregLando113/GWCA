@@ -224,6 +224,9 @@
     <ClInclude Include="GWCA\GameContainers\List.h">
       <Filter>GameContainers</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Context\TextParser.h">
+      <Filter>Context</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">

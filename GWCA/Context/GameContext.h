@@ -10,6 +10,7 @@
 #include "PartyContext.h"
 #include "TradeContext.h"
 #include "GadgetContext.h"
+#include "TextParser.h"
 
 #include <GWCA\Utilities\Scanner.h>
 
@@ -33,7 +34,7 @@ namespace GW {
         /* +h000C */ void* unkcontext4;
         /* +h0010 */ void* nullcontext1;
         /* +h0014 */ MapContext* map; // Static object/collision data
-        /* +h0018 */ void* text_parser; // TextParser context
+        /* +h0018 */ TextParser *text_parser;
         /* +h001C */ void* nullcontext2;
         /* +h0020 */ DWORD somenumber; // 0x30 for me at the moment.
         /* +h0024 */ void* unkcontext6;

@@ -2,6 +2,7 @@
 #define _ARRAY_H_INC
 
 #include <Windows.h>
+#include <assert.h>
 
 namespace GW {
 
@@ -34,11 +35,8 @@ namespace GW {
         }
 
         T& operator[](DWORD index) {
-        #ifdef NDEBUG
+			assert(Buff && index < Size);
             return Buff[index];
-        #else
-            return this->index(index);
-        #endif
         }
 
         bool valid() { return Buff != nullptr; }

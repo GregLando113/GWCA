@@ -2908,7 +2908,7 @@ namespace GW {
 				DWORD token1; // world id
 				DWORD region; // BYTE
 				DWORD map_id; // BYTE
-				DWORD is_outpost; // BYTE
+				DWORD is_explorable; // BYTE
 				DWORD token2; // player id
 			};
 			const DWORD Packet<P406_GameSrvTransfer>::STATIC_HEADER = 406;

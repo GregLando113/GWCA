@@ -5,6 +5,7 @@
 
 namespace GW {
 
+	using wchar = wchar_t;
     using ItemID = DWORD;
 
     struct Bag;
@@ -41,7 +42,7 @@ namespace GW {
         /* +h000C */ Bag *Bag;
         /* +h0010 */ ItemModifier *ModStruct; // Pointer to an array of mods.
         /* +h0014 */ DWORD ModStructSize; // Size of this array.
-        /* +h0018 */ WCHAR *Customized;
+        /* +h0018 */ wchar *Customized;
         /* +h001C */ DWORD ModelFileID;
         /* +h0020 */ BYTE Type;
         /* +h0021 */ BYTE h0021;
@@ -50,9 +51,9 @@ namespace GW {
         /* +h0026 */ BYTE h0026[4];
         /* +h002A */ WORD Interaction;
         /* +h002C */ DWORD ModelId;
-        /* +h0030 */ WCHAR *InfoString;
-        /* +h0034 */ BYTE h0034[4];
-        /* +h0038 */ WCHAR *NameString;
+        /* +h0030 */ wchar *InfoString;
+        /* +h0034 */ wchar *NameString;
+        /* +h0038 */ wchar *CompleteName; // with color, quantity, etc.
         /* +h003C */ BYTE h003C[15];
         /* +h004B */ BYTE Quantity;
         /* +h004C */ BYTE Equipped;

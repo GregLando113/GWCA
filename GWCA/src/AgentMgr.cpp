@@ -185,17 +185,28 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 	if (!agent) return L"";
 
 	if (agent->GetIsCharacterType()) {
-		if (agent->TypeMap & 0x400000) {
+		if (agent->LoginNumber) {
 			GW::PlayerArray players = GameContext::instance()->world->players;
 			if (!players.valid()) return L"";
 
-			GW::Player *player = &players[agent->PlayerNumber];
+			GW::Player *player = &players[agent->LoginNumber];
 			if (!player) return L"";
 			return std::wstring(player->Name);
 		} else {
-			GW::NPCArray npcs = GameContext::instance()->world->npcs;
-			if (!npcs.valid()) return L"";
-			str = npcs[agent->PlayerNumber].NameString;
+			// @Remark:
+			// For living npcs it's not elegant, but the game does it as well. See arround GetLivingName(AgentID id)@007C2A00.
+			// It first look in the AgentInfo arrays, if it doesn't find it, it does a bunch a shit and fallback on NPCArray.
+			// If we only use NPCArray, we have a problem because 2 agents can share the same PlayerNumber.
+			// In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
+			// But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
+			GW::Array<AgentInfo> npcs = GameContext::instance()->world->agentInfos;
+			if (agent->Id >= npcs.size()) return L"";
+			str = npcs[agent->Id].NameString;
+			if (!str) {
+				GW::NPCArray npcs = GameContext::instance()->world->npcs;
+				if (!npcs.valid()) return L"";
+				str = npcs[agent->PlayerNumber].NameString;
+			}
 			assert(str);
 			AsyncDecodeStr(str, __decode_str_callback, buffer);
 			return std::wstring(buffer);

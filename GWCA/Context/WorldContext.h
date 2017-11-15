@@ -16,6 +16,7 @@
 #include <GWCA\GameEntities\Map.h>
 
 namespace GW {
+    using wchar = wchar_t;
 
     struct WorldContext {
         struct sub1 {
@@ -105,7 +106,7 @@ namespace GW {
         /* +h07C4 */ DWORD maximperial;
         /* +h07C8 */ DWORD unk6;
         /* +h07CC */ AgentInfoArray agentInfos;
-        /* +h07DC */ Array<void*> unk24_array;
+        /* +h07DC */ Array<void*> h07DC;
         /* +h07EC */ MissionMapIconArray missionmapicons;
         /* +h07FC */ NPCArray npcs;
         /* +h080C */ PlayerArray players;

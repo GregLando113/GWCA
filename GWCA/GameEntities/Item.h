@@ -5,7 +5,7 @@
 
 namespace GW {
 
-	using wchar = wchar_t;
+    using wchar = wchar_t;
     using ItemID = DWORD;
 
     struct Bag;
@@ -62,7 +62,10 @@ namespace GW {
     };
 
     struct Inventory { // total: 0x84/124
-        /* +h0000 */ Bag *Bags[1]; // this is actually an array of 31 Bag's pointers.
+        union {
+        /* +h0000 */ Bag *Bags[31];
+            struct {
+        /* +h0000 */ Bag *UnusedBag;
         /* +h0004 */ Bag *Backpack;
         /* +h0008 */ Bag *BeltPouch;
         /* +h000C */ Bag *Bag1;
@@ -80,7 +83,9 @@ namespace GW {
         /* +h003C */ Bag *Storage8;
         /* +h0040 */ Bag *Storage9;
         /* +h0044 */ Bag *EquippedItems;
-        /* +h0048 */ Bag *BagsEnd[13];
+            };
+        };
+
         /* +h007C */ DWORD GoldCharacter;
         /* +h0080 */ DWORD GoldStorage;
     };

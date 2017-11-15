@@ -18,6 +18,25 @@ bool GW::Chat::KeepChatHistory = true;
 
 GW::Chat::Color GW::Chat::TimestampsColor = COLOR_RGB(0xff, 0xff, 0xff);
 
+static wchar_t *mwprintf(const wchar_t *fmt, ...) {
+#pragma warning(push)
+#pragma warning(disable: 4996)
+	va_list args;
+	wchar_t *buffer = NULL;
+
+	va_start(args, fmt);
+	int length = _vsnwprintf(NULL, 0, fmt, args) + 1;
+	if (length != -1) {
+		buffer = new wchar_t[length];
+		int err = _vsnwprintf(buffer, length, fmt, args);
+		assert(err != -1);
+	}
+	va_end(args);
+
+	return buffer;
+#pragma warning(pop)
+}
+
 namespace {
 	using namespace GW::Chat;
 
@@ -35,6 +54,7 @@ namespace {
 	// 08 01 07 01 [Time] 01 00 02 00
 	ChatBuffer **ChatBufferAddr;
 	SYSTEMTIME Timestamps[256];
+
 	int  reprint_index;
 	bool reprint_chat;
 
@@ -178,7 +198,12 @@ namespace {
 		ChatBuffer *buff = *ChatBufferAddr;
 		if (!buff) return;
 
-		GetLocalTime(&Timestamps[buff->next]);
+		SYSTEMTIME *time = &Timestamps[buff->next];
+		GetLocalTime(time);
+
+		// For future improvement, cache the message to avoid recomputing the string at every map reload.
+		// MessageWithTimestamps[buff->next] = mwprintf(L"\x108\x107[%02d:%02d] \x01\x02%s", time->wHour, time->wMinute, encStr);
+
 		WriteChatLog_hook.Original()(channel, encStr);
 	}
 

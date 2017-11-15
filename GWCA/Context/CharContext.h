@@ -7,7 +7,7 @@
 #include <GWCA\GameEntities\Match.h>
 
 namespace GW {
-	typedef wchar_t wchar;
+    typedef wchar_t wchar;
     struct CharContext { // total: 0x03A8
         /* +h0000 */ Array<void*> h0000;
         /* +h0010 */ char h0010[4];

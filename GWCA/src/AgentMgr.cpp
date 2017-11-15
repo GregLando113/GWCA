@@ -177,6 +177,8 @@ static void __fastcall __decode_str_callback(wchar_t *buff, wchar_t *str) {
 
 std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 	AsyncDecodeStr_t AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
+	assert(AsyncDecodeStr);
+
 	wchar_t  buffer[256] = L"";
 	wchar_t *str = nullptr;
 
@@ -193,10 +195,8 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 		} else {
 			GW::NPCArray npcs = GameContext::instance()->world->npcs;
 			if (!npcs.valid()) return L"";
-
 			str = npcs[agent->PlayerNumber].NameString;
-			if (!str || !AsyncDecodeStr) return L"";
-
+			assert(str);
 			AsyncDecodeStr(str, __decode_str_callback, buffer);
 			return std::wstring(buffer);
 		}
@@ -204,10 +204,17 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 		AgentContext *ctx = GameContext::instance()->agent;
 		GadgetContext *gadget = GameContext::instance()->gadget;
 		if (!ctx || !gadget) return L"";
+		auto *GadgetIds = ctx->GadgetData[agent->Id].GadgetIds;
+		if (!GadgetIds) return L"";
 
-		size_t id = ctx->GadgetData[agent->Id].GadgetIds->GadgetId;
-		if (gadget->GadgetInfo.size() <= id) return L"";
-		str = gadget->GadgetInfo[id].NameString;
+		str = GadgetIds->NameString;
+		if (!GadgetIds->NameString) {
+			size_t id = GadgetIds->GadgetId;
+			if (gadget->GadgetInfo.size() <= id) return L"";
+			str = gadget->GadgetInfo[id].NameString;
+		}
+
+		assert(str);
 		AsyncDecodeStr(str, __decode_str_callback, buffer);
 		return std::wstring(buffer);
 	} else if (agent->GetIsItemType()) {
@@ -216,6 +223,7 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 		GW::Item *item = items[agent->ItemID];
 		if (!item) return L"";
 		str = item->NameString;
+		assert(str);
 		AsyncDecodeStr(str, __decode_str_callback, buffer);
 		return std::wstring(buffer);
 	}

@@ -7,11 +7,15 @@
 #include <GWCA\GameContainers\Array.h>
 
 namespace GW {
+	using wchar = wchar_t;
+
     struct AgentToGadget {
 		struct GadgetID {
 			DWORD h0000;
 			DWORD h0004;
 			DWORD GadgetId;
+			DWORD h000C;
+			wchar *NameString;
 		};
 
         DWORD h0000;

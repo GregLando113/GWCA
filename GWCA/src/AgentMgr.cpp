@@ -137,8 +137,11 @@ DWORD GW::Agents::GetAmountOfPlayersInInstance() {
 	return GameContext::instance()->world->players.size() - 1;
 }
 
-wchar_t* GW::Agents::GetPlayerNameByLoginNumber(DWORD loginnumber) {
-	return GameContext::instance()->world->players[loginnumber].Name;
+wchar_t *GW::Agents::GetPlayerNameByLoginNumber(DWORD loginnumber) {
+	PlayerArray &players = GameContext::instance()->world->players;
+	if (loginnumber >= players.size())
+		return nullptr;
+	return players[loginnumber].Name;
 }
 
 DWORD GW::Agents::GetAgentIdByLoginNumber(DWORD loginnumber) {

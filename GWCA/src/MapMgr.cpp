@@ -133,6 +133,12 @@ DWORD GW::Map::GetFoesToKill() {
 }
 
 GW::AreaInfo& GW::Map::GetMapInfo(Constants::MapID MapID) {
-	static GW::AreaInfo *AreasInfo = (GW::AreaInfo*)0x8b6ee0; // need scan!
+	static GW::AreaInfo *AreasInfo;
+	if (!AreasInfo) {
+		GW::AreaInfo **tmp = (GW::AreaInfo**)GW::Scanner::Find("\x8B\xC6\xC1\xE0\x05\x2B\xC6\x5E\x8D\x04", "xxxxxxxxxx", 11);
+		assert(tmp);
+		AreasInfo = *tmp;
+	}
+	assert(AreasInfo);
 	return AreasInfo[(DWORD)MapID];
 }

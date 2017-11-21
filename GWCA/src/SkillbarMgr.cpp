@@ -45,7 +45,7 @@ GW::Skill GW::SkillbarMgr::GetSkillConstantData(DWORD SkillID) {
 	if (skillconstants == nullptr) {
 		// Skill array.
 		BYTE* SkillArray = (BYTE*)Scanner::Find("\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 0);
-		printf("SkillArray Addr = 0x%X\n", (DWORD)SkillArray);
+		printf("SkillArray Addr = %p\n", SkillArray);
 		if (SkillArray) {
 			skillconstants = *(GW::Skill**)(SkillArray + 8);
 		}
@@ -74,7 +74,7 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		int numeric_value = _Base64ToValue[temp[i]];
 		if (numeric_value == -1) {
 			fprintf_s(stderr, "Unvalid base64 character '%c' in string '%s'\n", temp[i], temp);
-			return false;
+			goto free_and_false;
 		}
 		_WriteBits(numeric_value, bitStr + (6 * i));
 	}
@@ -91,12 +91,12 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 
 	// HEADER
 	int header = _ReadBits(&it, 4);
-	if (header != 0 && header != 14) return false;
+	if (header != 0 && header != 14) goto free_and_false;
 	if (header == 14) _ReadBits(&it, 4);
 	int bits_per_prof = 2*_ReadBits(&it, 2) + 4;
 	int prof1 = _ReadBits(&it, bits_per_prof);
 	int prof2 = _ReadBits(&it, bits_per_prof);
-	if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) return false;
+	if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) goto free_and_false;;
 
 	// ATTRIBUTES
 	AttribCount = _ReadBits(&it, 4);
@@ -106,7 +106,7 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		AttribVal[i] = _ReadBits(&it, 4);
 		if (AttribIDs[i] > ATTRIBUTE_MAX) {
 			fprintf_s(stderr, "Attribute id %d is out of range. (max = %d)\n", AttribIDs[i], 44);
-			return false;
+			goto free_and_false;
 		}
 	}
 
@@ -116,7 +116,7 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		SkillIDs[SkillCount] = _ReadBits(&it, bits_per_skill);
 		if (SkillIDs[SkillCount] > SKILL_MAX) {
 			fprintf_s(stderr, "Skill id %d is out of range. (max = %d)\n", SkillIDs[SkillCount], SKILL_MAX);
-			return false;
+			goto free_and_false;
 		}
 		if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
 	}
@@ -128,6 +128,10 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);
 	}
 	return true;
+
+free_and_false:
+	delete[] bitStr;
+	return false;
 }
 
 void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, DWORD * attributevalues, int heroindex) {

@@ -15,7 +15,7 @@
 
 bool GW::Chat::ShowTimestamps  = true;
 bool GW::Chat::KeepChatHistory = true;
-bool GW::Chat::Timestamp12HoursFormat = true;
+bool GW::Chat::Timestamp12HourFormat = true;
 
 GW::Chat::Color GW::Chat::TimestampsColor = COLOR_RGB(0xff, 0xff, 0xff);
 
@@ -233,7 +233,7 @@ namespace {
 		WORD hour = time->wHour;
 		WORD minute = time->wMinute;
 
-		if (Timestamp12HoursFormat)
+		if (Timestamp12HourFormat)
 			hour %= 12;
 
 		wchar buffer[1024];

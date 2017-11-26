@@ -15,6 +15,7 @@
 
 bool GW::Chat::ShowTimestamps  = true;
 bool GW::Chat::KeepChatHistory = true;
+bool GW::Chat::Timestamp12HoursFormat = true;
 
 GW::Chat::Color GW::Chat::TimestampsColor = COLOR_RGB(0xff, 0xff, 0xff);
 
@@ -228,18 +229,25 @@ namespace {
 		}
 
 		// @Robustness, Buffer size, might create errors.
+
+		WORD hour = time->wHour;
+		WORD minute = time->wMinute;
+
+		if (Timestamp12HoursFormat)
+			hour %= 12;
+
 		wchar buffer[1024];
 		if (ChannelThatParseColorTag[channel]) {
 			if (time->wYear == 0) {
 				wsprintf(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, str);
 			} else {
-				wsprintf(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), time->wHour, time->wMinute, str);
+				wsprintf(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), hour, minute, str);
 			}
 		} else {
 			if (time->wYear == 0) {
 				wsprintf(buffer, L"\x108\x107[--:--] \x01\x02%s", str);
 			} else {
-				wsprintf(buffer, L"\x108\x107[%02d:%02d] \x01\x02%s", time->wHour, time->wMinute, str);
+				wsprintf(buffer, L"\x108\x107[%02d:%02d] \x01\x02%s", hour, minute, str);
 			}
 		}
 		PrintChat_hook.Original()(ctx, thiscall, channel, buffer, reprint);

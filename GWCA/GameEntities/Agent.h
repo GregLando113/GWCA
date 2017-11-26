@@ -59,7 +59,7 @@ namespace GW {
         /* +h00C4 */ DWORD Owner;
         /* +h00C8 */ DWORD ItemID; // Only valid if agent is type 0x400 (item)
         /* +h00CC */ BYTE  h00CC[4];
-        /* +h00D0 */ DWORD ExtraType;
+        /* +h00D0 */ DWORD ExtraType; // same as GadgetId. Could be used as such.
         /* +h00D4 */ BYTE  h00D4[0xC];
         /* +h00E0 */ float AnimationType;
         /* +h00E4 */ BYTE  h00E4[0x8];

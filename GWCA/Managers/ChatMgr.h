@@ -66,6 +66,7 @@ namespace GW {
 
 		extern bool ShowTimestamps;
 		extern bool KeepChatHistory;
+		extern bool Timestamp12HoursFormat;
 		extern Color TimestampsColor;
 
 		void Initialize();

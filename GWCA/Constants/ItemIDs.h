@@ -78,12 +78,13 @@ namespace GW {
 			const int Mobstopper = 32558;
 			const int Powerstone = 24862;
 
-			const int CremeBrulee = 15528;
 			const int Fruitcake = 21492;
-			const int SugaryBlueDrink = 21812;
 			const int RedBeanCake = 15479;
-			const int JarOfHoney = 31150;
+			const int CremeBrulee = 15528;
+			const int SugaryBlueDrink = 21812;
 			const int ChocolateBunny = 22644;
+			const int JarOfHoney = 31150;
+			const int KrytalLokum = 35125;
 
 			// level-1 alcohol
 			const int Eggnog = 6375;

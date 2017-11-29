@@ -16,8 +16,15 @@ namespace {
 		IDirect3DDevice9* device; //0x0090 IDirect3DDevice9*
 		char pad_0094[12]; //0x0094
 		unsigned int framecount; //0x00A0
-		char pad_00A4[4048]; //0x00A4
+		char pad_00A4[2936]; //0x00A4
+		DWORD viewport_width;	// 0x0C1C
+		DWORD viewport_height;	// 0x0C20
+		char pad_0C24[148];	// 0xC24
+		DWORD window_width;		// 0x0CB8
+		DWORD window_height;	// 0x0CBC
+		char pad_0CC0[952];		// 0x0CC0
 	}; //Size: 0x1074
+	gwdx* gwdx_ptr = nullptr;
 
 	typedef bool(__fastcall *GwEndScene_t)(gwdx* ctx, void* unk);
 	typedef bool(__fastcall *GwReset_t)(gwdx* ctx);
@@ -33,6 +40,7 @@ namespace {
 	std::function<void(IDirect3DDevice9*)> reset_callback;
 
 	bool __fastcall endscene_detour(gwdx* ctx, void* unk) {
+		gwdx_ptr = ctx;
 		render_callback(ctx->device);
 		if (endscene_hook.Valid()) {
 			return endscene_hook.Original()(ctx, unk);
@@ -42,6 +50,7 @@ namespace {
 	}
 
 	bool __fastcall reset_detour(gwdx* ctx) {
+		gwdx_ptr = ctx;
 		reset_callback(ctx->device);
 		return reset_hook.Original()(ctx);
 	}
@@ -54,6 +63,14 @@ namespace {
 			return screen_capture_original(ctx, unk);
 		}
 	}
+}
+
+int GW::Render::GetIsFullscreen() {
+	// this is hacky and might be unreliable
+	if (gwdx_ptr == nullptr) return -1;
+	if (gwdx_ptr->viewport_height == gwdx_ptr->window_height
+		&& gwdx_ptr->viewport_width == gwdx_ptr->window_width) return 1;
+	return 0;
 }
 
 void GW::Render::SetRenderCallback(std::function<void(IDirect3DDevice9*)> callback) {

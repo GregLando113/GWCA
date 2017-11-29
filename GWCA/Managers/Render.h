@@ -20,5 +20,11 @@ namespace GW {
 		void SetResetCallback(std::function<void(IDirect3DDevice9*)> callback);
 
 		void RestoreHooks();
+
+		// Check if gw is in fullscreen
+		// Note: requires one or both callbacks to be set and called before
+		// Note: does not update while minimized
+		// Note: returns -1 if it doesn't know yet
+		int GetIsFullscreen();
 	}
 }

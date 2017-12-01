@@ -73,6 +73,16 @@ int GW::Render::GetIsFullscreen() {
 	return 0;
 }
 
+int GW::Render::GetViewportWidth() {
+	if (gwdx_ptr == nullptr) return -1;
+	return gwdx_ptr->viewport_width;
+}
+
+int GW::Render::GetViewportHeight() {
+	if (gwdx_ptr == nullptr) return -1;
+	return gwdx_ptr->viewport_height;
+}
+
 void GW::Render::SetRenderCallback(std::function<void(IDirect3DDevice9*)> callback) {
 	render_callback = callback;
 	if (endscene_hook.Empty()) {

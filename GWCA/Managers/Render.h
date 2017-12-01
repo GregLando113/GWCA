@@ -26,5 +26,8 @@ namespace GW {
 		// Note: does not update while minimized
 		// Note: returns -1 if it doesn't know yet
 		int GetIsFullscreen();
+
+		int GetViewportWidth();
+		int GetViewportHeight();
 	}
 }

@@ -5,8 +5,10 @@
 
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\AgentMgr.h>
+#include <GWCA\Managers\PartyMgr.h>
 #include <GWCA\Managers\PlayerMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
+
 
 typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
 static UseSkill_t UseSkill;
@@ -63,7 +65,7 @@ void GW::SkillbarMgr::LoadSkillbar(DWORD skillids[8], int heroindex) {
 	CtoS::SendPacket(0x2C, 0x56, id, 0x8, skillids[0], skillids[1], skillids[2], skillids[3], skillids[4], skillids[5], skillids[6], skillids[7]);
 }
 
-bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
+bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int heroindex) {
 	const int SKILL_MAX = 3410; // @Move
 	const int ATTRIBUTE_MAX = 44; // @Move
 
@@ -121,13 +123,36 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
 	}
 
+	if (!GW::PartyMgr::GetIsPartyLoaded()) goto free_and_false;
+	GW::PartyInfo* info = GW::PartyMgr::GetPartyInfo();
+	if (info == nullptr) goto free_and_false;
+	GW::PlayerArray players = GW::Agents::GetPlayerArray();
+	if (!players.valid()) goto free_and_false;
+
 	Agent *me = GW::Agents::GetPlayer();
-	if (me && me->Primary == prof1) {
-		GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2);
-		LoadSkillbar((DWORD *)SkillIDs);
-		SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);
-	}
-	return true;
+	if (!me) goto free_and_false;
+	Array<HeroPartyMember> heroes = info->heroes;
+
+	if (heroindex >= 0 && heroindex < (int)heroes.size()) {
+		GW::HeroPartyMember &hero = heroes[heroindex];
+		if (hero.ownerplayerid == me->LoginNumber) {
+			GW::Constants::Profession Primary = GW::Constants::HeroProfs[hero.heroid];
+			if (Primary == static_cast<GW::Constants::Profession>(prof1) || Primary == GW::Constants::Profession::None) { //Hacky, because we can't check for mercenary heroes and Razah
+				heroindex++;
+				GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2, heroindex);
+				LoadSkillbar((DWORD *)SkillIDs, heroindex);
+				SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal, heroindex);
+			}
+			return true;
+		}
+	} else if (heroindex == -1) {
+		if (me->Primary == prof1) {
+			GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2);
+			LoadSkillbar((DWORD *)SkillIDs);
+			SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);
+		}
+		return true;
+	} else goto free_and_false;
 
 free_and_false:
 	delete[] bitStr;

@@ -96,6 +96,8 @@ namespace GW {
             Merc4, Merc5, Merc6, Merc7, Merc8, Miku, ZeiRi
         };
 
+		const BYTE HeroProfs[] = { 0,5,1,3,4,2,1,3,6,10,6,9,2,7,4,0,10,9,1,2,7,4,9,10,5,8,6,3,0,0,0,0,0,0,0,0,7,8 };
+
         enum HeroBehavior : DWORD {
             Fight, Guard, AvoidCombat
         };

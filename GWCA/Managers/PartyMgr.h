@@ -42,6 +42,13 @@ namespace GW {
 
         void RespondToPartyRequest(bool accept);
 
+		void LeaveParty();
+
+		// hero managment
+		void AddHero(DWORD heroid);
+		void KickHero(DWORD heroid);
+		void KickAllHeroes();
+
 		// hero flagging
 		void FlagHero(DWORD hero_index, GW::GamePos pos);
 		void UnflagHero(DWORD hero_index);

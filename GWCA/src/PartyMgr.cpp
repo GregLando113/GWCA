@@ -131,6 +131,22 @@ void GW::PartyMgr::RespondToPartyRequest(bool accept) {
 	CtoS::SendPacket(0x8, accept ? 0x96 : 0x98, 1);
 }
 
+void GW::PartyMgr::AddHero(DWORD heroid) {
+	CtoS::SendPacket(0x8, 0x17, heroid);
+}
+
+void GW::PartyMgr::KickHero(DWORD heroid) {
+	CtoS::SendPacket(0x8, 0x18, heroid);
+}
+
+void GW::PartyMgr::KickAllHeroes() {
+	CtoS::SendPacket(0x8, 0x18, 0x26);
+}
+
+void GW::PartyMgr::LeaveParty() {
+	CtoS::SendPacket(0x4, 0x9C);
+}
+
 void GW::PartyMgr::FlagHero(DWORD hero_index, GW::GamePos pos) {
 	DWORD heroid = Agents::GetHeroAgentID(hero_index);
 	if (heroid == 0) return;

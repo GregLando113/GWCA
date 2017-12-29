@@ -5,8 +5,10 @@
 
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\AgentMgr.h>
+#include <GWCA\Managers\PartyMgr.h>
 #include <GWCA\Managers\PlayerMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
+
 
 typedef void(__fastcall *UseSkill_t)(DWORD, DWORD, DWORD, DWORD);
 static UseSkill_t UseSkill;
@@ -63,7 +65,7 @@ void GW::SkillbarMgr::LoadSkillbar(DWORD skillids[8], int heroindex) {
 	CtoS::SendPacket(0x2C, 0x56, id, 0x8, skillids[0], skillids[1], skillids[2], skillids[3], skillids[4], skillids[5], skillids[6], skillids[7]);
 }
 
-bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
+bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int heroindex) {
 	const int SKILL_MAX = 3410; // @Move
 	const int ATTRIBUTE_MAX = 44; // @Move
 
@@ -79,21 +81,21 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		_WriteBits(numeric_value, bitStr + (6 * i));
 	}
 
-	int AttribIDs[10] = {0};
-	int AttribVal[10] = {0};
+	int AttribIDs[10] = { 0 };
+	int AttribVal[10] = { 0 };
 	int AttribCount = 0;
 
-	int SkillIDs[8] = {0};
+	int SkillIDs[8] = { 0 };
 	int SkillCount = 0;
 
 	char *it = bitStr;
-	char *end = bitStr + 6*len;
+	char *end = bitStr + 6 * len;
 
 	// HEADER
 	int header = _ReadBits(&it, 4);
 	if (header != 0 && header != 14) goto free_and_false;
 	if (header == 14) _ReadBits(&it, 4);
-	int bits_per_prof = 2*_ReadBits(&it, 2) + 4;
+	int bits_per_prof = 2 * _ReadBits(&it, 2) + 4;
 	int prof1 = _ReadBits(&it, bits_per_prof);
 	int prof2 = _ReadBits(&it, bits_per_prof);
 	if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) goto free_and_false;;
@@ -121,13 +123,40 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 		if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
 	}
 
+	if (!GW::PartyMgr::GetIsPartyLoaded()) goto free_and_false;
+	GW::PartyInfo* info = GW::PartyMgr::GetPartyInfo();
+	if (info == nullptr) goto free_and_false;
+	GW::PlayerArray players = GW::Agents::GetPlayerArray();
+	if (!players.valid()) goto free_and_false;
+
 	Agent *me = GW::Agents::GetPlayer();
-	if (me && me->Primary == prof1) {
-		GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2);
-		LoadSkillbar((DWORD *)SkillIDs);
-		SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);
-	}
-	return true;
+	Array<HeroPartyMember> heroes = info->heroes;
+
+	if (heroindex >= 0 && heroindex < (int)heroes.size()) {
+		GW::HeroPartyMember hero = heroes[heroindex];
+		for (GW::PlayerPartyMember& player : info->players) {
+			long id = players[player.loginnumber].AgentID;
+			if (id == GW::Agents::GetPlayerId()) {
+				if (hero.ownerplayerid == player.loginnumber) {
+					BYTE Primary = GW::Constants::HeroProfs[hero.heroid];
+					if (Primary == prof1 || Primary == 0) { //Hacky, because we can't check for mercenary heroes and Razah
+						heroindex++;
+						GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2, heroindex);
+						LoadSkillbar((DWORD *)SkillIDs, heroindex);
+						SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal, heroindex);
+					}
+					return true;
+				}
+			}
+		}
+	} else if (heroindex == -1) {
+		if (me && me->Primary == prof1) {
+			GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2);
+			LoadSkillbar((DWORD *)SkillIDs);
+			SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);
+		}
+		return true;
+	} else goto free_and_false;
 
 free_and_false:
 	delete[] bitStr;

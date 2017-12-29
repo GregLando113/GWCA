@@ -96,7 +96,46 @@ namespace GW {
             Merc4, Merc5, Merc6, Merc7, Merc8, Miku, ZeiRi
         };
 
-		const BYTE HeroProfs[] = { 0,5,1,3,4,2,1,3,6,10,6,9,2,7,4,0,10,9,1,2,7,4,9,10,5,8,6,3,0,0,0,0,0,0,0,0,7,8 };
+		const Profession HeroProfs[] = {
+			Profession::None,
+			Profession::Mesmer, // Norgu
+			Profession::Warrior,// Goren
+			Profession::Monk, // Tahlkora
+			Profession::Necromancer, // Master Of Whispers
+			Profession::Ranger, // Acolyte Jin
+			Profession::Warrior, // Koss
+			Profession::Monk, // Dunkoro
+			Profession::Elementalist, // Acolyte Sousuke
+			Profession::Dervish, // Melonni
+			Profession::Elementalist, // Zhed Shadowhoof
+			Profession::Paragon, // General Morgahn
+			Profession::Ranger, // Magrid The Sly
+			Profession::Assassin, // Zenmai
+			Profession::Necromancer, // Olias
+			Profession::None, // Razah
+			Profession::Dervish, // MOX
+			Profession::Paragon, // Keiran Thackeray
+			Profession::Warrior, // Jora
+			Profession::Ranger, // Pyre Fierceshot
+			Profession::Assassin, // Anton
+			Profession::Necromancer, // Livia
+			Profession::Paragon, // Hayda
+			Profession::Dervish, // Kahmu
+			Profession::Mesmer, // Gwen
+			Profession::Ritualist, // Xandra
+			Profession::Elementalist, // Vekk
+			Profession::Monk, // Ogden
+			Profession::None, // Mercenary Hero 1
+			Profession::None, // Mercenary Hero 2
+			Profession::None, // Mercenary Hero 3
+			Profession::None, // Mercenary Hero 4
+			Profession::None, // Mercenary Hero 5
+			Profession::None, // Mercenary Hero 6
+			Profession::None, // Mercenary Hero 7
+			Profession::None, // Mercenary Hero 8
+			Profession::Assassin, // Miku
+			Profession::Ritualist, // Zei Ri
+		};
 
         enum HeroBehavior : DWORD {
             Fight, Guard, AvoidCombat

@@ -130,27 +130,23 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int heroindex) {
 	if (!players.valid()) goto free_and_false;
 
 	Agent *me = GW::Agents::GetPlayer();
+	if (!me) goto free_and_false;
 	Array<HeroPartyMember> heroes = info->heroes;
 
 	if (heroindex >= 0 && heroindex < (int)heroes.size()) {
-		GW::HeroPartyMember hero = heroes[heroindex];
-		for (GW::PlayerPartyMember& player : info->players) {
-			long id = players[player.loginnumber].AgentID;
-			if (id == GW::Agents::GetPlayerId()) {
-				if (hero.ownerplayerid == player.loginnumber) {
-					BYTE Primary = GW::Constants::HeroProfs[hero.heroid];
-					if (Primary == prof1 || Primary == 0) { //Hacky, because we can't check for mercenary heroes and Razah
-						heroindex++;
-						GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2, heroindex);
-						LoadSkillbar((DWORD *)SkillIDs, heroindex);
-						SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal, heroindex);
-					}
-					return true;
-				}
+		GW::HeroPartyMember &hero = heroes[heroindex];
+		if (hero.ownerplayerid == me->LoginNumber) {
+			GW::Constants::Profession Primary = GW::Constants::HeroProfs[hero.heroid];
+			if (Primary == static_cast<GW::Constants::Profession>(prof1) || Primary == GW::Constants::Profession::None) { //Hacky, because we can't check for mercenary heroes and Razah
+				heroindex++;
+				GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2, heroindex);
+				LoadSkillbar((DWORD *)SkillIDs, heroindex);
+				SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal, heroindex);
 			}
+			return true;
 		}
 	} else if (heroindex == -1) {
-		if (me && me->Primary == prof1) {
+		if (me->Primary == prof1) {
 			GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2);
 			LoadSkillbar((DWORD *)SkillIDs);
 			SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);

@@ -23,11 +23,12 @@ namespace GW {
 		// Get skill structure of said id, houses pretty much everything you would want to know about the skill.
 		GW::Skill GetSkillConstantData(DWORD SkillID);
 
-		void ChangeSecondary(DWORD profession, int heroindex = 0);
+		void ChangeSecondary(DWORD profession, int hero_index = 0);
 
-		void LoadSkillbar(DWORD* skillids, int heroindex = 0);
-		bool LoadSkillTemplate(const char *temp, int heroindex = -1);
+		void LoadSkillbar(DWORD skillids[8], int hero_index = 0);
+		bool LoadSkillTemplate(const char *temp);
+		bool LoadSkillTemplate(const char *temp, int hero_index = 0);
 
-		void SetAttributes(DWORD attributecount, DWORD* attributeids, DWORD* attributevalues, int heroindex = 0);
+		void SetAttributes(DWORD attributecount, DWORD* attributeids, DWORD* attributevalues, int hero_index = 0);
 	};
 }

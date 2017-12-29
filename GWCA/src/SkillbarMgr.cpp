@@ -65,98 +65,152 @@ void GW::SkillbarMgr::LoadSkillbar(DWORD skillids[8], int heroindex) {
 	CtoS::SendPacket(0x2C, 0x56, id, 0x8, skillids[0], skillids[1], skillids[2], skillids[3], skillids[4], skillids[5], skillids[6], skillids[7]);
 }
 
-bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int heroindex) {
-	const int SKILL_MAX = 3410; // @Move
-	const int ATTRIBUTE_MAX = 44; // @Move
+static bool decode_skill_template(const char *temp, int AttribIDs[10], int AttribVal[10],
+	int *AttribCount, int SkillIDs[8], int *SkillCount,
+	GW::Constants::Profession *primary, GW::Constants::Profession *secondary)
+{
+	const int SKILL_MAX = 3410; // @Cleanup: This should go somewhere else (it could be readed from the client)
+	const int ATTRIBUTE_MAX = 44; // @Cleanup: This should go somewhere else (it could be readed from the client)
+
+	int _SkillCount = 0;
+	int _AttribCount = 0;
 
 	size_t len = strlen(temp);
-	char *bitStr = new char[len * 6]; // @Enhancement, this doesn't need to be a heap alloc.
+	// char *bitStr = new char[len * 6]; // @Enhancement: this doesn't need to be a heap alloc.
+
+	const int bufSize = 1024;
+	assert((len * 6) < bufSize);
+	char bitStr[bufSize]; // @Cleanup: Confirm that the buffer is alway big enough.
 
 	for (size_t i = 0; i < len; i++) {
 		int numeric_value = _Base64ToValue[temp[i]];
 		if (numeric_value == -1) {
 			fprintf_s(stderr, "Unvalid base64 character '%c' in string '%s'\n", temp[i], temp);
-			goto free_and_false;
+			return false;
 		}
 		_WriteBits(numeric_value, bitStr + (6 * i));
 	}
 
-	int AttribIDs[10] = {0};
-	int AttribVal[10] = {0};
-	int AttribCount = 0;
-
-	int SkillIDs[8] = {0};
-	int SkillCount = 0;
-
 	char *it = bitStr;
-	char *end = bitStr + 6*len;
+	char *end = bitStr + 6 * len;
 
 	// HEADER
 	int header = _ReadBits(&it, 4);
-	if (header != 0 && header != 14) goto free_and_false;
+	if (header != 0 && header != 14) {
+		fprintf_s(stderr, "Template header '%d' not valid.", header);
+		return false;
+	}
 	if (header == 14) _ReadBits(&it, 4);
-	int bits_per_prof = 2*_ReadBits(&it, 2) + 4;
+	int bits_per_prof = 2 * _ReadBits(&it, 2) + 4;
 	int prof1 = _ReadBits(&it, bits_per_prof);
 	int prof2 = _ReadBits(&it, bits_per_prof);
-	if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) goto free_and_false;;
+	if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) return false;
 
 	// ATTRIBUTES
-	AttribCount = _ReadBits(&it, 4);
+	_AttribCount = _ReadBits(&it, 4);
 	int bits_per_attr = _ReadBits(&it, 4) + 4;
-	for (int i = 0; i < AttribCount; i++) {
+	for (int i = 0; i < _AttribCount; i++) {
 		AttribIDs[i] = _ReadBits(&it, bits_per_attr);
 		AttribVal[i] = _ReadBits(&it, 4);
 		if (AttribIDs[i] > ATTRIBUTE_MAX) {
 			fprintf_s(stderr, "Attribute id %d is out of range. (max = %d)\n", AttribIDs[i], 44);
-			goto free_and_false;
+			return false;
 		}
 	}
 
 	// SKILLS
 	int bits_per_skill = _ReadBits(&it, 4) + 8;
-	for (SkillCount = 0; SkillCount < 8; SkillCount++) {
-		SkillIDs[SkillCount] = _ReadBits(&it, bits_per_skill);
-		if (SkillIDs[SkillCount] > SKILL_MAX) {
-			fprintf_s(stderr, "Skill id %d is out of range. (max = %d)\n", SkillIDs[SkillCount], SKILL_MAX);
-			goto free_and_false;
+	for (_SkillCount = 0; _SkillCount < 8; _SkillCount++) {
+		SkillIDs[_SkillCount] = _ReadBits(&it, bits_per_skill);
+		if (SkillIDs[_SkillCount] > SKILL_MAX) {
+			fprintf_s(stderr, "Skill id %d is out of range. (max = %d)\n", SkillIDs[_SkillCount], SKILL_MAX);
+			return false;
 		}
 		if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
 	}
 
-	if (!GW::PartyMgr::GetIsPartyLoaded()) goto free_and_false;
-	GW::PartyInfo* info = GW::PartyMgr::GetPartyInfo();
-	if (info == nullptr) goto free_and_false;
-	GW::PlayerArray players = GW::Agents::GetPlayerArray();
-	if (!players.valid()) goto free_and_false;
+	*AttribCount = _AttribCount;
+	*SkillCount = _SkillCount;
+	*primary = static_cast<GW::Constants::Profession>(prof1);
+	*secondary = static_cast<GW::Constants::Profession>(prof2);
+
+	return true;
+}
+
+bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
+	using GW::Constants::Profession;
+
+	int SkillCount = 0;
+	int AttribCount = 0;
+	int AttribIDs[10] = {0};
+	int AttribVal[10] = {0};
+	int SkillIDs[8] = {0};
+
+	Profession primary = Profession::None;
+	Profession secondary = Profession::None;
+
+	if (!decode_skill_template(temp, AttribIDs, AttribVal, &AttribCount, SkillIDs, &SkillCount, &primary, &secondary))
+		return false;
+
+	Agent *me = Agents::GetPlayer();
+	if (!me) return false;
+
+	// @Enhancement: Check if we already bought this secondary profession.
+	if (me->Secondary != (BYTE)secondary)
+		GW::PlayerMgr::ChangeSecondProfession(secondary);
+	LoadSkillbar((DWORD *)SkillIDs);
+	SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);
+	return true;
+}
+
+bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int hero_index) {
+	using GW::Constants::Profession;
+
+	int SkillCount = 0;
+	int AttribCount = 0;
+	int AttribIDs[10] = {0};
+	int AttribVal[10] = {0};
+	int SkillIDs[8] = {0};
+
+	Profession primary = Profession::None;
+	Profession secondary = Profession::None;
+
+	if (!decode_skill_template(temp, AttribIDs, AttribVal, &AttribCount, SkillIDs, &SkillCount, &primary, &secondary))
+		return false;
+
+	if (!GW::PartyMgr::GetIsPartyLoaded())
+		return false;
+
+	GW::PartyInfo *info = GW::PartyMgr::GetPartyInfo();
+	if (!info) return false;
+
+	GW::PlayerArray &players = GW::Agents::GetPlayerArray();
+	if (!players.valid()) return false;
 
 	Agent *me = GW::Agents::GetPlayer();
-	if (!me) goto free_and_false;
-	Array<HeroPartyMember> heroes = info->heroes;
+	if (!me) return false;
+	HeroPartyMemberArray &heroes = info->heroes;
 
-	if (heroindex >= 0 && heroindex < (int)heroes.size()) {
-		GW::HeroPartyMember &hero = heroes[heroindex];
-		if (hero.ownerplayerid == me->LoginNumber) {
-			GW::Constants::Profession Primary = GW::Constants::HeroProfs[hero.heroid];
-			if (Primary == static_cast<GW::Constants::Profession>(prof1) || Primary == GW::Constants::Profession::None) { //Hacky, because we can't check for mercenary heroes and Razah
-				heroindex++;
-				GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2, heroindex);
-				LoadSkillbar((DWORD *)SkillIDs, heroindex);
-				SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal, heroindex);
-			}
-			return true;
-		}
-	} else if (heroindex == -1) {
-		if (me->Primary == prof1) {
-			GW::PlayerMgr::ChangeSecondProfession((GW::Constants::Profession)prof2);
-			LoadSkillbar((DWORD *)SkillIDs);
-			SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal);
-		}
-		return true;
-	} else goto free_and_false;
+	if (hero_index < 0 || (int)heroes.size() <= hero_index)
+		return false;
 
-free_and_false:
-	delete[] bitStr;
-	return false;
+	GW::HeroPartyMember &hero = heroes[hero_index];
+	if (hero.ownerplayerid != me->LoginNumber)
+		return false;
+
+	// @Enhancement: There should be a systematic way to get the profession of an hero.
+	GW::Constants::Profession expected_primary = GW::Constants::HeroProfs[hero.heroid];
+
+	// Hacky, because we can't check for mercenary heroes and Razah
+	if (expected_primary != primary && expected_primary != Profession::None) {
+		return false;
+	}
+
+	// @Enhancement: We may want to check if the hero already have the secondary prof needed.
+	GW::PlayerMgr::ChangeSecondProfession(secondary, hero_index);
+	LoadSkillbar((DWORD *)SkillIDs, hero_index);
+	SetAttributes(AttribCount, (DWORD *)AttribIDs, (DWORD *)AttribVal, hero_index);
+	return true;
 }
 
 void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, DWORD * attributevalues, int heroindex) {

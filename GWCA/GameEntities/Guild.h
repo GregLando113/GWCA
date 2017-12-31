@@ -29,15 +29,23 @@ namespace GW {
 
     struct Guild {
         /* +h0000 */ GHKey key;
-        /* +h0010 */ DWORD h0004[6];
+        /* +h0010 */ DWORD h0004[5];
+        /* +h0024 */ DWORD guild_id;
         /* +h0028 */ DWORD rank;
-        /* +h002C */ DWORD h002C;
+        /* +h002C */ DWORD features;
         /* +h0030 */ wchar name[32];
         /* +h0070 */ DWORD rating;
         /* +h0074 */ DWORD faction; // 0=kurzick, 1=luxon
         /* +h0078 */ DWORD faction_point;
         /* +h007C */ DWORD qualifier_point;
-        /* +h0080 */ wchar tag[4];
+        /* +h0080 */ wchar tag[8];
+        /* +h0090 */ DWORD cape_bg_color;
+        /* +h0094 */ DWORD cape_detail_color;
+        /* +h0098 */ DWORD cape_emblem_color;
+        /* +h009C */ DWORD cape_shape;
+        /* +h00A0 */ DWORD cape_detail;
+        /* +h00A4 */ DWORD cape_emblem;
+        /* +h00A8 */ DWORD cape_trim;
     };
 
     using GuildArray = Array<Guild*>;

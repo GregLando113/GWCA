@@ -166,7 +166,7 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int hero_index) {
 	using GW::Constants::Profession;
 
-	if (heroindex == 0)
+	if (hero_index == 0)
 		return LoadSkillTemplate(temp);
 
 	int SkillCount = 0;

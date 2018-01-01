@@ -28,7 +28,7 @@ namespace GW {
 		void LoadSkillbar(DWORD skillids[8], int hero_index = 0);
 
 		bool LoadSkillTemplate(const char *temp);
-		bool LoadSkillTemplate(const char *temp, int hero_index = 0);
+		bool LoadSkillTemplate(const char *temp, int hero_index);
 
 		void SetAttributes(DWORD attributecount, DWORD* attributeids, DWORD* attributevalues, int hero_index = 0);
 	};

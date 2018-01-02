@@ -194,7 +194,7 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int hero_index) {
 	if (!me) return false;
 	HeroPartyMemberArray &heroes = info->heroes;
 
-	if (hero_index <= 0 || (int)heroes.size() <= hero_index)
+	if (hero_index <= 0 || (int)heroes.size() < hero_index)
 		return false;
 
 	GW::HeroPartyMember &hero = heroes[hero_index-1];

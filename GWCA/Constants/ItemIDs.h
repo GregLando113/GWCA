@@ -69,6 +69,7 @@ namespace GW {
 			const int LunarSheep = 29432;
 			const int LunarMonkey = 29433;
 			const int LunarRooster = 29434;
+			const int LunarDog = 29435;
 			const int ConsEssence = 24859;
 			const int ConsArmor = 24860;
 			const int ConsGrail = 24861;

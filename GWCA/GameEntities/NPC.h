@@ -5,13 +5,15 @@
 #include <GWCA\GameContainers\Array.h>
 
 namespace GW {
-	using wchar = wchar_t;
+    using wchar = wchar_t;
 
     struct NPC { // total: 0x30/48
         /* +h0000 */ DWORD ModelFileID;
         /* +h0004 */ DWORD h0004[3];
         /* +h0010 */ DWORD NpcFlags;
-        /* +h0014 */ DWORD h00014[3];
+        /* +h0014 */ DWORD h0014;
+        /* +h0018 */ DWORD h0018;
+        /* +h001C */ DWORD DefaultLevel; // Default Level of NPC without Levelup
         /* +h0020 */ wchar *NameString;
         /* +h0024 */ DWORD h0024[3];
     };

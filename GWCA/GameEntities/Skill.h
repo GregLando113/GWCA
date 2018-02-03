@@ -7,7 +7,7 @@
 #include <GWCA\Constants\Constants.h>
 
 namespace GW {
-    struct Skill { // total : A0/160
+    struct Skill { // total : 0xA0/160
         /* +h0000 */ DWORD SkillId;
         /* +h0004 */ DWORD h0004;
         /* +h0008 */ DWORD Campaign;
@@ -106,8 +106,8 @@ namespace GW {
         /* +h0008 */ DWORD BuffId; // id of buff in the buff array
         /* +h000C */ DWORD TargetAgentId; // agent id of the target (0 if no target)
 
-		static Buff Nil() { return Buff(); }
-		Buff() : SkillId(0), h0004(0), BuffId(0), TargetAgentId(0) {}
+        static Buff Nil() { return Buff(); }
+        Buff() : SkillId(0), h0004(0), BuffId(0), TargetAgentId(0) {}
     };
 
     using EffectArray = Array<Effect>;

@@ -5,7 +5,7 @@
 
 namespace GW {
     using PlayerID = DWORD;
-	using wchar = wchar_t;
+    using wchar = wchar_t;
 
     struct Player { // total: 0x4C/76
         /* +h0000 */ DWORD AgentID;

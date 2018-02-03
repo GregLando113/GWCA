@@ -14,12 +14,12 @@ namespace GW {
     using ItemArray = Array<Item*>;
 
     struct Bag { // total: 0x24/36
-        /* +h0000 */ DWORD h0000;
-        /* +h0004 */ DWORD index;
+        /* +h0000 */ DWORD BagType; // Bag 1, Equipped 2, NotCollected 3, Storage 4, MaterialStorage 5
+        /* +h0004 */ DWORD Index;
         /* +h0008 */ DWORD BagId;
         /* +h000C */ DWORD ContainerItem;
         /* +h0010 */ DWORD ItemsCount;
-        /* +h0014 */ Bag *BagArray;
+        /* +h0014 */ Bag  *BagArray;
         /* +h0018 */ ItemArray Items;
     };
 
@@ -38,8 +38,8 @@ namespace GW {
     struct Item { // total: 0x50/80
         /* +h0000 */ DWORD ItemId;
         /* +h0004 */ DWORD AgentId;
-        /* +h0008 */ BYTE h0008[4];
-        /* +h000C */ Bag *Bag;
+        /* +h0008 */ Bag  *BagEquiped; // Only valid if Item is a equipped Bag
+        /* +h000C */ Bag  *Bag;
         /* +h0010 */ ItemModifier *ModStruct; // Pointer to an array of mods.
         /* +h0014 */ DWORD ModStructSize; // Size of this array.
         /* +h0018 */ wchar *Customized;
@@ -54,16 +54,22 @@ namespace GW {
         /* +h0030 */ wchar *InfoString;
         /* +h0034 */ wchar *NameString;
         /* +h0038 */ wchar *CompleteName; // with color, quantity, etc.
-        /* +h003C */ BYTE h003C[15];
+        /* +h003C */ wchar *SingleItemName; // with color, w/o quantity, named as single item
+        /* +h0040 */ BYTE h003C[11];
         /* +h004B */ BYTE Quantity;
         /* +h004C */ BYTE Equipped;
         /* +h004D */ BYTE Profession;
         /* +h004E */ BYTE Slot;
     };
 
+    struct WeapondSet {
+        Item *Weapon;
+        Item *Offhand;
+    };
+
     struct Inventory { // total: 0x84/124
         union {
-        /* +h0000 */ Bag *Bags[31];
+        /* +h0000 */ Bag *Bags[18];
             struct {
         /* +h0000 */ Bag *UnusedBag;
         /* +h0004 */ Bag *Backpack;
@@ -85,7 +91,23 @@ namespace GW {
         /* +h0044 */ Bag *EquippedItems;
             };
         };
-
+        /* +h0048 */ Item *Bundle;
+        /* +h004C */ DWORD h004C;
+        union {
+        /* +h004C */ WeapondSet WeaponSets[4];
+            struct {
+        /* +h0050 */ Item *WeaponSet0;
+        /* +h0054 */ Item *OffhandSet0;
+        /* +h0058 */ Item *WeaponSet1;
+        /* +h005C */ Item *OffhandSet1;
+        /* +h0060 */ Item *WeaponSet2;
+        /* +h0064 */ Item *OffhandSet2;
+        /* +h0068 */ Item *WeaponSet3;
+        /* +h006C */ Item *OffhandSet3;
+            };
+        };
+        /* +h0070 */ DWORD ActiveWeaponSet;
+        /* +h0074 */ DWORD h0074[2];
         /* +h007C */ DWORD GoldCharacter;
         /* +h0080 */ DWORD GoldStorage;
     };

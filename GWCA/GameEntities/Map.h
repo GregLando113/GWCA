@@ -77,17 +77,35 @@ namespace GW {
 
     // https://github.com/entice/gw-interface/blob/master/GuildWarsInterface/Datastructures/Const/AreaInfo.cs
     struct AreaInfo { // total: 0x7C/120
-        /* +h0000 */ DWORD h0000;
+        /* +h0000 */ DWORD Campaign;
         /* +h0004 */ DWORD Continent;
         /* +h0008 */ Region Region;
         /* +h000C */ RegionType Type;
         /* +h0010 */ DWORD Flags;
         /* +h0014 */ DWORD ThumbmailID;
-        /* +h0018 */ DWORD PartySize;
-        /* +h001C */ DWORD h001C[9];
+        /* +h0018 */ DWORD MinPartySize;
+        /* +h001C */ DWORD MaxPartySize;
+        /* +h0020 */ DWORD MinPlayerSize;
+        /* +h0024 */ DWORD MaxPlayerSize;
+        /* +h0028 */ DWORD ControlledOutpostID;
+        /* +h002C */ DWORD FractionMission;
+        /* +h0030 */ DWORD MinLevel;
+        /* +h0034 */ DWORD MaxLevel;
+        /* +h0038 */ DWORD NeededPQ;
+        /* +h003C */ DWORD MissionMapsTo;
         /* +h0040 */ DWORD X; // icon position on map.
         /* +h0044 */ DWORD Y;
-        /* +h0048 */ DWORD h0048[11];
+        /* +h0048 */ DWORD IconStart_X;
+        /* +h004C */ DWORD IconStart_Y;
+        /* +h0050 */ DWORD IconEnd_X;
+        /* +h0054 */ DWORD IconEnd_Y;
+        /* +h0058 */ DWORD IconStart_X_dupe;
+        /* +h005C */ DWORD IconStart_Y_dupe;
+        /* +h0060 */ DWORD IconEnd_X_dupe;
+        /* +h0064 */ DWORD IconEnd_Y_dupe;
+        /* +h0068 */ DWORD h0068;
+        /* +h006C */ DWORD MissionChronology;
+        /* +h0070 */ DWORD HAMapChronology;
         /* +h0074 */ DWORD NameID;
         /* +h0078 */ DWORD DescriptionID;
 

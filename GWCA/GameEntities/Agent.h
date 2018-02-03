@@ -16,7 +16,9 @@ namespace GW {
         /* +h0000 */ DWORD* vtable;
         /* +h0004 */ DWORD h0004;
         /* +h0008 */ DWORD h0008;
-        /* +h000C */ DWORD h000C[4];
+        /* +h000C */ DWORD h000C[2];
+        /* +h0014 */ DWORD Timer; // Agent Instance Timer (in Frames)
+        /* +h0018 */ DWORD Timer2;
         /* +h001C */ TLink<Agent> link;
         /* +h0024 */ TLink<Agent> link2; // Not used.
         /* +h002C */ AgentID Id; // AgentId
@@ -31,7 +33,8 @@ namespace GW {
         /* +h0050 */ float Rotation_cos; // cosine of rotation
         /* +h0054 */ float Rotation_sin; // sine of rotation
         /* +h0058 */ DWORD NameProperties; // Bitmap basically telling what the agent is
-        /* +h005C */ BYTE  h005C[8];
+        /* +h005C */ DWORD Ground;
+        /* +h0060 */ DWORD h0060;
         /* +h0064 */ float h0064;   // weird values, change with movement, always between -1 and 1
         /* +h0068 */ float h0068;
         /* +h006C */ float h006C;
@@ -48,60 +51,65 @@ namespace GW {
         /* +h0084 */ float NameTagX; // Exactly the same as X above
         /* +h0088 */ float NameTagY; // Exactly the same as Y above
         /* +h008C */ float NameTagZ; // Z coord in float
-        /* +h0090 */ BYTE  h0090[12];
+        /* +h0090 */ WORD  VisualEffects; // Number of Visual Effects of Agent (Skills, Weapons); 1 = Always set;
+        //           WORD  padding;
+        /* +h0094 */ DWORD h0094[2];
         /* +h009C */ DWORD Type; // Livings = 0xDB, Gadgets = 0x200, Items = 0x400.
         /* +h00A0 */ float MoveX; //If moving, how much on the X axis per second
         /* +h00A4 */ float MoveY; //If moving, how much on the Y axis per second
-        /* +h00A8 */ BYTE  h00A8[4]; // always 0?
+        /* +h00A8 */ DWORD h00A8; // always 0?
         /* +h00AC */ float Rotation_cos2; // same as cosine above
         /* +h00B0 */ float Rotation_sin2; // same as sine above
-        /* +h00B4 */ BYTE  h00B4[16];
+        /* +h00B4 */ DWORD h00B4[4];
         /* +h00C4 */ DWORD Owner;
         /* +h00C8 */ DWORD ItemID; // Only valid if agent is type 0x400 (item)
-        /* +h00CC */ BYTE  h00CC[4];
+        /* +h00CC */ DWORD h00CC;
         /* +h00D0 */ DWORD ExtraType; // same as GadgetId. Could be used as such.
-        /* +h00D4 */ BYTE  h00D4[0xC];
+        /* +h00D4 */ DWORD h00D4[3];
         /* +h00E0 */ float AnimationType;
-        /* +h00E4 */ BYTE  h00E4[0x8];
+        /* +h00E4 */ DWORD h00E4[2];
         /* +h00EC */ float WeaponAttackSpeed; // The base attack speed in float of last attacks weapon. 1.33 = axe, sWORD, daggers etc.
         /* +h00F0 */ float AttackSpeedModifier; // Attack speed modifier of the last attack. 0.67 = 33% increase (1-.33)
         /* +h00F4 */ WORD  PlayerNumber; // Selfexplanatory. All non-players have identifiers for their type. Two of the same mob = same number
-        //           WORD padding;
-        /* +h00F8 */ BYTE  h00F8[4];
+        //           WORD  padding;
+        /* +h00F8 */ DWORD h00F8;
         /* +h00FC */ DWORD** Equip;
         /* +h0100 */ BYTE  h0100[10];
         /* +h010A */ BYTE  Primary; // Primary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
         /* +h010B */ BYTE  Secondary; // Secondary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
         /* +h010C */ BYTE  Level; // Duh!
         /* +h010D */ BYTE  TeamId; // 0=None, 1=Blue, 2=Red, 3=Yellow
-        /* +h010E */ BYTE  h010E[14];
+        /* +h010E */ BYTE  h010E[2];
+        /* +h0110 */ DWORD h0110;
+        /* +h0114 */ float EnergyRegen;
         /* +h011C */ float Energy; // Only works for yourself
         /* +h0120 */ DWORD MaxEnergy; // Only works for yourself
-        /* +h0124 */ BYTE  h0124[4];
+        /* +h0124 */ DWORD h0124;
         /* +h0128 */ float HPPips; // Regen/degen as float
-        /* +h012C */ BYTE  h012C[4];
+        /* +h012C */ DWORD h012C;
         /* +h0130 */ float HP; // Health in % where 1=100% and 0=0%
         /* +h0134 */ DWORD MaxHP; // Only works for yourself
         /* +h0138 */ DWORD Effects; // Bitmap for effects to display when targetted. DOES include hexes
-        /* +h013C */ BYTE  h013C[4];
+        /* +h013C */ DWORD h013C;
         /* +h0140 */ BYTE  Hex; // Bitmap for the hex effect when targetted (apparently obsolete!) (yes)
         /* +h0141 */ BYTE  h0141[19];
         /* +h0154 */ DWORD ModelState; // Different values for different states of the model.
         /* +h0158 */ DWORD TypeMap; // Odd variable! 0x08 = dead, 0xC00 = boss, 0x40000 = spirit, 0x400000 = player
-        /* +h015C */ BYTE  h015C[16];
+        /* +h015C */ DWORD h015C[4];
         /* +h016C */ DWORD InSpiritRange; // Tells if agent is within spirit range of you. Doesn't work anymore?
-        /* +h0170 */ BYTE  h0170[16];
+        /* +h0170 */ DWORD h0170[4];
         /* +h0180 */ DWORD LoginNumber; // Unique number in instance that only works for players
         /* +h0184 */ float AnimationSpeed;  // Speed of the current animation
-        /* +h0188 */ BYTE  AnimationUnk[4]; // related to animations
+        /* +h0188 */ DWORD AnimationCode; // related to animations
         /* +h018C */ DWORD AnimationID;     // Id of the current animation
         /* +h0190 */ BYTE  h0190[32];
         /* +h01B0 */ BYTE  DaggerStatus; // 0x1 = used lead attack, 0x2 = used offhand attack, 0x3 = used dual attack
         /* +h01B1 */ BYTE  Allegiance; // 0x1 = ally/non-attackable, 0x2 = neutral, 0x3 = enemy, 0x4 = spirit/pet, 0x5 = minion, 0x6 = npc/minipet
         /* +h01B2 */ WORD  WeaponType; // 1=bow, 2=axe, 3=hammer, 4=daggers, 5=scythe, 6=spear, 7=sWORD, 10=wand, 12=staff, 14=staff
         /* +h01B4 */ WORD  Skill; // 0 = not using a skill. Anything else is the Id of that skill
-        /* +h01B6 */ WORD  WeaponItemType;
-        /* +h01B8 */ WORD  OffhandItemType;
+        /* +h01B6 */ WORD  h01B6;
+        /* +h01B7 */ BYTE  WeaponItemType;
+        /* +h01B8 */ BYTE  OffhandItemType;
         /* +h01BA */ WORD  WeaponItemId;
         /* +h01BC */ WORD  OffhandItemId;
 

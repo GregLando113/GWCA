@@ -166,6 +166,9 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp) {
 bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int hero_index) {
 	using GW::Constants::Profession;
 
+	if (hero_index == 0)
+		return LoadSkillTemplate(temp);
+
 	int SkillCount = 0;
 	int AttribCount = 0;
 	int AttribIDs[10] = {0};
@@ -191,10 +194,10 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int hero_index) {
 	if (!me) return false;
 	HeroPartyMemberArray &heroes = info->heroes;
 
-	if (hero_index < 0 || (int)heroes.size() <= hero_index)
+	if (hero_index <= 0 || (int)heroes.size() < hero_index)
 		return false;
 
-	GW::HeroPartyMember &hero = heroes[hero_index];
+	GW::HeroPartyMember &hero = heroes[hero_index-1];
 	if (hero.ownerplayerid != me->LoginNumber)
 		return false;
 

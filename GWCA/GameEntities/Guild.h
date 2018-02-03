@@ -47,7 +47,7 @@ namespace GW {
         /* +h0090 */ DWORD cape_bg_color;
         /* +h0094 */ DWORD cape_detail_color;
         /* +h0098 */ DWORD cape_emblem_color;
-        /* +h009C */ DWORD cape_emblem_shape;
+        /* +h009C */ DWORD cape_shape;
         /* +h00A0 */ DWORD cape_detail;
         /* +h00A4 */ DWORD cape_emblem;
         /* +h00A8 */ DWORD cape_trim;

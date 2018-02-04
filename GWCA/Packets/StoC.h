@@ -552,17 +552,18 @@ namespace GW {
 				DWORD data1;
 				DWORD scale;
 				DWORD data2;
-				DWORD profession_flags;
-				BYTE unk1;
-				BYTE unk2;
-				wchar_t unk3[8];
+				DWORD flags;
+				DWORD profession;
+				DWORD level;
+				wchar_t name[8];
 			};
 			const DWORD Packet<P074_NpcGeneralStats>::STATIC_HEADER = 74;
 
 			// NPC model file (?)
 			struct P075 : Packet<P075> {
 				DWORD npc_id;
-				// int[8] // prefixType="int16"
+				DWORD count;
+				DWORD data[8];
 			};
 			const DWORD Packet<P075>::STATIC_HEADER = 75;
 

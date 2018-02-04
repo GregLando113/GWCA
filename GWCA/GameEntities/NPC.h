@@ -16,7 +16,7 @@ namespace GW {
         /* +h0014 */ DWORD Profession;
         /* +h0018 */ DWORD h0018[2];
         /* +h0020 */ wchar *NameString;
-        /* +h0024 */ DWORD *ModelFile;
+        /* +h0024 */ DWORD *ModelFiles;
         /* +h0028 */ DWORD h0028; // probably length of ModelFile
         /* +h002C */ DWORD h002C; // probably capacity of ModelFile
     };

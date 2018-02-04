@@ -72,7 +72,7 @@ namespace GW {
         /* +h00F0 */ float AttackSpeedModifier; // Attack speed modifier of the last attack. 0.67 = 33% increase (1-.33)
         /* +h00F4 */ WORD  PlayerNumber; // Selfexplanatory. All non-players have identifiers for their type. Two of the same mob = same number
         //           WORD  padding;
-        /* +h00F8 */ DWORD h00F8;
+        /* +h00F8 */ DWORD TransmogNpcId; // Actually, it's 0x20000000 | npc_id, It's not defined for npc, minipet, etc...
         /* +h00FC */ DWORD** Equip;
         /* +h0100 */ BYTE  h0100[10];
         /* +h010A */ BYTE  Primary; // Primary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
@@ -82,6 +82,7 @@ namespace GW {
         /* +h010E */ BYTE  h010E[2];
         /* +h0110 */ DWORD h0110;
         /* +h0114 */ float EnergyRegen;
+		/* +h0118 */ DWORD h0118;
         /* +h011C */ float Energy; // Only works for yourself
         /* +h0120 */ DWORD MaxEnergy; // Only works for yourself
         /* +h0124 */ DWORD h0124;

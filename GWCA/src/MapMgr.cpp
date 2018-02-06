@@ -82,7 +82,7 @@ GW::Constants::MapID GW::Map::GetMapID() {
 	if (mapid_ptr == nullptr) {
 		// For Map IDs
 		BYTE* addr = (BYTE*)Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0);
-		printf("MapIDPtr = %X\n", (DWORD)addr);
+		printf("MapIDPtr = %p\n", addr);
 		if (addr) {
 			mapid_ptr = *(DWORD**)(addr + 0x46);
 		}

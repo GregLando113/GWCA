@@ -250,7 +250,7 @@ void GW::SkillbarMgr::UseSkill(DWORD Slot, DWORD Target /*= 0*/, DWORD CallTarge
 	static UseSkill_t useskill_func = nullptr;
 	if (useskill_func == nullptr) {
 		useskill_func = (UseSkill_t)Scanner::Find("\x55\x8B\xEC\x83\xEC\x10\x53\x56\x8B\xD9\x57\x8B\xF2\x89\x5D\xF0", "xxxxxxxxxxxxxxxx", 0);
-		printf("UseSkillFunction = 0x%X\n", (DWORD)useskill_func);
+		printf("UseSkillFunction = %p\n", useskill_func);
 	}
 	if (useskill_func) {
 		useskill_func(Agents::GetPlayerId(), Slot, Target, CallTarget);

@@ -96,7 +96,7 @@ namespace {
 		if (MapInfoPtr == nullptr) {
 			MapInfoPtr = (BYTE*)GW::Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
 			if (MapInfoPtr) {
-				printf("MapInfoPtr = %X\n", (DWORD)MapInfoPtr);
+				printf("MapInfoPtr = %p\n", MapInfoPtr);
 				MapInfoPtr = *(BYTE**)(MapInfoPtr + 7);
 			}
 		}

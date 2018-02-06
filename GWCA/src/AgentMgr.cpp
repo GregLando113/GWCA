@@ -39,7 +39,7 @@ void GW::Agents::Initialize() {
 void GW::Agents::SetupLastDialogHook() {
 	if (lastdialoglog_hook.Empty()) {
 		BYTE* DialogFunc = (BYTE*)Scanner::Find("\x55\x8B\xEC\x83\xEC\x28\x53\x56\x57\x8B\xF2\x8B\xD9", "xxxxxxxxxxxxx", -0x28);
-		printf("DialogFunc = 0x%X\n", (DWORD)DialogFunc);
+		printf("DialogFunc = %p\n", DialogFunc);
 		lastdialoglog_ret = (BYTE*)lastdialoglog_hook.Detour(DialogFunc, (BYTE*)dialoglog_detour, 9);
 	}
 }
@@ -79,7 +79,7 @@ void GW::Agents::ChangeTarget(GW::AgentID agentid) {
 	static ChangeTarget_t changetarget_func = nullptr;
 	if (!changetarget_func) {
 		changetarget_func = (ChangeTarget_t)Scanner::Find("\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
-		printf("ChangeTargetFunction = %X\n", (DWORD)changetarget_func);
+		printf("ChangeTargetFunction = %p\n", changetarget_func);
 	}
 	auto& arr = GetAgentArray();
 	if (changetarget_func && arr.valid() && arr[agentid] != nullptr) changetarget_func(agentid, 0);
@@ -98,7 +98,7 @@ void GW::Agents::Move(const GW::GamePos& pos) {
 	static Move_t move_func = nullptr;
 	if (!move_func) {
 		move_func = (Move_t)Scanner::Find("\xD9\x07\xD8\x5D\xF0\xDF\xE0\xF6\xC4\x01", "xxxxxxxxxx", -0x12);
-		printf("MoveFunction = %X\n", (DWORD)move_func);
+		printf("MoveFunction = %p\n", move_func);
 	}
 	if (move_func) move_func(&pos);
 }

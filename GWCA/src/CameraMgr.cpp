@@ -80,6 +80,37 @@ void GW::CameraMgr::RestoreHooks() {
 	if (patch_fov) delete patch_fov;
 }
 
+void GW::CameraMgr::ForwardMovement(float amount) {
+	Camera *cam = GetCamera();
+	float pitchX = sqrt(1.f - cam->Pitch * cam->Pitch);
+	cam->LookAtTarget.x += amount * pitchX * cos(cam->Yaw);
+	cam->LookAtTarget.y += amount * pitchX * sin(cam->Yaw);
+	cam->LookAtTarget.z += amount * cam->Pitch;
+}
+
+void GW::CameraMgr::SideMovement(float amount) {
+	Camera *cam = GetCamera();
+	cam->LookAtTarget.x += amount * -sin(cam->Yaw);
+	cam->LookAtTarget.y += amount *  cos(cam->Yaw);
+}
+
+void GW::CameraMgr::RotateMovement(float angle) {
+	// rotation with fixed z (vertical axe)
+	Camera *cam = GetCamera();
+	float pos_x = cam->Position.x;
+	float pos_y = cam->Position.y;
+	float px = cam->LookAtTarget.x - pos_x;
+	float py = cam->LookAtTarget.y - pos_y;
+
+	Vec3f newPos;
+	newPos.x = pos_x + (cos(angle) * px - sin(angle) * py);
+	newPos.y = pos_y + (sin(angle) * px + cos(angle) * py);
+	newPos.z = cam->LookAtTarget.z;
+
+	SetYaw(cam->Yaw + angle);
+	GetCamera()->LookAtTarget = newPos;
+}
+
 GW::Vector3f GW::CameraMgr::ComputeCamPos(float dist) {
 	if (dist == 0) dist = GetCameraZoom();
 

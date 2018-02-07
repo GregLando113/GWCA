@@ -29,33 +29,33 @@ namespace GW {
 		inline float GetFieldOfView() { return GetCamera()->fieldofview; }
 
 		// Set yaw, radian angle
-		inline void SetYaw(float yaw) { GetCamera()->yaw_togo = yaw; }
+		inline void SetYaw(float yaw) {
+			Camera *cam = GetCamera();
+			cam->yaw_togo = yaw;
+			cam->Yaw = yaw;
+		}
 
 		// Set pitch (sin(angle))
 		inline void SetPitch(float pitch) { GetCamera()->pitch_togo = pitch; }
 
-		inline void SetCameraPos(Vec3f const& newPos) {
-			GetCamera()->Position.x = newPos.x;
-			GetCamera()->Position.y = newPos.y;
-			GetCamera()->Position.z = newPos.z;
+		inline void SetCameraPos(Vec3f newPos) {
+			Camera *cam = GetCamera();
+			cam->Position.x = newPos.x;
+			cam->Position.y = newPos.y;
+			cam->Position.z = newPos.z;
 		}
 
 		inline void SetLookAtTarget(Vec3f const& newPos) {
-			GetCamera()->LookAtTarget.x = newPos.x;
-			GetCamera()->LookAtTarget.y = newPos.y;
-			GetCamera()->LookAtTarget.z = newPos.z;
+			Camera *cam = GetCamera();
+			cam->LookAtTarget.x = newPos.x;
+			cam->LookAtTarget.y = newPos.y;
+			cam->LookAtTarget.z = newPos.z;
 		}
 
-		inline void ForwardMovement(float amount) {
-			float pitchX = sqrt(1.f - GetCamera()->Pitch*GetCamera()->Pitch);
-			GetCamera()->LookAtTarget.x += amount * pitchX * cos(GetCamera()->Yaw);
-			GetCamera()->LookAtTarget.y += amount * pitchX * sin(GetCamera()->Yaw);
-			GetCamera()->LookAtTarget.z += amount * GetCamera()->Pitch;
-		}
-		inline void SideMovement(float amount) {
-			GetCamera()->LookAtTarget.x += amount * -sin(GetCamera()->Yaw);
-			GetCamera()->LookAtTarget.y += amount * cos(GetCamera()->Yaw);
-		}
+		void ForwardMovement(float amount);
+		void RotateMovement(float angle);
+		void SideMovement(float amount);
+
 		inline void VerticalMovement(float amount) {
 			GetCamera()->LookAtTarget.z += amount;
 		}

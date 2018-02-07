@@ -80,12 +80,17 @@ void GW::CameraMgr::RestoreHooks() {
 	if (patch_fov) delete patch_fov;
 }
 
-void GW::CameraMgr::ForwardMovement(float amount) {
+void GW::CameraMgr::ForwardMovement(float amount, bool true_forward) {
 	Camera *cam = GetCamera();
-	float pitchX = sqrt(1.f - cam->Pitch * cam->Pitch);
-	cam->LookAtTarget.x += amount * pitchX * cos(cam->Yaw);
-	cam->LookAtTarget.y += amount * pitchX * sin(cam->Yaw);
-	cam->LookAtTarget.z += amount * cam->Pitch;
+	if (true_forward) {
+		float pitchX = sqrt(1.f - cam->Pitch * cam->Pitch);
+		cam->LookAtTarget.x += amount * pitchX * cos(cam->Yaw);
+		cam->LookAtTarget.y += amount * pitchX * sin(cam->Yaw);
+		cam->LookAtTarget.z += amount * cam->Pitch;
+	} else {
+		cam->LookAtTarget.x += amount * cos(cam->Yaw);
+		cam->LookAtTarget.y += amount * sin(cam->Yaw);
+	}
 }
 
 void GW::CameraMgr::SideMovement(float amount) {

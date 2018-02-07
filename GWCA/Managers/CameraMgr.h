@@ -52,7 +52,7 @@ namespace GW {
 			cam->LookAtTarget.z = newPos.z;
 		}
 
-		void ForwardMovement(float amount);
+		void ForwardMovement(float amount, bool true_forward);
 		void RotateMovement(float angle);
 		void SideMovement(float amount);
 

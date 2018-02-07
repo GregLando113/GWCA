@@ -81,6 +81,7 @@ void GW::CameraMgr::RestoreHooks() {
 }
 
 void GW::CameraMgr::ForwardMovement(float amount, bool true_forward) {
+	if (amount == 0.f) return;
 	Camera *cam = GetCamera();
 	if (true_forward) {
 		float pitchX = sqrt(1.f - cam->Pitch * cam->Pitch);
@@ -94,12 +95,14 @@ void GW::CameraMgr::ForwardMovement(float amount, bool true_forward) {
 }
 
 void GW::CameraMgr::SideMovement(float amount) {
+	if (amount == 0.f) return;
 	Camera *cam = GetCamera();
 	cam->LookAtTarget.x += amount * -sin(cam->Yaw);
 	cam->LookAtTarget.y += amount *  cos(cam->Yaw);
 }
 
 void GW::CameraMgr::RotateMovement(float angle) {
+	if (angle == 0.f) return;
 	// rotation with fixed z (vertical axe)
 	Camera *cam = GetCamera();
 	float pos_x = cam->Position.x;

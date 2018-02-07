@@ -20,8 +20,8 @@ namespace GW {
 		// +h001E    WORD padding;
         /* +h0020 */ wchar *NameString;
         /* +h0024 */ DWORD *ModelFiles;
-        /* +h0028 */ DWORD lengtSize; // length of ModelFile
-        /* +h002C */ DWORD capacity; // capacity of ModelFile
+        /* +h0028 */ DWORD FilesCount; // length of ModelFile
+        /* +h002C */ DWORD FilesCapacity; // capacity of ModelFile
     };
     using NPCArray = Array<NPC>;
 }

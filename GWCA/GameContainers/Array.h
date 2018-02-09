@@ -21,35 +21,38 @@ namespace GW {
         typedef       T* iterator;
         typedef const T* const_iterator;
 
-        iterator       begin()       { return Buff; }
-        const_iterator begin() const { return Buff; }
-        iterator       end()         { return Buff + Size; }
-        const_iterator end()   const { return Buff + Size; }
+        iterator       begin()       { return _array; }
+        const_iterator begin() const { return _array; }
+        iterator       end()         { return _array + _size; }
+        const_iterator end()   const { return _array + _size; }
 
-        T& index(DWORD index) {
-            if (!valid())
-                throw Exception::kInvalidArray;
-            if (index >= size() || index < 0)
-                throw Exception::kOutOfBounds;
-            return Buff[index];
+		Array()
+			: _array(nullptr)
+			, _capacity(0)
+			, _size(0)
+			, _growth(0)
+		{}
+
+        T& at(DWORD index) {
+			assert(_array && index < _size);
+            return _array[index];
         }
 
         T& operator[](DWORD index) {
-			assert(Buff && index < Size);
-            return Buff[index];
+            return at(index);
         }
 
-        bool valid() { return Buff != nullptr; }
+        bool valid() { return _array != nullptr; }
 		void clear() { Size = 0; }
 
-        DWORD size()     const { return Size; }
-        DWORD capacity() const { return Capacity; }
+        DWORD size()     const { return _size; }
+        DWORD capacity() const { return _capacity; }
 
     protected:
-        T*    Buff;     // +h0000
-        DWORD Capacity; // +h0004
-        DWORD Size;     // +h0008
-        DWORD Unk0;     // +h000C
+        T*    _array;       // +h0000
+        DWORD _capacity;   // +h0004
+        DWORD _size;       // +h0008
+        DWORD _growth;     // +h000C
     }; // Size: 0x0010
 }
 

@@ -23,7 +23,7 @@ namespace GW {
             const int BirthdayCharrDoll = 230;              // Miniature Charr Shaman (purple)
             const int BirthdayDragonDoll = 231;             // Miniature Bone Dragon (green)
             const int BirthdayRurikDoll = 232;              // Miniature Prince Rurik (gold)
-            // const int Birthday233 = 233;                    // Miniature Shiro (gold) ??
+            const int BirthdayShiroDoll = 233;              // Miniature Shiro (gold)
             const int BirthdayTitanDoll = 234;              // Miniature Burning Titan (purple)
             const int BirthdayKirinDoll = 235;              // Miniature Kirin (purple)
             const int BirthdayNecridDoll = 236;             // Miniature Necrid Horseman (white)
@@ -36,7 +36,7 @@ namespace GW {
             const int BirthdayDevourerDoll = 243;           // Miniature Whiptail Devourer (white)
             // Second Year
             const int MiniatureGwen = 244;                  // Miniature Gwen (green)
-            // const int Miniature245 = 245;                   // ?? Wiki missing an entry ??
+            const int MiniatureGwenDoll = 245;              // Miniature Gwen Doll (??)
             const int MiniatureWaterDjinn = 246;            // Miniature Water Djinn (gold)
             const int MiniatureLich = 247;                  // Miniature Lich (gold)
             const int MiniatureElf = 248;                   // Miniature Elf (purple)
@@ -71,7 +71,7 @@ namespace GW {
             const int MiniatureTerrorwebDryder = 275;       // Miniature Terrorweb Dryder (white)
             const int MiniatureAbomination = 276;           // Miniature Abomination (white)
             const int MiniatureKraitNeoss = 277;            // Miniature Krait Neoss (white)
-            //const int Miniature278 = 278;                 // Miniature Desert Griffon (white) ??
+            const int MiniatureDesertGriffon = 278;         // Miniature Desert Griffon (white)
             const int MiniatureKveldulf = 279;              // Miniature Kveldulf (white)
             const int MiniatureQuetzalSly = 280;            // Miniature Quetzal Sly (white)
             const int MiniatureJora = 281;                  // Miniature Jora (purple)
@@ -79,7 +79,7 @@ namespace GW {
             const int MiniatureNian = 283;                  // Miniature Nian (purple)
             const int MiniatureDagnarStonepate = 284;       // Miniature Dagnar Stonepate (gold)
             const int MiniatureFlameDjinn = 285;            // Miniature Flame Djinn (gold)
-            // const int Miniature286 = 286;                   // Miniature Eye of Janthir (green) ??
+            const int MiniatureEyeOfJanthir = 286;          // Miniature Eye of Janthir (green)
             // Fifth Year
             const int MiniatureSeer = 287;                  // Miniature Seer (white)
             const int MiniatureSiegeDevourer = 288;         // Miniature Siege Devourer (white)
@@ -94,27 +94,70 @@ namespace GW {
             const int MiniatureCandysmithMarley = 297;      // Miniature CandysmithMarley (purple)
             const int MiniatureZhuHanuku = 298;             // Miniature Zhu Hanuku (gold)
             const int MiniatureKingAdelbern = 299;          // Miniature King Adelbern (gold)
-            // const int Miniature300 = 300;                   // ?? Wiki missing an entry ??
-            // const int Miniature301 = 301;                   // ?? Wiki missing an entry ??
-            const int MiniatureMOX = 302;                   // Miniature M.O.X. (green)
+            const int MiniatureMOX1 = 300;                  // Miniature M.O.X. (color?)
+            const int MiniatureMOX2 = 301;                  // Miniature M.O.X. (color?)
+			const int MiniatureMOX3 = 302;                  // Miniature M.O.X. (green)
+			const int MiniatureMOX4 = 303;                  // Miniature M.O.X. (color?)
+			const int MiniatureMOX5 = 304;                  // Miniature M.O.X. (color?)
+			const int MiniatureMOX6 = 305;                  // Miniature M.O.X. (color?)
 
-            // const int Unknown303 = 303;
-            // const int Unknown304 = 304;
-            // const int Unknown305 = 305;
-            // const int Unknown306 = 306;
-            // const int Unknown307 = 307;
+            const int MiniatureBrownRabbit = 306;			// Miniature Brown Rabbit
+            const int MiniatureYakkington = 307;			// Miniature Yakkington
             // const int Unknown308 = 308;
             const int CollectorsEditionKuunavangDoll = 309; // Miniature Kuunavang (green)
-            // const int Unknown310 = 310;
-            // const int Unknown311 = 311;
-            // const int Unknown312 = 312;
-            // const int Unknown313 = 313;
+            const int MiniGrayGiant = 310;					// Not sure about the names of those
+            const int MiniAsura = 311;						// ^
+            const int MiniDestroyerOfFlesh = 312;			// ^
+            const int MiniPolarBear = 313;					// ^
             const int CollectorsEditionVareshDoll = 314;    // Miniature Varesh (green)
+			const int MiniatureMallyx = 315;
+			const int MiniatureCeratadon = 316;
+			const int MiniatureKanaxai = 317;
+			const int MiniaturePanda = 318;
+			const int MiniatureIslandGuardian = 319;
+			const int MinatureNagaRaincaller = 320;
+			const int MinatureLonghairYeti = 321;
+			const int MiniatureOni = 322;
+			const int MiniatureShirokenAssassin = 323;
+			const int MiniatureVizu = 324;
+			const int MiniatureZhedShadowhoof = 325;
+			const int MiniatureGrawl = 326;
+			const int MinatureGhostlyHero = 327;
+			const int MiniaturePig = 328;
+			const int MiniatureGreasedLightning = 329;
+			const int MinatureWorldFamousRacingBeetle = 330;
+			const int MiniatureCelestialPig = 331;
+			const int MiniatureCelestialRat = 332;
+			const int MiniatureCelestialOx = 333;
+			const int MiniatureCelestialTiger = 334;
+			const int MiniatureCelestialRabbit = 335;
+			const int MiniatureCelestialDragon = 336;
+			const int MiniatureCelestialSnake = 337;
+			const int MiniatureCelestialHorse = 338;
+			const int MiniatureCelestialSheep = 339;
+			const int MiniatureCelestialMonkey = 340;
+			const int MiniatureCelestialRooster = 341;
+			const int MiniatureCelestialDog = 342;
+			const int MiniatureBlackMoaChick = 343;
+			const int MiniatureDhuum = 344;
+			const int MiniatureMadKingsGuard = 345;
+			const int MiniatureSmiteCrawler = 346;
 
             const int MiniatureGuildLord = 347;
             const int MiniatureHighPriestZhang = 348;
             const int MiniatureGhostlyPriest = 349;
             const int MiniatureRiftWarden = 350;
+
+			const int MiniatureLegionnaire = 7980;
+			const int MiniatureConfessorDorian = 8289;
+			const int MiniaturePrincessSalma = 8294;
+			const int MiniatureLivia = 8295;
+			const int MiniatureEvennia = 8296;
+			const int MiniatureConfessorIsaiah = 8297;
+			// missing miniature 8298 ?
+			const int MiniaturePeacekeeperEnforcer = 8299;
+			const int MiniatureMinisterReiko = 8983;
+			const int MiniatureEcclesiateXunRao = 8984;
 
             const int LockedChest = 8141; // this is actually ->ExtraType
 

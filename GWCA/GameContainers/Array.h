@@ -43,7 +43,7 @@ namespace GW {
         }
 
         bool valid() { return _array != nullptr; }
-		void clear() { Size = 0; }
+		void clear() { _size = 0; }
 
         DWORD size()     const { return _size; }
         DWORD capacity() const { return _capacity; }

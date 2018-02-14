@@ -1,58 +1,38 @@
 #include "..\Utilities\Hooker.h"
+#include "..\..\Dependencies\minhook\include\MinHook.h"
 
-extern "C" {
-#include "..\..\Dependencies\disasm\ld32.h"
+void GW::HookBase::Initialize()
+{
+	MH_Initialize();
 }
 
-DWORD GW::HookInternal::CalculateDetourLength(BYTE* _source) {
-
-	DWORD len = 0;
-	DWORD current_op;
-
-	do {
-		current_op = length_disasm((void*)_source);
-		if (current_op != 0) {
-			len += current_op;
-			_source += current_op;
-		}
-	} while (len < 5);
-
-	return len;
+void GW::HookBase::Deinitialize()
+{
+	MH_Uninitialize();
 }
 
-BYTE* GW::HookInternal::Detour(BYTE* source, BYTE* detour, const DWORD length) {
-	DWORD old_protection;
-
-	BYTE* retour_func = (BYTE*)malloc(length + 5);
-	VirtualProtect(retour_func, length + 5, PAGE_EXECUTE_READWRITE, &old_protection);
-
-	memcpy(retour_func, source, length);
-
-	retour_func += length;
-
-	retour_func[0] = 0xE9;
-	*(DWORD*)(retour_func + 1) = (DWORD)((source + length) - (retour_func + 5));
-
-	VirtualProtect(source, length, PAGE_EXECUTE_READWRITE, &old_protection);
-
-	source[0] = 0xE9;
-	*(DWORD*)(source + 1) = (DWORD)(detour - (source + 5));
-
-	if (length != 5)
-		for (DWORD i = 5; i < length; i++)
-			source[i] = 0x90;
-
-	VirtualProtect(source, length, old_protection, &old_protection);
-
-	retour_func -= length;
-
-	return retour_func;
+void GW::HookBase::EnqueueHook(HookBase* base)
+{
+	MH_CreateHook(base->_sourceFunc, base->_detourFunc, &base->_retourFunc);
 }
 
-void GW::HookInternal::Retour(BYTE* source, BYTE* retour_func, DWORD length) {
-	DWORD old_protection;
-	VirtualProtect(source, length, PAGE_READWRITE, &old_protection);
-	memcpy(source, retour_func, length);
-	free(retour_func);
-	VirtualProtect(source, length, old_protection, &old_protection);
+void  GW::HookBase::RemoveHook(HookBase* base)
+{
+	MH_RemoveHook(base->_sourceFunc);
+}
+
+void GW::HookBase::EnableHooks(HookBase* base)
+{
+	if (base == nullptr)
+		MH_EnableHook(MH_ALL_HOOKS);
+	else
+		MH_EnableHook(base->_sourceFunc);
+}
+
+void GW::HookBase::DisableHooks(HookBase* base)
+{
+	if (base == nullptr)
+		MH_DisableHook(MH_ALL_HOOKS);
+	else
+		MH_DisableHook(base->_sourceFunc);
 }

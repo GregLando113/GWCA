@@ -11,6 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dependencies\minhook\include\MinHook.h" />
+    <ClInclude Include="Dependencies\minhook\src\buffer.h" />
+    <ClInclude Include="Dependencies\minhook\src\hde\hde32.h" />
+    <ClInclude Include="Dependencies\minhook\src\hde\hde64.h" />
+    <ClInclude Include="Dependencies\minhook\src\hde\pstdint.h" />
+    <ClInclude Include="Dependencies\minhook\src\hde\table32.h" />
+    <ClInclude Include="Dependencies\minhook\src\hde\table64.h" />
+    <ClInclude Include="Dependencies\minhook\src\trampoline.h" />
     <ClInclude Include="GWCA\Constants\AgentIDs.h" />
     <ClInclude Include="GWCA\Constants\Constants.h" />
     <ClInclude Include="GWCA\Constants\ItemIDs.h" />
@@ -52,7 +60,6 @@
     <ClInclude Include="GWCA\Managers\CameraMgr.h" />
     <ClInclude Include="GWCA\Managers\ChatMgr.h" />
     <ClInclude Include="GWCA\Managers\CtoSMgr.h" />
-    <ClInclude Include="Dependencies\disasm\ld32.h" />
     <ClInclude Include="GWCA\Managers\EffectMgr.h" />
     <ClInclude Include="GWCA\Managers\FriendListMgr.h" />
     <ClInclude Include="GWCA\Managers\GameThreadMgr.h" />
@@ -77,7 +84,11 @@
     <ClInclude Include="GWCA\GWCA.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Dependencies\disasm\ld32.c" />
+    <ClCompile Include="Dependencies\minhook\src\buffer.c" />
+    <ClCompile Include="Dependencies\minhook\src\hde\hde32.c" />
+    <ClCompile Include="Dependencies\minhook\src\hde\hde64.c" />
+    <ClCompile Include="Dependencies\minhook\src\hook.c" />
+    <ClCompile Include="Dependencies\minhook\src\trampoline.c" />
     <ClCompile Include="GWCA\src\Render.cpp" />
     <ClCompile Include="GWCA\src\Skill.cpp" />
     <ClCompile Include="GWCA\src\PlayerMgr.cpp" />

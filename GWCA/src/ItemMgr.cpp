@@ -37,12 +37,29 @@ GW::Bag *GW::Items::GetBag(GW::Constants::Bag bag_id) {
 	return bags[(unsigned)bag_id];
 }
 
-GW::Bag *GW::Items::GetBag(unsigned int bag_id) {
+GW::Bag *GW::Items::GetBag(DWORD bag_id) {
 	if (bag_id >= GW::Constants::BagMax)
 		return nullptr;
 	GW::Bag **bags = GetBagArray();
 	if (!bags) return nullptr;
 	return bags[bag_id];
+}
+
+GW::Item *GW::Items::GetItemBySlot(GW::Bag *bag, DWORD slot) {
+	if (!bag || slot == 0) return nullptr;
+	if (!bag->Items.valid()) return nullptr;
+	if (slot > bag->Items.size()) return nullptr;
+	return bag->Items[slot - 1];
+}
+
+GW::Item *GW::Items::GetItemBySlot(GW::Constants::Bag bag, DWORD slot) {
+	GW::Bag *bag_ptr = GetBag(bag);
+	return GetItemBySlot(bag_ptr, slot);
+}
+
+GW::Item *GW::Items::GetItemBySlot(DWORD bag, DWORD slot) {
+	if (bag < 0 || Constants::BagMax <= bag) return nullptr;
+	return GetItemBySlot((Constants::Bag)bag, slot);
 }
 
 GW::ItemArray GW::Items::GetItemArray() {
@@ -164,7 +181,7 @@ int GW::Items::GetCurrentStoragePannel(void) {
 
 typedef void (__fastcall *ItemClick_t)(uint32_t *bag_id, uint32_t edx, uint32_t *info);
 static GW::THook<ItemClick_t> ItemClickHook;
-static std::function<void(uint32_t type, uint32_t slot, uint32_t bag)> ItemClickCallback;
+static std::function<void(uint32_t type, uint32_t slot, GW::Bag *bag)> ItemClickCallback;
 
 static void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *info)
 {
@@ -178,7 +195,9 @@ static void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *inf
 	//  12 drag-remove
 	uint32_t type = info[2];
 	uint32_t slot = info[1] - 2; // for some reason the slot is offset by 2
-	uint32_t bag  = *bag_id; // bp = 0, belt pouch = 2, ...
+
+	GW::Bag *bag = GW::Items::GetBag(*bag_id + 1);
+	assert(bag);
 
 	if (ItemClickCallback) {
 		ItemClickCallback(type, slot, bag);
@@ -187,9 +206,8 @@ static void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *inf
 	ItemClickHook.Original()(bag_id, edx, info);
 }
 
-void GW::Items::SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, uint32_t bag)> callback) {
+void GW::Items::SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, GW::Bag *bag)> callback) {
 	if (ItemClickHook.Empty()) {
-		// ItemClick_t ItemClick = (ItemClick_t)Scanner::Find("\xF7\x43\x0C\x00\x00\x00\x01\x74\x11", "xxxxxxxxx", -79);
 		ItemClick_t ItemClick = (ItemClick_t)Scanner::Find("\x74\x73\x8B\x50\x08", "xxxxx", -25);
 		printf("ItemClick = %p\n", ItemClick);
 		ItemClickHook.Detour(ItemClick, OnItemClick);

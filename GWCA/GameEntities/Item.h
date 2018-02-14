@@ -21,6 +21,9 @@ namespace GW {
         /* +h0010 */ DWORD ItemsCount;
         /* +h0014 */ Bag  *BagArray;
         /* +h0018 */ ItemArray Items;
+
+		inline bool IsInventoryBag() { return (BagType == 1); }
+		inline bool IsStorageBag()   { return (BagType == 4); }
     };
 
     struct ItemModifier {

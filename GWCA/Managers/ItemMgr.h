@@ -18,7 +18,12 @@ namespace GW {
 		// Note: bag->index of each bag is one less than its index in the array
 		GWCA_API GW::Bag** GetBagArray();
 		GWCA_API GW::Bag  *GetBag(GW::Constants::Bag bag_id);
-		GWCA_API GW::Bag  *GetBag(unsigned int bag_id);
+		GWCA_API GW::Bag  *GetBag(DWORD bag_id);
+
+		GWCA_API GW::Item *GetItemBySlot(GW::Bag *bag, DWORD slot);
+		GWCA_API GW::Item *GetItemBySlot(GW::Constants::Bag bag, DWORD slot);
+		// bag & slot are 1 based
+		GWCA_API GW::Item *GetItemBySlot(DWORD bag, DWORD slot);
 
 		// Use given item if usable.
 		GWCA_API void UseItem(GW::Item* item);
@@ -71,6 +76,6 @@ namespace GW {
 		GWCA_API int GetCurrentStoragePannel(void);
 
 		// The callback should return false if it want to foward the info to Gw.
-		GWCA_API void SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, uint32_t bag)> callback);
+		GWCA_API void SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, GW::Bag *bag)> callback);
 	};
 }

@@ -31,6 +31,20 @@ GW::Bag** GW::Items::GetBagArray() {
 	return GameContext::instance()->items->inventory->Bags;
 }
 
+GW::Bag *GW::Items::GetBag(GW::Constants::Bag bag_id) {
+	GW::Bag **bags = GetBagArray();
+	if (!bags) return nullptr;
+	return bags[(unsigned)bag_id];
+}
+
+GW::Bag *GW::Items::GetBag(unsigned int bag_id) {
+	if (bag_id >= GW::Constants::BagMax)
+		return nullptr;
+	GW::Bag **bags = GetBagArray();
+	if (!bags) return nullptr;
+	return bags[bag_id];
+}
+
 GW::ItemArray GW::Items::GetItemArray() {
 	return GameContext::instance()->items->itemarray;
 }

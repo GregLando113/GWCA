@@ -1,9 +1,10 @@
 #pragma once
 
 #include <Windows.h>
+#include <functional>
 
 #include <GWCA\GameEntities\Item.h>
-#include <functional>
+#include <GWCA\Constants\Constants.h>
 
 namespace GW {
 
@@ -16,6 +17,8 @@ namespace GW {
 		// [7] = Unclaimed items, [8-16] = storage, [17] = Equipped
 		// Note: bag->index of each bag is one less than its index in the array
 		GWCA_API GW::Bag** GetBagArray();
+		GWCA_API GW::Bag  *GetBag(GW::Constants::Bag bag_id);
+		GWCA_API GW::Bag  *GetBag(unsigned int bag_id);
 
 		// Use given item if usable.
 		GWCA_API void UseItem(GW::Item* item);
@@ -64,6 +67,7 @@ namespace GW {
 		// Returns item struct of item with given modelid.
 		GWCA_API GW::Item* GetItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
+		// Returns the current storage pannel (0 based). Note that if material storage is on focus, 0 is returned.
 		GWCA_API int GetCurrentStoragePannel(void);
 
 		// The callback should return false if it want to foward the info to Gw.

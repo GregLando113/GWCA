@@ -74,8 +74,10 @@ namespace GW {
             None, Backpack, Belt_Pouch, Bag_1, Bag_2, Equipment_Pack,
             Material_Storage, Unclaimed_Items, Storage_1, Storage_2,
             Storage_3, Storage_4, Storage_5, Storage_6, Storage_7,
-            Storage_8, Storage_9, Equipped_Items
+            Storage_8, Storage_9, Equipped_Items, Max
         };
+
+		const size_t BagMax = (size_t)Bag::Max;
 
         enum class AgentType {
             Living = 0xDB, Gadget = 0x200, Item = 0x400

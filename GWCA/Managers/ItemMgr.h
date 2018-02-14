@@ -64,7 +64,9 @@ namespace GW {
 		// Returns item struct of item with given modelid.
 		GWCA_API GW::Item* GetItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
+		GWCA_API int GetCurrentStoragePannel(void);
+
 		// The callback should return false if it want to foward the info to Gw.
-		GWCA_API void SetOnItemClick(std::function<bool(GW::Item*, GW::Bag*)> callback);
+		GWCA_API void SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, uint32_t bag)> callback);
 	};
 }

@@ -44,6 +44,14 @@ namespace GW {
 
 		// Open locked chest, raw packet, first send a GoSignpost packet to select chest.
 		GWCA_API void OpenLockedChest();
+		
+		// Move item to a new position (bag, slot). Used to merge stacks
+		// slot start at 1
+		GWCA_API void MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity = 0);
+		GWCA_API void MoveItem(GW::Item *from, GW::Item *to, int quantity = 0);
+
+		// Split a given amount into a new position (bag, slot).
+		// GWCA_API void SplitStack(GW::Item *item, GW::Bag *bag, int slot, int quantity);
 
 		// === Complex functions ===
 		// Find item in selected bags with said modelid, then use it.

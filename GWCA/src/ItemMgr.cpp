@@ -51,6 +51,23 @@ void GW::Items::OpenLockedChest() {
 	CtoS::SendPacket(0x8, 0x4D, 0x2);
 }
 
+void GW::Items::MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity) {
+	assert(slot > 0);
+	if (!item || !bag) return;
+	if (bag->Items.size() < (unsigned)slot) return;
+	if (quantity <= 0) quantity = item->Quantity;
+	// @Robustness: Check if there is enough space at the destination.
+	CtoS::SendPacket(0x10, 108, item->ItemId, item->Quantity, bag->BagId, slot);
+}
+
+void GW::Items::MoveItem(GW::Item *from, GW::Item *to, int quantity) {
+	if (!from || !to) return;
+	if (!from->Bag || !to->Bag) return;
+	if (from->Quantity + to->Quantity > 250) return;
+	if (quantity <= 0) quantity = from->Quantity;
+	CtoS::SendPacket(0x10, 108, from->ItemId, quantity, to->Bag->BagId, to->Slot);
+}
+
 bool GW::Items::UseItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
 	GW::Bag** bags = GetBagArray();
 	if (bags == NULL) return false;

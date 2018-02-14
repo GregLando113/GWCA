@@ -480,6 +480,7 @@ void GW::Chat::CreateCommand(std::wstring cmd, CmdCB callback) {
 	if (::SendChat_hook.Empty()) {
 		if (SendChat_addr == nullptr) Initialize();
 		::SendChat_hook.Detour(SendChat_addr, SendChat_detour);
+		HookBase::EnableHooks(&SendChat_hook);
 	}
 	SlashCmdList[cmd] = callback;
 }

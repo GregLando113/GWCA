@@ -107,7 +107,7 @@ void GW::Render::SetResetCallback(std::function<void(IDirect3DDevice9* device)> 
 }
 
 void GW::Render::RestoreHooks() {
-	HookBase::RemoveHook(&endscene_hook);
-	reset_hook.Retour();
-	screen_capture_hook.Retour();
+	HookBase::DisableHooks(&endscene_hook);
+	HookBase::DisableHooks(&reset_hook);
+	HookBase::DisableHooks(&screen_capture_hook);
 }

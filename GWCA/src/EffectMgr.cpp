@@ -52,7 +52,7 @@ void GW::Effects::SetupPostProcessingEffectHook() {
 }
 
 void GW::Effects::RestoreHooks() {
-	ppe_hook.Retour();
+	HookBase::DisableHooks(&ppe_hook);
 }
 
 DWORD GW::Effects::GetAlcoholLevel() {

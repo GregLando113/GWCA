@@ -9,6 +9,7 @@
 namespace GW {
 
 	namespace Items {
+		GWCA_API void RestoreHooks();
 
 		// Get full array of items sorted by ItemID.
 		GWCA_API GW::ItemArray GetItemArray();

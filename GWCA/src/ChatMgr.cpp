@@ -356,18 +356,18 @@ void GW::Chat::Initialize() {
 }
 
 void GW::Chat::RestoreHooks() {
-	SendChat_hook.Retour();
-	OpenTemplate_hook.Retour();
-	SenderColor_hook.Retour();
-	MessageColor_hook.Retour();
-	ChatEvent_hook.Retour();
-	LocalMessage_hook.Retour();
-	WriteWhisper_hook.Retour();
+	HookBase::DisableHooks(&SendChat_hook);
+	HookBase::DisableHooks(&OpenTemplate_hook);
+	HookBase::DisableHooks(&SenderColor_hook);
+	HookBase::DisableHooks(&MessageColor_hook);
+	HookBase::DisableHooks(&ChatEvent_hook);
+	HookBase::DisableHooks(&LocalMessage_hook);
+	HookBase::DisableHooks(&WriteWhisper_hook);
 
-	InitChatLog_hook.Retour();
-	PrintChatLog_hook.Retour();
-	WriteChatLog_hook.Retour();
-	PrintChat_hook.Retour();
+	HookBase::DisableHooks(&InitChatLog_hook);
+	HookBase::DisableHooks(&PrintChatLog_hook);
+	HookBase::DisableHooks(&WriteChatLog_hook);
+	HookBase::DisableHooks(&PrintChat_hook);
 }
 
 bool GW::Chat::IsTyping() {

@@ -35,7 +35,7 @@ void GW::PartyMgr::SetTickToggle() {
 }
 
 void GW::PartyMgr::RestoreTickToggle() {
-	hk_tick_.Retour();
+	HookBase::DisableHooks(&hk_tick_);
 }
 
 void GW::PartyMgr::Tick(bool flag) {

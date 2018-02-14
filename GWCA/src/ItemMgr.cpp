@@ -214,3 +214,7 @@ void GW::Items::SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, 
 	}
 	ItemClickCallback = callback;
 }
+
+void GW::Items::RestoreHooks() {
+	HookBase::DisableHooks(&ItemClickHook);
+}

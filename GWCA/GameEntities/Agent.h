@@ -14,63 +14,63 @@ namespace GW {
 
     struct Agent {
 
-		// Courtesy of DerMonech14
-		struct Equipment {
+        // Courtesy of DerMonech14
+        struct Equipment {
 
-			virtual void Unk1() = 0;
-			virtual void Unk2() = 0;
-			virtual void Update(unsigned index) = 0;
+            virtual void Unk1() = 0;
+            virtual void Unk2() = 0;
+            virtual void Update(unsigned index) = 0;
 
-			struct DyeInfo {
-				BYTE h0000;
-				BYTE Shinyness;
-				BYTE dye1 : 4;
-				BYTE dye2 : 4;
-				BYTE dye3 : 4;
-				BYTE dye4 : 4;
-			};
-			struct ItemData {
-				DWORD ModelFileID;
-				DyeInfo Dye;
-				DWORD Value;
-				BYTE h000C[4];
-			};
+            struct DyeInfo {
+                BYTE h0000;
+                BYTE Shinyness;
+                BYTE dye1 : 4;
+                BYTE dye2 : 4;
+                BYTE dye3 : 4;
+                BYTE dye4 : 4;
+            };
+            struct ItemData {
+                DWORD ModelFileID;
+                DyeInfo Dye;
+                DWORD Value;
+                BYTE h000C[4];
+            };
 
-			DWORD h0004;				// 0x04		always 2 ?
-			DWORD h0008;				// 0x08		Ptr PlayerModelFile?
-			DWORD h000C;				// 0x0C
-			DWORD *LeftHandPtr;			// 0x10		Ptr Bow, Hammer, Focus, Daggers, Scythe
-			DWORD *RightHandPtr;			// 0x14		Ptr Sword, Spear, Staff, Daggers, Axe, Zepter, Bundle
-			DWORD h0018;				// 0x18
-			DWORD *ShieldPtr;			// 0x1C		Ptr Shield
-			BYTE LeftHandMap;			// 0x20		Weapon1		None = 9, Bow = 0, Hammer = 0, Focus = 1, Daggers = 0, Scythe = 0
-			BYTE RightHandMap;			// 0x21		Weapon2		None = 9, Sword = 0, Spear = 0, Staff = 0, Daggers = 0, Axe = 0, Zepter = 0, Bundle
-			BYTE HeadMap;				// 0x22		Head		None = 9, Headpiece Ele = 4
-			BYTE ShieldMap;				// 0x23		Shield		None = 9, Shield = 1
-			union {
-				ItemData Items[9];
-				struct {
-					ItemData Weapon;		// 0x24
-					ItemData Offhand;		// 0x34
-					ItemData Chest;		// 0x44
-					ItemData Legs;			// 0x54
-					ItemData Head;			// 0x64
-					ItemData Feet;			// 0x74
-					ItemData Hands;		// 0x84	
-					ItemData CostumeBody;		// 0x94
-					ItemData CostumeHead;		// 0xA4
-				};
-			};
-			DWORD ItemID_Weapon;			// 0xB4
-			DWORD ItemID_Offhand;			// 0xB8
-			DWORD ItemID_Chest;			// 0xBC
-			DWORD ItemID_Legs;			// 0xC0
-			DWORD ItemID_Head;			// 0xC4
-			DWORD ItemID_Feet;			// 0xC8
-			DWORD ItemID_Hands;			// 0xCC
-			DWORD ItemID_CostumeBody;		// 0xD0
-			DWORD ItemID_CostumeHead;		// 0xD4
-		};
+            DWORD h0004;                // 0x04     always 2 ?
+            DWORD h0008;                // 0x08     Ptr PlayerModelFile?
+            DWORD h000C;                // 0x0C
+            DWORD *LeftHandPtr;         // 0x10     Ptr Bow, Hammer, Focus, Daggers, Scythe
+            DWORD *RightHandPtr;            // 0x14     Ptr Sword, Spear, Staff, Daggers, Axe, Zepter, Bundle
+            DWORD h0018;                // 0x18
+            DWORD *ShieldPtr;           // 0x1C     Ptr Shield
+            BYTE LeftHandMap;           // 0x20     Weapon1     None = 9, Bow = 0, Hammer = 0, Focus = 1, Daggers = 0, Scythe = 0
+            BYTE RightHandMap;          // 0x21     Weapon2     None = 9, Sword = 0, Spear = 0, Staff = 0, Daggers = 0, Axe = 0, Zepter = 0, Bundle
+            BYTE HeadMap;               // 0x22     Head        None = 9, Headpiece Ele = 4
+            BYTE ShieldMap;             // 0x23     Shield      None = 9, Shield = 1
+            union {
+                ItemData Items[9];
+                struct {
+                    ItemData Weapon;        // 0x24
+                    ItemData Offhand;       // 0x34
+                    ItemData Chest;     // 0x44
+                    ItemData Legs;          // 0x54
+                    ItemData Head;          // 0x64
+                    ItemData Feet;          // 0x74
+                    ItemData Hands;     // 0x84 
+                    ItemData CostumeBody;       // 0x94
+                    ItemData CostumeHead;       // 0xA4
+                };
+            };
+            DWORD ItemID_Weapon;            // 0xB4
+            DWORD ItemID_Offhand;           // 0xB8
+            DWORD ItemID_Chest;         // 0xBC
+            DWORD ItemID_Legs;          // 0xC0
+            DWORD ItemID_Head;          // 0xC4
+            DWORD ItemID_Feet;          // 0xC8
+            DWORD ItemID_Hands;         // 0xCC
+            DWORD ItemID_CostumeBody;       // 0xD0
+            DWORD ItemID_CostumeHead;       // 0xD4
+        };
 
         /* +h0000 */ DWORD* vtable;
         /* +h0004 */ DWORD h0004;
@@ -141,7 +141,7 @@ namespace GW {
         /* +h010E */ BYTE  h010E[2];
         /* +h0110 */ DWORD h0110;
         /* +h0114 */ float EnergyRegen;
-		/* +h0118 */ DWORD h0118;
+        /* +h0118 */ DWORD h0118;
         /* +h011C */ float Energy; // Only works for yourself
         /* +h0120 */ DWORD MaxEnergy; // Only works for yourself
         /* +h0124 */ DWORD h0124;

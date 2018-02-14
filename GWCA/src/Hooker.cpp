@@ -19,6 +19,7 @@ void GW::HookBase::EnqueueHook(HookBase* base)
 void  GW::HookBase::RemoveHook(HookBase* base)
 {
 	MH_RemoveHook(base->_sourceFunc);
+	base->_retourFunc = nullptr;
 }
 
 void GW::HookBase::EnableHooks(HookBase* base)

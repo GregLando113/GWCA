@@ -9,47 +9,38 @@
 namespace GW {
 	namespace Map {
 
-		struct PAB_ZoneMap {
-			const DWORD header = 0xAB;
-			DWORD mapid;
-			int region;
-			int district;
-			int language;
-			DWORD unk;
-		};
-
-		bool IsMapLoaded();
+		GWCA_API bool IsMapLoaded();
 
 		// Get current map ID.
-		GW::Constants::MapID GetMapID();
+		GWCA_API GW::Constants::MapID GetMapID();
 
 		// Get current region you are in.
-		int GetRegion();
+		GWCA_API int GetRegion();
 
 		// Get current language you are in.
-		int GetLanguage();
+		GWCA_API int GetLanguage();
 
 		// Get time, in ms, since the instance you are residing in has been created.
-		DWORD GetInstanceTime();
+		GWCA_API DWORD GetInstanceTime();
 
 		// Get the instance type (Outpost, Explorable or Loading)
-		Constants::InstanceType GetInstanceType();
+		GWCA_API Constants::InstanceType GetInstanceType();
 
 		// Travel to specified outpost.
-		void Travel(Constants::MapID MapID, int District = 0, int Region = 0, int Language = 0);
-		void Travel(Constants::MapID MapID, Constants::District district, int district_number = 0);
+		GWCA_API void Travel(Constants::MapID MapID, int District = 0, int Region = 0, int Language = 0);
+		GWCA_API void Travel(Constants::MapID MapID, Constants::District district, int district_number = 0);
 
 		// Returns array of icons (res shrines, quarries, traders, etc) on mission map.
 		// Look at MissionMapIcon struct for more info.
-		GW::MissionMapIconArray GetMissionMapIconArray();
+		GWCA_API GW::MissionMapIconArray GetMissionMapIconArray();
 
 		// Returns pointer of collision trapezoid array.
-		GW::PathingMapArray GetPathingMap();
+		GWCA_API GW::PathingMapArray GetPathingMap();
 
-		DWORD GetFoesKilled();
-		DWORD GetFoesToKill();
+		GWCA_API DWORD GetFoesKilled();
+		GWCA_API DWORD GetFoesToKill();
 
-		GW::AreaInfo& GetMapInfo(Constants::MapID MapID);
+		GWCA_API GW::AreaInfo& GetMapInfo(Constants::MapID MapID);
 
 		inline GW::AreaInfo& GetCurrentMapInfo() { return GetMapInfo(GetMapID()); }
 	};

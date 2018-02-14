@@ -64,7 +64,7 @@ void GW::GameThread::RestoreHooks() {
 	*g__thingy = (uintptr_t)g__thingyret;
 }
 
-void __declspec(naked) GW::GameThread::renderHook() {
+static void __declspec(naked) renderHook() {
 	Sleep(1);
 	_asm {
 		POP ESI

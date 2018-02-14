@@ -45,50 +45,50 @@ namespace GW {
 		// void SetChatChannelColor(Channel channel, Color sender, Color message);
 		// void RegisterEvent(Event e);
 
-		bool IsTyping();
+		GWCA_API bool IsTyping();
 
 		// Send a message to an in-game channel (! for all, @ for guild, etc)
-		void SendChat(char channel, const wchar *msg);
-		void SendChat(char channel, const char  *msg);
+		GWCA_API void SendChat(char channel, const wchar *msg);
+		GWCA_API void SendChat(char channel, const char  *msg);
 
 		// Emulates a message in a given channel.
-		void WriteChat(Channel channel, const wchar *message);
-		void WriteChat(Channel channel, const char  *message);
+		GWCA_API void WriteChat(Channel channel, const wchar *message);
+		GWCA_API void WriteChat(Channel channel, const char  *message);
 
-		void WriteChat(Channel channel, const wchar *sender, const wchar *msg);
-		void WriteChat(Channel channel, const char  *sender, const char  *msg);
+		GWCA_API void WriteChat(Channel channel, const wchar *sender, const wchar *msg);
+		GWCA_API void WriteChat(Channel channel, const char  *sender, const char  *msg);
 
-		void WriteChatF(Channel channel, const wchar *sender, const char *fmt, ...);
+		GWCA_API void WriteChatF(Channel channel, const wchar *sender, const char *fmt, ...);
 
 		typedef std::function<void(int argc, LPWSTR *argv)> CmdCB;
-		void CreateCommand(std::wstring cmd, CmdCB callback);
-		void DeleteCommand(std::wstring cmd);
+		GWCA_API void CreateCommand(std::wstring cmd, CmdCB callback);
+		GWCA_API void DeleteCommand(std::wstring cmd);
 
 		extern bool ShowTimestamps;
 		extern bool KeepChatHistory;
 		extern bool Timestamp_24hFormat;
 		extern Color TimestampsColor;
 
-		void Initialize();
-		void RestoreHooks();
+		GWCA_API void Initialize();
+		GWCA_API void RestoreHooks();
 
 		// SendChat callback can modify the msg before it is send.
 		// Pay attention to not overflow the buffer.
-		void SetSendChatCallback(std::function<
+		GWCA_API void SetSendChatCallback(std::function<
 			void(Channel chan, wchar_t msg[140])>);
 
-		void SetOpenLinks(bool b);
+		GWCA_API void SetOpenLinks(bool b);
 
-		Color SetSenderColor(Channel chan, Color col);
-		Color SetMessageColor(Channel chan, Color col);
+		GWCA_API Color SetSenderColor(Channel chan, Color col);
+		GWCA_API Color SetMessageColor(Channel chan, Color col);
 
-		void SetChatEventCallback(std::function<
+		GWCA_API void SetChatEventCallback(std::function<
 			void(DWORD, DWORD, wchar_t*, void*)> callback);
 
-		void SetLocalMessageCallback(std::function<
+		GWCA_API void SetLocalMessageCallback(std::function<
 			bool(int, wchar_t*)> callback);
 
-		void SetWhisperCallback(std::function<
+		GWCA_API void SetWhisperCallback(std::function<
 			void(const wchar_t[20], const wchar_t[140])> callback);
 	};
 }

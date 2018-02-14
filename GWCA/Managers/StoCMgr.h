@@ -19,7 +19,7 @@ namespace GW {
 		void Initialize();
 		void RestoreHooks();
 
-		DWORD AddCallback(DWORD header, std::function<bool(Packet::StoC::PacketBase*)> callback);
+		GWCA_API DWORD AddCallback(DWORD header, std::function<bool(Packet::StoC::PacketBase*)> callback);
         
         /* Use this to add handlers to the stocmgr, primary function. */
         template <typename T>
@@ -30,7 +30,7 @@ namespace GW {
 			});
 		}
 		
-		void RemoveCallback(DWORD header, DWORD identifier);
+		GWCA_API void RemoveCallback(DWORD header, DWORD identifier);
 
         template <typename T>
         void RemoveCallback(DWORD identifier) {
@@ -39,7 +39,7 @@ namespace GW {
         }
 
 
-		void EmulatePacket(Packet::StoC::PacketBase* packet);
+		GWCA_API void EmulatePacket(Packet::StoC::PacketBase* packet);
 
         template <typename T>
         void EmulatePacket(T* packet) {

@@ -9,7 +9,7 @@ namespace GW {
 
 	namespace FriendListMgr {
 
-		GW::FriendList* GetFriendList();
+		GWCA_API GW::FriendList* GetFriendList();
 
 		inline GW::Friend* GetFriend(DWORD index) { 
 			return GetFriendList()->Friends[index + 1]; }
@@ -21,6 +21,6 @@ namespace GW {
 
 		inline DWORD GetMyStatus() { return GetFriendList()->PlayerStatus; }
 
-		void SetFriendListStatus(Constants::OnlineStatus status);
+		GWCA_API void SetFriendListStatus(Constants::OnlineStatus status);
 	};
 }

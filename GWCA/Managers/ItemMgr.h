@@ -10,53 +10,53 @@ namespace GW {
 	namespace Items {
 
 		// Get full array of items sorted by ItemID.
-		GW::ItemArray GetItemArray();
+		GWCA_API GW::ItemArray GetItemArray();
 
 		// Get bag array [1-4] = inventory bags, [5]=Equip pack, [6]=Materials storage,
 		// [7] = Unclaimed items, [8-16] = storage, [17] = Equipped
 		// Note: bag->index of each bag is one less than its index in the array
-		GW::Bag** GetBagArray();
+		GWCA_API GW::Bag** GetBagArray();
 
 		// Use given item if usable.
-		void UseItem(GW::Item* item);
+		GWCA_API void UseItem(GW::Item* item);
 
 		// Equip item if equippable.
-		void EquipItem(GW::Item* item);
+		GWCA_API void EquipItem(GW::Item* item);
 
 		// Drop item if droppable.
-		void DropItem(GW::Item* item, DWORD quantity);
+		GWCA_API void DropItem(GW::Item* item, DWORD quantity);
 
 		// Pick up selected item off the ground.
-		void PickUpItem(GW::Item* item, DWORD CallTarget = 0);
+		GWCA_API void PickUpItem(GW::Item* item, DWORD CallTarget = 0);
 
 		// Opens the storage window from anywhere.
 		// Can only interact with the storage in an outpost with a xunlai chest inside, sorry no exploiting.
-		void OpenXunlaiWindow();
+		GWCA_API void OpenXunlaiWindow();
 
 		// Drop amount gold on ground.
-		void DropGold(DWORD Amount = 1);
+		GWCA_API void DropGold(DWORD Amount = 1);
 
 		// Get amount of gold on character.
-		DWORD GetGoldAmountOnCharacter();
+		GWCA_API DWORD GetGoldAmountOnCharacter();
 
 		// Get amount of gold in storage.
-		DWORD GetGoldAmountInStorage();
+		GWCA_API DWORD GetGoldAmountInStorage();
 
 		// Open locked chest, raw packet, first send a GoSignpost packet to select chest.
-		void OpenLockedChest();
+		GWCA_API void OpenLockedChest();
 
 		// === Complex functions ===
 		// Find item in selected bags with said modelid, then use it.
 		// return: True if found and used, false if not.
-		bool UseItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
+		GWCA_API bool UseItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
 		// Returns the amount of item with said modelid in given bags.
-		DWORD CountItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
+		GWCA_API DWORD CountItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
 		// Returns item struct of item with given modelid.
-		GW::Item* GetItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
+		GWCA_API GW::Item* GetItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
 		// The callback should return false if it want to foward the info to Gw.
-		void SetOnItemClick(std::function<bool(GW::Item*, GW::Bag*)> callback);
+		GWCA_API void SetOnItemClick(std::function<bool(GW::Item*, GW::Bag*)> callback);
 	};
 }

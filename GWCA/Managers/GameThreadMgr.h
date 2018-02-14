@@ -8,17 +8,17 @@ namespace GW {
 
 	// Shoutouts to DarthTon @ unknowncheats.me for this class.
 	namespace GameThread {
-		void Initialize();
-		void ClearCalls();
-		void RestoreHooks();
+		GWCA_API void Initialize();
+		GWCA_API void ClearCalls();
+		GWCA_API void RestoreHooks();
 
-		void Enqueue(std::function<void()> f);
+		GWCA_API void Enqueue(std::function<void()> f);
 
-		DWORD AddPermanentCall(std::function<void()> f);
+		GWCA_API DWORD AddPermanentCall(std::function<void()> f);
 
-		void RemovePermanentCall(DWORD identifier);
+		GWCA_API void RemovePermanentCall(DWORD identifier);
 		
-		static void renderHook();
-		void ToggleRenderHook();
+		// static void renderHook();
+		GWCA_API void ToggleRenderHook();
 	};
 }

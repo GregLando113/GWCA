@@ -16,6 +16,15 @@ bool GW::Map::IsMapLoaded() {
 void GW::Map::Travel(GW::Constants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
 
+	struct PAB_ZoneMap {
+		const DWORD header = 0xAB;
+		DWORD mapid;
+		int region;
+		int district;
+		int language;
+		DWORD unk;
+	};
+
 	if (GetInstanceType() == GW::Constants::InstanceType::Loading) return;
 
 	static PAB_ZoneMap* pak = new PAB_ZoneMap();

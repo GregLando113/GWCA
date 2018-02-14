@@ -227,6 +227,9 @@
     <ClInclude Include="GWCA\Context\TextParser.h">
       <Filter>Context</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Utilities\Export.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\disasm\ld32.c">

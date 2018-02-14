@@ -32,17 +32,17 @@ namespace GW {
 			UnlockRunePriestOfBalth = 0xF
 		};
 
-		void TransactItems(TransactionType type,
+		GWCA_API void TransactItems(TransactionType type,
 			DWORD gold_give, TransactionInfo give,
 			DWORD gold_recv, TransactionInfo recv
 		);
 
-		void RequestQuote(TransactionType type,
+		GWCA_API void RequestQuote(TransactionType type,
 			QuoteInfo give,
 			QuoteInfo recv
 		);
 
 		// note: can contain pointers to random items from your inventory
-		GW::MerchItemArray GetMerchantItemsArray();
+		GWCA_API GW::MerchItemArray GetMerchantItemsArray();
 	};
 }

@@ -14,20 +14,20 @@ namespace GW {
 		// 
 		// Important: if you use this, you should call  GW::Terminate() 
 		// or at least GW::Render::RestoreHooks() from within the callback
-		void SetRenderCallback(std::function<void(IDirect3DDevice9*)> callback);
+		GWCA_API void SetRenderCallback(std::function<void(IDirect3DDevice9*)> callback);
 
 		// Set up a callback for directx device reset
-		void SetResetCallback(std::function<void(IDirect3DDevice9*)> callback);
+		GWCA_API void SetResetCallback(std::function<void(IDirect3DDevice9*)> callback);
 
-		void RestoreHooks();
+		GWCA_API void RestoreHooks();
 
 		// Check if gw is in fullscreen
 		// Note: requires one or both callbacks to be set and called before
 		// Note: does not update while minimized
 		// Note: returns -1 if it doesn't know yet
-		int GetIsFullscreen();
+		GWCA_API int GetIsFullscreen();
 
-		int GetViewportWidth();
-		int GetViewportHeight();
+		GWCA_API int GetViewportWidth();
+		GWCA_API int GetViewportHeight();
 	}
 }

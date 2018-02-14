@@ -8,52 +8,52 @@ namespace GW {
 
 		// set or unset the fact that ticking will work as a toggle instead
 		// of showing a drop-down menu
-		void SetTickToggle();
-		void RestoreTickToggle();
+		GWCA_API void SetTickToggle();
+		GWCA_API void RestoreTickToggle();
 
 		inline void RestoreHooks() { RestoreTickToggle(); }
 
 		// Set party ready status.
-		void Tick(bool flag = true);
+		GWCA_API void Tick(bool flag = true);
 
-		GW::PartyInfo* GetPartyInfo();
+		GWCA_API GW::PartyInfo* GetPartyInfo();
 
-		DWORD GetPartySize();
-		DWORD GetPartyPlayerCount();
-		DWORD GetPartyHeroCount();
-		DWORD GetPartyHenchmanCount();
+		GWCA_API DWORD GetPartySize();
+		GWCA_API DWORD GetPartyPlayerCount();
+		GWCA_API DWORD GetPartyHeroCount();
+		GWCA_API DWORD GetPartyHenchmanCount();
 
-		bool GetIsPartyDefeated();
+		GWCA_API bool GetIsPartyDefeated();
 
-		void SetHardMode(bool flag);
-		bool GetIsPartyInHardMode();
+		GWCA_API void SetHardMode(bool flag);
+		GWCA_API bool GetIsPartyInHardMode();
 
 		// check if the whole party is ticked
-		bool GetIsPartyTicked();
+		GWCA_API bool GetIsPartyTicked();
 
 		// check if selected party member is ticked
-		bool GetIsTicked(DWORD player_index);
+		GWCA_API bool GetIsTicked(DWORD player_index);
 
 		// check if the player is ticked
-		bool GetIsPlayerTicked();
+		GWCA_API bool GetIsPlayerTicked();
 
 		// check if the whole party is loaded
-		bool GetIsPartyLoaded();
+		GWCA_API bool GetIsPartyLoaded();
 
-        void RespondToPartyRequest(bool accept);
+		GWCA_API void RespondToPartyRequest(bool accept);
 
-		void LeaveParty();
+		GWCA_API void LeaveParty();
 
 		// hero managment
-		void AddHero(DWORD heroid);
-		void KickHero(DWORD heroid);
-		void KickAllHeroes();
+		GWCA_API void AddHero(DWORD heroid);
+		GWCA_API void KickHero(DWORD heroid);
+		GWCA_API void KickAllHeroes();
 
 		// hero flagging
-		void FlagHero(DWORD hero_index, GW::GamePos pos);
-		void UnflagHero(DWORD hero_index);
+		GWCA_API void FlagHero(DWORD hero_index, GW::GamePos pos);
+		GWCA_API void UnflagHero(DWORD hero_index);
 
-		void FlagAll(GW::GamePos pos);
-		void UnflagAll();
+		GWCA_API void FlagAll(GW::GamePos pos);
+		GWCA_API void UnflagAll();
 	};
 }

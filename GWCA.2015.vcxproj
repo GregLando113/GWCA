@@ -61,6 +61,7 @@
     <ClInclude Include="GWCA\Managers\TradeMgr.h" />
     <ClInclude Include="GWCA\Packets\CtoS.h" />
     <ClInclude Include="GWCA\Packets\StoC.h" />
+    <ClInclude Include="GWCA\Utilities\Export.h" />
     <ClInclude Include="GWCA\Utilities\Hooker.h" />
     <ClInclude Include="GWCA\Managers\ItemMgr.h" />
     <ClInclude Include="GWCA\Managers\MapMgr.h" />
@@ -153,6 +154,7 @@
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ForcedIncludeFiles>GWCA\Utilities\Export.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -174,6 +176,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ForcedIncludeFiles>GWCA\Utilities\Export.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

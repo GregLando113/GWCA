@@ -5,10 +5,10 @@
 namespace GW {
 
 	namespace CameraMgr {
-		void RestoreHooks();
+		GWCA_API void RestoreHooks();
 
 		// ==== Camera ====
-		GW::Camera* GetCamera();
+		GWCA_API GW::Camera* GetCamera();
 
 		// X,Y,Z of camera in game world.
 		inline Vec3f GetCameraPosition() { return GetCamera()->Position; }
@@ -61,27 +61,27 @@ namespace GW {
 		}
 
 		// Change max zoom dist
-		void SetMaxDist(float dist = 750.0f);
+		GWCA_API void SetMaxDist(float dist = 750.0f);
 
-		void SetFieldOfView(float fov);
+		GWCA_API void SetFieldOfView(float fov);
 
 		// Manual computation of the position of the Camera. (As close as possible to the original)
-		Vec3f ComputeCamPos(float dist = 0); // 2.f is the first person dist (const by gw)
+		GWCA_API Vec3f ComputeCamPos(float dist = 0); // 2.f is the first person dist (const by gw)
 		inline void UpdateCameraPos() {
 			CameraMgr::SetCameraPos(ComputeCamPos());
 		}
 
 		// ==== Projection matrix ====
 		// Returns (possible?) projection matrix of the game. Needs to be delved into.
-		float* GetProjectionMatrix();
+		GWCA_API float* GetProjectionMatrix();
 
 
 		// ==== Camera patches ====
 		// Unlock camera & return the new state of it
-		bool UnlockCam(bool flag);
-		bool GetCameraUnlock();
+		GWCA_API bool UnlockCam(bool flag);
+		GWCA_API bool GetCameraUnlock();
 
 		// Enable or Disable the fog & return the state of it
-		bool SetFog(bool flag);
+		GWCA_API bool SetFog(bool flag);
 	};
 }

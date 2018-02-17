@@ -44,7 +44,7 @@ void GW::Agents::SetupLastDialogHook() {
 	}
 }
 void GW::Agents::RestoreLastDialogHook() {
-	lastdialoglog_hook.Retour();
+	HookBase::DisableHooks(&lastdialoglog_hook);
 }
 DWORD GW::Agents::GetLastDialogId() { 
 	return lastdialog_id;

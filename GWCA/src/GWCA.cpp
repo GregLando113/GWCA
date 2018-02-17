@@ -6,6 +6,7 @@
 #include "..\Managers\PartyMgr.h"
 #include "..\Managers\EffectMgr.h"
 #include "..\Managers\ChatMgr.h"
+#include "..\Managers\ItemMgr.h"
 #include "..\Managers\StoCMgr.h"
 #include "..\Managers\CameraMgr.h"
 #include "..\Managers\Render.h"
@@ -33,6 +34,7 @@ void GW::Terminate() {
 	GW::Agents::RestoreHooks();
 	GW::Effects::RestoreHooks();
 	GW::Render::RestoreHooks();
+	GW::Items::RestoreHooks();
 
 	GW::GameThread::RestoreHooks();
 }

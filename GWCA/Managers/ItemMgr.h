@@ -1,13 +1,15 @@
 #pragma once
 
 #include <Windows.h>
+#include <functional>
 
 #include <GWCA\GameEntities\Item.h>
-#include <functional>
+#include <GWCA\Constants\Constants.h>
 
 namespace GW {
 
 	namespace Items {
+		GWCA_API void RestoreHooks();
 
 		// Get full array of items sorted by ItemID.
 		GWCA_API GW::ItemArray GetItemArray();
@@ -16,6 +18,13 @@ namespace GW {
 		// [7] = Unclaimed items, [8-16] = storage, [17] = Equipped
 		// Note: bag->index of each bag is one less than its index in the array
 		GWCA_API GW::Bag** GetBagArray();
+		GWCA_API GW::Bag  *GetBag(GW::Constants::Bag bag_id);
+		GWCA_API GW::Bag  *GetBag(DWORD bag_id);
+
+		GWCA_API GW::Item *GetItemBySlot(GW::Bag *bag, DWORD slot);
+		GWCA_API GW::Item *GetItemBySlot(GW::Constants::Bag bag, DWORD slot);
+		// bag & slot are 1 based
+		GWCA_API GW::Item *GetItemBySlot(DWORD bag, DWORD slot);
 
 		// Use given item if usable.
 		GWCA_API void UseItem(GW::Item* item);
@@ -44,6 +53,14 @@ namespace GW {
 
 		// Open locked chest, raw packet, first send a GoSignpost packet to select chest.
 		GWCA_API void OpenLockedChest();
+		
+		// Move item to a new position (bag, slot). Used to merge stacks
+		// slot start at 1
+		GWCA_API void MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity = 0);
+		GWCA_API void MoveItem(GW::Item *from, GW::Item *to, int quantity = 0);
+
+		// Split a given amount into a new position (bag, slot).
+		// GWCA_API void SplitStack(GW::Item *item, GW::Bag *bag, int slot, int quantity);
 
 		// === Complex functions ===
 		// Find item in selected bags with said modelid, then use it.
@@ -56,7 +73,10 @@ namespace GW {
 		// Returns item struct of item with given modelid.
 		GWCA_API GW::Item* GetItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
+		// Returns the current storage pannel (0 based). Note that if material storage is on focus, 0 is returned.
+		GWCA_API int GetCurrentStoragePannel(void);
+
 		// The callback should return false if it want to foward the info to Gw.
-		GWCA_API void SetOnItemClick(std::function<bool(GW::Item*, GW::Bag*)> callback);
+		GWCA_API void SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, GW::Bag *bag)> callback);
 	};
 }

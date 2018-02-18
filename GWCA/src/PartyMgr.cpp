@@ -43,7 +43,7 @@ void GW::PartyMgr::Tick(bool flag) {
 }
 
 GW::PartyInfo* GW::PartyMgr::GetPartyInfo() {
-	return GameContext::instance()->party->partyinfo;
+	return GameContext::instance()->party->playerparty;
 }
 
 DWORD GW::PartyMgr::GetPartySize() {

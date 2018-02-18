@@ -154,8 +154,8 @@ GW::AgentID GW::Agents::GetHeroAgentID(DWORD heroindex) {
 	GW::GameContext* ctx = GameContext::instance();
 	if (ctx == nullptr) return 0;
 	if (ctx->party == nullptr) return 0;
-	if (ctx->party->partyinfo == nullptr) return 0;
-	HeroPartyMemberArray heroarray = ctx->party->partyinfo->heroes;
+	if (ctx->party->playerparty == nullptr) return 0;
+	HeroPartyMemberArray heroarray = ctx->party->playerparty->heroes;
 
 	if (!heroarray.valid() || (DWORD)heroindex > heroarray.size()) return 0;
 

@@ -9,7 +9,7 @@
 namespace GW {
 
 	struct TradeContext {
-		enum State : DWORD { NO_TRADE, TRADE_INITIATED, OFFER_ACCEPTED = 3 };
+		enum State : DWORD { NO_TRADE, TRADE_INITIATED, OFFER_SEND = 3, OFFER_ACCEPTED = 7 };
 
 		struct Item {
 			ItemID itemid;
@@ -21,7 +21,7 @@ namespace GW {
 			Array<TradeContext::Item> items;
 		};
 
-		/* +h0000 */ State  state;
+		/* +h0000 */ State  state; // this is actually a flags
 		/* +h0004 */ DWORD  h0004[3]; // Seemingly 3 null dwords
 		/* +h0010 */ Trader player;
 		/* +h0020 */ Trader partner;

@@ -17,6 +17,7 @@ namespace GW {
         } recieving, sending;
         /* +h003C */ DWORD h003C;
         /* +h0040 */ Array<PartyInfo*> parties; 
+        /* +h0050 */ DWORD h0050;
         /* +h0054 */ PartyInfo* playerparty; // Players party
         
         bool InHardMode() { return (flag & 0x10) > 0; }

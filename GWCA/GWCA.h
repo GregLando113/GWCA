@@ -10,7 +10,7 @@ _____ _    _ _____   ___
 \____/\/  \/ \____/\_| |_/
 
 
-Created by KAOS (a.k.a. 4D 1) and gigi for use in GWToolbox++
+Created by KAOS (a.k.a. 4D 1) and HasKha for use in GWToolbox++
 
 Credits to:
 
@@ -27,7 +27,7 @@ d8rken -
 Zraw menu/api which acted as a gateway to get a grasp of cpp as well
 as directx.
 
-gigi -
+HasKha -
 For getting me to not make everything singletons :P
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

@@ -575,13 +575,13 @@ namespace GW {
 			const DWORD Packet<P076>::STATIC_HEADER = 76;
 
 			struct P077 : Packet<P077> {
-				// DWORD
-				// DWORD agent_id;
-				// DWORD
-				// BYTE
-				// DWORD
-				// DWORD
-				// wchar_t array[32] // prefixType="int16"
+				DWORD player_id;
+				DWORD agent_id;
+				DWORD appearance;
+				BYTE  unk0;
+				DWORD unk1;
+				DWORD unk2;
+				wchar_t name[32];
 			};
 			const DWORD Packet<P077>::STATIC_HEADER = 77;
 

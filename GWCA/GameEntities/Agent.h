@@ -72,6 +72,13 @@ namespace GW {
             DWORD ItemID_CostumeHead;       // 0xD4
         };
 
+        struct TagInfo {
+            WORD GuildId;
+            BYTE Primary;
+            BYTE Secondary;
+            // ...
+        };
+
         /* +h0000 */ DWORD* vtable;
         /* +h0004 */ DWORD h0004;
         /* +h0008 */ DWORD h0008;
@@ -133,7 +140,9 @@ namespace GW {
         //           WORD  padding;
         /* +h00F8 */ DWORD TransmogNpcId; // Actually, it's 0x20000000 | npc_id, It's not defined for npc, minipet, etc...
         /* +h00FC */ Equipment** Equip;
-        /* +h0100 */ BYTE  h0100[10];
+        /* +h0100 */ DWORD h0100;
+        /* +h0104 */ TagInfo *Tags; // struct { WORD guild_id, BYTE primary, BYTE secondary, WORD level
+        /* +h0108 */ WORD  h0108;
         /* +h010A */ BYTE  Primary; // Primary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
         /* +h010B */ BYTE  Secondary; // Secondary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
         /* +h010C */ BYTE  Level; // Duh!

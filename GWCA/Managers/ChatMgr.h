@@ -51,6 +51,9 @@ namespace GW {
 		GWCA_API void SendChat(char channel, const wchar *msg);
 		GWCA_API void SendChat(char channel, const char  *msg);
 
+		GWCA_API void SendChat(const wchar *from, const wchar *msg);
+		GWCA_API void SendChat(const char  *from, const char  *msg);
+
 		// Emulates a message in a given channel.
 		GWCA_API void WriteChat(Channel channel, const wchar *message);
 		GWCA_API void WriteChat(Channel channel, const char  *message);

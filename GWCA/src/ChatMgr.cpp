@@ -411,6 +411,26 @@ void GW::Chat::SendChat(char channel, const char *msg) {
 	SendChat_addr(buffer);
 }
 
+void GW::Chat::SendChat(const wchar *from, const wchar *msg) {
+	assert(SendChat_addr);
+	wchar buffer[140];
+
+	if (swprintf(buffer, 140, L"\"%s,%s", from, msg) < 140) {
+		buffer[139] = 0;
+		SendChat_addr(buffer);
+	}
+}
+
+void GW::Chat::SendChat(const char *from, const char *msg) {
+	assert(SendChat_addr);
+	wchar buffer[140];
+
+	if (swprintf(buffer, 140, L"\"%S,%S", from, msg) < 140) {
+		buffer[139] = 0;
+		SendChat_addr(buffer);
+	}
+}
+
 // Change to WriteChatF(Channel chan, const wchar *from, const wchar *frmt, ..)
 // and       WriteChat(Channel chan, const wchar *from, const wchar *msg) 
 /*

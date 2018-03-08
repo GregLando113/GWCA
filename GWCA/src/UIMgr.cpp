@@ -16,7 +16,7 @@ namespace {
 }
 
 
-void GW::UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)
+void GW::UI::SendUIMessage(UIMessage message, unsigned int wParam, int lParam)
 {
 	if (!g_uiSendMessage) {
 		UISendMessageInitialize();
@@ -24,7 +24,7 @@ void GW::UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)
 	g_uiSendMessage(message, (void*)wParam, (void*)lParam);
 }
 
-void GW::UI::SendUIMessage(unsigned message, void * wParam, void * lParam)
+void GW::UI::SendUIMessage(UIMessage message, void * wParam, void * lParam)
 {
 	if (!g_uiSendMessage) {
 		UISendMessageInitialize();

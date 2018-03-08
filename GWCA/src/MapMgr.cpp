@@ -91,7 +91,7 @@ GW::Constants::MapID GW::Map::GetMapID() {
 	if (mapid_ptr == nullptr) {
 		// For Map IDs
 		BYTE* addr = (BYTE*)Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0);
-		printf("MapIDPtr = %p\n", addr);
+		printf("[SCAN] MapIDPtr = %p\n", addr);
 		if (addr) {
 			mapid_ptr = *(DWORD**)(addr + 0x46);
 		}
@@ -105,7 +105,7 @@ namespace {
 		if (MapInfoPtr == nullptr) {
 			MapInfoPtr = (BYTE*)GW::Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
 			if (MapInfoPtr) {
-				printf("MapInfoPtr = %p\n", MapInfoPtr);
+				printf("[SCAN] MapInfoPtr = %p\n", MapInfoPtr);
 				MapInfoPtr = *(BYTE**)(MapInfoPtr + 7);
 			}
 		}

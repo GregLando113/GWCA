@@ -31,7 +31,7 @@ void GW::Merchant::TransactItems(TransactionType type,
 
 	if (transactitem_func == nullptr) {
 		transactitem_func = (TransactItem_t*)Scanner::Find("\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C);
-		printf("transaction_function_ = %p\n", transactitem_func);
+		printf("[SCAN] transaction_function_ = %p\n", transactitem_func);
 	}
 
 	if (transactitem_func) {
@@ -44,7 +44,7 @@ void GW::Merchant::RequestQuote(TransactionType type,
 
 	if (requestquote_func == nullptr) {
 		requestquote_func = (RequestQuote_t*)Scanner::Find("\x53\x56\x8B\x75\x0C\x57\x83\xFE\x10", "xxxxxxxxx", -0x9);
-		printf("quote_function_ = %p\n", requestquote_func);
+		printf("[SCAN] quote_function_ = %p\n", requestquote_func);
 	}
 
 	if (requestquote_func) {

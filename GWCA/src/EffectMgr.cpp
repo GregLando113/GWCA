@@ -46,7 +46,7 @@ namespace {
 void GW::Effects::SetupPostProcessingEffectHook() {
 	if (ppe_hook.Empty()) {
 		PPEFunc_t ppe_original = (PPEFunc_t)Scanner::Find("\x55\x8B\xEC\x83\xEC\x10\x89\x4D\xF8\xC7\x45\xFC", "xxxxxxxxxxxx", 0);
-		printf("PostProcessEffectFunction = %p\n", ppe_original);
+		printf("[SCAN] PostProcessEffectFunction = %p\n", ppe_original);
 		ppe_hook.Detour(ppe_original, ppe_detour, 6);
 	}	
 }

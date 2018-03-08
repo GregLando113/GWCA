@@ -209,7 +209,7 @@ static void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *inf
 void GW::Items::SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, GW::Bag *bag)> callback) {
 	if (ItemClickHook.Empty()) {
 		ItemClick_t ItemClick = (ItemClick_t)Scanner::Find("\x74\x73\x8B\x50\x08", "xxxxx", -25);
-		printf("ItemClick = %p\n", ItemClick);
+		printf("[SCAN] ItemClick = %p\n", ItemClick);
 		ItemClickHook.Detour(ItemClick, OnItemClick);
 	}
 	ItemClickCallback = callback;

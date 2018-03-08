@@ -29,7 +29,7 @@ namespace {
 void GW::PartyMgr::SetTickToggle() {
 	if (hk_tick_.Empty()) {
 		Tick_t addr_tick = (Tick_t)Scanner::Find("\x74\x0A\x48\x75\x14\xB9", "xxxxxx", -33);
-		printf("addr_tick = %p\n", addr_tick);
+		printf("[SCAN] addr_tick = %p\n", addr_tick);
 		hk_tick_.Detour(addr_tick, DetourTick);
 	}
 }

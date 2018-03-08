@@ -87,12 +87,12 @@ void GW::Render::SetRenderCallback(std::function<void(IDirect3DDevice9*)> callba
 	render_callback = callback;
 	if (endscene_hook.Empty()) {
 		endscene_original = (GwEndScene_t)GW::Scanner::Find("\x55\x8B\xEC\x83\xEC\x28\x56\x8B\xF1\x57\x89\x55\xF8", "xxxxxxxxxxxxx", 0);
-		printf("GwEndScene address = %p\n", endscene_original);
+		printf("[SCAN] GwEndScene address = %p\n", endscene_original);
 		endscene_hook.Detour(endscene_original, endscene_detour);
 	}
 	if (screen_capture_hook.Empty()) {
 		screen_capture_original = (GwEndScene_t)GW::Scanner::Find("\xC3\x39\x86\x94\x00\x00\x00\x74\x0C", "xxxxxxxxx", -69);
-		printf("GwScreenCapture address = %p\n", screen_capture_original);
+		printf("[SCAN] GwScreenCapture address = %p\n", screen_capture_original);
 		screen_capture_hook.Detour(screen_capture_original, screen_capture_detour);
 	}
 }
@@ -101,7 +101,7 @@ void GW::Render::SetResetCallback(std::function<void(IDirect3DDevice9* device)> 
 	reset_callback = callback;
 	if (reset_hook.Empty()) {
 		GwReset_t source = (GwReset_t)GW::Scanner::Find("\x55\x8B\xEC\x81\xEC\x98\x00\x00\x00\x53\x56\x57\x8B\xF1\x33\xD2", "xxxxxxxxxxxxxxxx", 0);
-		printf("GwReset address = %p\n", source);
+		printf("[SCAN] GwReset address = %p\n", source);
 		reset_hook.Detour(source, reset_detour);
 	}
 }

@@ -248,6 +248,9 @@
     <ClInclude Include="Dependencies\minhook\include\MinHook.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Managers\UIMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\src\GWCA.cpp">
@@ -333,6 +336,9 @@
     </ClCompile>
     <ClCompile Include="Dependencies\minhook\src\trampoline.c">
       <Filter>src\Utilities\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\src\UIMgr.cpp">
+      <Filter>src\Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

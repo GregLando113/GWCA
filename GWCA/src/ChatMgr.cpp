@@ -463,7 +463,7 @@ void GW::Chat::WriteChat(Channel channel, const wchar *msg) {
 	buffer[len + 2] = 1;
 	buffer[len + 3] = 0;
 
-	GW::UI::SendUIMessage(0x1000007E, &param, NULL);
+	GW::UI::SendUIMessage(UI::kWriteToChatLog, &param);
 	delete[] buffer;
 }
 
@@ -484,7 +484,7 @@ void GW::Chat::WriteChat(Channel channel, const char *msg) {
 	buffer[len + 2] = 1;
 	buffer[len + 3] = 0;
 
-	GW::UI::SendUIMessage(0x1000007E, &param, NULL);
+	GW::UI::SendUIMessage(UI::kWriteToChatLog, &param);
 	delete[] buffer;
 }
 

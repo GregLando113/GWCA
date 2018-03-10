@@ -248,7 +248,9 @@ namespace GW {
     struct AgentMovement {
         /* +h0000 */ DWORD h0000[3];
         /* +h000C */ DWORD AgentId;
-        /* +h0010 */ DWORD h0010[10];
+        /* +h0010 */ DWORD h0010[3];
+        /* +h001C */ DWORD h001C;
+        /* +h0020 */ DWORD h0020[6];
         /* +h0038 */ DWORD Moving1; //tells if you are stuck even if your client doesn't know
         /* +h003C */ DWORD h003C[2];
         /* +h0044 */ DWORD Moving2; //exactly same as Moving1

@@ -1638,8 +1638,8 @@ namespace GW {
 			const DWORD Packet<P227>::STATIC_HEADER = 227;
 
 			struct P228 : Packet<P228> {
-				// DWORD agent_id;
-				// DWORD
+				DWORD agent_id;
+				DWORD unk0;
 			};
 			const DWORD Packet<P228>::STATIC_HEADER = 228;
 

@@ -28,7 +28,9 @@ namespace GW {
         /* +h014C */ DWORD token2; // player id
         /* +h0150 */ char h0130[0x40];
         /* +h0190 */ DWORD currentmapid_again;
-        /* +h0194 */ char h0194[0x28];
+        /* +h0194 */ DWORD h0194[8];
+        /* +h01B4 */ DWORD district_number;
+        /* +h01B8 */ DWORD h01B8;
         /* +h01BC */ DWORD currentmapid;
         /* +h01C0 */ DWORD currentmapid_dupe;
         /* +h01C4 */ char h01C4[0x8];

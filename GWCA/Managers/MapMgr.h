@@ -20,6 +20,9 @@ namespace GW {
 		// Get current language you are in.
 		GWCA_API int GetLanguage();
 
+		// Get the district number you are in.
+		GWCA_API int GetDistrict();
+
 		// Get time, in ms, since the instance you are residing in has been created.
 		GWCA_API DWORD GetInstanceTime();
 

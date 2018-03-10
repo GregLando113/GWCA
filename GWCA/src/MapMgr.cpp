@@ -121,6 +121,12 @@ int GW::Map::GetLanguage() {
 	return *(int*)(GetMapInfoPtr() + 0xC);
 }
 
+int GW::Map::GetDistrict() {
+	GW::CharContext *ctx = GW::GameContext::instance()->character;
+	if (!ctx) return 0;
+	return ctx->district_number;
+}
+
 GW::Constants::InstanceType GW::Map::GetInstanceType() {
 	return *(GW::Constants::InstanceType*)(MemoryMgr::agArrayPtr - 0xF0);
 }

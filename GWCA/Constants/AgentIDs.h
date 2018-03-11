@@ -180,6 +180,9 @@ namespace GW {
 
             // ==== DoA ====
             namespace DoA {
+				// Friendly
+				const int FoundrySnakes = 5217;
+
                 const int BlackBeastOfArgh = 5146;
                 const int SmotheringTendril = 5210;
                 const int Fury = 5145;
@@ -211,7 +214,16 @@ namespace GW {
                 const int StygianHorror = 5174;
                 const int StygianFiend = 5175;
 
-                // tormentors
+				// tormentors in veil
+				const int VeilMindTormentor = 5176;
+				const int VeilSoulTormentor = 5177;
+				const int VeilWaterTormentor = 5178;
+				const int VeilHeartTormentor = 5179;
+				const int VeilFleshTormentor = 5180;
+				const int VeilSpiritTormentor = 5181;
+				const int VeilEarthTormentor = 5182;
+				const int VeilSanityTormentor = 5183;
+				// tormentors
                 const int MindTormentor = 5200;
                 const int SoulTormentor = 5201;
                 const int WaterTormentor = 5202;
@@ -220,16 +232,6 @@ namespace GW {
                 const int SpiritTormentor = 5205;
                 const int EarthTormentor = 5206;
                 const int SanityTormentor = 5208;
-
-                // termentors in veil
-                const int VeilMindTormentor = 5176;
-                const int VeilSoulTormentor = 5177;
-                const int VeilWaterTormentor = 5178;
-                const int VeilHeartTormentor = 5179;
-                const int VeilFleshTormentor = 5180;
-                const int VeilSpiritTormentor = 5181;
-                const int VeilEarthTormentor = 5182;
-                const int VeilSanityTormentor = 5183;
 
                 // titans
                 const int MiseryTitan = 5191;
@@ -246,17 +248,103 @@ namespace GW {
             }
 
             namespace UW {
-                const int KeeperOfSouls = 2319;
+				const int ChainedSoul = 2313;
+				const int DyingNightmare = 2314;
+				const int ObsidianBehemoth = 2315;
+				const int ObsidianGuardian = 2316;
+				const int TerrorwebDryder = 2317;
+				const int TerrorwebDryderSilver = 2318;
+				const int KeeperOfSouls = 2319;
+				const int TerrorwebQueen = 2320; // boss-like
+				const int SmiteCrawler = 2321;
+				const int WailingLord = 2322;		// Note: same as FoW::Banshee
+				const int BanishedDreamRider = 2323;
+				// 2324 ?
+				const int FourHorseman = 2325; // all four share the same id
+				const int MindbladeSpectre = 2326;
+				
+				const int DeadCollector = 2328;
+				const int DeadThresher = 2329;
+				const int ColdfireNight = 2330;
+				const int StalkingNight = 2331;
+				// 2332 ?
+				const int ChargedBlackness = 2333;
+				const int GraspingDarkness = 2334;
+				const int BladedAatxe = 2335;
+				// 2336 ?
                 const int Slayer = 2337;
-                const int SkeletonOfDhuum = 2338;
-                const int FourHorseman = 2325; // all four share the same id
+				const int SkeletonOfDhuum1 = 2338;
+				const int SkeletonOfDhuum2 = 2339;
+				const int ChampionOfDhuum = 2340;
+				const int MinionOfDhuum = 2341;
+				const int Dhuum = 2342;
+
+				const int Reapers = 2344; // Friendly
+
+				const int Escort1 = 2352; // Friendly NPCs
+				const int Escort2 = 2353;
+				const int Escort3 = 2354;
+				const int Escort4 = 2355;
+				const int Escort5 = 2356;
+				const int Escort6 = 2357;
+				const int PitsSoul1 = 2358;
+				const int PitsSoul2 = 2359;
+				const int PitsSoul3 = 2360;
+				const int PitsSoul4 = 2361;
+
+				const int TorturedSpirit = 2367;
             }
 
             namespace FoW {
-                const int ShardWolf = 2831;
-                const int Abyssal = 2806;
-                const int SeedOfCorruption = 2807;
+				const int Banshee = 2322;			// Note: same as UW::WailingLord
+
+				const int MahgoHydra = 2792;
+				const int ArmoredCaveSpider = 2796;
+				const int SmokeWalker = 2797;
+				const int ObsidianFurnanceDrake = 2798;
+				const int DoubtersDryder = 2799;
+				const int ShadowMesmer = 2800;
+				const int ShadowElemental = 2801;
+				const int ShadowMonk = 2802;
+				const int ShadowWarrior = 2803;
+				const int ShadowRanger = 2804;
+				const int ShadowBeast = 2805;
+				const int Abyssal = 2806;			// Note: same as ShadowOverlord.
+				const int ShadowOverlord = 2806;	// Note: same as Abyssal.
+				const int SeedOfCorruption = 2807;
+				const int SpiritWood = 2808;
+				const int SpiritShepherd = 2809;
+				const int AncientSkale = 2810;
+				const int SnarlingDriftwood = 2811;
+				const int SkeletalEtherBreaker = 2812;
+				const int SkeletalIcehand = 2813;
+				const int SkeletalBond = 2814;
+				const int SkeletalBerserker = 2815;
+				const int SkeletalImpaler = 2816;
+				const int RockBorerWorm = 2817;
+				const int InfernalWurm = 2818;
+				const int DragonLich = 2819;
+				const int Menzies = 2820;
+				// 2821 ?
+				const int Rastigan = 2822;			// Friendly NPC
+				const int Griffons = 2823;			// Friendly NPC
+				const int LordKhobay = 2824;		// Unfriendly NPC
+				const int Forgemaster = 2825;		// Friendly NPC
+				// 2826 ?
+				const int TraitorousTempleGuard1 = 2827;
+				const int TraitorousTempleGuard2 = 2828;
+				const int TraitorousTempleGuard3 = 2829;
+				// 2830 ?
+				const int ShardWolf = 2831;
             }
+
+			namespace Urgoz {
+				const int HoppingVampire = 3741;
+			}
+
+			namespace EotnDungeons {
+				const int StormcloudIncubus = 6847;
+			}
         }
     }
 }

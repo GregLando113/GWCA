@@ -16,6 +16,8 @@ namespace GW {
 
             const int Boo = 7445;
 
+			const int LockedChest = 8141; // this is actually ->ExtraType
+
 			/* Birthday Minis */
 			/* unknowns are commented as a guess as inventory name but fit a pattern of id schema */
 			namespace Minipet {
@@ -169,16 +171,6 @@ namespace GW {
 				const int MiniatureEcclesiateXunRao = 8984;
 			}
 
-            const int LockedChest = 8141; // this is actually ->ExtraType
-
-            // ==== SoO ====
-            namespace SoO {
-                const int Brigand = 7005;
-                const int Fendi = 7009;
-                const int Fendi_soul = 7010;
-            }
-
-            // ==== DoA ====
             namespace DoA {
 				// Friendly
 				const int FoundrySnakes = 5217;
@@ -344,6 +336,12 @@ namespace GW {
 
 			namespace EotnDungeons {
 				const int StormcloudIncubus = 6847;
+			}
+			
+			namespace SoO {
+				const int Brigand = 7005;
+				const int Fendi = 7009;
+				const int Fendi_soul = 7010;
 			}
         }
     }

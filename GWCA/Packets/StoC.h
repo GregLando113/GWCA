@@ -450,8 +450,8 @@ namespace GW {
 
 			// Display Cape (?)
 			struct P060 : Packet<P060> {
-				// DWORD agent_id;
-				// BYTE
+				DWORD agent_id;
+				BYTE unk0;
 			};
 			const DWORD Packet<P060>::STATIC_HEADER = 60;
 

@@ -288,6 +288,9 @@ namespace GW {
             }
 
             namespace FoW {
+				const int NimrosTheHunter = 1478;
+				const int MikoTheUnchained = 1961;
+
 				const int Banshee = 2322;			// Note: same as UW::WailingLord
 
 				const int MahgoHydra = 2792;

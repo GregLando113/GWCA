@@ -7,12 +7,13 @@ namespace GW {
 
     struct HeroFlag { // total: 0x20/36
         /* +h0000 */ DWORD HeroID;
-        /* +h0004 */ AgentID heroid;
+        /* +h0004 */ AgentID id;
         /* +h0008 */ DWORD Level;
         /* +h000C */ DWORD HeroBehavior;
         /* +h0010 */ Vec2f flag;
         /* +h0018 */ DWORD h0018;
         /* +h001C */ AgentID lockedtargetid;
+					 DWORD unk; // type is unknown too, added for padding
     };
 
     struct HeroInfo { // total: 0x78/120

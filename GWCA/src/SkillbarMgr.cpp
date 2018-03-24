@@ -57,12 +57,12 @@ GW::Skill GW::SkillbarMgr::GetSkillConstantData(DWORD SkillID) {
 
 void GW::SkillbarMgr::ChangeSecondary(DWORD profession, int heroindex) {
 	GW::AgentID id = Agents::GetHeroAgentID(heroindex);
-	CtoS::SendPacket(0xC, 0x3B, id, profession);
+	CtoS::SendPacket(0xC, 0x41, id, profession);
 }
 
 void GW::SkillbarMgr::LoadSkillbar(DWORD skillids[8], int heroindex) {
 	GW::AgentID id = Agents::GetHeroAgentID(heroindex);
-	CtoS::SendPacket(0x2C, 0x56, id, 0x8, skillids[0], skillids[1], skillids[2], skillids[3], skillids[4], skillids[5], skillids[6], skillids[7]);
+	CtoS::SendPacket(0x2C, 0x5C, id, 0x8, skillids[0], skillids[1], skillids[2], skillids[3], skillids[4], skillids[5], skillids[6], skillids[7]);
 }
 
 static bool decode_skill_template(const char *temp, int AttribIDs[10], int AttribVal[10],
@@ -219,7 +219,7 @@ bool GW::SkillbarMgr::LoadSkillTemplate(const char *temp, int hero_index) {
 void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, DWORD * attributevalues, int heroindex) {
 
 	struct tSetAttributes {
-		DWORD header = 0x9;
+		DWORD header = 0xE;
 		GW::AgentID id;
 		DWORD attributecount1;
 		DWORD attributeids[16];
@@ -231,7 +231,7 @@ void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, 
 
 	GW::AgentID id = Agents::GetHeroAgentID(heroindex);
 
-	set_attributes_buffer->header = 0x9;
+	set_attributes_buffer->header = 0xE;
 
 	set_attributes_buffer->id = id;
 
@@ -258,7 +258,7 @@ void GW::SkillbarMgr::UseSkill(DWORD Slot, DWORD Target /*= 0*/, DWORD CallTarge
 }
 
 void GW::SkillbarMgr::UseSkillByID(DWORD SkillID, DWORD Target /*= 0*/, DWORD CallTarget /*= 0*/) {
-	CtoS::SendPacket(0x14, 0x40, SkillID, 0, Target, CallTarget);
+	CtoS::SendPacket(0x14, 0x46, SkillID, 0, Target, CallTarget);
 }
 
 int GW::SkillbarMgr::GetSkillSlot(GW::Constants::SkillID SkillID) {

@@ -6,11 +6,11 @@
 #include <GWCA\Managers\CtoSMgr.h>
 
 void GW::PlayerMgr::SetActiveTitle(GW::Constants::TitleID id) {
-	CtoS::SendPacket(0x8, 0x51, (DWORD)id);
+	CtoS::SendPacket(0x8, 0x57, (DWORD)id);
 }
 
 void GW::PlayerMgr::RemoveActiveTitle() {
-	CtoS::SendPacket(0x4, 0x52);
+	CtoS::SendPacket(0x4, 0x58);
 }
 
 GW::PlayerArray& GW::PlayerMgr::GetPlayerArray() {
@@ -30,5 +30,5 @@ void GW::PlayerMgr::SetPlayerName(PlayerID id, const wchar *replacename) {
 }
 
 void GW::PlayerMgr::ChangeSecondProfession(GW::Constants::Profession prof, DWORD heroindex) {
-	CtoS::SendPacket(12, 0x3B, GW::Agents::GetHeroAgentID(heroindex), prof);
+	CtoS::SendPacket(12, 0x41, GW::Agents::GetHeroAgentID(heroindex), prof);
 }

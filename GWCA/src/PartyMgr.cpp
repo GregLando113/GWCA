@@ -39,7 +39,7 @@ void GW::PartyMgr::RestoreTickToggle() {
 }
 
 void GW::PartyMgr::Tick(bool flag) {
-	CtoS::SendPacket(0x8, 0xA9, flag);
+	CtoS::SendPacket(0x8, 0xAF, flag);
 }
 
 GW::PartyInfo* GW::PartyMgr::GetPartyInfo() {
@@ -79,7 +79,7 @@ bool GW::PartyMgr::GetIsPartyDefeated() {
 }
 
 void GW::PartyMgr::SetHardMode(bool flag) {
-	CtoS::SendPacket(0x8, 0x95, flag);
+	CtoS::SendPacket(0x8, 0x9B, flag);
 }
 bool GW::PartyMgr::GetIsPartyInHardMode() {
 	return GameContext::instance()->party->InHardMode();
@@ -128,37 +128,37 @@ bool GW::PartyMgr::GetIsPlayerTicked() {
 }
 
 void GW::PartyMgr::RespondToPartyRequest(bool accept) {
-	CtoS::SendPacket(0x8, accept ? 0x96 : 0x98, 1);
+	CtoS::SendPacket(0x8, accept ? 0x9C : 0x9E, 1);
 }
 
 void GW::PartyMgr::AddHero(DWORD heroid) {
-	CtoS::SendPacket(0x8, 0x17, heroid);
+	CtoS::SendPacket(0x8, 0x1C, heroid);
 }
 
 void GW::PartyMgr::KickHero(DWORD heroid) {
-	CtoS::SendPacket(0x8, 0x18, heroid);
+	CtoS::SendPacket(0x8, 0x1D, heroid);
 }
 
 void GW::PartyMgr::KickAllHeroes() {
-	CtoS::SendPacket(0x8, 0x18, 0x26);
+	CtoS::SendPacket(0x8, 0x1D, 0x26);
 }
 
 void GW::PartyMgr::LeaveParty() {
-	CtoS::SendPacket(0x4, 0x9C);
+	CtoS::SendPacket(0x4, 0xA2);
 }
 
 void GW::PartyMgr::FlagHero(DWORD hero_index, GW::GamePos pos) {
 	DWORD heroid = Agents::GetHeroAgentID(hero_index);
 	if (heroid == 0) return;
 	if (heroid == Agents::GetPlayerId()) return;
-	static GW::Packet::CtoS::P019 pak;
+	static GW::Packet::CtoS::P024 pak;
 	pak.id = heroid;
 	pak.pos = pos;
 	CtoS::SendPacket(&pak);
 }
 
 void GW::PartyMgr::FlagAll(GW::GamePos pos) {
-	static GW::Packet::CtoS::P020 pak;
+	static GW::Packet::CtoS::P025 pak;
 	pak.pos = pos;
 	CtoS::SendPacket(&pak);
 }

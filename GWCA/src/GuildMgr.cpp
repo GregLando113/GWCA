@@ -27,13 +27,13 @@ GW::GuildArray GW::GuildMgr::GetGuildArray() {
 void GW::GuildMgr::TravelGH() {
 	GW::GHKey playerguild = GameContext::instance()->guild->playerghkey;
 
-	CtoS::SendPacket(0x18, 0xAA, playerguild.k[0], playerguild.k[1], playerguild.k[2], playerguild.k[3]);
+	CtoS::SendPacket(0x18, 0xB0, playerguild.k[0], playerguild.k[1], playerguild.k[2], playerguild.k[3]);
 }
 
 void GW::GuildMgr::TravelGH(GW::GHKey key) {
-	CtoS::SendPacket(0x18, 0xAA, key.k[0], key.k[1], key.k[2], key.k[3]);
+	CtoS::SendPacket(0x18, 0xB0, key.k[0], key.k[1], key.k[2], key.k[3]);
 }
 
 void GW::GuildMgr::LeaveGH() {
-	CtoS::SendPacket(0x8, 0xAC, 0x1);
+	CtoS::SendPacket(0x8, 0xB2, 0x1);
 }

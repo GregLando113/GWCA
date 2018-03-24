@@ -17,7 +17,7 @@ void GW::Map::Travel(GW::Constants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
 
 	struct PAB_ZoneMap {
-		const DWORD header = 0xAB;
+		const DWORD header = 0xB1;
 		DWORD mapid;
 		int region;
 		int district;

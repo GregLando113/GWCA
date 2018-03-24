@@ -50,7 +50,7 @@ DWORD GW::Agents::GetLastDialogId() {
 	return lastdialog_id;
 }
 void GW::Agents::Dialog(DWORD id) {
-	CtoS::SendPacket(0x8, 0x35, id);
+	CtoS::SendPacket(0x8, 0x3B, id);
 }
 
 GW::AgentArray GW::Agents::GetAgentArray() {
@@ -117,19 +117,19 @@ GW::Agent* GW::Agents::GetAgentByID(DWORD id) {
 }
 
 void GW::Agents::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/) {
-	CtoS::SendPacket(0xC, 0x33, Agent->Id, CallTarget);
+	CtoS::SendPacket(0xC, 0x39, Agent->Id, CallTarget);
 }
 
 void GW::Agents::GoPlayer(GW::Agent* Agent) {
-	CtoS::SendPacket(0x8, 0x2D, Agent->Id);
+	CtoS::SendPacket(0x8, 0x33, Agent->Id);
 }
 
 void GW::Agents::GoSignpost(GW::Agent* Agent, BOOL CallTarget /*= 0*/) {
-	CtoS::SendPacket(0xC, 0x4B, Agent->Id, CallTarget);
+	CtoS::SendPacket(0xC, 0x51, Agent->Id, CallTarget);
 }
 
 void GW::Agents::CallTarget(GW::Agent* Agent) {
-	CtoS::SendPacket(0xC, 0x1C, 0xA, Agent->Id);
+	CtoS::SendPacket(0xC, 0x21, 0xA, Agent->Id);
 }
 
 DWORD GW::Agents::GetAmountOfPlayersInInstance() {

@@ -7,7 +7,7 @@
 #include <GWCA\Utilities\Hooker.h>
 
 void GW::Items::OpenXunlaiWindow() {
-	static DWORD ecxbuf[4] = { 119, 0, 0, 3 };
+	static DWORD ecxbuf[4] = { 124, 0, 0, 3 };
 	StoC::EmulatePacket((Packet::StoC::PacketBase*)ecxbuf);
 }
 

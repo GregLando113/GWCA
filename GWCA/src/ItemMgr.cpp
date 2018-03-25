@@ -83,7 +83,7 @@ void GW::Items::OpenLockedChest() {
 }
 
 void GW::Items::MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity) {
-	assert(slot > 0);
+	if (slot < 0) return;
 	if (!item || !bag) return;
 	if (bag->Items.size() < (unsigned)slot) return;
 	// @Robustness: Check if there is enough space at the destination.

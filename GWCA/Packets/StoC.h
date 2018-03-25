@@ -50,6 +50,18 @@ namespace GW {
 			};
 			const DWORD Packet<AddExternalBond>::STATIC_HEADER = 58;
 
+            // Display Cape (?)
+			struct P065 : Packet<P065> {
+				DWORD agent_id;
+				BYTE unk0;
+			};
+			const DWORD Packet<P065>::STATIC_HEADER = 65;
+
+            struct P067 : Packet<P067> {
+				// DWORD
+			};
+            const DWORD Packet<P067>::STATIC_HEADER = 67;
+
             struct NpcGeneralStats : Packet<NpcGeneralStats > {
 				DWORD npc_id;
 				DWORD file_id;

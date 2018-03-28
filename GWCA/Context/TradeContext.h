@@ -9,7 +9,10 @@
 namespace GW {
 
 	struct TradeContext {
-		enum State : DWORD { NO_TRADE, TRADE_INITIATED, OFFER_SEND = 3, OFFER_ACCEPTED = 7 };
+		const DWORD TRADE_CLOSED     = 0;
+		const DWORD TRADE_INITIATED  = 1;
+		const DWORD TRADE_OFFER_SEND = 2;
+		const DWORD TRADE_ACCEPTED   = 4;
 
 		struct Item {
 			ItemID itemid;
@@ -21,7 +24,7 @@ namespace GW {
 			Array<TradeContext::Item> items;
 		};
 
-		/* +h0000 */ State  state; // this is actually a flags
+		/* +h0000 */ DWORD  flags; // this is actually a flags
 		/* +h0004 */ DWORD  h0004[3]; // Seemingly 3 null dwords
 		/* +h0010 */ Trader player;
 		/* +h0020 */ Trader partner;
@@ -29,7 +32,8 @@ namespace GW {
 		// bool GetPartnerAccepted();
 		// bool GetPartnerOfferSent();
 
-		bool GetIsTradeInitiated() { return state >= TRADE_INITIATED; }
+		bool GetIsTradeInitiated() { return (flags & TRADE_INITIATED) != 0; }
+		bool GetIsTradeAccepted()  { return (flags & TRADE_ACCEPTED)  != 0; }
 	};
 }
 

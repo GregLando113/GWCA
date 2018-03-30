@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <GWCA\Utilities\Export.h>
 
 namespace GW {
     namespace Trade {

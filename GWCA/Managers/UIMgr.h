@@ -1,6 +1,8 @@
 #pragma once
 
 
+#include <GWCA\Utilities\Export.h>
+
 namespace GW {
 	namespace UI {
 
@@ -13,7 +15,7 @@ namespace GW {
 		};
 
 		// SendMessage for Guild Wars UI messages, most UI interactions will use this.
-		void SendUIMessage(unsigned message, unsigned int wParam = 0, int lParam = 0);
-		void SendUIMessage(unsigned message, void* wParam = nullptr, void* lParam = nullptr);
+		GWCA_API void SendUIMessage(unsigned message, unsigned int wParam = 0, int lParam = 0);
+		GWCA_API void SendUIMessage(unsigned message, void* wParam = nullptr, void* lParam = nullptr);
 	}
 }

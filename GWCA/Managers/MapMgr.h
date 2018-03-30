@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 
+#include <GWCA\Utilities\Export.h>
 #include <GWCA\Constants\Constants.h>
 #include <GWCA\GameEntities\Map.h>
 #include <GWCA\GameEntities\Pathing.h>

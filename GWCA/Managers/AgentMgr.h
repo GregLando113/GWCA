@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "MemoryMgr.h"
+#include <GWCA\Utilities\Export.h>
 #include <GWCA\Utilities\Hooker.h>
 #include <GWCA\Constants\Constants.h>
 #include <GWCA\GameEntities\Position.h>

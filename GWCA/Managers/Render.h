@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 
+#include <GWCA\Utilities\Export.h>
 #include <functional>
 
 // forward declaration, we don't need to include the full directx header here

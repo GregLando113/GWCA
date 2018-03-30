@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 
+#include <GWCA\Utilities\Export.h>
 #include <GWCA\Context\GuildContext.h>
 #include <GWCA\GameEntities\Guild.h>
 

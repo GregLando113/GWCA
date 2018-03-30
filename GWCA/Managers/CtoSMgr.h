@@ -2,6 +2,8 @@
 
 #include <Windows.h>
 
+#include <GWCA\Utilities\Export.h>
+
 namespace GW {
 	namespace CtoS {
         // Send packet that uses only dword parameters, can copypaste most gwa2 sendpackets :D

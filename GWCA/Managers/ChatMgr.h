@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 
+#include <GWCA\Utilities\Export.h>
 #include <GWCA\Utilities\Hooker.h>
 #include <GWCA\GameContainers\Array.h>
 

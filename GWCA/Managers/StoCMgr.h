@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include <GWCA\Utilities\Export.h>
 #include <GWCA\Packets\StoC.h>
 
 namespace GW {

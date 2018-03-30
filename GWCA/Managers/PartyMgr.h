@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA\Utilities\Export.h>
 #include <GWCA\GameEntities\Position.h>
 #include <GWCA\GameEntities\Party.h>
 

@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <functional>
 
+#include <GWCA\Utilities\Export.h>
 #include <GWCA\GameEntities\Item.h>
 #include <GWCA\Constants\Constants.h>
 

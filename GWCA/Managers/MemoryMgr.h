@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <stdio.h>
 
+#include <GWCA\Utilities\Export.h>
+
 namespace GW {
 
 	struct MemoryMgr {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA\Utilities\Export.h>
 #include <GWCA\Constants\Constants.h>
 #include <GWCA\GameEntities\Player.h>
 

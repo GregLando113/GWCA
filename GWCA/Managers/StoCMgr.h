@@ -40,12 +40,12 @@ namespace GW {
         }
 
 
-		GWCA_API void EmulatePacket(Packet::StoC::PacketBase* packet);
+		GWCA_API void EmulatePacket(Packet::StoC::PacketBase *packet);
 
         template <typename T>
-        void EmulatePacket(T* packet) {
+        void EmulatePacket(Packet::StoC::Packet<T> *packet) {
             packet->header = Packet::StoC::Packet<T>::STATIC_HEADER;
-			EmulatePacket(packet);
+			EmulatePacket((Packet::StoC::PacketBase *)packet);
         }
     };
 }

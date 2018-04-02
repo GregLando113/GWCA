@@ -7,8 +7,11 @@
 #include <GWCA\Utilities\Hooker.h>
 
 void GW::Items::OpenXunlaiWindow() {
-	static DWORD ecxbuf[4] = { 124, 0, 0, 3 };
-	StoC::EmulatePacket((Packet::StoC::PacketBase*)ecxbuf);
+	GW::Packet::StoC::DataWindow pack;
+	pack.agent = 0;
+	pack.type = 0;
+	pack.data = 3;
+	StoC::EmulatePacket(&pack);
 }
 
 void GW::Items::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {

@@ -27,18 +27,18 @@ namespace GW {
 				static const DWORD STATIC_HEADER;
 			};
 
-            struct P028 : Packet<P028> {
+            struct AgentSetPlayer : Packet<AgentSetPlayer> {
 				DWORD unk1;
 				DWORD unk2;
 			};
-			const DWORD Packet<P028>::STATIC_HEADER = 28;
+			const DWORD Packet<AgentSetPlayer>::STATIC_HEADER = 28;
 
             // creates the "ping" on an enemy when some player targets it
-			struct P046 : Packet<P046> {
+			struct AgentPinged : Packet<AgentPinged> {
 				DWORD Player; // who sent the message
 				DWORD agent_id; // target agent
 			};
-			const DWORD Packet<P046>::STATIC_HEADER = 46;
+			const DWORD Packet<AgentPinged>::STATIC_HEADER = 46;
 
             // prety much a bond from someone else / hero bond
             struct AddExternalBond : Packet<AddExternalBond> {
@@ -51,16 +51,18 @@ namespace GW {
 			const DWORD Packet<AddExternalBond>::STATIC_HEADER = 58;
 
             // Display Cape (?)
-			struct P065 : Packet<P065> {
+			struct DisplayCape : Packet<DisplayCape> {
 				DWORD agent_id;
 				BYTE unk0;
 			};
-			const DWORD Packet<P065>::STATIC_HEADER = 65;
+			const DWORD Packet<DisplayCape>::STATIC_HEADER = 65;
 
+			/*
             struct P067 : Packet<P067> {
 				// DWORD
 			};
             const DWORD Packet<P067>::STATIC_HEADER = 67;
+			*/
 
             struct NpcGeneralStats : Packet<NpcGeneralStats > {
 				DWORD npc_id;
@@ -76,57 +78,66 @@ namespace GW {
 			const DWORD Packet<NpcGeneralStats >::STATIC_HEADER = 79;
 
             // NPC model file (?)
-			struct P080 : Packet<P080> {
+			struct NPCModelFile : Packet<NPCModelFile> {
 				DWORD npc_id;
 				DWORD count;
 				DWORD data[8];
 			};
-			const DWORD Packet<P080>::STATIC_HEADER = 80;
+			const DWORD Packet<NPCModelFile>::STATIC_HEADER = 80;
 
             // Define chat message
-			struct P086 : Packet<P086> {
+			struct MessageCore : Packet<MessageCore> {
 				wchar_t message[122]; // prefixType="int16"
 			};
-			const DWORD Packet<P086>::STATIC_HEADER = 86;
+			const DWORD Packet<MessageCore>::STATIC_HEADER = 86;
 
             // Deliver chat message (no owner)
-            struct P087 : Packet<P087> {
+            struct MessageServer : Packet<MessageServer> {
 				DWORD id; // some kind of ID of the affected target
 				DWORD type; // enum ChatChannel above.
 			};
-			const DWORD Packet<P087>::STATIC_HEADER = 87;
+			const DWORD Packet<MessageServer>::STATIC_HEADER = 87;
 
+			/*
             struct P088 : Packet<P088> {
 				DWORD agent_id;
 				DWORD unk1;
 				wchar_t unk2[8]; // prefixType="int16"
 			};
 			const DWORD Packet<P088>::STATIC_HEADER = 88;
+			*/
 
             // Deliver chat message (player sender in guild or alliance chat)
-            struct P089 : Packet<P089> {
+            struct MessageGlobal : Packet<MessageGlobal> {
 				DWORD id; // some kind of ID
 				wchar_t sender_name[32]; // full in-game name
 				wchar_t sender_guild[6]; // guild tag for alliance chat, empty for guild chat
 			};
-			const DWORD Packet<P089>::STATIC_HEADER = 89;
+			const DWORD Packet<MessageGlobal>::STATIC_HEADER = 89;
 
             // Deliver chat message (player sender in the instance)
-			struct P090 : Packet<P090> {
+			struct MessageLocal : Packet<MessageLocal> {
 				DWORD id; // PlayerNumber of the sender
 				DWORD type; // enum ChatChannel above.
 			};
-			const DWORD Packet<P090>::STATIC_HEADER = 90;
+			const DWORD Packet<MessageLocal>::STATIC_HEADER = 90;
 
             // Alcohol Post Process Effect
-			struct P100 : Packet<P100> {
+			struct PostProcess : Packet<PostProcess> {
 				DWORD level;
 				DWORD tint;
 			};
-			const DWORD Packet<P100>::STATIC_HEADER = 100;
+			const DWORD Packet<PostProcess>::STATIC_HEADER = 100;
+
+			struct DataWindow : Packet<DataWindow> {
+				DWORD agent;
+				DWORD type; // 0=storage, 1=tournament, 2=records, 3=stylist
+				DWORD data;
+			};
+			const DWORD Packet<DataWindow>::STATIC_HEADER = 124;
 
             // Pings and drawing in compass
-			struct P138 : Packet<P138> {
+			struct CompassEvent : Packet<CompassEvent> {
 				DWORD Player;    // player who sent the ping (PlayerNumber)
 				DWORD SessionID; // Changes for different pings/lines/curves
 				DWORD NumberPts; // Number of points in the data, between 1 and 8
@@ -136,30 +147,30 @@ namespace GW {
 				} points[8];
 				// there *might* be another 8 DWORDs, but they look like noise and they are not relayed by the server to other players
 			};
-			const DWORD Packet<P138>::STATIC_HEADER = 138;
+			const DWORD Packet<CompassEvent>::STATIC_HEADER = 138;
 
-            struct P147 : Packet<P147> {
+            struct AgentScale : Packet<AgentScale> {
 				DWORD agent_id;
 				DWORD scale;
 			};
-			const DWORD Packet<P147>::STATIC_HEADER = 147;
+			const DWORD Packet<AgentScale>::STATIC_HEADER = 147;
 
             // agent animation lock (and probably something else)
-			struct P152 : Packet<P152> {
+			struct GenericValue : Packet<GenericValue> {
 				DWORD unk1;
 				DWORD agent_id;
 				DWORD unk2;
 			};
-			const DWORD Packet<P152>::STATIC_HEADER = 152;
+			const DWORD Packet<GenericValue>::STATIC_HEADER = 152;
 
             // Update Target Generic Value
-			struct P153 : Packet<P153> {
+			struct GenericValueTarget : Packet<GenericValueTarget> {
 				DWORD Value_id;
 				DWORD target; // agent id
 				DWORD caster; // agent id
 				DWORD value;
 			};
-			const DWORD Packet<P153>::STATIC_HEADER = 153;
+			const DWORD Packet<GenericValueTarget>::STATIC_HEADER = 153;
 
             // damage or healing done packet, but also has other purposes.
 			// to be investigated further.
@@ -174,42 +185,42 @@ namespace GW {
 				const DWORD armorignoring = 55; // all armor ignoring damage and heals
 				const DWORD casttime = 61; // non-standard cast time, value in seconds
 			}
-			struct P156 : Packet<P156> {
+			struct GenericModifier : Packet<GenericModifier> {
 				DWORD type;			// type as specified above in P156_Type
 				DWORD target_id;	// agent id of who is affected by the change
 				DWORD cause_id;		// agent id of who caused the change
 				float value;		// value, often in percentage (e.g. %hp)
 			};
-			const DWORD Packet<P156>::STATIC_HEADER = 156;
+			const DWORD Packet<GenericModifier>::STATIC_HEADER = 156;
 
             // agent text above head
-			struct P158 : Packet<P158> {
+			struct SpeechBubble : Packet<SpeechBubble> {
 				DWORD agent_id;
 				wchar_t message[122];
 			};
-			const DWORD Packet<P158>::STATIC_HEADER = 158;
+			const DWORD Packet<SpeechBubble>::STATIC_HEADER = 158;
 
             // agent change model
-			struct P167 : Packet<P167> {
+			struct AgentModel : Packet<AgentModel> {
 				DWORD agent_id;
 				DWORD model_id;
 			};
-			const DWORD Packet<P167>::STATIC_HEADER = 167;
+			const DWORD Packet<AgentModel>::STATIC_HEADER = 167;
 
             // Skill Activate (begin casting)
-			struct P221 : Packet<P221> {
+			struct SkillActivate : Packet<SkillActivate> {
 				DWORD agent_id;
 				DWORD skill_id;
 				DWORD skill_instance;
 			};
-			const DWORD Packet<P221>::STATIC_HEADER = 221;
+			const DWORD Packet<SkillActivate>::STATIC_HEADER = 221;
 
             // update agent state
-			struct P234 : Packet<P234> {
+			struct AgentState : Packet<AgentState> {
 				DWORD agent_id;
 				DWORD state; // bitmap of agent states (0 neutral, 2 condition, 128 enchanted, 1024 degen?, 2048 hexed, 8192 sitting, etc)
 			};
-			const DWORD Packet<P234>::STATIC_HEADER = 234;
+			const DWORD Packet<AgentState>::STATIC_HEADER = 234;
 
             struct P235 : Packet<P235> {
 				// DWORD
@@ -223,18 +234,18 @@ namespace GW {
 			const DWORD Packet<QuotedItemPrice>::STATIC_HEADER = 240;
 
             // Gold added to inventory
-			struct P315 : Packet<P315> {
+			struct CharacterAddGold : Packet<CharacterAddGold> {
 				DWORD unk;
 				DWORD gold;
 			};
-			const DWORD Packet<P315>::STATIC_HEADER = 315;
+			const DWORD Packet<CharacterAddGold>::STATIC_HEADER = 315;
 
             // Gold removed from inventory
-			struct P330 : Packet<P330> {
+			struct StorageAddGold : Packet<StorageAddGold> {
 				DWORD unk; // some kind of id? but neither agentid nor playerid
 				DWORD gold;
 			};
-			const DWORD Packet<P330>::STATIC_HEADER = 330;
+			const DWORD Packet<StorageAddGold>::STATIC_HEADER = 330;
 
             struct InstanceLoadFile : Packet<InstanceLoadFile> {
 				DWORD map_fileID;
@@ -255,12 +266,12 @@ namespace GW {
 			};
 			const DWORD Packet<GameSrvTransfer>::STATIC_HEADER = 413;
 
-            struct P451 : Packet<P451> {
+            struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
 				// WORD
 				// WORD
 				// BYTE
 			};
-			const DWORD Packet<P451>::STATIC_HEADER = 451;
+			const DWORD Packet<PartyPlayerAdd>::STATIC_HEADER = 451;
         }
 	}
 }

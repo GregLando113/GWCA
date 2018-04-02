@@ -319,7 +319,7 @@ void GW::Chat::SetWhisperCallback(std::function<void(const wchar_t[20], const wc
 }
 
 void GW::Chat::Initialize() {
-	SendChat_addr = (SendChat_t)Scanner::Find("\xC7\x85\xE4\xFE\xFF\xFF\x64", "xxxxxxx", -25);
+	SendChat_addr = (SendChat_t)Scanner::Find("\x81\xEC\x1C\x01\x00\x00\x56\x8B\xF2", "xxxxxxxxx", -3);
 	printf("[SCAN] SendChat = %p\n", SendChat_addr);
 
 	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x83\xC6\x2E\x8B\xC6\x83\xC0\x03", "xxxxxxxx", -22);

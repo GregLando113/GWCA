@@ -5,18 +5,18 @@
 namespace GW {
 	namespace Packet {
 		namespace CtoS {
-			struct P024 { // Flag Hero
-				const DWORD header = 0x18;
+			struct FlagHero { // Flag Hero
+				const DWORD header = 0x1F;
 				DWORD id;
 				GamePos pos;
 			};
-			struct P025 { // Flag All
-				const DWORD header = 0x19;
+			struct FlagAll { // Flag All
+				const DWORD header = 0x20;
 				GamePos pos;
 			};
 
-			struct P043 { // Used to send pings and drawings in the minimap. Related to StoC::P133
-				const DWORD header = 0x2B;
+			struct DrawMap { // Used to send pings and drawings in the minimap. Related to StoC::P133
+				const DWORD header = 0x32;
 				DWORD session_id = 0;	// unique for every player and shape. changes for every ping or shape.
 				DWORD NumberPts;		// number of points in the following array
 				struct {

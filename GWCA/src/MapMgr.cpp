@@ -16,7 +16,7 @@ bool GW::Map::IsMapLoaded() {
 void GW::Map::Travel(GW::Constants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
 
-	struct PAB_ZoneMap {
+	struct ZoneMap {
 		const DWORD header = 0xB1;
 		DWORD mapid;
 		int region;
@@ -27,7 +27,7 @@ void GW::Map::Travel(GW::Constants::MapID MapID,
 
 	if (GetInstanceType() == GW::Constants::InstanceType::Loading) return;
 
-	static PAB_ZoneMap* pak = new PAB_ZoneMap();
+	static ZoneMap *pak = new ZoneMap();
 
 	pak->mapid = static_cast<DWORD>(MapID);
 	pak->district = District;
@@ -35,7 +35,7 @@ void GW::Map::Travel(GW::Constants::MapID MapID,
 	pak->language = Language;
 	pak->unk = 0;
 
-	CtoS::SendPacket<PAB_ZoneMap>(pak);
+	CtoS::SendPacket<ZoneMap>(pak);
 }
 
 void GW::Map::Travel(GW::Constants::MapID MapID, GW::Constants::District district, int district_number) {

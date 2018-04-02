@@ -12,19 +12,19 @@ void GW::Items::OpenXunlaiWindow() {
 }
 
 void GW::Items::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
-	CtoS::SendPacket(0xC, 0x3F, item->AgentId, CallTarget);
+	CtoS::SendPacket(0xC, 0x46, item->AgentId, CallTarget);
 }
 
 void GW::Items::DropItem(GW::Item* item, DWORD quantity) {
-	CtoS::SendPacket(0xC, 0x2C, item->ItemId, quantity);
+	CtoS::SendPacket(0xC, 0x33, item->ItemId, quantity);
 }
 
 void GW::Items::EquipItem(GW::Item* item) {
-	CtoS::SendPacket(0x8, 0x30, item->ItemId);
+	CtoS::SendPacket(0x8, 0x37, item->ItemId);
 }
 
 void GW::Items::UseItem(GW::Item* item) {
-	CtoS::SendPacket(0x8, 0x7E, item->ItemId);
+	CtoS::SendPacket(0x8, 0x84, item->ItemId);
 }
 
 GW::Bag** GW::Items::GetBagArray() {
@@ -67,7 +67,7 @@ GW::ItemArray GW::Items::GetItemArray() {
 }
 
 void GW::Items::DropGold(DWORD Amount /*= 1*/) {
-	CtoS::SendPacket(0x8, 0x2F, Amount);
+	CtoS::SendPacket(0x8, 0x36, Amount);
 }
 
 DWORD GW::Items::GetGoldAmountOnCharacter() {
@@ -79,7 +79,7 @@ DWORD GW::Items::GetGoldAmountInStorage() {
 }
 
 void GW::Items::OpenLockedChest() {
-	CtoS::SendPacket(0x8, 0x53, 0x2);
+	CtoS::SendPacket(0x8, 0x58, 0x2);
 }
 
 void GW::Items::MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity) {
@@ -87,7 +87,7 @@ void GW::Items::MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity) {
 	if (!item || !bag) return;
 	if (bag->Items.size() < (unsigned)slot) return;
 	// @Robustness: Check if there is enough space at the destination.
-	CtoS::SendPacket(0x10, 0x72, item->ItemId, bag->BagId, slot);
+	CtoS::SendPacket(0x10, 0x78, item->ItemId, bag->BagId, slot);
 }
 
 void GW::Items::MoveItem(GW::Item *from, GW::Item *to, int quantity) {
@@ -95,7 +95,7 @@ void GW::Items::MoveItem(GW::Item *from, GW::Item *to, int quantity) {
 	if (!from->Bag || !to->Bag) return;
 	if (quantity <= 0) quantity = from->Quantity;
 	if (quantity + to->Quantity > 250) return;
-	CtoS::SendPacket(0x10, 0x72, from->ItemId, to->Bag->BagId, to->Slot);
+	CtoS::SendPacket(0x10, 0x78, from->ItemId, to->Bag->BagId, to->Slot);
 }
 
 bool GW::Items::UseItemByModelId(DWORD modelid, int bagStart, int bagEnd) {

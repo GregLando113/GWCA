@@ -50,7 +50,7 @@ DWORD GW::Agents::GetLastDialogId() {
 	return lastdialog_id;
 }
 void GW::Agents::Dialog(DWORD id) {
-	CtoS::SendPacket(0x8, 0x3B, id);
+	CtoS::SendPacket(0x8, 0x42, id);
 }
 
 GW::AgentArray GW::Agents::GetAgentArray() {

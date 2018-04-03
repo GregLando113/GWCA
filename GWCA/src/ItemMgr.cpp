@@ -82,7 +82,7 @@ DWORD GW::Items::GetGoldAmountInStorage() {
 }
 
 void GW::Items::OpenLockedChest() {
-	CtoS::SendPacket(0x8, 0x58, 0x2);
+	CtoS::SendPacket(0x8, 0x5A, 0x2);
 }
 
 void GW::Items::MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity) {

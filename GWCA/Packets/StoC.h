@@ -96,7 +96,7 @@ namespace GW {
 				DWORD id; // some kind of ID of the affected target
 				DWORD type; // enum ChatChannel above.
 			};
-			const DWORD Packet<MessageServer>::STATIC_HEADER = 96; // +8 check
+			const DWORD Packet<MessageServer>::STATIC_HEADER = 95; // +8 check
 
 			/*
             struct P088 : Packet<P088> {

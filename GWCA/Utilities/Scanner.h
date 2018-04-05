@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
-
+#include <stdint.h>
+#include <assert.h>
 
 namespace GW {
 
@@ -18,5 +18,13 @@ namespace GW {
 		// Actual pattern finder.
 		uintptr_t Find(char* pattern, char* mask, int offset);
 
+		inline uintptr_t DecodeE8(uintptr_t addr) {
+			assert(addr);
+			uint8_t op = *(uint8_t *)addr;
+			assert(op == 0xE8);
+			uint32_t rel = *(uint32_t *)(addr + 1);
+			uint32_t real = rel + addr + 5;
+			return real;
+		}
 	}
 }

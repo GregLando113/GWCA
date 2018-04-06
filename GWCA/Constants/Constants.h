@@ -99,6 +99,22 @@ namespace GW {
 			Miku, ZeiRi
         };
 
+		enum MaterialSlot : DWORD {
+			Bone, IronIngot, TannedHideSquare, Scale, ChitinFragment,
+			BoltofCloth, WoodPlank, GraniteSlab = 8,
+			PileofGlitteringDust, PlantFiber, Feather,
+
+			FurSquare, BoltofLinen, BoltofDamask, BoltofSilk,
+			GlobofEctoplasm, SteelIngot, DeldrimorSteelIngot,
+			MonstrousClaw, MonstrousEye, MonstrousFang, Ruby,
+			Sapphire, Diamond, OnyxGemstone, LumpofCharcoal,
+			ObsidianShard, TemperedGlassVial = 29, LeatherSquare,
+			ElonianLeatherSquare, VialofInk, RollofParchment,
+			RollofVellum, SpiritwoodPlank, AmberChunk, JadeiteShard,
+
+			N_MATS
+		};
+
 		const Profession HeroProfs[] = {
 			Profession::None,
 			Profession::Mesmer, // Norgu

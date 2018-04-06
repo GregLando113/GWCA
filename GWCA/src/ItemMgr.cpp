@@ -93,12 +93,126 @@ void GW::Items::MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity) {
 	CtoS::SendPacket(0x10, 0x78, item->ItemId, bag->BagId, slot);
 }
 
+void GW::Items::MoveItem(GW::Item *item, GW::Constants::Bag bag_id, int slot, int quantity)
+{
+	Bag *bag = GetBag(bag_id);
+	if (!bag) return;
+	MoveItem(item, bag, slot, quantity);
+}
+
 void GW::Items::MoveItem(GW::Item *from, GW::Item *to, int quantity) {
 	if (!from || !to) return;
 	if (!from->Bag || !to->Bag) return;
 	if (quantity <= 0) quantity = from->Quantity;
 	if (quantity + to->Quantity > 250) return;
 	CtoS::SendPacket(0x10, 0x78, from->ItemId, to->Bag->BagId, to->Slot);
+}
+
+bool GW::Item::GetIsStackable() {
+	switch (Type) {
+	case 0:  return false; // Salvage
+	case 1:  return false; // LeadHand
+	case 2:  return false; // Axe
+	case 3:  return false; // Bag
+	case 4:  return false; // Feet
+	case 5:  return false; // Bow
+	case 6:  return false; // Bundle
+	case 7:  return false; // Chest
+	case 8:  return false; // Rune
+	case 9:  return true;  // Consumable
+	case 10: return true;  // Dye
+	case 11: return true;  // Material
+	case 12: return false; // Focus
+	case 13: return false; // Arms
+	case 14: return true;  // Sigil
+	case 15: return false; // Hammer
+	case 16: return false; // Head
+	case 17: return false; // SalvageItem
+	case 18: return true;  // Key
+	case 19: return false; // Legs
+	case 20: return true;  // Coins
+	case 21: return false; // QuestItem
+	case 22: return false; // Wand
+	case 24: return false; // Shield
+	case 26: return false; // Staff
+	case 27: return false; // Sword
+	case 29: return false; // Kit
+	case 30: return true;  // Trophy
+	case 31: return true;  // Scroll
+	case 32: return false; // Daggers
+	case 33: return true;  // Present
+	case 34: return false; // Minipet
+	case 35: return false; // Scythe
+	case 36: return false; // Spear
+	case 43: return false; // Handbook
+	case 44: return false; // CostumeBody
+	case 45: return false; // CostumeHead
+	};
+	return false;
+}
+
+bool GW::Item::GetIsZcoin() {
+	if (ModelFileID == 31202) return true; // Copper
+	if (ModelFileID == 31203) return true; // Gold
+	if (ModelFileID == 31204) return true; // Silver
+	return false;
+}
+
+bool GW::Item::GetIsMaterial() {
+	if (Type == (DWORD)GW::Constants::ItemType::Materials_Zcoins
+		&& !GetIsZcoin()) {
+		return true;
+	}
+	return false;
+}
+
+int GW::Items::GetMaterialSlot(DWORD model_id) {
+	switch (model_id) {
+	case 921: return GW::Constants::Bone;
+	case 948: return GW::Constants::IronIngot;
+	case 940: return GW::Constants::TannedHideSquare;
+	case 953: return GW::Constants::Scale;
+	case 954: return GW::Constants::ChitinFragment;
+	case 925: return GW::Constants::BoltofCloth;
+	case 946: return GW::Constants::WoodPlank;
+	case 955: return GW::Constants::GraniteSlab;
+	case 929: return GW::Constants::PileofGlitteringDust;
+	case 934: return GW::Constants::PlantFiber;
+	case 933: return GW::Constants::Feather;
+	// rare
+	case 941: return GW::Constants::FurSquare;
+	case 926: return GW::Constants::BoltofLinen;
+	case 927: return GW::Constants::BoltofDamask;
+	case 928: return GW::Constants::BoltofSilk;
+	case 930: return GW::Constants::GlobofEctoplasm;
+	case 949: return GW::Constants::SteelIngot;
+	case 950: return GW::Constants::DeldrimorSteelIngot;
+	case 923: return GW::Constants::MonstrousClaw;
+	case 931: return GW::Constants::MonstrousEye;
+	case 932: return GW::Constants::MonstrousFang;
+	case 937: return GW::Constants::Ruby;
+	case 938: return GW::Constants::Sapphire;
+	case 935: return GW::Constants::Diamond;
+	case 936: return GW::Constants::OnyxGemstone;
+	case 922: return GW::Constants::LumpofCharcoal;
+	case 945: return GW::Constants::ObsidianShard;
+	case 939: return GW::Constants::TemperedGlassVial;
+	case 942: return GW::Constants::LeatherSquare;
+	case 943: return GW::Constants::ElonianLeatherSquare;
+	case 944: return GW::Constants::VialofInk;
+	case 951: return GW::Constants::RollofParchment;
+	case 952: return GW::Constants::RollofVellum;
+	case 956: return GW::Constants::SpiritwoodPlank;
+	case 6532: return GW::Constants::AmberChunk;
+	case 6533: return GW::Constants::JadeiteShard;
+	};
+	return -1;
+}
+
+int GW::Items::GetMaterialSlot(GW::Item *item) {
+	if (!item) return -1;
+	if (!item->GetIsMaterial()) return -1;
+	return GetMaterialSlot(item->ModelId);
 }
 
 bool GW::Items::UseItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
@@ -171,15 +285,28 @@ GW::Item* GW::Items::GetItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
 	return NULL;
 }
 
-int GW::Items::GetCurrentStoragePannel(void) {
+int GW::Items::GetStoragePage(void) {
 	static DWORD *addr;
 	if (!addr) {
 		DWORD **tmp = (DWORD **)Scanner::Find("\x0F\x84\xFC\x01\x00\x00\x8B\x43\x14", "xxxxxxxxx", -4);
+		printf("[SCAN] StoragePannel = %p\n", tmp);
+		if (tmp) addr = *tmp;
+	}
+	assert(addr);
+	// @Cleanup: 20 being the position for the storage, but this array hold way more, for instance the current chat channel
+	return addr[20];
+}
+
+bool GW::Items::IsStorageOpen(void) {
+	static DWORD *addr;
+	if (!addr) {
+		DWORD **tmp = (DWORD **)Scanner::Find("\x40\x85\xD2\xA3\x00\x00\x00\x00\x75\x05", "xxxx????xx", 4);
+		printf("[SCAN] StorageOpen = %p\n", tmp);
 		assert(tmp);
 		addr = *tmp;
 	}
-	// @Cleanup: 20 being the position for the storage, but this array hold way more, for instance the current chat channel
-	return addr[20];
+	assert(addr);
+	return *addr != 0;
 }
 
 typedef void (__fastcall *ItemClick_t)(uint32_t *bag_id, uint32_t edx, uint32_t *info);

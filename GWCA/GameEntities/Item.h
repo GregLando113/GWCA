@@ -24,6 +24,9 @@ namespace GW {
 
 		inline bool IsInventoryBag() { return (BagType == 1); }
 		inline bool IsStorageBag()   { return (BagType == 4); }
+
+		static const size_t npos = (size_t)-1;
+		size_t find(DWORD model_id, size_t pos = 0);
     };
 
     struct ItemModifier {
@@ -38,7 +41,7 @@ namespace GW {
         DWORD arg6() { return (mod & 0x00000001); }
     };
 
-    struct Item { // total: 0x50/80
+	struct Item { // total: 0x50/80
         /* +h0000 */ DWORD ItemId;
         /* +h0004 */ DWORD AgentId;
         /* +h0008 */ Bag  *BagEquiped; // Only valid if Item is a equipped Bag
@@ -63,6 +66,10 @@ namespace GW {
         /* +h004C */ BYTE Equipped;
         /* +h004D */ BYTE Profession;
         /* +h004E */ BYTE Slot;
+
+		bool GetIsStackable();
+		bool GetIsMaterial();
+		bool GetIsZcoin();
     };
 
     struct WeapondSet {
@@ -116,6 +123,17 @@ namespace GW {
     };
 
     using MerchItemArray = Array<ItemID>;
+
+	inline size_t Bag::find(DWORD model_id, size_t pos) {
+		for (size_t i = pos; i < Items.size(); i++) {
+			Item *item = Items[i];
+			if (!item && model_id == 0) return i;
+			if (!item) continue;
+			if (item->ModelId == model_id)
+				return i;
+		}
+		return npos;
+	}
 }
 
 #endif // _ENTITIE_ITEM_INC

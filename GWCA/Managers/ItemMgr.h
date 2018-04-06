@@ -22,9 +22,9 @@ namespace GW {
 		GWCA_API GW::Bag  *GetBag(GW::Constants::Bag bag_id);
 		GWCA_API GW::Bag  *GetBag(DWORD bag_id);
 
+		// bag & slot are 1 based
 		GWCA_API GW::Item *GetItemBySlot(GW::Bag *bag, DWORD slot);
 		GWCA_API GW::Item *GetItemBySlot(GW::Constants::Bag bag, DWORD slot);
-		// bag & slot are 1 based
 		GWCA_API GW::Item *GetItemBySlot(DWORD bag, DWORD slot);
 
 		// Use given item if usable.
@@ -56,7 +56,8 @@ namespace GW {
 		GWCA_API void OpenLockedChest();
 		
 		// Move item to a new position (bag, slot). Used to merge stacks
-		// slot start at 1
+		// slot start at 0
+		GWCA_API void MoveItem(GW::Item *from, GW::Constants::Bag bag_id, int slot, int quantity = 0);
 		GWCA_API void MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity = 0);
 		GWCA_API void MoveItem(GW::Item *from, GW::Item *to, int quantity = 0);
 
@@ -75,9 +76,15 @@ namespace GW {
 		GWCA_API GW::Item* GetItemByModelId(DWORD modelid, int bagStart = 1, int bagEnd = 4);
 
 		// Returns the current storage pannel (0 based). Note that if material storage is on focus, 0 is returned.
-		GWCA_API int GetCurrentStoragePannel(void);
+		GWCA_API int GetStoragePage(void);
+
+		GWCA_API bool IsStorageOpen(void);
 
 		// The callback should return false if it want to foward the info to Gw.
 		GWCA_API void SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, GW::Bag *bag)> callback);
+
+		// Returns the slot of the materials in the storage page. (-1 if not found)
+		GWCA_API int GetMaterialSlot(DWORD model_id);
+		GWCA_API int GetMaterialSlot(GW::Item *item);
 	};
 }

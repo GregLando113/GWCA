@@ -10,7 +10,7 @@ namespace {
 		auto uiMsg = GW::Scanner::Find(
 			"\x8B\xDA\x1B\xF6\xF7\xDE\x4E\x83\xFF\x40\x73\x14\x68", 
 			"xxxxxxxxxxxxx", -0xB);
-		printf("[SCAN] UI::SendUIMessage = %p\n", uiMsg);
+		printf("[SCAN] UI::SendUIMessage = %p\n", (void *)uiMsg);
 		g_uiSendMessage = (GwSendUIMessage_t*)uiMsg;
 	}
 }

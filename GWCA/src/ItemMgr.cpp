@@ -1,10 +1,10 @@
-#include <GWCA\Managers\ItemMgr.h>
+#include <GWCA/Managers/ItemMgr.h>
 
-#include <GWCA\Context\GameContext.h>
-#include <GWCA\Managers\StoCMgr.h>
-#include <GWCA\Managers\CtoSMgr.h>
+#include <GWCA/Context/GameContext.h>
+#include <GWCA/Managers/StoCMgr.h>
+#include <GWCA/Managers/CtoSMgr.h>
 
-#include <GWCA\Utilities\Hooker.h>
+#include <GWCA/Utilities/Hooker.h>
 
 void GW::Items::OpenXunlaiWindow() {
 	GW::Packet::StoC::DataWindow pack;
@@ -14,27 +14,27 @@ void GW::Items::OpenXunlaiWindow() {
 	StoC::EmulatePacket(&pack);
 }
 
-void GW::Items::PickUpItem(GW::Item* item, DWORD CallTarget /*= 0*/) {
+void GW::Items::PickUpItem(Item *item, DWORD CallTarget /*= 0*/) {
 	CtoS::SendPacket(0xC, 0x46, item->AgentId, CallTarget);
 }
 
-void GW::Items::DropItem(GW::Item* item, DWORD quantity) {
+void GW::Items::DropItem(Item *item, DWORD quantity) {
 	CtoS::SendPacket(0xC, 0x33, item->ItemId, quantity);
 }
 
-void GW::Items::EquipItem(GW::Item* item) {
+void GW::Items::EquipItem(Item *item) {
 	CtoS::SendPacket(0x8, 0x37, item->ItemId);
 }
 
-void GW::Items::UseItem(GW::Item* item) {
+void GW::Items::UseItem(GW::Item *item) {
 	CtoS::SendPacket(0x8, 0x84, item->ItemId);
 }
 
-GW::Bag** GW::Items::GetBagArray() {
+GW::Bag **GW::Items::GetBagArray() {
 	return GameContext::instance()->items->inventory->Bags;
 }
 
-GW::Bag *GW::Items::GetBag(GW::Constants::Bag bag_id) {
+GW::Bag *GW::Items::GetBag(Constants::Bag bag_id) {
 	GW::Bag **bags = GetBagArray();
 	if (!bags) return nullptr;
 	return bags[(unsigned)bag_id];
@@ -48,7 +48,7 @@ GW::Bag *GW::Items::GetBag(DWORD bag_id) {
 	return bags[bag_id];
 }
 
-GW::Item *GW::Items::GetItemBySlot(GW::Bag *bag, DWORD slot) {
+GW::Item *GW::Items::GetItemBySlot(Bag *bag, DWORD slot) {
 	if (!bag || slot == 0) return nullptr;
 	if (!bag->Items.valid()) return nullptr;
 	if (slot > bag->Items.size()) return nullptr;
@@ -85,7 +85,7 @@ void GW::Items::OpenLockedChest() {
 	CtoS::SendPacket(0x8, 0x5A, 0x2);
 }
 
-void GW::Items::MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity) {
+void GW::Items::MoveItem(Item *item, Bag *bag, int slot, int quantity) {
 	if (slot < 0) return;
 	if (!item || !bag) return;
 	if (bag->Items.size() < (unsigned)slot) return;
@@ -93,14 +93,14 @@ void GW::Items::MoveItem(GW::Item *item, GW::Bag *bag, int slot, int quantity) {
 	CtoS::SendPacket(0x10, 0x78, item->ItemId, bag->BagId, slot);
 }
 
-void GW::Items::MoveItem(GW::Item *item, GW::Constants::Bag bag_id, int slot, int quantity)
+void GW::Items::MoveItem(Item *item, Constants::Bag bag_id, int slot, int quantity)
 {
 	Bag *bag = GetBag(bag_id);
 	if (!bag) return;
 	MoveItem(item, bag, slot, quantity);
 }
 
-void GW::Items::MoveItem(GW::Item *from, GW::Item *to, int quantity) {
+void GW::Items::MoveItem(Item *from, Item *to, int quantity) {
 	if (!from || !to) return;
 	if (!from->Bag || !to->Bag) return;
 	if (quantity <= 0) quantity = from->Quantity;
@@ -209,23 +209,23 @@ int GW::Items::GetMaterialSlot(DWORD model_id) {
 	return -1;
 }
 
-int GW::Items::GetMaterialSlot(GW::Item *item) {
+int GW::Items::GetMaterialSlot(Item *item) {
 	if (!item) return -1;
 	if (!item->GetIsMaterial()) return -1;
 	return GetMaterialSlot(item->ModelId);
 }
 
 bool GW::Items::UseItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
-	GW::Bag** bags = GetBagArray();
+	Bag **bags = GetBagArray();
 	if (bags == NULL) return false;
 
-	GW::Bag* bag = NULL;
-	GW::Item* item = NULL;
+	Bag *bag = NULL;
+	Item *item = NULL;
 
 	for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
 		bag = bags[bagIndex];
 		if (bag != NULL) {
-			GW::ItemArray items = bag->Items;
+			ItemArray items = bag->Items;
 			if (!items.valid()) return false;
 			for (size_t i = 0; i < items.size(); i++) {
 				item = items[i];
@@ -244,13 +244,13 @@ bool GW::Items::UseItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
 
 DWORD GW::Items::CountItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
 	DWORD itemcount = 0;
-	GW::Bag** bags = GetBagArray();
-	GW::Bag* bag = NULL;
+	Bag **bags = GetBagArray();
+	Bag  *bag = NULL;
 
 	for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
 		bag = bags[bagIndex];
 		if (bag != NULL) {
-			GW::ItemArray items = bag->Items;
+			ItemArray items = bag->Items;
 			for (size_t i = 0; i < items.size(); i++) {
 				if (items[i]) {
 					if (items[i]->ModelId == modelid) {
@@ -265,13 +265,13 @@ DWORD GW::Items::CountItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
 }
 
 GW::Item* GW::Items::GetItemByModelId(DWORD modelid, int bagStart, int bagEnd) {
-	GW::Bag** bags = GetBagArray();
-	GW::Bag* bag = NULL;
+	Bag **bags = GetBagArray();
+	Bag  *bag = NULL;
 
 	for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
 		bag = bags[bagIndex];
 		if (bag != NULL) {
-			GW::ItemArray items = bag->Items;
+			ItemArray items = bag->Items;
 			for (size_t i = 0; i < items.size(); i++) {
 				if (items[i]) {
 					if (items[i]->ModelId == modelid) {

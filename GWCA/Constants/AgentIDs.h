@@ -337,8 +337,15 @@ namespace GW {
 				const int HoppingVampire = 3741;
 			}
 
+			namespace Deep {
+				const int Kanaxai = 4055;
+				const int KanaxaiAspect = 4056;
+			}
+
 			namespace EotnDungeons {
 				const int StormcloudIncubus = 6847;
+				const int Khabuus = 6244;
+				const int JusticiarThommis = 6402;
 			}
 			
 			namespace SoO {

@@ -1,19 +1,22 @@
-#include "..\Utilities\MemoryPatcher.h"
+#include <GWCA/Utilities/MemoryPatcher.h>
 
-GW::MemoryPatcher::MemoryPatcher(LPVOID addr, BYTE *patch, UINT size) {
-	this->addr = addr;
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+GW::MemoryPatcher::MemoryPatcher(uintptr_t addr, void *patch, size_t size) {
+	this->addr = (void *)addr;
 	this->size = size;
 	this->flag = false;
 
-	this->patch = new BYTE[size];
+	this->patch = new char[size];
 	memcpy(this->patch, patch, size);
 
-	this->backup = new BYTE[size];
+	this->backup = new char[size];
 
 	DWORD oldProt;
-	VirtualProtect(addr, size, PAGE_EXECUTE_READ, &oldProt);
-	memcpy(this->backup, addr, size);
-	VirtualProtect(addr, size, oldProt, &oldProt);
+	VirtualProtect(this->addr, size, PAGE_EXECUTE_READ, &oldProt);
+	memcpy(this->backup, this->addr, size);
+	VirtualProtect(this->addr, size, oldProt, &oldProt);
 }
 
 GW::MemoryPatcher::~MemoryPatcher() {

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Windows.h>
+#include <stdint.h>
 
 namespace GW {
 
 	class MemoryPatcher {
 	public:
-		MemoryPatcher(LPVOID addr, BYTE *patch, UINT size);
+		MemoryPatcher(uintptr_t addr, void *patch, size_t size);
 		~MemoryPatcher();
 
 		bool TooglePatch(bool flag);
@@ -14,11 +14,10 @@ namespace GW {
 
 		bool GetPatchState() { return flag; };
 	private:
-		LPVOID addr;
-
-		BYTE *patch;
-		BYTE *backup;
-		UINT size;
+		void  *addr;
+		void  *patch;
+		void  *backup;
+		size_t size;
 
 		bool flag;
 	};

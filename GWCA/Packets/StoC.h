@@ -64,7 +64,7 @@ namespace GW {
             const DWORD Packet<P067>::STATIC_HEADER = 67;
 			*/
 
-            struct NpcGeneralStats : Packet<NpcGeneralStats > {
+            struct NpcGeneralStats : Packet<NpcGeneralStats> {
 				DWORD npc_id;
 				DWORD file_id;
 				DWORD data1;
@@ -75,7 +75,7 @@ namespace GW {
 				DWORD level;
 				wchar_t name[8];
 			};
-			const DWORD Packet<NpcGeneralStats >::STATIC_HEADER = 87; // +8 not check
+			const DWORD Packet<NpcGeneralStats>::STATIC_HEADER = 87; // +8 not check
 
             // NPC model file (?)
 			struct NPCModelFile : Packet<NPCModelFile> {

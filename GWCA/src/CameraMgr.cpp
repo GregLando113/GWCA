@@ -34,8 +34,8 @@ float* GW::CameraMgr::GetProjectionMatrix() {
 
 void GW::CameraMgr::SetMaxDist(float dist) {
 	if (patch_maxdist == nullptr) {
-		LPVOID patch_maxdist_addr = (LPVOID)Scanner::Find("\x8B\x45\x08\x89\x41\x68\x5D", "xxxxxxx", 3);
-		patch_maxdist = new MemoryPatcher(patch_maxdist_addr, (BYTE*)"\xEB\x01", 2);
+		uintptr_t patch_maxdist_addr = Scanner::Find("\x8B\x45\x08\x89\x41\x68\x5D", "xxxxxxx", 3);
+		patch_maxdist = new MemoryPatcher(patch_maxdist_addr, "\xEB\x01", 2);
 		patch_maxdist->TooglePatch(true);
 	}
 	GetCamera()->maxdistance2 = dist;
@@ -43,8 +43,8 @@ void GW::CameraMgr::SetMaxDist(float dist) {
 
 void GW::CameraMgr::SetFieldOfView(float fov) {
 	if (patch_fog == nullptr) {
-		LPVOID patch_fov_addr = (LPVOID)Scanner::Find("\x8B\x45\x0C\x89\x41\x04\xD9", "xxxxxxx", -0xC);
-		patch_fov = new MemoryPatcher(patch_fov_addr, (BYTE*)"\xC3", 1);
+		uintptr_t patch_fov_addr = Scanner::Find("\x8B\x45\x0C\x89\x41\x04\xD9", "xxxxxxx", -0xC);
+		patch_fov = new MemoryPatcher(patch_fov_addr, "\xC3", 1);
 		patch_fov->TooglePatch(true);
 	}
 	GetCamera()->fieldofview = fov;
@@ -52,8 +52,8 @@ void GW::CameraMgr::SetFieldOfView(float fov) {
 
 bool GW::CameraMgr::UnlockCam(bool flag) {
 	if (patch_camupdate == nullptr) {
-		LPVOID patch_camupdate_addr = (LPVOID)Scanner::Find("\x89\x0E\x89\x56\x04\x89\x7E\x08", "xxxxxxxx", 0);
-		patch_camupdate = new MemoryPatcher(patch_camupdate_addr, (BYTE*)"\xEB\x06", 2);
+		uintptr_t patch_camupdate_addr = Scanner::Find("\x89\x0E\x89\x56\x04\x89\x7E\x08", "xxxxxxxx", 0);
+		patch_camupdate = new MemoryPatcher(patch_camupdate_addr, "\xEB\x06", 2);
 	}
 	return patch_camupdate->TooglePatch(flag);
 }
@@ -67,8 +67,8 @@ bool GW::CameraMgr::GetCameraUnlock() {
 
 bool GW::CameraMgr::SetFog(bool flag) {
 	if (patch_fog == nullptr) {
-		LPVOID patch_fog_addr = (LPVOID)Scanner::Find("\x83\xE2\x01\x52\x6A\x1C\x50", "xxxxxxx", 2);
-		patch_fog = new MemoryPatcher(patch_fog_addr, (BYTE*)"\x00", 1);
+		uintptr_t patch_fog_addr = Scanner::Find("\x83\xE2\x01\x52\x6A\x1C\x50", "xxxxxxx", 2);
+		patch_fog = new MemoryPatcher(patch_fog_addr, "\x00", 1);
 	}
 	return patch_fog->TooglePatch(!flag);
 }

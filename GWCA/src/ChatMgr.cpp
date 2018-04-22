@@ -534,7 +534,7 @@ namespace {
 		}
 
 		if (SendChat_callback) SendChat_callback(GetChannel(*message), &message[1]);
-		SendChat_hook.Original()(message);
+		::SendChat_hook.Original()(message);
 	}
 
 	void __fastcall OpenTemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info) {

@@ -148,12 +148,11 @@ DWORD GW::Map::GetFoesToKill() {
 }
 
 GW::AreaInfo& GW::Map::GetMapInfo(Constants::MapID MapID) {
-	static GW::AreaInfo *AreasInfo;
-	if (!AreasInfo) {
-		GW::AreaInfo **tmp = (GW::AreaInfo**)GW::Scanner::Find("\x8B\xC6\xC1\xE0\x05\x2B\xC6\x5E\x8D\x04", "xxxxxxxxxx", 11);
-		assert(tmp);
-		AreasInfo = *tmp;
+	static AreaInfo *infos = nullptr;
+	if (!infos) {
+		DWORD *tmp = (DWORD *)GW::Scanner::Find("\x8B\xC6\xC1\xE0\x05\x2B\xC6\x5E\x8D\x04", "xxxxxxxxxx", 11);
+		printf("[SCAN] AreaInfoPtr = %p\n", tmp);
+		infos = (AreaInfo *)*tmp;
 	}
-	assert(AreasInfo);
-	return AreasInfo[(DWORD)MapID];
+	return infos[(DWORD)MapID];
 }

@@ -335,6 +335,7 @@ namespace GW {
 
 			namespace Urgoz {
 				const int HoppingVampire = 3741;
+				const int Urgoz = 3750;
 			}
 
 			namespace Deep {
@@ -344,8 +345,15 @@ namespace GW {
 
 			namespace EotnDungeons {
 				const int StormcloudIncubus = 6847;
+				const int ZhimMonns = 6242;
 				const int Khabuus = 6244;
+				const int DuncanTheBlack = 6401;
 				const int JusticiarThommis = 6402;
+				const int RandStormweaver = 6403;
+				const int Selvetarm = 6404;
+				const int Forgewright = 6405;
+				const int Frostmaw = 6928;
+				
 			}
 			
 			namespace SoO {

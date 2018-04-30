@@ -15,6 +15,8 @@ namespace GW {
 		};
 
 		struct CompassPoint {
+			CompassPoint() : x(0), y(0) {}
+			CompassPoint(short _x, short _y) : x(_x), y(_y) {}
 			short x;
 			short y;
 		};

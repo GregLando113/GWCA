@@ -526,7 +526,7 @@ namespace {
 			auto callback = SlashCmdList.find(argv[0]);
 			if (callback != SlashCmdList.end()) {
 				callback->second(argc, argv);
-				// Doesn't seem to have any reason to foward the function call to it's original.
+				// No reasons to foward the function call to it's original.
 				LocalFree(argv);
 				return;
 			}
@@ -534,7 +534,7 @@ namespace {
 		}
 
 		if (SendChat_callback) SendChat_callback(GetChannel(*message), &message[1]);
-		SendChat_hook.Original()(message);
+		::SendChat_hook.Original()(message);
 	}
 
 	void __fastcall OpenTemplate_detour(DWORD unk, GW::Chat::ChatTemplate* info) {

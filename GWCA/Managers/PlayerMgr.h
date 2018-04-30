@@ -20,5 +20,7 @@ namespace GW {
 		GWCA_API void SetPlayerName(PlayerID id, const wchar_t* replacename);
 
 		GWCA_API void ChangeSecondProfession(GW::Constants::Profession prof, DWORD heroindex = 0);
+
+		GWCA_API GW::Player *GetPlayerByName(const wchar_t *name);
 	};
 }

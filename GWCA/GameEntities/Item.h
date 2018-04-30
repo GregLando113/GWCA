@@ -61,7 +61,8 @@ namespace GW {
         /* +h0034 */ wchar *NameString;
         /* +h0038 */ wchar *CompleteName; // with color, quantity, etc.
         /* +h003C */ wchar *SingleItemName; // with color, w/o quantity, named as single item
-        /* +h0040 */ BYTE h003C[11];
+        /* +h0040 */ BYTE h003C[10];
+        /* +h004A */ BYTE IsMaterialSalvageable; // Only valid for type 11 (Materials)
         /* +h004B */ BYTE Quantity;
         /* +h004C */ BYTE Equipped;
         /* +h004D */ BYTE Profession;

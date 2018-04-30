@@ -183,39 +183,39 @@ namespace GW {
         /* +h01BC */ WORD  OffhandItemId;
 
         // Health Bar Effect Bitmasks.
-        inline bool GetIsBleeding()         { return (Effects & 0x0001) != 0; }
-        inline bool GetIsConditioned()      { return (Effects & 0x0002) != 0; }
-        inline bool GetIsDead()             { return (Effects & 0x0010) != 0; }
-        inline bool GetIsDeepWounded()      { return (Effects & 0x0020) != 0; }
-        inline bool GetIsPoisoned()         { return (Effects & 0x0040) != 0; }
-        inline bool GetIsEnchanted()        { return (Effects & 0x0080) != 0; }
-        inline bool GetIsDegenHexed()       { return (Effects & 0x0400) != 0; }
-        inline bool GetIsHexed()            { return (Effects & 0x0800) != 0; }
-        inline bool GetIsWeaponSpelled()    { return (Effects & 0x8000) != 0; }
+        inline bool GetIsBleeding()        const { return (Effects & 0x0001) != 0; }
+        inline bool GetIsConditioned()     const { return (Effects & 0x0002) != 0; }
+        inline bool GetIsDead()            const { return (Effects & 0x0010) != 0; }
+        inline bool GetIsDeepWounded()     const { return (Effects & 0x0020) != 0; }
+        inline bool GetIsPoisoned()        const { return (Effects & 0x0040) != 0; }
+        inline bool GetIsEnchanted()       const { return (Effects & 0x0080) != 0; }
+        inline bool GetIsDegenHexed()      const { return (Effects & 0x0400) != 0; }
+        inline bool GetIsHexed()           const { return (Effects & 0x0800) != 0; }
+        inline bool GetIsWeaponSpelled()   const { return (Effects & 0x8000) != 0; }
 
         // Agent Type Bitmasks.
-        inline bool GetIsCharacterType()    { return (Type & 0xDB)  != 0; }
-        inline bool GetIsGadgetType()       { return (Type & 0x200) != 0; }
-        inline bool GetIsItemType()         { return (Type & 0x400) != 0; }
+        inline bool GetIsCharacterType()   const { return (Type & 0xDB)  != 0; }
+        inline bool GetIsGadgetType()      const { return (Type & 0x200) != 0; }
+        inline bool GetIsItemType()        const { return (Type & 0x400) != 0; }
 
         // Agent TypeMap Bitmasks.
-        inline bool GetInCombatStance()     { return (TypeMap & 0x000001) != 0; }
-        inline bool GetHasQuest()           { return (TypeMap & 0x000002) != 0; } // if agent has quest marker
-        inline bool GetIsDeadByTypeMap()    { return (TypeMap & 0x000008) != 0; }
-        inline bool GetIsFemale()           { return (TypeMap & 0x000200) != 0; }
-        inline bool GetHasBossGlow()        { return (TypeMap & 0x000400) != 0; }
-        inline bool GetIsHidingCape()       { return (TypeMap & 0x001000) != 0; }
-        inline bool GetCanBeViewedInPartyWindow() { return (TypeMap & 0x20000) != 0; }
-        inline bool GetIsSpawned()          { return (TypeMap & 0x040000) != 0; }
-        inline bool GetIsBeingObserved()    { return (TypeMap & 0x400000) != 0; }
+        inline bool GetInCombatStance()    const { return (TypeMap & 0x000001) != 0; }
+        inline bool GetHasQuest()          const { return (TypeMap & 0x000002) != 0; } // if agent has quest marker
+        inline bool GetIsDeadByTypeMap()   const { return (TypeMap & 0x000008) != 0; }
+        inline bool GetIsFemale()          const { return (TypeMap & 0x000200) != 0; }
+        inline bool GetHasBossGlow()       const { return (TypeMap & 0x000400) != 0; }
+        inline bool GetIsHidingCape()      const { return (TypeMap & 0x001000) != 0; }
+        inline bool GetCanBeViewedInPartyWindow() const { return (TypeMap & 0x20000) != 0; }
+        inline bool GetIsSpawned()         const { return (TypeMap & 0x040000) != 0; }
+        inline bool GetIsBeingObserved()   const { return (TypeMap & 0x400000) != 0; }
 
         // Modelstates.
-        inline bool GetIsKnockedDown()      { return ModelState == 1104; }
-        inline bool GetIsMoving()           { return ModelState == 12 || ModelState == 76   || ModelState == 204; }
-        inline bool GetIsAttacking()        { return ModelState == 96 || ModelState == 1088 || ModelState == 1120; }
+        inline bool GetIsKnockedDown()     const { return ModelState == 1104; }
+        inline bool GetIsMoving()          const { return ModelState == 12 || ModelState == 76   || ModelState == 204; }
+        inline bool GetIsAttacking()       const { return ModelState == 96 || ModelState == 1088 || ModelState == 1120; }
 
-        inline bool IsPlayer()              { return LoginNumber != 0; }
-        inline bool IsNPC()                 { return LoginNumber == 0; }
+        inline bool IsPlayer()             const { return LoginNumber != 0; }
+        inline bool IsNPC()                const { return LoginNumber == 0; }
     };
 
     struct MapAgent {

@@ -46,6 +46,9 @@ namespace GW {
 
 		GWCA_API GW::AreaInfo& GetMapInfo(Constants::MapID MapID);
 
-		inline GW::AreaInfo& GetCurrentMapInfo() { return GetMapInfo(GetMapID()); }
+		inline GW::AreaInfo& GetCurrentMapInfo() {
+			Constants::MapID map_id = GetMapID();
+			return GetMapInfo(map_id);
+		}
 	};
 }

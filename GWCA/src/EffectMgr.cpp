@@ -9,6 +9,8 @@
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\StoCMgr.h>
 
+#include <GWCA\CtoSHeaders.h>
+
 namespace {
 	DWORD alcohol_level = 0;
 	// post processing effects hook
@@ -118,7 +120,7 @@ GW::BuffArray GW::Effects::GetPlayerBuffArray() {
 }
 
 void GW::Effects::DropBuff(DWORD buffId) {
-	CtoS::SendPacket(0x8, 0x30, buffId);
+	CtoS::SendPacket(0x8, CtoGS_MSGDropBuff, buffId);
 }
 
 MSG_EFFECT_APPLIED applied_effect;

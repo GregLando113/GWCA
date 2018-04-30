@@ -5,12 +5,14 @@
 #include <GWCA\Managers\AgentMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 
+#include <GWCA\CtoSHeaders.h>
+
 void GW::PlayerMgr::SetActiveTitle(GW::Constants::TitleID id) {
-	CtoS::SendPacket(0x8, 0x5E, (DWORD)id);
+	CtoS::SendPacket(0x8, CtoGS_MSGSetDisplayedTitle, (DWORD)id);
 }
 
 void GW::PlayerMgr::RemoveActiveTitle() {
-	CtoS::SendPacket(0x4, 0x5F);
+	CtoS::SendPacket(0x4, CtoGS_MSGRemoveDisplayedTitle);
 }
 
 GW::PlayerArray& GW::PlayerMgr::GetPlayerArray() {
@@ -30,7 +32,7 @@ void GW::PlayerMgr::SetPlayerName(PlayerID id, const wchar_t *replacename) {
 }
 
 void GW::PlayerMgr::ChangeSecondProfession(GW::Constants::Profession prof, DWORD heroindex) {
-	CtoS::SendPacket(12, 0x48, GW::Agents::GetHeroAgentID(heroindex), prof);
+	CtoS::SendPacket(12, CtoGS_MSGChangeSecondary, GW::Agents::GetHeroAgentID(heroindex), prof);
 }
 
 static int wcsncasecmp(const wchar_t *s1, const wchar_t *s2, size_t n)

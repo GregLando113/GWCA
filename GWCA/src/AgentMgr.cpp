@@ -10,6 +10,8 @@
 #include <GWCA\Context\GameContext.h>
 #include <GWCA\Context\PartyContext.h>
 
+#include <GWCA\CtoSHeaders.h>
+
 namespace {
 	GW::Hook lastdialoglog_hook;
 	BYTE* lastdialoglog_ret = nullptr;
@@ -50,7 +52,7 @@ DWORD GW::Agents::GetLastDialogId() {
 	return lastdialog_id;
 }
 void GW::Agents::Dialog(DWORD id) {
-	CtoS::SendPacket(0x8, 0x42, id);
+	CtoS::SendPacket(0x8, CtoGS_MSGDialog, id);
 }
 
 GW::AgentArray GW::Agents::GetAgentArray() {
@@ -117,19 +119,19 @@ GW::Agent* GW::Agents::GetAgentByID(DWORD id) {
 }
 
 void GW::Agents::GoNPC(GW::Agent* Agent, DWORD CallTarget /*= 0*/) {
-	CtoS::SendPacket(0xC, 0x40, Agent->Id, CallTarget);
+	CtoS::SendPacket(0xC, CtoGS_MSGGoNPC, Agent->Id, CallTarget);
 }
 
 void GW::Agents::GoPlayer(GW::Agent* Agent) {
-	CtoS::SendPacket(0x8, 0x3A, Agent->Id);
+	CtoS::SendPacket(0x8, CtoGS_MSGGoPlayer, Agent->Id);
 }
 
 void GW::Agents::GoSignpost(GW::Agent* Agent, BOOL CallTarget /*= 0*/) {
-	CtoS::SendPacket(0xC, 0x58, Agent->Id, CallTarget);
+	CtoS::SendPacket(0xC, CtoGS_MSGGoGadget, Agent->Id, CallTarget);
 }
 
 void GW::Agents::CallTarget(GW::Agent* Agent) {
-	CtoS::SendPacket(0xC, 0x29, 0xA, Agent->Id);
+	CtoS::SendPacket(0xC, CtoGS_MSGCallTarget, 0xA, Agent->Id);
 }
 
 DWORD GW::Agents::GetAmountOfPlayersInInstance() {

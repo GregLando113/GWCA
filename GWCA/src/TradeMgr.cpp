@@ -1,27 +1,27 @@
 #include <GWCA\Managers\TradeMgr.h>
-
 #include <GWCA\Managers\CtoSMgr.h>
+#include <GWCA\CtoSHeaders.h>
 
 void GW::Trade::OpenTradeWindow(DWORD agentId) {
-    CtoS::SendPacket(0x8, 0x50, agentId);
+    CtoS::SendPacket(0x8, CtoGS_MSGStartTrade, agentId);
 }
 
 void GW::Trade::AcceptTrade() {
-	CtoS::SendPacket(0x4, 7);
+	CtoS::SendPacket(0x4, CtoGS_MSGAcceptTrade);
 }
 
 void GW::Trade::CancelTrade() {
-	CtoS::SendPacket(0x4, 1);
+	CtoS::SendPacket(0x4, CtoGS_MSGCancelTrade);
 }
 
 void GW::Trade::ChangeOffer() {
-	CtoS::SendPacket(0x4, 6);
+	CtoS::SendPacket(0x4, CtoGS_MSGChangeOffer);
 }
 
 void GW::Trade::SubmitOffer(DWORD gold) {
-	CtoS::SendPacket(0x8, 3, gold);
+	CtoS::SendPacket(0x8, CtoGS_MSGSubmitOffer, gold);
 }
 
 void GW::Trade::OfferItem(DWORD itemId, DWORD quantity) {
-	CtoS::SendPacket(0xC, 2, itemId, quantity);
+	CtoS::SendPacket(0xC, CtoGS_MSGAddItemTrade, itemId, quantity);
 }

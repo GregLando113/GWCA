@@ -67,7 +67,6 @@
     <ClInclude Include="GWCA\Managers\Render.h" />
     <ClInclude Include="GWCA\Managers\TradeMgr.h" />
     <ClInclude Include="GWCA\Managers\UIMgr.h" />
-    <ClInclude Include="GWCA\Packets\CtoS.h" />
     <ClInclude Include="GWCA\Packets\StoC.h" />
     <ClInclude Include="GWCA\Utilities\Export.h" />
     <ClInclude Include="GWCA\Utilities\Hooker.h" />

@@ -5,6 +5,7 @@
 #include <GWCA/Managers/CtoSMgr.h>
 
 #include <GWCA/Utilities/Hooker.h>
+#include <GWCA\CtoSHeaders.h>
 
 void GW::Items::OpenXunlaiWindow() {
 	GW::Packet::StoC::DataWindow pack;
@@ -15,19 +16,19 @@ void GW::Items::OpenXunlaiWindow() {
 }
 
 void GW::Items::PickUpItem(Item *item, DWORD CallTarget /*= 0*/) {
-	CtoS::SendPacket(0xC, 0x46, item->AgentId, CallTarget);
+	CtoS::SendPacket(0xC, CtoGS_MSGPickUpItem, item->AgentId, CallTarget);
 }
 
 void GW::Items::DropItem(Item *item, DWORD quantity) {
-	CtoS::SendPacket(0xC, 0x33, item->ItemId, quantity);
+	CtoS::SendPacket(0xC, CtoGS_MSGDropItem, item->ItemId, quantity);
 }
 
 void GW::Items::EquipItem(Item *item) {
-	CtoS::SendPacket(0x8, 0x37, item->ItemId);
+	CtoS::SendPacket(0x8, CtoGS_MSGEquipItem, item->ItemId);
 }
 
 void GW::Items::UseItem(GW::Item *item) {
-	CtoS::SendPacket(0x8, 0x84, item->ItemId);
+	CtoS::SendPacket(0x8, CtoGS_MSGUseItem, item->ItemId);
 }
 
 GW::Bag **GW::Items::GetBagArray() {
@@ -70,7 +71,7 @@ GW::ItemArray GW::Items::GetItemArray() {
 }
 
 void GW::Items::DropGold(DWORD Amount /*= 1*/) {
-	CtoS::SendPacket(0x8, 0x36, Amount);
+	CtoS::SendPacket(0x8, CtoGS_MSGDropGold, Amount);
 }
 
 DWORD GW::Items::GetGoldAmountOnCharacter() {
@@ -82,7 +83,7 @@ DWORD GW::Items::GetGoldAmountInStorage() {
 }
 
 void GW::Items::OpenLockedChest() {
-	CtoS::SendPacket(0x8, 0x5A, 0x2);
+	CtoS::SendPacket(0x8, CtoGS_MSGOpenChest, 0x2);
 }
 
 void GW::Items::MoveItem(Item *item, Bag *bag, int slot, int quantity) {
@@ -90,7 +91,7 @@ void GW::Items::MoveItem(Item *item, Bag *bag, int slot, int quantity) {
 	if (!item || !bag) return;
 	if (bag->Items.size() < (unsigned)slot) return;
 	// @Robustness: Check if there is enough space at the destination.
-	CtoS::SendPacket(0x10, 0x78, item->ItemId, bag->BagId, slot);
+	CtoS::SendPacket(0x10, CtoGS_MSGMoveItem, item->ItemId, bag->BagId, slot);
 }
 
 void GW::Items::MoveItem(Item *item, Constants::Bag bag_id, int slot, int quantity)
@@ -105,7 +106,7 @@ void GW::Items::MoveItem(Item *from, Item *to, int quantity) {
 	if (!from->Bag || !to->Bag) return;
 	if (quantity <= 0) quantity = from->Quantity;
 	if (quantity + to->Quantity > 250) return;
-	CtoS::SendPacket(0x10, 0x78, from->ItemId, to->Bag->BagId, to->Slot);
+	CtoS::SendPacket(0x10, CtoGS_MSGMoveItem, from->ItemId, to->Bag->BagId, to->Slot);
 }
 
 bool GW::Item::GetIsStackable() {

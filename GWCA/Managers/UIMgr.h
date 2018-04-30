@@ -14,8 +14,15 @@ namespace GW {
 			kOpenWhisper            = 0x10000000 | 0x8F // wparam = wchar* name
 		};
 
+		struct CompassPoint {
+			short x;
+			short y;
+		};
+
 		// SendMessage for Guild Wars UI messages, most UI interactions will use this.
 		GWCA_API void SendUIMessage(unsigned message, unsigned int wParam = 0, int lParam = 0);
 		GWCA_API void SendUIMessage(unsigned message, void* wParam = nullptr, void* lParam = nullptr);
+
+		GWCA_API void DrawOnCompass(unsigned sessionid, unsigned ptcount, CompassPoint pts[8]);
 	}
 }

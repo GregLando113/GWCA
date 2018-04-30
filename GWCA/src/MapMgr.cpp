@@ -9,6 +9,8 @@
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
 
+#include <GWCA\CtoSHeaders.h>
+
 bool GW::Map::IsMapLoaded() {
 	return GameContext::instance()->map != nullptr;
 }
@@ -17,7 +19,7 @@ void GW::Map::Travel(GW::Constants::MapID MapID,
 	int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
 
 	struct ZoneMap {
-		const DWORD header = 0xB8;
+		const DWORD header = CtoGS_MSGTravelTo;
 		DWORD mapid;
 		int region;
 		int district;

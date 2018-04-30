@@ -103,9 +103,6 @@
     <ClInclude Include="GWCA\Utilities\MemoryPatcher.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\Packets\CtoS.h">
-      <Filter>Packets</Filter>
-    </ClInclude>
     <ClInclude Include="GWCA\GameEntities\Agent.h">
       <Filter>GameEntities</Filter>
     </ClInclude>

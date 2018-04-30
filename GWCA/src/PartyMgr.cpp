@@ -6,9 +6,9 @@
 
 #include <GWCA\Managers\AgentMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
-#include <GWCA\Packets\CtoS.h>
 
 #include <GWCA\Utilities\Scanner.h>
+#include <GWCA\CtoSHeaders.h>
 
 namespace {
 	typedef DWORD(__stdcall *Tick_t)(DWORD unk1);
@@ -39,7 +39,7 @@ void GW::PartyMgr::RestoreTickToggle() {
 }
 
 void GW::PartyMgr::Tick(bool flag) {
-	CtoS::SendPacket(0x8, 0xB6, flag);
+	CtoS::SendPacket(0x8, CtoGS_MSGTick, flag);
 }
 
 GW::PartyInfo* GW::PartyMgr::GetPartyInfo() {
@@ -79,7 +79,7 @@ bool GW::PartyMgr::GetIsPartyDefeated() {
 }
 
 void GW::PartyMgr::SetHardMode(bool flag) {
-	CtoS::SendPacket(0x8, 0xA2, flag);
+	CtoS::SendPacket(0x8, CtoGS_MSGSwitchMode, flag);
 }
 bool GW::PartyMgr::GetIsPartyInHardMode() {
 	return GameContext::instance()->party->InHardMode();
@@ -128,37 +128,46 @@ bool GW::PartyMgr::GetIsPlayerTicked() {
 }
 
 void GW::PartyMgr::RespondToPartyRequest(bool accept) {
-	CtoS::SendPacket(0x8, accept ? 0xA3 : 0xA5, 1);
+	CtoS::SendPacket(0x8, accept ? CtoGS_MSGAcceptPartyRequest : CtoGS_MSGDenyPartyRequest, 1);
 }
 
 void GW::PartyMgr::AddHero(DWORD heroid) {
-	CtoS::SendPacket(0x8, 0x24, heroid);
+	CtoS::SendPacket(0x8, CtoGS_MSGAddHero, heroid);
 }
 
 void GW::PartyMgr::KickHero(DWORD heroid) {
-	CtoS::SendPacket(0x8, 0x37, heroid);
+	CtoS::SendPacket(0x8, CtoGS_MSGKickHero, heroid);
 }
 
 void GW::PartyMgr::KickAllHeroes() {
-	CtoS::SendPacket(0x8, 0x25, 0x26);
+	KickHero(0x26);
 }
 
 void GW::PartyMgr::LeaveParty() {
-	CtoS::SendPacket(0x4, 0xA9);
+	CtoS::SendPacket(0x4, CtoGS_MSGLeaveParty);
 }
 
 void GW::PartyMgr::FlagHero(DWORD hero_index, GW::GamePos pos) {
+	struct FlagHero { // Flag Hero
+		const DWORD header = CtoGS_MSGCommandHero;
+		DWORD id;
+		GamePos pos;
+	};
 	DWORD heroid = Agents::GetHeroAgentID(hero_index);
 	if (heroid == 0) return;
 	if (heroid == Agents::GetPlayerId()) return;
-	static GW::Packet::CtoS::FlagHero pak; // TODO
+	static FlagHero pak; // TODO
 	pak.id = heroid;
 	pak.pos = pos;
 	CtoS::SendPacket(&pak);
 }
 
 void GW::PartyMgr::FlagAll(GW::GamePos pos) {
-	static GW::Packet::CtoS::FlagAll pak;
+	struct FlagAll { // Flag All
+		const DWORD header = CtoGS_MSGCommandAll;
+		GamePos pos;
+	};
+	static FlagAll pak;
 	pak.pos = pos; // TODO
 	CtoS::SendPacket(&pak);
 }

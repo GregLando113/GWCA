@@ -4,6 +4,8 @@
 #include <GWCA\Context\GuildContext.h>
 #include <GWCA\Managers\CtoSMgr.h>
 
+#include <GWCA\CtoSHeaders.h>
+
 GW::GuildContext* GW::GuildMgr::GetGuildContext() {
 	return GameContext::instance()->guild;
 }
@@ -27,13 +29,13 @@ GW::GuildArray GW::GuildMgr::GetGuildArray() {
 void GW::GuildMgr::TravelGH() {
 	GW::GHKey playerguild = GameContext::instance()->guild->playerghkey;
 
-	CtoS::SendPacket(0x18, 0xB7, playerguild.k[0], playerguild.k[1], playerguild.k[2], playerguild.k[3]);
+	CtoS::SendPacket(0x18, CtoGS_MSGTravelGH, playerguild.k[0], playerguild.k[1], playerguild.k[2], playerguild.k[3]);
 }
 
 void GW::GuildMgr::TravelGH(GW::GHKey key) {
-	CtoS::SendPacket(0x18, 0xB7, key.k[0], key.k[1], key.k[2], key.k[3]);
+	CtoS::SendPacket(0x18, CtoGS_MSGTravelGH, key.k[0], key.k[1], key.k[2], key.k[3]);
 }
 
 void GW::GuildMgr::LeaveGH() {
-	CtoS::SendPacket(0x8, 0xB9, 0x1);
+	CtoS::SendPacket(0x8, CtoGS_MSGLeaveGH, 0x1);
 }

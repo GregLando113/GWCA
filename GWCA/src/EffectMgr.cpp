@@ -125,7 +125,7 @@ void GW::Effects::DropBuff(DWORD buffId) {
 
 MSG_EFFECT_APPLIED applied_effect;
 void GW::Effects::CreateEffect(DWORD effect_id, DWORD skill_id, float duration) {
-	applied_effect.header = 59;
+	applied_effect.header = 58;
 	applied_effect.agent_id = GW::Agents::GetPlayerId();
 	applied_effect.skill_id = skill_id;
 	applied_effect.effect_type = 0;
@@ -144,7 +144,7 @@ void GW::Effects::CreateEffect(DWORD effect_id, DWORD skill_id, float duration) 
 
 MSG_EFFECT_REAPPLIED reapplied_effect;
 void GW::Effects::ReapplieEffect(DWORD effect_id, float duration) {
-	reapplied_effect.header = 60;
+	reapplied_effect.header = 59;
 	reapplied_effect.agent_id = GW::Agents::GetPlayerId();
 	reapplied_effect.effect_type = 0;
 	reapplied_effect.effect_id = effect_id;
@@ -162,7 +162,7 @@ void GW::Effects::ReapplieEffect(DWORD effect_id, float duration) {
 
 MSG_EFFECT_REMOVED removed_effect;
 void GW::Effects::RemoveEffect(DWORD effect_id) {
-	removed_effect.header = 61;
+	removed_effect.header = 60;
 	removed_effect.agent_id = GW::Agents::GetPlayerId();
 	removed_effect.effect_id = effect_id;
 

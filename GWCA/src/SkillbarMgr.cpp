@@ -233,10 +233,7 @@ void GW::SkillbarMgr::SetAttributes(DWORD attributecount, DWORD * attributeids, 
 
 	GW::AgentID id = Agents::GetHeroAgentID(heroindex);
 
-	set_attributes_buffer->header = 0x11;
-
 	set_attributes_buffer->id = id;
-
 	set_attributes_buffer->attributecount1 = attributecount;
 	set_attributes_buffer->attributecount2 = attributecount;
 

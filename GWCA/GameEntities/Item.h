@@ -1,7 +1,8 @@
 #ifndef _ENTITIE_ITEM_INC
 #define _ENTITIE_ITEM_INC
 
-#include <GWCA\GameContainers\Array.h>
+#include <GWCA/GameContainers/Array.h>
+#include <GWCA/Constants/ItemIDs.h>
 
 namespace GW {
 
@@ -26,7 +27,7 @@ namespace GW {
 		inline bool IsStorageBag()   { return (BagType == 4); }
 
 		static const size_t npos = (size_t)-1;
-		size_t find(DWORD model_id, size_t pos = 0);
+		size_t find(DWORD model_id, size_t pos = 0, DWORD ExtraId = 0);
     };
 
     struct ItemModifier {
@@ -125,13 +126,15 @@ namespace GW {
 
     using MerchItemArray = Array<ItemID>;
 
-	inline size_t Bag::find(DWORD model_id, size_t pos) {
+	inline size_t Bag::find(DWORD model_id, size_t pos, DWORD extra_id) {
 		for (size_t i = pos; i < Items.size(); i++) {
 			Item *item = Items[i];
 			if (!item && model_id == 0) return i;
 			if (!item) continue;
-			if (item->ModelId == model_id)
-				return i;
+			if (item->ModelId == model_id) {
+				if (model_id == Constants::ItemID::Dye && item->ExtraId == extra_id)
+					return i;
+			}
 		}
 		return npos;
 	}

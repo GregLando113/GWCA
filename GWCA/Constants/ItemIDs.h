@@ -3,6 +3,7 @@
 namespace GW {
 	namespace Constants {
 		namespace ItemID { // aka item modelIDs
+			const int Dye = 146;
 			
 			// items that make agents
 			const int GhostInTheBox = 6368;

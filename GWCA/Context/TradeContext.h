@@ -27,7 +27,7 @@ namespace GW {
 		/* +h0000 */ DWORD  flags; // this is actually a flags
 		/* +h0004 */ DWORD  h0004[3]; // Seemingly 3 null dwords
 		/* +h0010 */ Trader player;
-		/* +h0020 */ Trader partner;
+		/* +h0024 */ Trader partner;
 
 		// bool GetPartnerAccepted();
 		// bool GetPartnerOfferSent();

@@ -132,7 +132,7 @@ namespace GW {
 			if (!item && model_id == 0) return i;
 			if (!item) continue;
 			if (item->ModelId == model_id) {
-				if (model_id == Constants::ItemID::Dye && item->ExtraId == extra_id)
+				if (model_id != Constants::ItemID::Dye || item->ExtraId == extra_id)
 					return i;
 			}
 		}

@@ -173,30 +173,40 @@ GW::NPCArray GW::Agents::GetNPCArray() {
 }
 
 // GetAgentName stuff.
-typedef void(__fastcall *Callback_t)(wchar_t *buff, wchar_t *str);
+typedef void(__fastcall *Callback_t)(void *param, wchar_t *str);
 typedef void(__fastcall *AsyncDecodeStr_t)(wchar_t *s, Callback_t cb, void *param);
-static void __fastcall __decode_str_callback(wchar_t *buff, wchar_t *str) {
-	while (*str) *buff++ = *str++;
-	*buff = 0;
+static void __fastcall __decode_str_callback(void *param, wchar_t *str) {
+	std::wstring *wstr = (std::wstring *)param;
+	if (!wstr) return;
+	*wstr = str;
 }
 
 std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
+	// @Remark: I'm not conviced that the name is decoded synchronously so that could avoid crashes
+	// if it is not the cases. We should still avoid to call this function.
+	static std::wstring buffer;
+	buffer.clear();
+	AsyncGetAgentName(agent, buffer);
+	if (buffer.size() != 0)
+		return buffer;
+	return L"";
+}
+
+void GW::Agents::AsyncGetAgentName(GW::Agent *agent, std::wstring& res) {
 	AsyncDecodeStr_t AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
 	assert(AsyncDecodeStr);
 
-	wchar_t  buffer[256] = L"";
 	wchar_t *str = nullptr;
+	res = L"";
 
-	if (!agent) return L"";
-
+	if (!agent) return;
 	if (agent->GetIsCharacterType()) {
 		if (agent->LoginNumber) {
 			GW::PlayerArray players = GameContext::instance()->world->players;
-			if (!players.valid()) return L"";
+			if (!players.valid()) return;
 
 			GW::Player *player = &players[agent->LoginNumber];
-			if (!player) return L"";
-			return std::wstring(player->Name);
+			if (player) res = player->Name;
 		} else {
 			// @Remark:
 			// For living npcs it's not elegant, but the game does it as well. See arround GetLivingName(AgentID id)@007C2A00.
@@ -205,44 +215,38 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 			// In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
 			// But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
 			GW::Array<AgentInfo> npcs = GameContext::instance()->world->agentInfos;
-			if (agent->Id >= npcs.size()) return L"";
+			if (agent->Id >= npcs.size()) return;
 			str = npcs[agent->Id].NameString;
 			if (!str) {
 				GW::NPCArray npcs = GameContext::instance()->world->npcs;
-				if (!npcs.valid()) return L"";
+				if (!npcs.valid()) return;
 				str = npcs[agent->PlayerNumber].NameString;
+				if (!str) return;
 			}
-			assert(str);
-			AsyncDecodeStr(str, __decode_str_callback, buffer);
-			return std::wstring(buffer);
+			AsyncDecodeStr(str, __decode_str_callback, &res);
 		}
 	} else if (agent->GetIsGadgetType()) {
 		AgentContext *ctx = GameContext::instance()->agent;
 		GadgetContext *gadget = GameContext::instance()->gadget;
-		if (!ctx || !gadget) return L"";
+		if (!ctx || !gadget) return;
 		auto *GadgetIds = ctx->GadgetData[agent->Id].GadgetIds;
-		if (!GadgetIds) return L"";
+		if (!GadgetIds) return;
 
 		str = GadgetIds->NameString;
 		if (!GadgetIds->NameString) {
 			size_t id = GadgetIds->GadgetId;
-			if (gadget->GadgetInfo.size() <= id) return L"";
+			if (gadget->GadgetInfo.size() <= id) return;
 			str = gadget->GadgetInfo[id].NameString;
+			if (!str) return;
 		}
 
-		assert(str);
-		AsyncDecodeStr(str, __decode_str_callback, buffer);
-		return std::wstring(buffer);
+		AsyncDecodeStr(str, __decode_str_callback, &res);
 	} else if (agent->GetIsItemType()) {
 		GW::ItemArray items = GW::Items::GetItemArray();
-		if (!items.valid()) return L"";
+		if (!items.valid()) return;
 		GW::Item *item = items[agent->ItemID];
-		if (!item) return L"";
+		if (!item || !item->NameString) return;
 		str = item->NameString;
-		assert(str);
-		AsyncDecodeStr(str, __decode_str_callback, buffer);
-		return std::wstring(buffer);
+		AsyncDecodeStr(str, __decode_str_callback, &res);
 	}
-
-	return L"";
 }

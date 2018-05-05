@@ -91,6 +91,9 @@ namespace GW {
 
 		GWCA_API GW::AgentID GetHeroAgentID(DWORD heroindex);
 
+		// Might be bugged, avoid to use.
 		GWCA_API std::wstring GetAgentName(GW::Agent *Agent);
+
+		GWCA_API void AsyncGetAgentName(GW::Agent *agent, std::wstring& name);
 	};
 }

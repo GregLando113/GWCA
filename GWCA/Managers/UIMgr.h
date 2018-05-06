@@ -1,7 +1,9 @@
 #pragma once
 
+#include <GWCA/Utilities/Export.h>
+#include <GWCA/GameContainers/Array.h>
 
-#include <GWCA\Utilities\Export.h>
+#include <stdint.h>
 
 namespace GW {
 	namespace UI {
@@ -26,5 +28,9 @@ namespace GW {
 		GWCA_API void SendUIMessage(unsigned message, void* wParam = nullptr, void* lParam = nullptr);
 
 		GWCA_API void DrawOnCompass(unsigned sessionid, unsigned ptcount, CompassPoint pts[8]);
+
+		using ArrayByte = GW::Array<unsigned char>;
+		GWCA_API void LoadSettings(size_t size, uint8_t *data);
+		GWCA_API ArrayByte GetSettings();
 	}
 }

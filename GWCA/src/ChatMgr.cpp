@@ -1,6 +1,7 @@
 #include <GWCA\Managers\ChatMgr.h>
-#include <assert.h>
 
+#include <ShellApi.h>
+#include <assert.h>
 #include <sstream>
 
 #include <GWCA\Utilities\Scanner.h>

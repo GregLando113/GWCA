@@ -1,6 +1,5 @@
 #include <GWCA/Utilities/MemoryPatcher.h>
 
-#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 GW::MemoryPatcher::MemoryPatcher(uintptr_t addr, void *patch, size_t size) {

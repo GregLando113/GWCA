@@ -30,6 +30,8 @@ namespace GW {
 		GWCA_API void DrawOnCompass(unsigned sessionid, unsigned ptcount, CompassPoint pts[8]);
 
 		using ArrayByte = GW::Array<unsigned char>;
+
+		// Call from GameThread to be safe
 		GWCA_API void LoadSettings(size_t size, uint8_t *data);
 		GWCA_API ArrayByte GetSettings();
 	}

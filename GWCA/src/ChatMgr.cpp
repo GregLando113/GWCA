@@ -326,7 +326,7 @@ void GW::Chat::Initialize() {
 	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x83\xC6\x2E\x8B\xC6\x83\xC0\x03", "xxxxxxxx", -22);
 	printf("[SCAN] WriteWhisper = %p\n", WriteWhisper_addr);
 
-	InitChatLog = (InitChatLog_t)Scanner::Find("\x33\xD2\xB9\x38\x04\x00\x00\xE8", "xxxxxxxx", -35);
+	InitChatLog = (InitChatLog_t)Scanner::Find("\x83\xF8\x1E\x5E\x72\x16\xB9\x86\x07", "xxxxxxxxx", +43);
 	printf("[SCAN] InitChatLog = %p\n", InitChatLog);
 
 	PrintChatLog = (PrintChatLog_t)Scanner::Find("\x6A\x00\xBA\x80\x48\x02\x00\xE8", "xxxxxxxx", -32);

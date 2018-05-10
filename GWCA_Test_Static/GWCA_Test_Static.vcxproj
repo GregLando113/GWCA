@@ -11,23 +11,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ECC70C1A-462D-4BF1-95CA-B8B95E6E01AC}</ProjectGuid>
+    <ProjectGuid>{A917F016-425B-485A-AB6B-9F0331B5CF5D}</ProjectGuid>
     <RootNamespace>GWCA_Tests</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -44,16 +44,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\;$(IncludePath)</IncludePath>
     <LibraryPath>..\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\;$(IncludePath)</IncludePath>
     <LibraryPath>..\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;WIN32;_DEBUG;_LIB;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>GWCAd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -67,6 +70,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;WIN32;NDEBUG;_LIB;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -80,9 +84,31 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\CrashTest.cpp" />
+    <ClCompile Include="..\GWCA\src\AgentMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\CameraMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\ChatMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\CtoSMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\EffectMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\FriendListMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\GameThreadMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\GuildMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\GWCA.cpp" />
+    <ClCompile Include="..\GWCA\src\Hooker.cpp" />
+    <ClCompile Include="..\GWCA\src\ItemMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\MapMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\MemoryMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\MemoryPatcher.cpp" />
+    <ClCompile Include="..\GWCA\src\MerchantMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\PartyMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\PlayerMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\Render.cpp" />
+    <ClCompile Include="..\GWCA\src\Scanner.cpp" />
+    <ClCompile Include="..\GWCA\src\Skill.cpp" />
+    <ClCompile Include="..\GWCA\src\SkillbarMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\StoCMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\TradeMgr.cpp" />
+    <ClCompile Include="..\GWCA\src\UIMgr.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\TestAgentMgr.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

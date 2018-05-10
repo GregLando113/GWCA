@@ -21,6 +21,10 @@ Release/
 *.pch
 *.idb
 *.pdb
+*.ipdb
+*.iobj
+*.exp
+*.tmp
 dox/
 GWCA_d.lib
 *.opendb

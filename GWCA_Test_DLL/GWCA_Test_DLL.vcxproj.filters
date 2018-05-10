@@ -5,4 +5,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\TestAgentMgr.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\GWCA_Tests.h" />
+  </ItemGroup>
 </Project>

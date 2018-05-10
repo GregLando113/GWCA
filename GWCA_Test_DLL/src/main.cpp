@@ -1,11 +1,12 @@
 #include <Windows.h>
+#include <time.h>
 
 #include <GWCA\GWCA.h>
 #include <GWCA\Utilities\Hooker.h>
 #include <GWCA\Managers\Render.h>
 
-#define CATCH_CONFIG_RUNNER
-#include "catch.hpp"
+#include "GWCA_Tests.h"
+
 
 DWORD WINAPI init(HMODULE hModule);
 
@@ -43,17 +44,39 @@ DWORD WINAPI init(HMODULE hModule) {
 	});
 
 	bool done = false;
-	GW::Render::SetRenderCallback([&done](IDirect3DDevice9* device) {
+	std::stack<std::function<bool()>> tests;
+	// add a test case
+	auto GWCA_Test = [&tests](std::function<void()> f) {
+		tests.push([f]() { f(); return true; });
+	};
+	// wait for n frames
+	auto WaitFrames = [&tests](int n) {
+		auto lambda = [num = n]() mutable { return (num--) < 0; };
+		tests.push(lambda);
+	};
+	// wait for n milliseconds
+	auto WaitMilliseconds = [&tests](int n) {
+		auto lambda = [start = clock(), n]() mutable { return (clock() - start) < n; };
+		tests.push(lambda);
+	};
+	// wait until func returns true
+	auto WaitUntilTrue = [&tests](std::function<bool()> func) {
+		tests.push(func);
+	};
+
+	// add all tests here
+
+	GW::Render::SetRenderCallback([&done, &tests](IDirect3DDevice9* device) {
 		GW::HookBase::EnableHooks(); // do we need this? we have it in toolbox...
-
-		Catch::Session session; // There must be exactly one instance. If this callback runs twice we'll crash.
-		// write to session.configData() to supply Catch2 command line arguments
-
-		int numFailed = session.run();
-
-		GW::Render::RestoreHooks();
-		GW::Terminate();
-		done = true;
+		if (tests.size() > 0) {
+			if (tests.top()()) {
+				tests.pop();
+			}
+		} else {
+			GW::Render::RestoreHooks();
+			GW::Terminate();
+			done = true;
+		}
 	});
 	GW::HookBase::EnableHooks(); // do we need this? we have it in toolbox...
 

@@ -26,3 +26,7 @@ for base_dir in include_dirs:
             shutil.copy(os.path.join(root, file),os.path.join(dst, file))
 
 shutil.copy('GWCA.lib',os.path.join(pub_dir, 'GWCA.lib'))
+
+os.chdir(pub_dir)
+os.system('git commit -a -m "Updated to commit at %s"' % d.datetime.now().isoformat(timespec='seconds').replace(':','-'))
+os.system('git push origin master')

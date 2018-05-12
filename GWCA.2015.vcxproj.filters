@@ -248,6 +248,12 @@
     <ClInclude Include="GWCA\Managers\UIMgr.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Utilities\Macros.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\Managers\ConnMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\src\GWCA.cpp">
@@ -337,5 +343,6 @@
     <ClCompile Include="GWCA\src\UIMgr.cpp">
       <Filter>src\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="GWCA\Managers\ConnMgr.cpp" />
   </ItemGroup>
 </Project>

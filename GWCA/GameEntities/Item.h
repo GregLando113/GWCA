@@ -27,7 +27,11 @@ namespace GW {
 		inline bool IsStorageBag()   { return (BagType == 4); }
 
 		static const size_t npos = (size_t)-1;
-		size_t find(DWORD model_id, size_t pos = 0, DWORD ExtraId = 0);
+
+		size_t find_dye(DWORD model_id, DWORD ExtraId, size_t pos = 0);
+
+		size_t find1(DWORD model_id, size_t pos = 0);
+		size_t find2(Item *item, size_t pos = 0);
     };
 
     struct ItemModifier {
@@ -126,17 +130,34 @@ namespace GW {
 
     using MerchItemArray = Array<ItemID>;
 
-	inline size_t Bag::find(DWORD model_id, size_t pos, DWORD extra_id) {
+	inline size_t Bag::find1(DWORD model_id, size_t pos) {
 		for (size_t i = pos; i < Items.size(); i++) {
 			Item *item = Items[i];
 			if (!item && model_id == 0) return i;
 			if (!item) continue;
-			if (item->ModelId == model_id) {
-				if (model_id != Constants::ItemID::Dye || item->ExtraId == extra_id)
-					return i;
-			}
+			if (item->ModelId == model_id)
+				return i;
 		}
 		return npos;
+	}
+
+	inline size_t Bag::find_dye(DWORD model_id, DWORD extra_id, size_t pos) {
+		for (size_t i = pos; i < Items.size(); i++) {
+			Item *item = Items[i];
+			if (!item && model_id == 0) return i;
+			if (!item) continue;
+			if (item->ModelId == model_id && item->ExtraId == extra_id)
+				return i;
+		}
+		return npos;
+	}
+
+	// Find a similar item
+	inline size_t Bag::find2(Item *item, size_t pos) {
+		if (item->ModelId == Constants::ItemID::Dye)
+			return find_dye(item->ModelId, item->ExtraId, pos);
+		else
+			return find1(item->ModelId, pos);
 	}
 }
 

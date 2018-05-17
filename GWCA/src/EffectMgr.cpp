@@ -123,6 +123,7 @@ void GW::Effects::DropBuff(DWORD buffId) {
 	CtoS::SendPacket(0x8, CtoGS_MSGDropBuff, buffId);
 }
 
+#if 0 // deprecated
 MSG_EFFECT_APPLIED applied_effect;
 void GW::Effects::CreateEffect(DWORD effect_id, DWORD skill_id, float duration) {
 	applied_effect.header = 58;
@@ -175,3 +176,4 @@ void GW::Effects::RemoveEffect(DWORD effect_id) {
 		GW::StoC::EmulatePacket((Packet::StoC::PacketBase*)&removed_effect);
 	});
 }
+#endif

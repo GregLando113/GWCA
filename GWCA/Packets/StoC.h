@@ -238,14 +238,14 @@ namespace GW {
 				DWORD unk;
 				DWORD gold;
 			};
-			const DWORD Packet<CharacterAddGold>::STATIC_HEADER = 321;
+			const DWORD Packet<CharacterAddGold>::STATIC_HEADER = 323;
 
             // Gold removed from inventory
 			struct StorageAddGold : Packet<StorageAddGold> {
 				DWORD unk; // some kind of id? but neither agentid nor playerid
 				DWORD gold;
 			};
-			const DWORD Packet<StorageAddGold>::STATIC_HEADER = 336;
+			const DWORD Packet<StorageAddGold>::STATIC_HEADER = 338;
 
             struct InstanceLoadFile : Packet<InstanceLoadFile> {
 				DWORD map_fileID;
@@ -254,7 +254,7 @@ namespace GW {
 				BYTE unk1;
 				BYTE unk2;
 			};
-			const DWORD Packet<InstanceLoadFile>::STATIC_HEADER = 404;
+			const DWORD Packet<InstanceLoadFile>::STATIC_HEADER = 407;
 
             struct GameSrvTransfer : Packet<GameSrvTransfer> {
 				BYTE host[24]; // ip of the game server
@@ -264,14 +264,14 @@ namespace GW {
 				DWORD is_explorable; // BYTE
 				DWORD token2; // player id
 			};
-			const DWORD Packet<GameSrvTransfer>::STATIC_HEADER = 419;
+			const DWORD Packet<GameSrvTransfer>::STATIC_HEADER = 422;
 
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
 				// WORD
 				// WORD
 				// BYTE
 			};
-			const DWORD Packet<PartyPlayerAdd>::STATIC_HEADER = 457;
+			const DWORD Packet<PartyPlayerAdd>::STATIC_HEADER = 460;
         }
 	}
 }

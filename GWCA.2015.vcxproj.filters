@@ -343,6 +343,8 @@
     <ClCompile Include="GWCA\src\UIMgr.cpp">
       <Filter>src\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="GWCA\Managers\ConnMgr.cpp" />
+    <ClCompile Include="GWCA\src\ConnMgr.cpp">
+      <Filter>src\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

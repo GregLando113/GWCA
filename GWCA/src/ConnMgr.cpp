@@ -1,4 +1,4 @@
-#include "ConnMgr.h"
+#include <GWCA/Managers/ConnMgr.h>
 
 #include <GWCA\Utilities\Scanner.h>
 

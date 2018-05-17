@@ -91,7 +91,7 @@
     <ClCompile Include="Dependencies\minhook\src\hde\hde64.c" />
     <ClCompile Include="Dependencies\minhook\src\hook.c" />
     <ClCompile Include="Dependencies\minhook\src\trampoline.c" />
-    <ClCompile Include="GWCA\Managers\ConnMgr.cpp" />
+    <ClCompile Include="GWCA\src\ConnMgr.cpp" />
     <ClCompile Include="GWCA\src\Render.cpp" />
     <ClCompile Include="GWCA\src\Skill.cpp" />
     <ClCompile Include="GWCA\src\PlayerMgr.cpp" />

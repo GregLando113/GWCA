@@ -255,7 +255,7 @@ namespace {
 void GW::Chat::SetChatEventCallback(std::function<void(DWORD, DWORD, wchar_t*, void*)> callback) {
 	if (ChatEvent_hook.Empty()) {
 		ChatEvent_t addr = (ChatEvent_t)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x28);
-		printf("Chat Event = %p\n", addr);
+		printf("[SCAN] Chat Event = %p\n", addr);
 		ChatEvent_hook.Detour(addr, ChatEvent_detour);
 	}
 	ChatEvent_callback = callback;
@@ -264,7 +264,7 @@ void GW::Chat::SetChatEventCallback(std::function<void(DWORD, DWORD, wchar_t*, v
 void GW::Chat::SetLocalMessageCallback(std::function<bool(int, wchar_t*)> callback) {
 	if (LocalMessage_hook.Empty()) {
 		LocalMessage_t addr = (LocalMessage_t)Scanner::Find("\x8D\x55\xF8\xB9\x7E\x00\x00\x10\x6A\x00", "xxxxxxxxxx", -59);
-		printf("LocalMessage = %p\n", addr);
+		printf("[SCAN] LocalMessage = %p\n", addr);
 		LocalMessage_hook.Detour(addr, LocalMessage_detour);
 	}
 	LocalMessage_callback = callback;
@@ -281,7 +281,7 @@ void GW::Chat::SetSendChatCallback(std::function<void(GW::Chat::Channel chan, wc
 void GW::Chat::SetOpenLinks(bool b) {
 	if (b && OpenTemplate_hook.Empty()) {
 		OpenTemplate_t addr = (OpenTemplate_t)Scanner::Find("\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
-		printf("OpenTemplate = %p\n", addr);
+		printf("[SCAN] OpenTemplate = %p\n", addr);
 		OpenTemplate_hook.Detour(addr, OpenTemplate_detour);
 	}
 	open_links = b;
@@ -290,7 +290,7 @@ void GW::Chat::SetOpenLinks(bool b) {
 GW::Chat::Color GW::Chat::SetSenderColor(Channel chan, Color col) {
 	if (SenderColor_hook.Empty()) {
 		GetChannelColor_t addr = (GetChannelColor_t)Scanner::Find("\x56\x83\xFA\x0E\x8B\xF1\x0F\x87\x96", "xxxxxxxxx", 0);
-		printf("GetSenderColor = %p\n", addr);
+		printf("[SCAN] GetSenderColor = %p\n", addr);
 		SenderColor_hook.Detour(addr, ::SenderColor_detour);
 	}
 	Color old = ChatSenderColor[(int)chan];
@@ -301,7 +301,7 @@ GW::Chat::Color GW::Chat::SetSenderColor(Channel chan, Color col) {
 GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 	if (MessageColor_hook.Empty()) {
 		GetChannelColor_t addr = (GetChannelColor_t)Scanner::Find("\x83\xFA\x0E\x8B\xC1\x0F\x87\x83", "xxxxxxxx", 0);
-		printf("GetMessageColor = %p\n", addr);
+		printf("[SCAN] GetMessageColor = %p\n", addr);
 		MessageColor_hook.Detour(addr, ::MessageColor_detour);
 	}
 	Color old = ChatMessageColor[(int)chan];
@@ -312,7 +312,7 @@ GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 void GW::Chat::SetWhisperCallback(std::function<void(const wchar_t[20], const wchar_t[140])> callback) {
 	if (!WriteWhisper_addr) {
 		WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);
-		printf("WriteWhisper = %p\n", WriteWhisper_addr);
+		printf("[SCAN] WriteWhisper = %p\n", WriteWhisper_addr);
 	}
 	if (WriteWhisper_hook.Empty())
 		WriteWhisper_hook.Detour(WriteWhisper_addr, WriteWhisper_detour);

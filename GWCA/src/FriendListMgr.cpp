@@ -58,7 +58,9 @@ GW::Friend *GW::FriendListMgr::GetFriend(wchar_t *account, wchar_t *playing) {
 		if (it->Type != FriendType_Friend) continue;
 		if (n_friends == 0) break;
 		--n_friends;
-		if (!wcsncmp(it->Account, account, 20) || !wcsncmp(it->Name, playing, 20))
+		if (account && !wcsncmp(it->Account, account, 20))
+			return it;
+		if (playing && !wcsncmp(it->Name, playing, 20))
 			return it;
 	}
 	return NULL;

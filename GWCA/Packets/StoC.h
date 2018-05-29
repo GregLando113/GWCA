@@ -207,6 +207,17 @@ namespace GW {
 			};
 			const DWORD Packet<AgentModel>::STATIC_HEADER = 175;
 
+			struct ObjectiveDone : Packet<ObjectiveDone> {
+				DWORD objective_id;
+			};
+			const DWORD Packet<ObjectiveDone>::STATIC_HEADER = 189;
+
+			struct ObjectiveAdd : Packet<ObjectiveAdd> {
+				DWORD objective_id;
+				wchar_t objective_name[128];
+			};
+			const DWORD Packet<ObjectiveAdd>::STATIC_HEADER = 190;
+
             // Skill Activate (begin casting)
 			struct SkillActivate : Packet<SkillActivate> {
 				DWORD agent_id;

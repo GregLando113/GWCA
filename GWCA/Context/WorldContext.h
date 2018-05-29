@@ -43,7 +43,8 @@ namespace GW {
         /* +h0518 */ Array<void*> h0518;
         /* +h0528 */ DWORD activequestid;
         /* +h052C */ QuestLog questlog;
-        /* +h053C */ BYTE h053C[0x38];
+        /* +h053C */ BYTE h053C[0x28];
+        /* +h0564 */ Array<MissionObjective> mission_objectives;
         /* +h0574 */ Array<DWORD> h0574; // Seems like agent/item ids (only appears in outpost?)
         /* +h0584 */ HeroFlagArray hero_flags;
         /* +h0594 */ Array<void*> h0594;

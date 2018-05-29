@@ -19,6 +19,12 @@ namespace GW {
         /* +h0030 */ DWORD h0030; // namestring objective
     };
 
+    struct MissionObjective { // total: 0xC/12
+        /* +h0000 */ DWORD objective_id;
+        /* +h0004 */ wchar_t *string;
+        /* +h0008 */ DWORD type; // completed, bullet, etc...
+    };
+
     using QuestLog = Array<Quest>;
 }
 

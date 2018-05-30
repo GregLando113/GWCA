@@ -25,6 +25,7 @@ Release/
 *.iobj
 *.exp
 *.tmp
+*.ilk
 dox/
 GWCA_d.lib
 *.opendb

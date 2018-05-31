@@ -18,6 +18,7 @@ namespace {
 	GW::UI::ArrayByte *GwSettings = nullptr;
 
 	DWORD *gw_ui_drawn = nullptr;
+	DWORD *gw_shift_screen = nullptr;
 
 	void Initialize() {
 		g_uiSendMessage = (GwSendUIMessage_t *)GW::Scanner::Find(
@@ -36,8 +37,14 @@ namespace {
 
 		{
 			uintptr_t temp = GW::Scanner::Find("\x85\xC0\x74\x58\x5F\x5E\xE9", "xxxxxxx", +16);
-			printf("[SCAN] UI::GwSettings = %p\n", (void *)temp);
+			printf("[SCAN] UI::gw_ui_drawn = %p\n", (void *)temp);
 			gw_ui_drawn = *(DWORD **)temp;
+		}
+
+		{
+			uintptr_t temp = GW::Scanner::Find("\x85\xC0\x0F\x85\x00\x00\x00\x00\x85\xC9\x75\x00", "xxxx????xxx?", +14);
+			printf("[SCAN] UI::gw_shift_screen = %p\n", (void *)temp);
+			gw_shift_screen = *(DWORD **)temp;
 		}
 	}
 }
@@ -91,6 +98,15 @@ GW::UI::ArrayByte GW::UI::GetSettings() {
 }
 
 bool GW::UI::GetIsUIDrawn() {
-	assert(gw_ui_drawn);
+	if (!gw_ui_drawn) {
+		::Initialize();
+	}
 	return (*gw_ui_drawn == 0);
+}
+
+bool GW::UI::GetIsShiftScrennShot() {
+	if (!gw_shift_screen) {
+		::Initialize();
+	}
+	return (*gw_shift_screen != 0);
 }

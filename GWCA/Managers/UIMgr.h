@@ -36,5 +36,6 @@ namespace GW {
 		GWCA_API ArrayByte GetSettings();
 
 		GWCA_API bool GetIsUIDrawn();
+		GWCA_API bool GetIsShiftScrennShot();
 	}
 }

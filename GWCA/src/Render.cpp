@@ -1,9 +1,11 @@
-#include "../Managers/Render.h"
+#include <GWCA/Managers/Render.h>
 
 #include <stdio.h>
 
-#include "../Utilities/Hooker.h"
-#include "../Utilities/Scanner.h"
+#include <GWCA/Utilities/Hooker.h>
+#include <GWCA/Utilities/Scanner.h>
+
+#include <GWCA/Managers/UIMgr.h>
 
 namespace {
 	struct gwdx
@@ -56,7 +58,10 @@ namespace {
 	}
 
 	bool __fastcall screen_capture_detour(gwdx* ctx, void* unk) {
-		render_callback(ctx->device);
+		// @Enhancement: This should probably be an option.
+		if (!GW::UI::GetIsShiftScrennShot()) {
+			render_callback(ctx->device);
+		}
 		if (screen_capture_hook.Valid()) {
 			return screen_capture_hook.Original()(ctx, unk);
 		} else {

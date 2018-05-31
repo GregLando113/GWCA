@@ -47,7 +47,7 @@ namespace GW {
         /* +h0564 */ Array<MissionObjective> mission_objectives;
         /* +h0574 */ Array<DWORD> h0574; // Seems like agent/item ids (only appears in outpost?)
         /* +h0584 */ HeroFlagArray hero_flags;
-        /* +h0594 */ Array<void*> h0594;
+        /* +h0594 */ HeroInfoArray hero_info;
         /* +h05A4 */ Array<void*> h05A4; // Struct size = 0x20
         /* +h05B4 */ DWORD h05B4[2];
         /* +h05BC */ Array<void*> h05BC;

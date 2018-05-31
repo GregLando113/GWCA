@@ -48,6 +48,15 @@ namespace GW {
         DWORD size()     const { return _size; }
         DWORD capacity() const { return _capacity; }
 
+		T& find_first(bool* found, bool(*cmpfn)(T&))
+		{
+			for (DWORD i = 0; i < _size; ++i) {
+				if (cmpfn(_array[i])) {
+					return _array[i];
+				}
+			}
+		}
+
     protected:
         T*    _array;       // +h0000
         DWORD _capacity;   // +h0004

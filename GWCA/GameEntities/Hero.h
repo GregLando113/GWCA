@@ -24,7 +24,8 @@ namespace GW {
         /* +h0010 */ DWORD Secondary; // Primary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
         /* +h0014 */ DWORD HeroFileID;
         /* +h0018 */ DWORD ModelFileID;
-        /* +h001C */ DWORD h001C[23];
+		/* +h001C */ char pad_001C[52];
+		/* +h0050 */ wchar_t name[20];
     };
 
     using HeroFlagArray = Array<HeroFlag>;

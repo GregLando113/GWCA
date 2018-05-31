@@ -17,6 +17,8 @@ namespace {
 
 	GW::UI::ArrayByte *GwSettings = nullptr;
 
+	DWORD *gw_ui_drawn = nullptr;
+
 	void Initialize() {
 		g_uiSendMessage = (GwSendUIMessage_t *)GW::Scanner::Find(
 			"\x8B\xDA\x1B\xF6\xF7\xDE\x4E\x83\xFF\x40\x73\x14\x68", 
@@ -30,6 +32,12 @@ namespace {
 			uintptr_t temp = GW::Scanner::Find("\x57\x77\x04\x8B\xF8\xEB\x18", "xxxxxxx", +15);
 			printf("[SCAN] UI::GwSettings = %p\n", (void *)temp);
 			GwSettings = *(GW::UI::ArrayByte **)temp;
+		}
+
+		{
+			uintptr_t temp = GW::Scanner::Find("\x85\xC0\x74\x58\x5F\x5E\xE9", "xxxxxxx", +16);
+			printf("[SCAN] UI::GwSettings = %p\n", (void *)temp);
+			gw_ui_drawn = *(DWORD **)temp;
 		}
 	}
 }
@@ -80,4 +88,9 @@ GW::UI::ArrayByte GW::UI::GetSettings() {
 		::Initialize();
 	}
 	return *GwSettings;
+}
+
+bool GW::UI::GetIsUIDrawn() {
+	assert(gw_ui_drawn);
+	return (*gw_ui_drawn == 0);
 }

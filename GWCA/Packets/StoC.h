@@ -277,6 +277,11 @@ namespace GW {
 			};
 			const DWORD Packet<GameSrvTransfer>::STATIC_HEADER = 422;
 
+			struct DoACompleteZone : Packet<DoACompleteZone> {
+				wchar_t message[122];
+			};
+			const DWORD Packet<DoACompleteZone>::STATIC_HEADER = 432;
+
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
 				// WORD
 				// WORD

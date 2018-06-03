@@ -4,6 +4,7 @@
 #include <GWCA/GameContainers/Array.h>
 
 #include <stdint.h>
+#include <string>
 
 namespace GW {
 	namespace UI {
@@ -37,5 +38,12 @@ namespace GW {
 
 		GWCA_API bool GetIsUIDrawn();
 		GWCA_API bool GetIsShiftScrennShot();
+
+		GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, wchar_t *buffer, size_t size);
+		GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, char    *buffer, size_t size);
+		GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out);
+
+		GWCA_API bool UInt32ToEncStr(uint32_t value, wchar_t *buffer, size_t count);
+		GWCA_API uint32_t EncStrToUInt32(const wchar_t *enc_str);
 	}
 }

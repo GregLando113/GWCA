@@ -1,10 +1,11 @@
 #include <GWCA\Managers\AgentMgr.h>
 
-#include <GWCA\Managers\MemoryMgr.h>
 #include <GWCA\Managers\GameThreadMgr.h>
+#include <GWCA\Managers\MemoryMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MapMgr.h>
 #include <GWCA\Managers\ItemMgr.h>
+#include <GWCA\Managers\UIMgr.h>
 
 #include <GWCA\Context\WorldContext.h>
 #include <GWCA\Context\GameContext.h>
@@ -172,15 +173,6 @@ GW::NPCArray GW::Agents::GetNPCArray() {
 	return GameContext::instance()->world->npcs;
 }
 
-// GetAgentName stuff.
-typedef void(__fastcall *Callback_t)(void *param, wchar_t *str);
-typedef void(__fastcall *AsyncDecodeStr_t)(wchar_t *s, Callback_t cb, void *param);
-static void __fastcall __decode_str_callback(void *param, wchar_t *str) {
-	std::wstring *wstr = (std::wstring *)param;
-	if (!wstr) return;
-	*wstr = str;
-}
-
 std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 	// @Remark: I'm not conviced that the name is decoded synchronously so that could avoid crashes
 	// if it is not the cases. We should still avoid to call this function.
@@ -193,9 +185,6 @@ std::wstring GW::Agents::GetAgentName(GW::Agent *agent) {
 }
 
 void GW::Agents::AsyncGetAgentName(GW::Agent *agent, std::wstring& res) {
-	AsyncDecodeStr_t AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
-	assert(AsyncDecodeStr);
-
 	wchar_t *str = nullptr;
 	res = L"";
 
@@ -223,7 +212,7 @@ void GW::Agents::AsyncGetAgentName(GW::Agent *agent, std::wstring& res) {
 				str = npcs[agent->PlayerNumber].NameString;
 				if (!str) return;
 			}
-			AsyncDecodeStr(str, __decode_str_callback, &res);
+			GW::UI::AsyncDecodeStr(str, &res);
 		}
 	} else if (agent->GetIsGadgetType()) {
 		AgentContext *ctx = GameContext::instance()->agent;
@@ -240,13 +229,13 @@ void GW::Agents::AsyncGetAgentName(GW::Agent *agent, std::wstring& res) {
 			if (!str) return;
 		}
 
-		AsyncDecodeStr(str, __decode_str_callback, &res);
+		GW::UI::AsyncDecodeStr(str, &res);
 	} else if (agent->GetIsItemType()) {
 		GW::ItemArray items = GW::Items::GetItemArray();
 		if (!items.valid()) return;
 		GW::Item *item = items[agent->ItemID];
 		if (!item || !item->NameString) return;
 		str = item->NameString;
-		AsyncDecodeStr(str, __decode_str_callback, &res);
+		GW::UI::AsyncDecodeStr(str, &res);
 	}
 }

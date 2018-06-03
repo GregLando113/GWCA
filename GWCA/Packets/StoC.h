@@ -207,16 +207,23 @@ namespace GW {
 			};
 			const DWORD Packet<AgentModel>::STATIC_HEADER = 175;
 
+			struct ObjectiveAdd : Packet<ObjectiveAdd> {
+				DWORD objective_id;
+				DWORD type;
+				wchar_t name[128];
+			};
+			const DWORD Packet<ObjectiveAdd>::STATIC_HEADER = 188;
+
 			struct ObjectiveDone : Packet<ObjectiveDone> {
 				DWORD objective_id;
 			};
 			const DWORD Packet<ObjectiveDone>::STATIC_HEADER = 189;
 
-			struct ObjectiveAdd : Packet<ObjectiveAdd> {
+			struct ObjectiveUpdateName : Packet<ObjectiveUpdateName> {
 				DWORD objective_id;
 				wchar_t objective_name[128];
 			};
-			const DWORD Packet<ObjectiveAdd>::STATIC_HEADER = 190;
+			const DWORD Packet<ObjectiveUpdateName>::STATIC_HEADER = 190;
 
             // Skill Activate (begin casting)
 			struct SkillActivate : Packet<SkillActivate> {
@@ -266,6 +273,16 @@ namespace GW {
 				BYTE unk2;
 			};
 			const DWORD Packet<InstanceLoadFile>::STATIC_HEADER = 407;
+
+			struct InstanceLoadInfo : Packet<InstanceLoadInfo> {
+				DWORD agent_id;
+				DWORD map_id;
+				DWORD is_explorable;
+				DWORD district;
+				DWORD language;
+				DWORD is_observer;
+			};
+			const DWORD Packet<InstanceLoadInfo>::STATIC_HEADER = 411;
 
             struct GameSrvTransfer : Packet<GameSrvTransfer> {
 				BYTE host[24]; // ip of the game server

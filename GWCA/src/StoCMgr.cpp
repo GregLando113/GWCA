@@ -39,6 +39,7 @@ namespace {
 
 void GW::StoC::Initialize() {
 	// inb4 has rages at this
+#if 0
 	struct LSObjPtrChain {
 		struct {
 			struct {
@@ -55,9 +56,34 @@ void GW::StoC::Initialize() {
 				} *sub2;
 			};
 		}*sub1;
-	} *lsobjbase = *(LSObjPtrChain**)Scanner::Find("\x8B\x56\x04\x85\xC0\x89\x57\x18", "xxxxxxxx", -4);
-
+	} *lsobjbase = *(LSObjPtrChain **)Scanner::Find("\x8B\x56\x04\x85\xC0\x89\x57\x18", "xxxxxxxx", -4);
 	game_server_handler = lsobjbase->sub1->sub2->sub3->sub4->gshandlers;
+#else
+	uintptr_t found = Scanner::Find("\x50\x52\x8B\x55\x0C\xC7\x45\xF8", "xxxxxxxx", -0x23);
+	printf("[SCAN] StoCHandler pattern = %p\n", (void *)found);
+	if (!found) return;
+
+	struct GameServer {
+		BYTE h0000[8];
+		struct {
+			BYTE h0000[12];
+			struct {
+				BYTE h0000[12];
+				void *next;
+				BYTE h0010[12];
+				DWORD ClientCodecArray[4];
+				StoCHandlerArray handlers;
+			} *ls_codec;
+			BYTE h0010[12];
+			// Client codec
+			DWORD ClientCodecArray[4];
+			StoCHandlerArray handlers;
+		} *gs_codec;
+	};
+
+	GameServer **addr = *(GameServer ***)found;
+	game_server_handler = (*addr)->gs_codec->handlers;
+#endif
 
 	original_functions = new StoCHandler[game_server_handler.size()];
 

@@ -69,7 +69,7 @@ namespace GW {
 		GWCA_API void DeleteCommand(std::wstring cmd);
 
 		extern bool ShowTimestamps;
-		extern bool KeepChatHistory;
+		// extern bool KeepChatHistory; @Deprecated
 		extern bool Timestamp_24hFormat;
 		extern Color TimestampsColor;
 

@@ -305,6 +305,10 @@ namespace GW {
 				// BYTE
 			};
 			const DWORD Packet<PartyPlayerAdd>::STATIC_HEADER = 460;
+
+			struct PartyDefeated : Packet<PartyDefeated> {
+			};
+			const DWORD Packet<PartyDefeated>::STATIC_HEADER = 473;
         }
 	}
 }

@@ -45,7 +45,9 @@ namespace {
 
 	struct ChatMessage {
 		uint32_t channel;
-		wchar_t *message;
+		uint32_t unk1;
+		FILETIME timestamp;
+		wchar_t  message[];
 	};
 
 	const size_t CHAT_LOG_LENGTH = 0x200;
@@ -58,10 +60,11 @@ namespace {
 
 	// 08 01 07 01 [Time] 01 00 02 00
 	ChatBuffer **ChatBufferAddr;
-	SYSTEMTIME Timestamps[CHAT_LOG_LENGTH];
-
-	int  reprint_index;
-	bool reprint_chat;
+	
+	// @Deprecated
+	// SYSTEMTIME Timestamps[CHAT_LOG_LENGTH];
+	// int  reprint_index;
+	// bool reprint_chat;
 
 	// There is maybe more.
 	// Though, we can probably fix this.
@@ -153,34 +156,17 @@ namespace {
 		WriteWhisper_hook.Original()(unk, from, msg);
 	}
 
-	// It was used to keep chat history on character change, @Deprecated
-#if 0
-	typedef void (GWCALL *InitChatLog_t)(void);
-	InitChatLog_t InitChatLog;
-	GW::THook<InitChatLog_t> InitChatLog_hook;
+	typedef void (GWCALL *PrintChat_t)(void *ctx, int thiscall, Channel channel, wchar_t *str, FILETIME timestamp, int reprint);
+	PrintChat_t PrintChat;
+	GW::THook<PrintChat_t> PrintChat_hook;
 
-	void GWCALL InitChatLog_detour(void) {
-		assert(ChatBufferAddr);
-		ChatBuffer *buff = *ChatBufferAddr;
-		if (!KeepChatHistory || !buff)
-			InitChatLog_hook.Original()();
-	}
-#endif
-
-	// PrintChatBuffer tell us when the chat is reprinted.
-	// WriteChatBuffer is used to save messages timestamps.
-	// PrintChat is used to chnage the message printed.
+#if 0 // @Deprecated
 	typedef void (GWCALL *PrintChatLog_t)(void *ctx, int thiscall, int unk);
-	typedef void (GWCALL *WriteChatLog_t)(Channel channel, wchar *encStr);
-	typedef void (GWCALL *PrintChat_t)(void *ctx, int thiscall, Channel channel, wchar *str, DWORD arg3, DWORD arg4, int reprint);
-
+	typedef void (GWCALL *WriteChatLog_t)(Channel channel, wchar_t *encStr);
 	PrintChatLog_t PrintChatLog;
 	WriteChatLog_t WriteChatLog;
-	PrintChat_t    PrintChat;
-
 	GW::THook<PrintChatLog_t> PrintChatLog_hook;
 	GW::THook<WriteChatLog_t> WriteChatLog_hook;
-	GW::THook<PrintChat_t>    PrintChat_hook;
 
 	void GWCALL PrintChatLog_detour(void *ctx, int thiscall, int unk) {
 		assert(ChatBufferAddr);
@@ -211,8 +197,22 @@ namespace {
 		WriteChatLog_hook.Original()(channel, encStr);
 	}
 
-	void GWCALL PrintChat_detour(void *ctx, int thiscall, Channel channel, wchar *str, DWORD arg3, DWORD arg4, int reprint) {
+	// It was used to keep chat history on character change, @Deprecated
+	typedef void (GWCALL *InitChatLog_t)(void);
+	InitChatLog_t InitChatLog;
+	GW::THook<InitChatLog_t> InitChatLog_hook;
+
+	void GWCALL InitChatLog_detour(void) {
+		assert(ChatBufferAddr);
+		ChatBuffer *buff = *ChatBufferAddr;
+		if (!KeepChatHistory || !buff)
+			InitChatLog_hook.Original()();
+	}
+#endif
+
+	void GWCALL PrintChat_detour(void *ctx, int thiscall, Channel channel, wchar_t *str, FILETIME timestamp, int reprint) {
 		assert(ChatBufferAddr && 0 <= channel && channel < CHANNEL_COUNT);
+	#if 0
 		SYSTEMTIME *time = nullptr;
 		ChatBuffer *buff = *ChatBufferAddr;
 		if (!buff) return;
@@ -230,30 +230,35 @@ namespace {
 			if (!tmp) tmp = CHAT_LOG_LENGTH;
 			time = &Timestamps[tmp - 1];
 		}
+	#endif
 
-		// @Robustness, Buffer size, might create errors.
+		FILETIME   timestamp2;
+		SYSTEMTIME localtime;
 
-		WORD hour = time->wHour;
-		WORD minute = time->wMinute;
+		FileTimeToLocalFileTime(&timestamp, &timestamp2);
+		FileTimeToSystemTime(&timestamp2, &localtime);
+
+		WORD hour = localtime.wHour;
+		WORD minute = localtime.wMinute;
 
 		if (Timestamp_24hFormat)
 			hour %= 12;
 
-		wchar buffer[1024];
+		wchar_t buffer[1024];
 		if (ChannelThatParseColorTag[channel]) {
-			if (time->wYear == 0) {
+			if (localtime.wYear == 0) {
 				wsprintf(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, str);
 			} else {
 				wsprintf(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), hour, minute, str);
 			}
 		} else {
-			if (time->wYear == 0) {
+			if (localtime.wYear == 0) {
 				wsprintf(buffer, L"\x108\x107[--:--] \x01\x02%s", str);
 			} else {
 				wsprintf(buffer, L"\x108\x107[%02d:%02d] \x01\x02%s", hour, minute, str);
 			}
 		}
-		PrintChat_hook.Original()(ctx, thiscall, channel, buffer, arg3, arg4, reprint);
+		PrintChat_hook.Original()(ctx, thiscall, channel, buffer, timestamp, reprint);
 	}
 }
 
@@ -331,15 +336,6 @@ void GW::Chat::Initialize() {
 	WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x83\xC6\x2E\x8B\xC6\x83\xC0\x03", "xxxxxxxx", -22);
 	printf("[SCAN] WriteWhisper = %p\n", WriteWhisper_addr);
 
-	// @Deprecated
-#if 0
-	InitChatLog = (InitChatLog_t)Scanner::Find("\x56\x85\xC9\x8B\xF1\x74\x0C\xE8\x00\x00\x00\x00\x8B\xCE\xE8\x00\x00\x00\x00\x68", "xxxxxxxx????xxx????x", -6);
-	printf("[SCAN] InitChatLog = %p\n", InitChatLog);
-#endif
-
-	PrintChatLog = (PrintChatLog_t)Scanner::Find("\x6A\x00\xBA\x80\x48\x02\x00\xE8", "xxxxxxxx", -32);
-	printf("[SCAN] PrintChatLog = %p\n", PrintChatLog);
-
 	PrintChat = (PrintChat_t)Scanner::Find("\x83\xEC\x30\x56\x8B\xF1\x57\x81", "xxxxxxxx", -3);
 	printf("[SCAN] PrintChat = %p\n", PrintChat);
 
@@ -347,16 +343,27 @@ void GW::Chat::Initialize() {
 		DWORD tmp = Scanner::Find("\x8B\xF2\x85\xC0\x8B\xF9\x75\x00\x5F", "xxxxxxx?x", -6);
 		ChatBufferAddr = *(ChatBuffer***)tmp;
 		printf("[SCAN] ChatBufferAddr = %p\n", ChatBufferAddr);
+	}
 
+	PrintChat_hook.Detour(PrintChat, PrintChat_detour);
+
+#if 0 // @Deprecated
+	InitChatLog = (InitChatLog_t)Scanner::Find("\x56\x85\xC9\x8B\xF1\x74\x0C\xE8\x00\x00\x00\x00\x8B\xCE\xE8\x00\x00\x00\x00\x68", "xxxxxxxx????xxx????x", -6);
+	printf("[SCAN] InitChatLog = %p\n", InitChatLog);
+
+	PrintChatLog = (PrintChatLog_t)Scanner::Find("\x6A\x00\xBA\x80\x48\x02\x00\xE8", "xxxxxxxx", -32);
+	printf("[SCAN] PrintChatLog = %p\n", PrintChatLog);
+
+	{
+		DWORD tmp = Scanner::Find("\x8B\xF2\x85\xC0\x8B\xF9\x75\x00\x5F", "xxxxxxx?x", -6);
 		WriteChatLog = (WriteChatLog_t)(tmp - 68);
 		printf("[SCAN] WriteChatLog = %p\n", WriteChatLog);
 	}
 
-	// @Deprecated
-	// InitChatLog_hook.Detour(InitChatLog, InitChatLog_detour);
+	InitChatLog_hook.Detour(InitChatLog, InitChatLog_detour);
 	PrintChatLog_hook.Detour(PrintChatLog, PrintChatLog_detour);
 	WriteChatLog_hook.Detour(WriteChatLog, WriteChatLog_detour);
-	PrintChat_hook.Detour(PrintChat, PrintChat_detour);
+#endif
 }
 
 void GW::Chat::RestoreHooks() {
@@ -368,9 +375,9 @@ void GW::Chat::RestoreHooks() {
 	HookBase::DisableHooks(&LocalMessage_hook);
 	HookBase::DisableHooks(&WriteWhisper_hook);
 
-	// HookBase::DisableHooks(&InitChatLog_hook); @Deprecated
-	HookBase::DisableHooks(&PrintChatLog_hook);
-	HookBase::DisableHooks(&WriteChatLog_hook);
+	// HookBase::DisableHooks(&InitChatLog_hook);  @Deprecated
+	// HookBase::DisableHooks(&PrintChatLog_hook); @Deprecated
+	// HookBase::DisableHooks(&WriteChatLog_hook); @Deprecated
 	HookBase::DisableHooks(&PrintChat_hook);
 }
 
@@ -456,13 +463,20 @@ void GW::Chat::WriteChat(const wchar_t *from, const wchar_t *msg) {
 }
 */
 
+struct UIChatMessage {
+	uint32_t channel;
+	wchar_t *message;
+	uint32_t channel2;
+};
+
 void GW::Chat::WriteChat(Channel channel, const wchar *msg) {
 
 	size_t len = wcslen(msg);
 	wchar *buffer = new wchar[len + 4];
 
-	ChatMessage param;
-	param.channel = (int)channel;
+	UIChatMessage param;
+	param.channel = channel;
+	param.channel2 = channel;
 	param.message = buffer;
 
 	buffer[0] = 0x108;
@@ -482,8 +496,9 @@ void GW::Chat::WriteChat(Channel channel, const char *msg) {
 	size_t len = strlen(msg);
 	wchar *buffer = new wchar[len + 4];
 
-	ChatMessage param;
-	param.channel = (int)channel;
+	UIChatMessage param;
+	param.channel = channel;
+	param.channel2 = channel;
 	param.message = buffer;
 
 	buffer[0] = 0x108;

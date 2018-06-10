@@ -62,7 +62,7 @@ namespace GW {
 		}
 
 		// Change max zoom dist
-		GWCA_API void SetMaxDist(float dist = 750.0f);
+		GWCA_API void SetMaxDist(float dist = 900.0f);
 
 		GWCA_API void SetFieldOfView(float fov);
 

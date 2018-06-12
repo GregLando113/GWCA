@@ -52,6 +52,12 @@ namespace GW {
 		// Get amount of gold in storage.
 		GWCA_API DWORD GetGoldAmountInStorage();
 
+		// Deposit to the storage the given amount of gold. "0" is all you can.
+		GWCA_API DWORD DepositGold(DWORD amount = 0);
+
+		// Withdraw from the storage the given amount of gold. "0" is all you can.
+		GWCA_API DWORD WithdrawGold(DWORD amount = 0);
+
 		// Open locked chest, raw packet, first send a GoSignpost packet to select chest.
 		GWCA_API void OpenLockedChest();
 		

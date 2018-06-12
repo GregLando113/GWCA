@@ -5,7 +5,7 @@
 #include <GWCA/Managers/CtoSMgr.h>
 
 #include <GWCA/Utilities/Hooker.h>
-#include <GWCA\CtoSHeaders.h>
+#include <GWCA/CtoSHeaders.h>
 
 void GW::Items::OpenXunlaiWindow() {
 	GW::Packet::StoC::DataWindow pack;
@@ -80,6 +80,48 @@ DWORD GW::Items::GetGoldAmountOnCharacter() {
 
 DWORD GW::Items::GetGoldAmountInStorage() {
 	return GameContext::instance()->items->inventory->GoldStorage;
+}
+
+static void ChangeGold(DWORD character_gold, DWORD storage_gold) {
+	GW::CtoS::SendPacket(0xC, CtoGS_MSGChangeGold, character_gold, storage_gold);
+}
+
+DWORD GW::Items::DepositGold(DWORD amount) {
+	DWORD gold_storage = GetGoldAmountInStorage();
+	DWORD gold_character = GetGoldAmountOnCharacter();
+	DWORD will_move = 0;
+	if (amount == 0) {
+		will_move = min(1000000 - gold_storage, gold_character);
+	} else {
+		if (gold_storage + amount > 1000000)
+			return 0;
+		if (amount > gold_character)
+			return 0;
+		will_move = amount;
+	}
+	gold_storage += will_move;
+	gold_character -= will_move;
+	ChangeGold(gold_character, gold_storage);
+	return will_move;
+}
+
+DWORD GW::Items::WithdrawGold(DWORD amount) {
+	DWORD gold_storage = GetGoldAmountInStorage();
+	DWORD gold_character = GetGoldAmountOnCharacter();
+	DWORD will_move = 0;
+	if (amount == 0) {
+		will_move = min(gold_storage, 100000 - gold_character);
+	} else {
+		if (gold_character + amount > 100000)
+			return 0;
+		if (amount > gold_storage)
+			return 0;
+		will_move = amount;
+	}
+	gold_storage -= will_move;
+	gold_character += will_move;
+	ChangeGold(gold_character, gold_storage);
+	return will_move;
 }
 
 void GW::Items::OpenLockedChest() {

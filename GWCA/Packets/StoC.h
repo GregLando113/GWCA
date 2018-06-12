@@ -136,6 +136,11 @@ namespace GW {
 			};
 			const DWORD Packet<DataWindow>::STATIC_HEADER = 131;
 
+			struct ItemStreamEnd : Packet<ItemStreamEnd> {
+				DWORD unk1;
+			};
+			const DWORD Packet<ItemStreamEnd>::STATIC_HEADER = 134;
+
             // Pings and drawing in compass
 			struct CompassEvent : Packet<CompassEvent> {
 				DWORD Player;    // player who sent the ping (PlayerNumber)
@@ -225,6 +230,11 @@ namespace GW {
 			};
 			const DWORD Packet<ObjectiveUpdateName>::STATIC_HEADER = 190;
 
+			struct TransactionDone : Packet<TransactionDone> {
+				DWORD unk1;
+			};
+			const DWORD Packet<TransactionDone>::STATIC_HEADER = 205;
+
             // Skill Activate (begin casting)
 			struct SkillActivate : Packet<SkillActivate> {
 				DWORD agent_id;
@@ -259,11 +269,11 @@ namespace GW {
 			const DWORD Packet<CharacterAddGold>::STATIC_HEADER = 323;
 
             // Gold removed from inventory
-			struct StorageAddGold : Packet<StorageAddGold> {
+			struct CharacterRemoveGold : Packet<CharacterRemoveGold> {
 				DWORD unk; // some kind of id? but neither agentid nor playerid
 				DWORD gold;
 			};
-			const DWORD Packet<StorageAddGold>::STATIC_HEADER = 338;
+			const DWORD Packet<CharacterRemoveGold>::STATIC_HEADER = 338;
 
             struct InstanceLoadFile : Packet<InstanceLoadFile> {
 				DWORD map_fileID;

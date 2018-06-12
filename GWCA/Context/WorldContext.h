@@ -27,7 +27,8 @@ namespace GW {
         /* +h0004 */ Array<wchar> message_buff;
         /* +h0014 */ BYTE h0014[0x10];
         /* +h0024 */ MerchItemArray merchitems;
-        /* +h0034 */ BYTE h0034[0x48];
+        /* +h0034 */ MerchItemArray merchitems2;
+        /* +h0044 */ BYTE h0044[0x38];
         /* +h007C */ MapAgentArray mapagents;
         /* +h008C */ BYTE h008C[0x10];
         /* +h009C */ Vec3f all_flag;

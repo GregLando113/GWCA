@@ -85,6 +85,8 @@ namespace GW {
 
 		GWCA_API Color SetSenderColor(Channel chan, Color col);
 		GWCA_API Color SetMessageColor(Channel chan, Color col);
+		GWCA_API void  GetChannelColors(Channel chan, Color *sender, Color *message);
+		GWCA_API void  GetDefaultColors(Channel chan, Color *sender, Color *message);
 
 		GWCA_API void SetChatEventCallback(std::function<
 			void(DWORD, DWORD, wchar_t*, void*)> callback);

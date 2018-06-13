@@ -324,6 +324,76 @@ GW::Chat::Color GW::Chat::SetMessageColor(Channel chan, Color col) {
 	return old;
 }
 
+void GW::Chat::GetChannelColors(Channel chan, Color *sender, Color *message) {
+	*sender  = ChatSenderColor[chan];
+	*message = ChatMessageColor[chan];
+}
+
+void GW::Chat::GetDefaultColors(Channel chan, Color *sender, Color *message) {
+	switch (chan) {
+	case CHANNEL_ALLIANCE:
+		*sender  = COLOR_RGB(0xFF, 0xC0, 0x60);
+		*message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+		break;
+	case CHANNEL_ALLIES:
+		*sender  = COLOR_RGB(0x60, 0xA0, 0xFF);
+		*message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+		break;
+	case CHANNEL_GWCA1:
+		*sender  = COLOR_RGB(0xC0, 0xD0, 0xFF);
+		*message = COLOR_RGB(0xC0, 0xD0, 0xFF);
+		break;
+	case CHANNEL_ALL:
+		*sender  = COLOR_RGB(0xFF, 0xFF, 0x80);
+		*message = COLOR_RGB(0xFF, 0xFF, 0xFF);
+		break;
+	case CHANNEL_GWCA2:
+		*sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
+		*message = COLOR_RGB(0xB0, 0xB0, 0xB0);
+		break;
+	case CHANNEL_MODERATOR:
+		*sender  = COLOR_RGB(0xFF, 0x50, 0xDF);
+		*message = COLOR_RGB(0x50, 0xFF, 0xDF);
+		break;
+	case CHANNEL_EMOTE:
+		*sender  = COLOR_RGB(0xFF, 0xFF, 0xFF);
+		*message = COLOR_RGB(0xFF, 0xFF, 0xFF);
+		break;
+	case CHANNEL_WARNING:
+		*sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
+		*message = COLOR_RGB(0xCC, 0xCC, 0xCC);
+		break;
+	case CHANNEL_GWCA3:
+		*sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
+		*message = COLOR_RGB(0x50, 0xFF, 0xDF);
+		break;
+	case CHANNEL_GUILD:
+		*sender  = COLOR_RGB(0x00, 0xFF, 0x60);
+		*message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+		break;
+	case CHANNEL_GLOBAL:
+		*sender  = COLOR_RGB(0x80, 0xFF, 0x80);
+		*message = COLOR_RGB(0x80, 0xFF, 0x80);
+		break;
+	case CHANNEL_GROUP:
+		*sender  = COLOR_RGB(0x80, 0xC0, 0xFF);
+		*message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+		break;
+	case CHANNEL_TRADE:
+		*sender  = COLOR_RGB(0xFF, 0xC0, 0xC4);
+		*message = COLOR_RGB(0xFF, 0xC4, 0xC0);
+		break;
+	case CHANNEL_ADVISORY:
+		*sender  = COLOR_RGB(0xFF, 0x90, 0x20);
+		*message = COLOR_RGB(0xFF, 0x90, 0x20);
+		break;
+	case CHANNEL_WHISPER:
+		*sender  = COLOR_RGB(0x80, 0xC0, 0xFF);
+		*message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+		break;
+	}
+}
+
 void GW::Chat::SetWhisperCallback(std::function<void(const wchar_t[20], const wchar_t[140])> callback) {
 	if (!WriteWhisper_addr) {
 		WriteWhisper_addr = (WriteWhisper_t)Scanner::Find("\x55\x8B\xEC\x51\x53\x89\x4D\xFC\x8B\x4D\x08\x56\x57\x8B", "xxxxxxxxxxxxxx", 0);

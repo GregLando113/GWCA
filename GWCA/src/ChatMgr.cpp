@@ -232,6 +232,11 @@ namespace {
 		}
 	#endif
 
+		if (!ShowTimestamps) {
+			PrintChat_hook.Original()(ctx, thiscall, channel, str, timestamp, reprint);
+			return;
+		}
+
 		FILETIME   timestamp2;
 		SYSTEMTIME localtime;
 

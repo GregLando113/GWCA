@@ -64,7 +64,7 @@ namespace GW {
 
 		GWCA_API void WriteChatF(Channel channel, const wchar *sender, const char *fmt, ...);
 
-		typedef std::function<void(int argc, LPWSTR *argv)> CmdCB;
+		typedef std::function<void(const wchar_t *msg, int argc, LPWSTR *argv)> CmdCB;
 		GWCA_API void CreateCommand(std::wstring cmd, CmdCB callback);
 		GWCA_API void DeleteCommand(std::wstring cmd);
 

@@ -625,7 +625,7 @@ namespace {
 
 			auto callback = SlashCmdList.find(argv[0]);
 			if (callback != SlashCmdList.end()) {
-				callback->second(argc, argv);
+				callback->second(message, argc, argv);
 				// No reasons to foward the function call to it's original.
 				LocalFree(argv);
 				return;

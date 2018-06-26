@@ -261,6 +261,11 @@ namespace GW {
 			};
 			const DWORD Packet<QuotedItemPrice>::STATIC_HEADER = 248;
 
+			struct CinematicPlay : Packet<CinematicPlay> {
+				DWORD play;
+			};
+			const DWORD Packet<CinematicPlay>::STATIC_HEADER = 258;
+
             // Gold added to inventory
 			struct CharacterAddGold : Packet<CharacterAddGold> {
 				DWORD unk;

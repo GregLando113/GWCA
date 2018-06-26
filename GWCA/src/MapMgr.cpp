@@ -165,3 +165,7 @@ bool GW::Map::GetIsInCinematic(void) {
 		return false;
 	return (game_ctx->cinematic->h0004 != 0);
 }
+
+void GW::Map::SkipCinematic(void) {
+	GW::CtoS::SendPacket(4, CtoGS_MSGSkipCinematic);
+}

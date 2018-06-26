@@ -158,3 +158,10 @@ GW::AreaInfo& GW::Map::GetMapInfo(Constants::MapID MapID) {
 	}
 	return infos[(DWORD)MapID];
 }
+
+bool GW::Map::GetIsInCinematic(void) {
+	GW::GameContext *game_ctx = GW::GameContext().instance();
+	if (!(game_ctx && game_ctx->cinematic))
+		return false;
+	return (game_ctx->cinematic->h0004 != 0);
+}

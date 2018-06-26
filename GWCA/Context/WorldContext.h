@@ -56,7 +56,7 @@ namespace GW {
         /* +h05DC */ Array<void*> h05DC;
         /* +h05EC */ Array<void*> h05EC;
         /* +h05FC */ Array<void*> h05FC;
-        /* +h060C */ Array<void*> h060C;
+        /* +h060C */ Array<DWORD> unlocked_map;
         /* +h061C */ DWORD h061C[4];
         /* +h062C */ Array<void*> h062C;
         /* +h063C */ BYTE h063C[0x44];
@@ -68,8 +68,8 @@ namespace GW {
         /* +h06DC */ DWORD h06DC;
         /* +h06E0 */ Array<void*> h06E0;
         /* +h06F0 */ SkillbarArray skillbar;
-        /* +h0700 */ Array<void*> h0700;
-        /* +h0710 */ Array<void*> h0710;
+        /* +h0700 */ Array<void*> h0700; // related to +h0710, but always 0
+        /* +h0710 */ Array<DWORD> unlocked_character_skills; // bit field
         /* +h0720 */ Array<void*> h0720;
         /* +h0730 */ Array<void*> h0730;
         /* +h0740 */ DWORD experience;

@@ -11,6 +11,7 @@
 #include "TradeContext.h"
 #include "GadgetContext.h"
 #include "TextParser.h"
+#include "Cinematic.h"
 
 #include <GWCA\Utilities\Scanner.h>
 
@@ -40,7 +41,7 @@ namespace GW {
         /* +h0024 */ void* unkcontext6;
         /* +h0028 */ void* unkcontext7;
         /* +h002C */ WorldContext* world; // Best name to fit it that I can think of.
-        /* +h0030 */ void* unkcontext8;
+        /* +h0030 */ Cinematic *cinematic;
         /* +h0034 */ void* nullcontext3;
         /* +h0038 */ GadgetContext* gadget;
         /* +h003C */ GuildContext* guild;

@@ -254,6 +254,9 @@
     <ClInclude Include="GWCA\Managers\ConnMgr.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\Context\Cinematic.h">
+      <Filter>Context</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\src\GWCA.cpp">

@@ -1,7 +1,7 @@
 #include <GWCA\GameEntities\Skill.h>
 
-#include <GWCA\Managers\MemoryMgr.h>
 #include <GWCA\Context\GameContext.h>
+#include <GWCA\Managers\MemoryMgr.h>
 
 long GW::SkillbarSkill::GetRecharge() const {
 	if (Recharge == 0) return 0;

@@ -11,10 +11,10 @@ namespace GW {
         /* +h0004 */ Array<void*> h0004;
         /* +h0014 */ DWORD flag;
         /* +h0018 */ DWORD h0018;
-        struct { // Invite requests, recieving and sending to your party
-            TList<PartyInfo> requests;
-            DWORD count;
-        } recieving, sending;
+        /* +h001C */ TList<PartyInfo> requests;
+        /* +h0028 */ DWORD requests_count;
+        /* +h002C */ TList<PartyInfo> sending;
+        /* +h0038 */ DWORD sending_count;
         /* +h003C */ DWORD h003C;
         /* +h0040 */ Array<PartyInfo*> parties; 
         /* +h0050 */ DWORD h0050;

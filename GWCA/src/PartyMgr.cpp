@@ -127,6 +127,15 @@ bool GW::PartyMgr::GetIsPlayerTicked() {
 	return false;
 }
 
+bool GW::PartyMgr::GetPlayerIsLeader() {
+	GW::PartyInfo *party = GetPartyInfo();
+	if (!party) return false;
+	GW::Agent *player_agent = Agents::GetPlayer();
+	if (!player_agent) return false;
+	if (!party->players.size()) return false;
+	return (party->players[0].loginnumber == player_agent->LoginNumber);
+}
+
 void GW::PartyMgr::RespondToPartyRequest(bool accept) {
 	CtoS::SendPacket(0x8, accept ? CtoGS_MSGAcceptPartyRequest : CtoGS_MSGDenyPartyRequest, 1);
 }
@@ -148,16 +157,20 @@ void GW::PartyMgr::LeaveParty() {
 }
 
 void GW::PartyMgr::FlagHero(DWORD hero_index, GW::GamePos pos) {
+	DWORD agent_id = Agents::GetHeroAgentID(hero_index);
+	FlagHeroAgent(agent_id, pos);
+}
+
+void GW::PartyMgr::FlagHeroAgent(GW::AgentID agent_id, GW::GamePos pos) {
 	struct FlagHero { // Flag Hero
 		const DWORD header = CtoGS_MSGCommandHero;
 		DWORD id;
 		GamePos pos;
 	};
-	DWORD heroid = Agents::GetHeroAgentID(hero_index);
-	if (heroid == 0) return;
-	if (heroid == Agents::GetPlayerId()) return;
+	if (agent_id == 0) return;
+	if (agent_id == Agents::GetPlayerId()) return;
 	static FlagHero pak; // TODO
-	pak.id = heroid;
+	pak.id = agent_id;
 	pak.pos = pos;
 	CtoS::SendPacket(&pak);
 }

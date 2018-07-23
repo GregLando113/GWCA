@@ -41,6 +41,9 @@ namespace GW {
 		// check if the whole party is loaded
 		GWCA_API bool GetIsPartyLoaded();
 
+		// returns if the player agent is leader
+		GWCA_API bool GetPlayerIsLeader();
+
 		GWCA_API void RespondToPartyRequest(bool accept);
 
 		GWCA_API void LeaveParty();
@@ -52,6 +55,7 @@ namespace GW {
 
 		// hero flagging
 		GWCA_API void FlagHero(DWORD hero_index, GW::GamePos pos);
+		GWCA_API void FlagHeroAgent(GW::AgentID agent_id, GW::GamePos pos);
 		GWCA_API void UnflagHero(DWORD hero_index);
 
 		GWCA_API void FlagAll(GW::GamePos pos);

@@ -1,14 +1,18 @@
 #include <GWCA\Managers\ChatMgr.h>
 
-#include <ShellApi.h>
-#include <assert.h>
+#include <vector>
 #include <sstream>
+#include <assert.h>
+#include <ShellApi.h>
+#include <unordered_map>
 
+#include <GWCA\Utilities\Hooker.h>
 #include <GWCA\Utilities\Scanner.h>
+
+#include <GWCA\Managers\UIMgr.h>
 #include <GWCA\Managers\CtoSMgr.h>
 #include <GWCA\Managers\MemoryMgr.h>
 #include <GWCA\Constants\Constants.h>
-#include <GWCA\Managers\UIMgr.h>
 
 #define COLOR_ARGB(a, r, g, b) (GW::Chat::Color)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
 #define COLOR_RGB(r, g, b) COLOR_ARGB(0xff, r, g, b)
@@ -116,7 +120,7 @@ namespace {
 	typedef void(__fastcall *SendChat_t)(wchar_t* message);
 	SendChat_t SendChat_addr = nullptr;
 	GW::THook<SendChat_t> SendChat_hook;
-	std::map<std::wstring, GW::Chat::CmdCB> SlashCmdList;
+	std::unordered_map<std::wstring, GW::Chat::CmdCB> SlashCmdList;
 	std::function<void(GW::Chat::Channel chan, wchar msg[120])> SendChat_callback;
 
 	typedef void(__fastcall *OpenTemplate_t)(DWORD unk, GW::Chat::ChatTemplate* info);

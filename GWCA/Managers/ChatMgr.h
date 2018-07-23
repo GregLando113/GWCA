@@ -1,11 +1,8 @@
 #pragma once
 #include <string>
 #include <functional>
-#include <vector>
-#include <map>
 
 #include <GWCA\Utilities\Export.h>
-#include <GWCA\Utilities\Hooker.h>
 #include <GWCA\GameContainers\Array.h>
 
 namespace GW {
@@ -39,8 +36,8 @@ namespace GW {
 		struct ChatTemplate {
 			DWORD unk0;
 			DWORD type; // 0 = build, 1 = equipement
-			GW::Array<wchar> code;
-			wchar *name;
+			GW::Array<wchar_t> code;
+			wchar_t *name;
 		};
 		
 		// void SetChatChannelColor(Channel channel, Color sender, Color message);

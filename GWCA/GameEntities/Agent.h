@@ -177,8 +177,8 @@ namespace GW {
         /* +h01B2 */ WORD  WeaponType; // 1=bow, 2=axe, 3=hammer, 4=daggers, 5=scythe, 6=spear, 7=sWORD, 10=wand, 12=staff, 14=staff
         /* +h01B4 */ WORD  Skill; // 0 = not using a skill. Anything else is the Id of that skill
         /* +h01B6 */ WORD  h01B6;
-        /* +h01B7 */ BYTE  WeaponItemType;
-        /* +h01B8 */ BYTE  OffhandItemType;
+        /* +h01B8 */ BYTE  WeaponItemType;
+        /* +h01B9 */ BYTE  OffhandItemType;
         /* +h01BA */ WORD  WeaponItemId;
         /* +h01BC */ WORD  OffhandItemId;
 

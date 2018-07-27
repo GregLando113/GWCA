@@ -33,6 +33,12 @@ namespace GW {
 			};
 			const DWORD Packet<AgentSetPlayer>::STATIC_HEADER = 35;
 
+            struct AgentUpdateAllegiance : Packet<AgentUpdateAllegiance> {
+                DWORD agent_id;
+                DWORD unk1; // more than just allegiance, determines things that change.
+            };
+            const DWORD Packet<AgentUpdateAllegiance>::STATIC_HEADER = 48;
+
             // creates the "ping" on an enemy when some player targets it
 			struct AgentPinged : Packet<AgentPinged> {
 				DWORD Player; // who sent the message

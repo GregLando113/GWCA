@@ -271,9 +271,12 @@ namespace GW {
 				const int MinionOfDhuum = 2341;
 				const int Dhuum = 2342;
 
-				const int Reapers = 2344; // Friendly
-
-				const int Escort1 = 2352; // Friendly NPCs
+				const int Reapers = 2344; // outside dhuum chamber
+                const int ReapersAtDhuum = 2345; // in dhuum chamber
+                const int IceElemental = 2346; // friendly, during waste quest near dhuum.
+                const int KingFrozenwind = 2348;
+                const int TorturedSpirit1 = 2349; // friendly, during quest
+				const int Escort1 = 2352; // souls npc spawned by escort quest
 				const int Escort2 = 2353;
 				const int Escort3 = 2354;
 				const int Escort4 = 2355;
@@ -285,6 +288,7 @@ namespace GW {
 				const int PitsSoul4 = 2361;
 
 				const int TorturedSpirit = 2367;
+                const int MajorAlgheri = 2369;
             }
 
             namespace FoW {

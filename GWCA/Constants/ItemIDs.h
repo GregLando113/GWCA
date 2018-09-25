@@ -102,7 +102,7 @@ namespace GW {
 			const int Grog = 30855;
 			const int SpikedEggnog = 6366;
 			const int AgedDwarvenAle = 24593;
-			const int AgedHungersAle = 31145;
+			const int AgedHuntersAle = 31145;
 			const int Keg = 31146;
 			const int FlaskOfFirewater = 2513;
 			const int KrytanBrandy = 35124;

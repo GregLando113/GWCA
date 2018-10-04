@@ -42,7 +42,7 @@ void GW::CameraMgr::SetMaxDist(float dist) {
 }
 
 void GW::CameraMgr::SetFieldOfView(float fov) {
-	if (patch_fog == nullptr) {
+	if (patch_fov == nullptr) {
 		uintptr_t patch_fov_addr = Scanner::Find("\x8B\x45\x0C\x89\x41\x04\xD9", "xxxxxxx", -0xC);
 		patch_fov = new MemoryPatcher(patch_fov_addr, "\xC3", 1);
 		patch_fov->TooglePatch(true);

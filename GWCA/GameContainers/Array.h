@@ -42,7 +42,12 @@ namespace GW {
             return at(index);
         }
 
-        bool valid() { return _array != nullptr; }
+        const T& operator[](DWORD index) const {
+            assert(_array && index < _size);
+            return _array[index];
+        }
+
+        bool valid() const { return _array != nullptr; }
 		void clear() { _size = 0; }
 
         DWORD size()     const { return _size; }

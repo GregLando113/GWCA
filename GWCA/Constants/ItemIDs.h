@@ -50,9 +50,9 @@ namespace GW {
 			const int VialofInk = 944;
 
 			// pcons
-			const int BRC = 31151;
-			const int GRC = 31152;
-			const int RRC = 31153;
+			const int SkalefinSoup = 17061;
+			const int PahnaiSalad = 17062;
+			const int MandragorRootCake = 19170;
 			const int Pies = 28436;
 			const int Cupcakes = 22269;
 			const int Apples = 28431;
@@ -75,8 +75,6 @@ namespace GW {
 			const int ConsArmor = 24860;
 			const int ConsGrail = 24861;
 			const int ResScrolls = 26501;
-			const int SkalefinSoup = 17061;
-			const int PahnaiSalad = 17062;
 			const int Mobstopper = 32558;
 			const int Powerstone = 24862;
 
@@ -86,6 +84,9 @@ namespace GW {
 			const int SugaryBlueDrink = 21812;
 			const int ChocolateBunny = 22644;
 			const int JarOfHoney = 31150;
+			const int BRC = 31151;
+			const int GRC = 31152;
+			const int RRC = 31153;
 			const int KrytalLokum = 35125;
 
 			// level-1 alcohol

@@ -9,10 +9,10 @@
 namespace GW {
 
 	struct TradeContext {
-		const DWORD TRADE_CLOSED     = 0;
-		const DWORD TRADE_INITIATED  = 1;
-		const DWORD TRADE_OFFER_SEND = 2;
-		const DWORD TRADE_ACCEPTED   = 4;
+		static const DWORD TRADE_CLOSED = 0;
+		static const DWORD TRADE_INITIATED = 1;
+		static const DWORD TRADE_OFFER_SEND = 2;
+		static const DWORD TRADE_ACCEPTED = 4;
 
 		struct Item {
 			ItemID itemid;

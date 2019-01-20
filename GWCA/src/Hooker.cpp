@@ -1,5 +1,7 @@
-#include "..\Utilities\Hooker.h"
-#include "..\..\Dependencies\minhook\include\MinHook.h"
+#include <Windows.h>
+
+#include <GWCA/Utilities/Hooker.h>
+#include <Dependencies/minhook/include/MinHook.h>
 
 void GW::HookBase::Initialize()
 {

@@ -1,31 +1,29 @@
-#ifndef _ENTITIE_QUEST_INC
-#define _ENTITIE_QUEST_INC
+#pragma once
 
-#include <Windows.h>
-#include <GWCA\GameContainers\Array.h>
+#include <GWCA/GameContainers/Array.h>
 
 namespace GW {
     struct Quest { // total: 0x34/52
-        /* +h0000 */ DWORD questid;
-        /* +h0004 */ DWORD logstate;
-        /* +h0008 */ DWORD h0008; // quest category
-        /* +h000C */ DWORD h000C; // quest name
-        /* +h0010 */ DWORD h0010; //
-        /* +h0014 */ DWORD mapfrom;
-        /* +h0018 */ Vec3f marker;
-        /* +h0024 */ DWORD h0024;
-        /* +h0028 */ DWORD mapto;
-        /* +h002C */ DWORD h002C; // namestring reward
-        /* +h0030 */ DWORD h0030; // namestring objective
+        /* +h0000 */ uint32_t quest_id;
+        /* +h0004 */ uint32_t log_state;
+        /* +h0008 */ uint32_t h0008; // quest category
+        /* +h000C */ uint32_t h000C; // quest name
+        /* +h0010 */ uint32_t h0010; //
+        /* +h0014 */ uint32_t map_from;
+        /* +h0018 */ Vector3f marker;
+        /* +h0024 */ uint32_t h0024;
+        /* +h0028 */ uint32_t map_to;
+        /* +h002C */ uint32_t h002C; // namestring reward
+        /* +h0030 */ uint32_t h0030; // namestring objective
     };
+    static_assert(sizeof(Quest) == 52, "struct Quest has incorect size");
 
     struct MissionObjective { // total: 0xC/12
-        /* +h0000 */ DWORD objective_id;
+        /* +h0000 */ uint32_t objective_id;
         /* +h0004 */ wchar_t *string;
-        /* +h0008 */ DWORD type; // completed, bullet, etc...
+        /* +h0008 */ uint32_t type; // completed, bullet, etc...
     };
+    static_assert(sizeof(MissionObjective) == 12, "struct MissionObjective has incorect size");
 
     using QuestLog = Array<Quest>;
 }
-
-#endif // _ENTITIE_QUEST_INC

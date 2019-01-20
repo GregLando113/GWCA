@@ -1,15 +1,13 @@
-#ifndef _GADGET_CONTEXT_INC
-#define _GADGET_CONTEXT_INC
+#pragma once
 
-#include <Windows.h>
-#include <GWCA\GameContainers\Array.h>
+#include <GWCA/GameContainers/Array.h>
 
 namespace GW {
     struct GadgetInfo {
-        /* +h0000 */ DWORD h0000;
-        /* +h0004 */ DWORD h0004;
-        /* +h0008 */ DWORD h0008;
-        /* +h000C */ wchar *NameString;
+        /* +h0000 */ uint32_t h0000;
+        /* +h0004 */ uint32_t h0004;
+        /* +h0008 */ uint32_t h0008;
+        /* +h000C */ wchar_t *name_enc;
     };
 
     struct GadgetContext {
@@ -17,5 +15,3 @@ namespace GW {
         // ...
     };
 }
-
-#endif // _GADGET_CONTEXT_INC

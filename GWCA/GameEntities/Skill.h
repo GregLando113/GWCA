@@ -1,85 +1,85 @@
-#ifndef _ENTITIE_SKILL_INC
-#define _ENTITIE_SKILL_INC
+#pragma once
 
-#include <Windows.h>
-#include <GWCA\GameContainers\Array.h>
-#include <GWCA\Utilities\Maybe.h>
-#include <GWCA\Constants\Constants.h>
+#include <GWCA/GameContainers/Array.h>
+#include <GWCA/Utilities/Maybe.h>
 
 namespace GW {
     struct Skill { // total : 0xA0/160
-        /* +h0000 */ DWORD SkillId;
-        /* +h0004 */ DWORD h0004;
-        /* +h0008 */ DWORD Campaign;
-        /* +h000C */ DWORD Type;
-        /* +h0010 */ DWORD Special;
-        /* +h0014 */ DWORD ComboReq;
-        /* +h0018 */ DWORD Effect1;
-        /* +h001C */ DWORD Condition;
-        /* +h0020 */ DWORD Effect2;
-        /* +h0024 */ DWORD WeaponReq;
-        /* +h0028 */ BYTE Profession;
-        /* +h0029 */ BYTE Attribute;
-        /* +h002A */ BYTE h002A[2];
-        /* +h002C */ DWORD SkillId_PvP;
-        /* +h0030 */ BYTE Combo;
-        /* +h0031 */ BYTE Target;
-        /* +h0032 */ BYTE h0032;
-        /* +h0033 */ BYTE SkillEquipType;
-        /* +h0034 */ BYTE h0034;
-        /* +h0035 */ BYTE EnergyCost;
-        /* +h0036 */ BYTE HealthCost;
-        /* +h0037 */ BYTE h0037;
-        /* +h0038 */ DWORD Adrenaline;
-        /* +h003C */ float Activation;
-        /* +h0040 */ float Aftercast;
-        /* +h0044 */ DWORD Duration0;
-        /* +h0048 */ DWORD Duration15;
-        /* +h004C */ DWORD Recharge;
-        /* +h0050 */ BYTE h0050[12];
-        /* +h005C */ DWORD Scale0;
-        /* +h0060 */ DWORD Scale15;
-        /* +h0064 */ DWORD BonusScale0;
-        /* +h0068 */ DWORD BonusScale15;
-        /* +h006C */ float AoERange;
-        /* +h0070 */ float ConstEffect;
-        /* +h0074 */ BYTE h0074[32];
-        /* +h0094 */ DWORD Name; // String id
-        /* +h0098 */ DWORD h0098;
-        /* +h009C */ DWORD Description; // String id
+        /* +h0000 */ uint32_t skill_id;
+        /* +h0004 */ uint32_t h0004;
+        /* +h0008 */ uint32_t campaign;
+        /* +h000C */ uint32_t type;
+        /* +h0010 */ uint32_t special;
+        /* +h0014 */ uint32_t combo_req;
+        /* +h0018 */ uint32_t effect1;
+        /* +h001C */ uint32_t condition;
+        /* +h0020 */ uint32_t effect2;
+        /* +h0024 */ uint32_t weapon_req;
+        /* +h0028 */ uint8_t profession;
+        /* +h0029 */ uint8_t attribute;
+        /* +h002A */ uint8_t h002A[2];
+        /* +h002C */ uint32_t skill_id_pvp;
+        /* +h0030 */ uint8_t combo;
+        /* +h0031 */ uint8_t target;
+        /* +h0032 */ uint8_t h0032;
+        /* +h0033 */ uint8_t skill_equip_type;
+        /* +h0034 */ uint8_t h0034;
+        /* +h0035 */ uint8_t energy_cost;
+        /* +h0036 */ uint8_t health_cost;
+        /* +h0037 */ uint8_t h0037;
+        /* +h0038 */ uint32_t adrenaline;
+        /* +h003C */ float activation;
+        /* +h0040 */ float aftercast;
+        /* +h0044 */ uint32_t duration0;
+        /* +h0048 */ uint32_t duration15;
+        /* +h004C */ uint32_t recharge;
+        /* +h0050 */ uint8_t h0050[12];
+        /* +h005C */ uint32_t scale0;
+        /* +h0060 */ uint32_t scale15;
+        /* +h0064 */ uint32_t bonusScale0;
+        /* +h0068 */ uint32_t bonusScale15;
+        /* +h006C */ float aoe_range;
+        /* +h0070 */ float const_effect;
+        /* +h0074 */ uint8_t h0074[32];
+        /* +h0094 */ uint32_t name; // String id
+        /* +h0098 */ uint32_t h0098;
+        /* +h009C */ uint32_t description; // String id
 
-        BYTE GetEnergyCost() {
-            switch (EnergyCost) {
+        uint8_t GetEnergyCost() {
+            switch (energy_cost) {
             case 11: return 15;
             case 12: return 25;
-            default: return EnergyCost;
+            default: return energy_cost;
             }
         }
     };
+    static_assert(sizeof(Skill) == 160, "struct Skill has incorect size");
 
     struct SkillbarSkill { // total: 0x14/20
-        /* +h0000 */ DWORD AdrenalineA;
-        /* +h0004 */ DWORD AdrenalineB;
-        /* +h0008 */ DWORD Recharge;
-        /* +h000C */ DWORD SkillId; // see GWConst::SkillIds
-        /* +h0010 */ DWORD Event;
+        /* +h0000 */ uint32_t adrenaline_a;
+        /* +h0004 */ uint32_t adrenaline_b;
+        /* +h0008 */ uint32_t recharge;
+        /* +h000C */ uint32_t skill_id; // see GWConst::SkillIds
+        /* +h0010 */ uint32_t event;
 
-        long GetRecharge() const; // returns recharge time remaining in milliseconds, or 0 if recharged
+        uint32_t GetRecharge() const; // returns recharge time remaining in milliseconds, or 0 if recharged
     };
+    static_assert(sizeof(SkillbarSkill) == 20, "struct SkillbarSkill has incorect size");
 
     struct Skillbar { // total: 0xBC/188
-        /* +h0000 */ DWORD AgentId; // id of the agent whose skillbar this is
-        /* +h0004 */ SkillbarSkill Skills[8];
-        /* +h00A4 */ DWORD Disabled;
-        /* +h00A8 */ DWORD h00A8[2];
-        /* +h00B0 */ DWORD Casting;
-        /* +h00B4 */ DWORD h00B4[2];
+        /* +h0000 */ uint32_t agent_id; // id of the agent whose skillbar this is
+        /* +h0004 */ SkillbarSkill skills[8];
+        /* +h00A4 */ uint32_t disabled;
+        /* +h00A8 */ uint32_t h00A8[2];
+        /* +h00B0 */ uint32_t casting;
+        /* +h00B4 */ uint32_t h00B4[2];
 
-        bool IsValid() const { return AgentId > 0; }
+        bool IsValid() const { return agent_id > 0; }
         // Same as SkillbarArray::GetSkillbarArray()[0] with checks. 
         static Skillbar GetPlayerSkillbar();
-        Maybe<SkillbarSkill> GetSkillById(Constants::SkillID skillId);
+        Maybe<SkillbarSkill> GetSkillById(Constants::SkillID skill_id);
     };
+    static_assert(sizeof(Skillbar) == 188, "struct Skillbar has incorect size");
 
     struct SkillbarArray : Array<Skillbar> {
         // Get array of skillbars, [0] = player [1-7] = heroes.
@@ -87,40 +87,40 @@ namespace GW {
     };
 
     struct Effect { // total: 0x18/24
-        /* +h0000 */ DWORD SkillId; // skill id of the effect
-        /* +h0004 */ long EffectType; // 0 = condition/shout, 8 = stance, 11 = maintained enchantment, 14 = enchantment/nature ritual
-        /* +h0008 */ DWORD EffectId; // unique identifier of effect
-        /* +h000C */ DWORD AgentId; // non-zero means maintained enchantment - caster id
-        /* +h0010 */ float Duration; // non-zero if effect has a duration
-        /* +h0014 */ DWORD TimeStamp; // GW-timestamp of when effect was applied - only with duration
+        /* +h0000 */ uint32_t skill_id; // skill id of the effect
+        /* +h0004 */ uint32_t effect_type; // 0 = condition/shout, 8 = stance, 11 = maintained enchantment, 14 = enchantment/nature ritual
+        /* +h0008 */ uint32_t effect_id; // unique identifier of effect
+        /* +h000C */ uint32_t agent_id; // non-zero means maintained enchantment - caster id
+        /* +h0010 */ float duration; // non-zero if effect has a duration
+        /* +h0014 */ uint32_t timestamp; // GW-timestamp of when effect was applied - only with duration
 
-        long GetTimeElapsed() const;
-        long GetTimeRemaining() const;
+        uint32_t GetTimeElapsed() const;
+        uint32_t GetTimeRemaining() const;
         static Effect Nil() { return Effect(); }
-        Effect() : SkillId(0), EffectType(0), EffectId(0), AgentId(0), Duration(0.0f), TimeStamp(0) {}
+        Effect() : skill_id(0), effect_type(0), effect_id(0), agent_id(0), duration(0.0f), timestamp(0) {}
     };
+    static_assert(sizeof(Effect) == 24, "struct Effect has incorect size");
 
     struct Buff { // total: 0x10/16
-        /* +h0000 */ DWORD SkillId; // skill id of the buff
-        /* +h0004 */ DWORD h0004;
-        /* +h0008 */ DWORD BuffId; // id of buff in the buff array
-        /* +h000C */ DWORD TargetAgentId; // agent id of the target (0 if no target)
+        /* +h0000 */ uint32_t skill_id; // skill id of the buff
+        /* +h0004 */ uint32_t h0004;
+        /* +h0008 */ uint32_t buff_id; // id of buff in the buff array
+        /* +h000C */ uint32_t target_agent_id; // agent id of the target (0 if no target)
 
         static Buff Nil() { return Buff(); }
-        Buff() : SkillId(0), h0004(0), BuffId(0), TargetAgentId(0) {}
+        Buff() : skill_id(0), h0004(0), buff_id(0), target_agent_id(0) {}
     };
+    static_assert(sizeof(Buff) == 16, "struct Buff has incorect size");
 
     using EffectArray = Array<Effect>;
     using BuffArray = Array<Buff>;
 
-
-    struct AgentEffects {
-        DWORD AgentId;
-        BuffArray Buffs;
-        EffectArray Effects;
+    struct AgentEffects { // total: 0x24/36
+        /* +h0000 */ uint32_t agent_id;
+        /* +h0004 */ BuffArray buffs;
+        /* +h0014 */ EffectArray effects;
     };
+    static_assert(sizeof(AgentEffects) == 36, "struct AgentEffects has incorect size");
 
     using AgentEffectsArray = Array<AgentEffects>;
 }
-
-#endif // _ENTITIE_SKILL_INC

@@ -1,47 +1,46 @@
-#ifndef _LIST_H_INC
-#define _LIST_H_INC
+#pragma once
 
 namespace GW {
 
     template <typename T>
     struct TLink {
 
-        bool IsLinked() const { return prevLink != this; }
+        bool IsLinked() const { return prev_link != this; }
 
         void Unlink() {
             RemoveFromList();
 
-            nextNode = (T*)((size_t)this + 1);
-            prevLink = this;
+            next_node = (T*)((size_t)this + 1);
+            prev_link = this;
         }
 
         T *Prev() {
-            T *prevNode = prevLink->prevLink->nextNode;
+            T *prevNode = prev_link->prev_link->next_node;
             if ((size_t)prevNode & 1)
                 return NULL;
             return prevNode;
         }
 
         T *Next() {
-            if ((size_t)nextNode & 1)
+            if ((size_t)next_node & 1)
                 return NULL;
-            return nextNode;
+            return next_node;
         }
 
         TLink<T> *NextLink() {
-            size_t offset = (size_t)this - ((size_t)prevLink->nextNode & ~1);
-            return (TLink<T>*) ( ((size_t)nextNode & ~1) + offset );
+            size_t offset = (size_t)this - ((size_t)prev_link->next_node & ~1);
+            return (TLink<T>*) ( ((size_t)next_node & ~1) + offset );
         }
 
-        TLink<T> *PrevLink() { return prevLink; }
+        TLink<T> *PrevLink() { return prev_link; }
 
     protected:
-        TLink<T> *prevLink; // +h0000
-        T        *nextNode; // +h0004
+        TLink<T> *prev_link; // +h0000
+        T        *next_node; // +h0004
 
         void RemoveFromList () {
-            NextLink()->m_prevLink = m_prevLink;
-            m_prevLink->m_nextNode = m_nextNode;
+            NextLink()->prev_link = prev_link;
+            m_prevLink->next_node = next_node;
         }
     };
 
@@ -53,5 +52,3 @@ namespace GW {
         TLink<T> link;
     };
 }
-
-#endif // _LIST_H_INC

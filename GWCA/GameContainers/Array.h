@@ -1,7 +1,4 @@
-#ifndef _ARRAY_H_INC
-#define _ARRAY_H_INC
-
-#include <Windows.h>
+#pragma once
 #include <assert.h>
 
 namespace GW {
@@ -13,61 +10,54 @@ namespace GW {
     template <typename T>
     class Array {
     public:
-        enum class Exception {
-            kOutOfBounds,   // index is beyond the current size of the array
-            kInvalidArray   // array pointer is null
-        };
-
         typedef       T* iterator;
         typedef const T* const_iterator;
 
-        iterator       begin()       { return _array; }
-        const_iterator begin() const { return _array; }
-        iterator       end()         { return _array + _size; }
-        const_iterator end()   const { return _array + _size; }
+        iterator       begin()       { return m_buffer; }
+        const_iterator begin() const { return m_buffer; }
+        iterator       end()         { return m_buffer + m_size; }
+        const_iterator end()   const { return m_buffer + m_size; }
 
-		Array()
-			: _array(nullptr)
-			, _capacity(0)
-			, _size(0)
-			, _growth(0)
-		{}
+        Array()
+            : m_buffer(nullptr)
+            , m_capacity(0)
+            , m_size(0)
+            , m_param(0)
+        {}
 
-        T& at(DWORD index) {
-			assert(_array && index < _size);
-            return _array[index];
+        T& at(uint32_t index) {
+            assert(m_buffer && index < m_size);
+            return m_buffer[index];
         }
 
-        T& operator[](DWORD index) {
+        T& operator[](uint32_t index) {
             return at(index);
         }
 
-        const T& operator[](DWORD index) const {
-            assert(_array && index < _size);
-            return _array[index];
+        const T& operator[](uint32_t index) const {
+            assert(m_buffer && index < m_size);
+            return m_buffer[index];
         }
 
-        bool valid() const { return _array != nullptr; }
-		void clear() { _size = 0; }
+        bool valid() const { return m_buffer != nullptr; }
+        void clear() { m_size = 0; }
 
-        DWORD size()     const { return _size; }
-        DWORD capacity() const { return _capacity; }
+        uint32_t size()     const { return m_size; }
+        uint32_t capacity() const { return m_capacity; }
 
-		T& find_first(bool* found, bool(*cmpfn)(T&))
-		{
-			for (DWORD i = 0; i < _size; ++i) {
-				if (cmpfn(_array[i])) {
-					return _array[i];
-				}
-			}
-		}
+        T& find_first(bool* found, bool(*cmpfn)(T&))
+        {
+            for (uint32_t i = 0; i < m_size; ++i) {
+                if (cmpfn(m_buffer[i])) {
+                    return m_buffer[i];
+                }
+            }
+        }
 
     protected:
-        T*    _array;       // +h0000
-        DWORD _capacity;   // +h0004
-        DWORD _size;       // +h0008
-        DWORD _growth;     // +h000C
+        T*       m_buffer;    // +h0000
+        uint32_t m_capacity;  // +h0004
+        uint32_t m_size;      // +h0008
+        uint32_t m_param;     // +h000C
     }; // Size: 0x0010
 }
-
-#endif // _ARRAY_H_INC

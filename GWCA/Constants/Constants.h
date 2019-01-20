@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Windows.h>
 #include <string>
-#include <Windows.h>
 
 #include "Skills.h"
 #include "Maps.h"
@@ -78,7 +76,7 @@ namespace GW {
 			Storage_13, Storage_14, Equipped_Items, Max
         };
 
-		const size_t BagMax = (size_t)Bag::Max;
+        const size_t BagMax = (size_t)Bag::Max;
 
         enum class AgentType {
             Living = 0xDB, Gadget = 0x200, Item = 0x400
@@ -91,77 +89,77 @@ namespace GW {
             Kit = 29, Trophy, Scroll, Daggers, Minipet, Scythe, Spear, Costume = 45
         };
 
-        enum HeroID : DWORD {
+        enum HeroID : uint32_t {
             NoHero, Norgu, Goren, Tahlkora, MasterOfWhispers, AcolyteJin, Koss,
             Dunkoro, AcolyteSousuke, Melonni, ZhedShadowhoof, GeneralMorgahn,
             MargridTheSly, Zenmai, Olias, Razah, MOX, KeiranThackeray, Jora,
-			PyreFierceshot, Anton, Livia, Hayda, Kahmu, Gwen, Xandra, Vekk,
-			Ogden, Merc1, Merc2, Merc3, Merc4, Merc5, Merc6, Merc7, Merc8,
-			Miku, ZeiRi
+            PyreFierceshot, Anton, Livia, Hayda, Kahmu, Gwen, Xandra, Vekk,
+            Ogden, Merc1, Merc2, Merc3, Merc4, Merc5, Merc6, Merc7, Merc8,
+            Miku, ZeiRi
         };
 
-		enum MaterialSlot : DWORD {
-			Bone, IronIngot, TannedHideSquare, Scale, ChitinFragment,
-			BoltofCloth, WoodPlank, GraniteSlab = 8,
-			PileofGlitteringDust, PlantFiber, Feather,
+        enum MaterialSlot : uint32_t {
+            Bone, IronIngot, TannedHideSquare, Scale, ChitinFragment,
+            BoltofCloth, WoodPlank, GraniteSlab = 8,
+            PileofGlitteringDust, PlantFiber, Feather,
 
-			FurSquare, BoltofLinen, BoltofDamask, BoltofSilk,
-			GlobofEctoplasm, SteelIngot, DeldrimorSteelIngot,
-			MonstrousClaw, MonstrousEye, MonstrousFang, Ruby,
-			Sapphire, Diamond, OnyxGemstone, LumpofCharcoal,
-			ObsidianShard, TemperedGlassVial = 29, LeatherSquare,
-			ElonianLeatherSquare, VialofInk, RollofParchment,
-			RollofVellum, SpiritwoodPlank, AmberChunk, JadeiteShard,
+            FurSquare, BoltofLinen, BoltofDamask, BoltofSilk,
+            GlobofEctoplasm, SteelIngot, DeldrimorSteelIngot,
+            MonstrousClaw, MonstrousEye, MonstrousFang, Ruby,
+            Sapphire, Diamond, OnyxGemstone, LumpofCharcoal,
+            ObsidianShard, TemperedGlassVial = 29, LeatherSquare,
+            ElonianLeatherSquare, VialofInk, RollofParchment,
+            RollofVellum, SpiritwoodPlank, AmberChunk, JadeiteShard,
 
-			N_MATS
-		};
+            N_MATS
+        };
 
-		const Profession HeroProfs[] = {
-			Profession::None,
-			Profession::Mesmer, // Norgu
-			Profession::Warrior,// Goren
-			Profession::Monk, // Tahlkora
-			Profession::Necromancer, // Master Of Whispers
-			Profession::Ranger, // Acolyte Jin
-			Profession::Warrior, // Koss
-			Profession::Monk, // Dunkoro
-			Profession::Elementalist, // Acolyte Sousuke
-			Profession::Dervish, // Melonni
-			Profession::Elementalist, // Zhed Shadowhoof
-			Profession::Paragon, // General Morgahn
-			Profession::Ranger, // Magrid The Sly
-			Profession::Assassin, // Zenmai
-			Profession::Necromancer, // Olias
-			Profession::None, // Razah
-			Profession::Dervish, // MOX
-			Profession::Paragon, // Keiran Thackeray
-			Profession::Warrior, // Jora
-			Profession::Ranger, // Pyre Fierceshot
-			Profession::Assassin, // Anton
-			Profession::Necromancer, // Livia
-			Profession::Paragon, // Hayda
-			Profession::Dervish, // Kahmu
-			Profession::Mesmer, // Gwen
-			Profession::Ritualist, // Xandra
-			Profession::Elementalist, // Vekk
-			Profession::Monk, // Ogden
-			Profession::None, // Mercenary Hero 1
-			Profession::None, // Mercenary Hero 2
-			Profession::None, // Mercenary Hero 3
-			Profession::None, // Mercenary Hero 4
-			Profession::None, // Mercenary Hero 5
-			Profession::None, // Mercenary Hero 6
-			Profession::None, // Mercenary Hero 7
-			Profession::None, // Mercenary Hero 8
-			Profession::Assassin, // Miku
-			Profession::Ritualist, // Zei Ri
-		};
+        const Profession HeroProfs[] = {
+            Profession::None,
+            Profession::Mesmer, // Norgu
+            Profession::Warrior,// Goren
+            Profession::Monk, // Tahlkora
+            Profession::Necromancer, // Master Of Whispers
+            Profession::Ranger, // Acolyte Jin
+            Profession::Warrior, // Koss
+            Profession::Monk, // Dunkoro
+            Profession::Elementalist, // Acolyte Sousuke
+            Profession::Dervish, // Melonni
+            Profession::Elementalist, // Zhed Shadowhoof
+            Profession::Paragon, // General Morgahn
+            Profession::Ranger, // Magrid The Sly
+            Profession::Assassin, // Zenmai
+            Profession::Necromancer, // Olias
+            Profession::None, // Razah
+            Profession::Dervish, // MOX
+            Profession::Paragon, // Keiran Thackeray
+            Profession::Warrior, // Jora
+            Profession::Ranger, // Pyre Fierceshot
+            Profession::Assassin, // Anton
+            Profession::Necromancer, // Livia
+            Profession::Paragon, // Hayda
+            Profession::Dervish, // Kahmu
+            Profession::Mesmer, // Gwen
+            Profession::Ritualist, // Xandra
+            Profession::Elementalist, // Vekk
+            Profession::Monk, // Ogden
+            Profession::None, // Mercenary Hero 1
+            Profession::None, // Mercenary Hero 2
+            Profession::None, // Mercenary Hero 3
+            Profession::None, // Mercenary Hero 4
+            Profession::None, // Mercenary Hero 5
+            Profession::None, // Mercenary Hero 6
+            Profession::None, // Mercenary Hero 7
+            Profession::None, // Mercenary Hero 8
+            Profession::Assassin, // Miku
+            Profession::Ritualist, // Zei Ri
+        };
 
-        enum HeroBehavior : DWORD {
+        enum HeroBehavior : uint32_t {
             Fight, Guard, AvoidCombat
         };
 
-        enum TitleID : DWORD {
+        enum TitleID : uint32_t {
             Hero, TyrianCarto, CanthanCarto, Gladiator, Champion, Kurzick,
             Luxon, Drunkard, Survivor = 0x9, KoaBD, ProtectorTyria = 0xD,
             ProtectorCantha, Lucky, Unlucky, Sunspear, ElonianCarto,

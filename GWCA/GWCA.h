@@ -51,6 +51,6 @@ THE SOFTWARE.
 \**********************************************************************************/
 
 namespace GW {
-	bool Initialize();
-	void Terminate();
+    bool Initialize();
+    void Terminate();
 }

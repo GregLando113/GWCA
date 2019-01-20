@@ -1,52 +1,50 @@
-#ifndef _ENTITIE_ITEM_INC
-#define _ENTITIE_ITEM_INC
+#pragma once
 
 #include <GWCA/GameContainers/Array.h>
 #include <GWCA/Constants/ItemIDs.h>
 
 namespace GW {
-
-    using wchar = wchar_t;
-    using ItemID = DWORD;
+    using ItemID = uint32_t;
 
     struct Bag;
     struct Item;
 
-    using ItemArray = Array<Item*>;
+    using ItemArray = Array<Item *>;
 
-    struct Bag { // total: 0x24/36
-        /* +h0000 */ DWORD BagType; // Bag 1, Equipped 2, NotCollected 3, Storage 4, MaterialStorage 5
-        /* +h0004 */ DWORD Index;
-        /* +h0008 */ DWORD BagId;
-        /* +h000C */ DWORD ContainerItem;
-        /* +h0010 */ DWORD ItemsCount;
-        /* +h0014 */ Bag  *BagArray;
-        /* +h0018 */ ItemArray Items;
+    struct Bag { // total: 0x28/40
+        /* +h0000 */ uint32_t bag_type; // Bag 1, Equipped 2, NotCollected 3, Storage 4, MaterialStorage 5
+        /* +h0004 */ uint32_t index;
+        /* +h0008 */ uint32_t bag_id;
+        /* +h000C */ uint32_t container_item;
+        /* +h0010 */ uint32_t items_count;
+        /* +h0014 */ Bag  *bag_array;
+        /* +h0018 */ ItemArray items;
 
-        inline bool IsInventoryBag() { return (BagType == 1); }
-        inline bool IsStorageBag()   { return (BagType == 4); }
+        inline bool IsInventoryBag() { return (bag_type == 1); }
+        inline bool IsStorageBag()   { return (bag_type == 4); }
 
         static const size_t npos = (size_t)-1;
 
-        size_t find_dye(DWORD model_id, DWORD ExtraId, size_t pos = 0);
+        size_t find_dye(uint32_t model_id, uint32_t ExtraId, size_t pos = 0);
 
-        size_t find1(DWORD model_id, size_t pos = 0);
+        size_t find1(uint32_t model_id, size_t pos = 0);
         size_t find2(Item *item, size_t pos = 0);
     };
+    static_assert(sizeof(Bag) == 40, "struct Bag has incorect size");
 
     struct ItemModifier {
-        DWORD mod;
+        uint32_t mod;
 
-        DWORD identifier() { return (mod & 0x3FF00000) >> 20; }
-        DWORD arg1() { return (mod & 0x0001FF00) >> 8; }
-        DWORD arg2() { return (mod & 0x000000FE); }
-        DWORD arg3() { return (mod & 0x0003FFFF); }
-        DWORD arg4() { return (mod & 0x00040000) >> 17; }
-        DWORD arg5() { return (mod & 0x0001FFFE); }
-        DWORD arg6() { return (mod & 0x00000001); }
+        uint32_t identifier() { return (mod & 0x3FF00000) >> 20; }
+        uint32_t arg1() { return (mod & 0x0001FF00) >> 8; }
+        uint32_t arg2() { return (mod & 0x000000FE); }
+        uint32_t arg3() { return (mod & 0x0003FFFF); }
+        uint32_t arg4() { return (mod & 0x00040000) >> 17; }
+        uint32_t arg5() { return (mod & 0x0001FFFE); }
+        uint32_t arg6() { return (mod & 0x00000001); }
     };
 
-    struct Item { // total: 0x50/80
+    struct Item { // total: 0x54/84
         /* +h0000 */ DWORD ItemId;
         /* +h0004 */ DWORD AgentId;
         /* +h0008 */ Bag  *BagEquiped; // Only valid if Item is a equipped Bag
@@ -68,21 +66,23 @@ namespace GW {
         /* +h003C */ wchar *SingleItemName; // with color, w/o quantity, named as single item
         /* +h0040 */ BYTE h003C[10];
         /* +h004A */ BYTE IsMaterialSalvageable; // Only valid for type 11 (Materials)
-		/* +h004B */ BYTE Unknown001; // probably used for quantity extension for new material storage
-		/* +h004C */ WORD Quantity;
-		/* +h004E */ BYTE Equipped;
-		/* +h004F */ BYTE Profession;
-		/* +h0050 */ BYTE Slot;
+        /* +h004B */ BYTE Unknown001; // probably used for quantity extension for new material storage
+        /* +h004C */ WORD Quantity;
+        /* +h004E */ BYTE Equipped;
+        /* +h004F */ BYTE Profession;
+        /* +h0050 */ BYTE Slot;
 
         bool GetIsStackable();
         bool GetIsMaterial();
         bool GetIsZcoin();
     };
+    static_assert(sizeof(Item) == 84, "struct Item has incorect size");
 
-    struct WeapondSet {
-        Item *Weapon;
-        Item *Offhand;
+    struct WeapondSet { // total: 0x8/8
+        /* +h0000 */ Item *weapond;
+        /* +h0004 */ Item *offhand;
     };
+    static_assert(sizeof(WeapondSet) == 8, "struct WeapondSet has incorect size");
 
     struct Inventory { // total: 0x98/152
         union {
@@ -133,26 +133,27 @@ namespace GW {
         /* +h0090 */ DWORD GoldCharacter;
         /* +h0094 */ DWORD GoldStorage;
     };
+    static_assert(sizeof(Inventory) == 152, "struct Inventory has incorect size");
 
     using MerchItemArray = Array<ItemID>;
 
-    inline size_t Bag::find1(DWORD model_id, size_t pos) {
-        for (size_t i = pos; i < Items.size(); i++) {
-            Item *item = Items[i];
+    inline size_t Bag::find1(uint32_t model_id, size_t pos) {
+        for (size_t i = pos; i < items.size(); i++) {
+            Item *item = items[i];
             if (!item && model_id == 0) return i;
             if (!item) continue;
-            if (item->ModelId == model_id)
+            if (item->model_id == model_id)
                 return i;
         }
         return npos;
     }
 
-    inline size_t Bag::find_dye(DWORD model_id, DWORD extra_id, size_t pos) {
-        for (size_t i = pos; i < Items.size(); i++) {
-            Item *item = Items[i];
+    inline size_t Bag::find_dye(uint32_t model_id, uint32_t extra_id, size_t pos) {
+        for (size_t i = pos; i < items.size(); i++) {
+            Item *item = items[i];
             if (!item && model_id == 0) return i;
             if (!item) continue;
-            if (item->ModelId == model_id && item->ExtraId == extra_id)
+            if (item->model_id == model_id && item->extra_id == extra_id)
                 return i;
         }
         return npos;
@@ -160,11 +161,9 @@ namespace GW {
 
     // Find a similar item
     inline size_t Bag::find2(Item *item, size_t pos) {
-        if (item->ModelId == Constants::ItemID::Dye)
-            return find_dye(item->ModelId, item->ExtraId, pos);
+        if (item->model_id == Constants::ItemID::Dye)
+            return find_dye(item->model_id, item->extra_id, pos);
         else
-            return find1(item->ModelId, pos);
+            return find1(item->model_id, pos);
     }
 }
-
-#endif // _ENTITIE_ITEM_INC

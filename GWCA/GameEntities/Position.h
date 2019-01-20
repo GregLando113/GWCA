@@ -301,4 +301,7 @@ namespace GW {
         GamePos(const float _x, const float _y, const unsigned int _zplane)
             : Vector2f(_x, _y), zplane(_zplane) {}
     };
+
+    typedef Vector2f Vec2f;
+    typedef Vector3f Vec3f;
 }

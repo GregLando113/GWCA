@@ -1,49 +1,44 @@
 #pragma once
 
-#include <Windows.h>
-
-#include <GWCA\Utilities\Export.h>
-#include <GWCA\GameEntities\Item.h>
-
 namespace GW {
-	namespace Merchant {
+    namespace Merchant {
 
-		struct TransactionInfo {
-			DWORD itemcount;
-			DWORD* itemids;
-			DWORD* itemquantities;
-		};
+        struct TransactionInfo {
+            uint32_t itemcount;
+            uint32_t* itemids;
+            uint32_t* itemquantities;
+        };
 
-		struct QuoteInfo {
-			DWORD unknown; // = 0
-			DWORD itemcount;
-			DWORD* itemids;
-		};
+        struct QuoteInfo {
+            uint32_t unknown; // = 0
+            uint32_t itemcount;
+            uint32_t* itemids;
+        };
 
-		enum TransactionType : DWORD {
-			MerchantBuy = 0x1,
-			CollectorBuy,
-			CrafterBuy,
-			WeaponsmithCustomize,
+        enum TransactionType : uint32_t {
+            MerchantBuy = 0x1,
+            CollectorBuy,
+            CrafterBuy,
+            WeaponsmithCustomize,
 
-			MerchantSell = 0xB,
-			TraderBuy,
-			TraderSell,
+            MerchantSell = 0xB,
+            TraderBuy,
+            TraderSell,
 
-			UnlockRunePriestOfBalth = 0xF
-		};
+            UnlockRunePriestOfBalth = 0xF
+        };
 
-		GWCA_API void TransactItems(TransactionType type,
-			DWORD gold_give, TransactionInfo give,
-			DWORD gold_recv, TransactionInfo recv
-		);
+        GWCA_API void TransactItems(TransactionType type,
+            uint32_t gold_give, TransactionInfo give,
+            uint32_t gold_recv, TransactionInfo recv
+        );
 
-		GWCA_API void RequestQuote(TransactionType type,
-			QuoteInfo give,
-			QuoteInfo recv
-		);
+        GWCA_API void RequestQuote(TransactionType type,
+            QuoteInfo give,
+            QuoteInfo recv
+        );
 
-		// note: can contain pointers to random items from your inventory
-		GWCA_API GW::MerchItemArray GetMerchantItemsArray();
-	};
+        // note: can contain pointers to random items from your inventory
+        GWCA_API GW::MerchItemArray GetMerchantItemsArray();
+    };
 }

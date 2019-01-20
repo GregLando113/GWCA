@@ -1,19 +1,13 @@
-#ifndef _ENTITIE_MATCH_INC
-#define _ENTITIE_MATCH_INC
-
-#include <Windows.h>
+#pragma once
 
 namespace GW {
-    using wchar = wchar_t;
-
-    struct ObserverMatch {
-        /* +h0000 */ DWORD MatchID;
-        /* +h0004 */ DWORD MatchID_dup;
-        /* +h0008 */ DWORD MapID;
-        /* +h000C */ DWORD Age;
-        /* +h0010 */ DWORD h0010[14];
-        /* +h0048 */ wchar *TeamNames;
+    struct ObserverMatch { // total: 0x4C/76
+        /* +h0000 */ uint32_t match_id;
+        /* +h0004 */ uint32_t match_id_dup;
+        /* +h0008 */ uint32_t map_id;
+        /* +h000C */ uint32_t age;
+        /* +h0010 */ uint32_t h0010[14];
+        /* +h0048 */ wchar_t *team_names;
     };
+    static_assert(sizeof(ObserverMatch) == 76, "struct ObserverMatch has incorect size");
 }
-
-#endif // _ENTITIE_MATCH_INC

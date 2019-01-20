@@ -1,12 +1,9 @@
-#ifndef CINEMATIC_H_INC
-#define CINEMATIC_H_INC
+#pragma once
 
-#include <Windows.h>
-
-struct Cinematic {
-	DWORD h0000;
-	DWORD h0004; // pointer to data
-	// ...
-};
-
-#endif // CINEMATIC_H_INC
+namespace GW {
+    struct Cinematic {
+        /* +h0000 */ uint32_t h0000;
+        /* +h0004 */ uint32_t h0004; // pointer to data
+        // ...
+    };
+}

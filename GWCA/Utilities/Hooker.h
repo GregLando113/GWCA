@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Windows.h>
-
 namespace GW {
     
     class HookBase {
@@ -32,7 +30,7 @@ namespace GW {
         T Retour(bool do_cleanup = true);
     };
     
-    typedef THook<unsigned char*> Hook; // backward compatibility
+    typedef THook<unsigned char *> Hook; // backward compatibility
 }
 
 template <typename T>

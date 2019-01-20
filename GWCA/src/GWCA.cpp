@@ -1,40 +1,57 @@
-#include "..\GWCA.h"
+#include <stdint.h>
+#include <Windows.h>
 
-#include "..\Managers\MemoryMgr.h"
-#include "..\Managers\GameThreadMgr.h"
-#include "..\Managers\AgentMgr.h"
-#include "..\Managers\PartyMgr.h"
-#include "..\Managers\EffectMgr.h"
-#include "..\Managers\ChatMgr.h"
-#include "..\Managers\ItemMgr.h"
-#include "..\Managers\StoCMgr.h"
-#include "..\Managers\CameraMgr.h"
-#include "..\Managers\Render.h"
+#include <functional>
+
+#include <GWCA/GWCA.h>
+
+#include <GWCA/Constants/Constants.h>
+
+#include <GWCA/GameEntities/Position.h>
+#include <GWCA/Packets/StoC.h>
+
+#include <GWCA/GameEntities/NPC.h>
+#include <GWCA/GameEntities/Item.h>
+#include <GWCA/GameEntities/Agent.h>
+#include <GWCA/GameEntities/Skill.h>
+#include <GWCA/GameEntities/Camera.h>
+#include <GWCA/GameEntities/Player.h>
+
+#include <GWCA/Managers/Render.h>
+#include <GWCA/Managers/StoCMgr.h>
+#include <GWCA/Managers/ChatMgr.h>
+#include <GWCA/Managers/ItemMgr.h>
+#include <GWCA/Managers/AgentMgr.h>
+#include <GWCA/Managers/PartyMgr.h>
+#include <GWCA/Managers/CameraMgr.h>
+#include <GWCA/Managers/EffectMgr.h>
+#include <GWCA/Managers/MemoryMgr.h>
+#include <GWCA/Managers/GameThreadMgr.h>
 
 bool GW::Initialize() {
-	if (MemoryMgr::Scan()) {
+    if (GW::MemoryMgr::Scan()) {
 
-		// force the initialization of gamethread
-		GameThread::Initialize();
-		Agents::Initialize();
+        // force the initialization of gamethread
+        GW::GameThread::Initialize();
+        GW::Agents::Initialize();
 
-		return true;
-	} else {
-		return false;
-	}
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void GW::Terminate() {
-	GW::GameThread::ClearCalls();
+    GW::GameThread::ClearCalls();
 
-	GW::CameraMgr::RestoreHooks();
-	GW::Chat::RestoreHooks();
-	GW::PartyMgr::RestoreHooks();
-	GW::StoC::RestoreHooks();
-	GW::Agents::RestoreHooks();
-	GW::Effects::RestoreHooks();
-	GW::Render::RestoreHooks();
-	GW::Items::RestoreHooks();
+    GW::CameraMgr::RestoreHooks();
+    GW::Chat::RestoreHooks();
+    GW::PartyMgr::RestoreHooks();
+    GW::StoC::RestoreHooks();
+    GW::Agents::RestoreHooks();
+    GW::Effects::RestoreHooks();
+    GW::Render::RestoreHooks();
+    GW::Items::RestoreHooks();
 
-	GW::GameThread::RestoreHooks();
+    GW::GameThread::RestoreHooks();
 }

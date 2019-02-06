@@ -2,6 +2,7 @@
 #define _ENTITIE_ITEM_INC
 
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameContainers/List.h>
 #include <GWCA/Constants/ItemIDs.h>
 
 namespace GW {
@@ -68,10 +69,12 @@ namespace GW {
         /* +h003C */ wchar *SingleItemName; // with color, w/o quantity, named as single item
         /* +h0040 */ BYTE h003C[10];
         /* +h004A */ BYTE IsMaterialSalvageable; // Only valid for type 11 (Materials)
-        /* +h004B */ BYTE Quantity;
-        /* +h004C */ BYTE Equipped;
-        /* +h004D */ BYTE Profession;
-        /* +h004E */ BYTE Slot;
+		/* +h004B */ BYTE Unknown001; 
+        /* +h004C */ BYTE Quantity;
+        /* +h004D */ BYTE Equipped;
+        /* +h004E */ BYTE Profession;
+		/* +h004F */ BYTE TypeAgain;
+        /* +h0050 */ BYTE Slot;
 
 		bool GetIsStackable();
 		bool GetIsMaterial();

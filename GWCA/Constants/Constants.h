@@ -74,7 +74,8 @@ namespace GW {
             None, Backpack, Belt_Pouch, Bag_1, Bag_2, Equipment_Pack,
             Material_Storage, Unclaimed_Items, Storage_1, Storage_2,
             Storage_3, Storage_4, Storage_5, Storage_6, Storage_7,
-            Storage_8, Storage_9, Equipped_Items, Max
+            Storage_8, Storage_9, Storage_10, Storage_11, Storage_12, 
+			Storage_13, Storage_14, Equipped_Items, Max
         };
 
 		const size_t BagMax = (size_t)Bag::Max;

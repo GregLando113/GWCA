@@ -69,10 +69,9 @@ namespace GW {
         /* +h0040 */ BYTE h003C[10];
         /* +h004A */ BYTE IsMaterialSalvageable; // Only valid for type 11 (Materials)
 		/* +h004B */ BYTE Unknown001; // probably used for quantity extension for new material storage
-		/* +h004C */ BYTE Quantity;
-		/* +h004D */ BYTE Equipped;
-		/* +h004E */ BYTE Profession;
-		/* +h004F */ BYTE TypeAgain;
+		/* +h004C */ WORD Quantity;
+		/* +h004E */ BYTE Equipped;
+		/* +h004F */ BYTE Profession;
 		/* +h0050 */ BYTE Slot;
 
         bool GetIsStackable();

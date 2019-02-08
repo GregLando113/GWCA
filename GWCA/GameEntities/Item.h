@@ -22,6 +22,8 @@ namespace GW {
         /* +h0010 */ DWORD ItemsCount;
         /* +h0014 */ Bag  *BagArray;
         /* +h0018 */ ItemArray Items;
+		/* +h001C */ BYTE h001C[4];
+		/* +h0020 */ DWORD Slots;
 
         inline bool IsInventoryBag() { return (BagType == 1); }
         inline bool IsStorageBag()   { return (BagType == 4); }

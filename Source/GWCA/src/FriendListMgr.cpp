@@ -78,4 +78,36 @@ namespace GW {
         }
         return NULL;
     }
+
+    Friend *FriendListMgr::GetFriend(uint32_t index) {
+        FriendList *fl = GetFriendList();
+        if (!fl || (index + 1) >= fl->friends.size())
+            return NULL;
+        return fl->friends[index + 1];
+    }
+
+    uint32_t FriendListMgr::GetNumberOfFriends() {
+        return GetFriendList()->number_of_friend;
+    }
+
+    uint32_t FriendListMgr::GetNumberOfIgnores() {
+        return GetFriendList()->number_of_ignore;
+    }
+
+    uint32_t FriendListMgr::GetNumberOfPartners(){
+        return GetFriendList()->number_of_partner;
+    }
+
+    uint32_t FriendListMgr::GetNumberOfTraders() {
+        return GetFriendList()->number_of_trade;
+    }
+
+    uint32_t FriendListMgr::GetMyStatus() {
+        FriendList *fl = GetFriendList();
+        if (fl)
+            return fl->player_status;
+        else
+            return 0;
+    }
+
 } // namespace GW

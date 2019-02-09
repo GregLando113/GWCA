@@ -15,18 +15,14 @@ namespace GW {
 
         GWCA_API Friend *GetFriend(wchar_t *account, wchar_t *playing);
 
-        // @Cleanup:
-        // move this to cpp
-        // inline Friend *GetFriend(uint32_t index) { 
-        //     return GetFriendList()->friends[index + 1];
-        // }
+        GWCA_API Friend *GetFriend(uint32_t index);
 
-        // inline uint32_t GetNumberOfFriends() { return GetFriendList()->number_of_friend; }
-        // inline uint32_t GetNumberOfIgnores() { return GetFriendList()->number_of_ignore; }
-        // inline uint32_t GetNumberOfPartners() { return GetFriendList()->number_of_partner; }
-        // inline uint32_t GetNumberOfTraders() { return GetFriendList()->number_of_trade; }
+        GWCA_API uint32_t GetNumberOfFriends();
+        GWCA_API uint32_t GetNumberOfIgnores();
+        GWCA_API uint32_t GetNumberOfPartners();
+        GWCA_API uint32_t GetNumberOfTraders();
 
-        // inline uint32_t GetMyStatus() { return GetFriendList()->player_status; }
+        GWCA_API uint32_t GetMyStatus();
 
         GWCA_API void SetFriendListStatus(Constants::OnlineStatus status);
 

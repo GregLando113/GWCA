@@ -1,7 +1,4 @@
-#include <stdint.h>
-#include <Windows.h>
-
-#include <functional>
+#include "stdafx.h"
 
 #include <GWCA/CtoSHeaders.h>
 #include <GWCA/Constants/Skills.h>
@@ -10,7 +7,8 @@
 #include <GWCA/Utilities/Hooker.h>
 
 #include <GWCA/GameContainers/List.h>
-#include <GWCA/GameEntities/Position.h>
+#include <GWCA/GameContainers/Vector.h>
+
 #include <GWCA/Packets/StoC.h>
 
 #include <GWCA/GameEntities/Agent.h>

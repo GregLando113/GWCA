@@ -43,10 +43,10 @@ namespace GW {
         inline GW::NPC& GetNPCByID(DWORD id) { return GetNPCArray()[id]; }
 
         // Computes distance between the two agents in game units
-        GWCA_API float GetDistance(Vector2f a, const Vector2f b);
+        GWCA_API float GetDistance(Vec2f a, Vec2f b);
 
         // Computes squared distance between the two agents in game units
-        GWCA_API float GetSqrDistance(Vector2f a, const Vector2f b);
+        GWCA_API float GetSqrDistance(Vec2f a, Vec2f b);
 
         // Change targeted agent to (Agent)
         GWCA_API void ChangeTarget(GW::AgentID agentid);

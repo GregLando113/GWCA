@@ -285,7 +285,7 @@ namespace GW {
             struct InstanceLoadFile : Packet<InstanceLoadFile> {
                 uint32_t map_fileID;
                 Vec2f spawn_point;
-                WORD spawn_plane;
+                uint16_t spawn_plane;
                 uint8_t unk1;
                 uint8_t unk2;
             };
@@ -317,8 +317,8 @@ namespace GW {
             const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 432;
 
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
-                // WORD
-                // WORD
+                // uint16_t
+                // uint16_t
                 // uint8_t
             };
             const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 460;

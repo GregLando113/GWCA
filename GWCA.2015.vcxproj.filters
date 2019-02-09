@@ -139,9 +139,6 @@
     <ClInclude Include="GWCA\GameEntities\Player.h">
       <Filter>GameEntities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\GameEntities\Position.h">
-      <Filter>GameEntities</Filter>
-    </ClInclude>
     <ClInclude Include="GWCA\GameEntities\Quest.h">
       <Filter>GameEntities</Filter>
     </ClInclude>
@@ -199,7 +196,6 @@
     <ClInclude Include="GWCA\Utilities\Scanner.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\GWStructures.h" />
     <ClInclude Include="GWCA\Managers\Render.h">
       <Filter>Managers</Filter>
     </ClInclude>
@@ -257,6 +253,10 @@
     <ClInclude Include="GWCA\Context\Cinematic.h">
       <Filter>Context</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA\GameContainers\Vector.h">
+      <Filter>GameContainers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWCA\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWCA\src\GWCA.cpp">
@@ -348,6 +348,10 @@
     </ClCompile>
     <ClCompile Include="GWCA\src\ConnMgr.cpp">
       <Filter>src\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GWCA\stdafx.cpp" />
+    <ClCompile Include="GWCA\src\Vector.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

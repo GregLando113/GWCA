@@ -1,12 +1,4 @@
-#include <assert.h>
-#include <stdint.h>
-#include <Windows.h>
-
-#include <string>
-#include <vector>
-#include <sstream>
-#include <functional>
-#include <unordered_map>
+#include "stdafx.h"
 
 #include <ShellApi.h>
 
@@ -56,12 +48,15 @@ static wchar_t *mwprintf(const wchar_t *fmt, ...) {
 namespace {
     using namespace GW::Chat;
 
+#pragma warning(push)
+#pragma warning(disable: 4200)
     struct ChatMessage {
         uint32_t channel;
         uint32_t unk1;
         FILETIME timestamp;
-        wchar_t  message[];
+        wchar_t  message[0];
     };
+#pragma warning(pop)
 
     const size_t CHAT_LOG_LENGTH = 0x200;
     struct ChatBuffer {

@@ -39,6 +39,7 @@
     <ClInclude Include="GWCA\Context\WorldContext.h" />
     <ClInclude Include="GWCA\GameContainers\Array.h" />
     <ClInclude Include="GWCA\GameContainers\List.h" />
+    <ClInclude Include="GWCA\GameContainers\Vector.h" />
     <ClInclude Include="GWCA\GameEntities\Agent.h" />
     <ClInclude Include="GWCA\GameEntities\Attribute.h" />
     <ClInclude Include="GWCA\GameEntities\Camera.h" />
@@ -52,11 +53,9 @@
     <ClInclude Include="GWCA\GameEntities\Party.h" />
     <ClInclude Include="GWCA\GameEntities\Pathing.h" />
     <ClInclude Include="GWCA\GameEntities\Player.h" />
-    <ClInclude Include="GWCA\GameEntities\Position.h" />
     <ClInclude Include="GWCA\GameEntities\Quest.h" />
     <ClInclude Include="GWCA\GameEntities\Skill.h" />
     <ClInclude Include="GWCA\GameEntities\Title.h" />
-    <ClInclude Include="GWCA\GWStructures.h" />
     <ClInclude Include="GWCA\Managers\AgentMgr.h" />
     <ClInclude Include="GWCA\Managers\CameraMgr.h" />
     <ClInclude Include="GWCA\Managers\ChatMgr.h" />
@@ -70,6 +69,7 @@
     <ClInclude Include="GWCA\Managers\TradeMgr.h" />
     <ClInclude Include="GWCA\Managers\UIMgr.h" />
     <ClInclude Include="GWCA\Packets\StoC.h" />
+    <ClInclude Include="GWCA\stdafx.h" />
     <ClInclude Include="GWCA\Utilities\Export.h" />
     <ClInclude Include="GWCA\Utilities\Hooker.h" />
     <ClInclude Include="GWCA\Managers\ItemMgr.h" />
@@ -87,11 +87,26 @@
     <ClInclude Include="GWCA\GWCA.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Dependencies\minhook\src\buffer.c" />
-    <ClCompile Include="Dependencies\minhook\src\hde\hde32.c" />
-    <ClCompile Include="Dependencies\minhook\src\hde\hde64.c" />
-    <ClCompile Include="Dependencies\minhook\src\hook.c" />
-    <ClCompile Include="Dependencies\minhook\src\trampoline.c" />
+    <ClCompile Include="Dependencies\minhook\src\buffer.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Dependencies\minhook\src\hde\hde32.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Dependencies\minhook\src\hde\hde64.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Dependencies\minhook\src\hook.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Dependencies\minhook\src\trampoline.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="GWCA\src\ConnMgr.cpp" />
     <ClCompile Include="GWCA\src\Render.cpp" />
     <ClCompile Include="GWCA\src\Skill.cpp" />
@@ -117,6 +132,11 @@
     <ClCompile Include="GWCA\src\GWCA.cpp" />
     <ClCompile Include="GWCA\src\TradeMgr.cpp" />
     <ClCompile Include="GWCA\src\UIMgr.cpp" />
+    <ClCompile Include="GWCA\src\Vector.cpp" />
+    <ClCompile Include="GWCA\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}</ProjectGuid>
@@ -151,26 +171,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>GWCAd</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>GWCA</TargetName>
     <OutDir>$(ProjectDir)</OutDir>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;WIN32;_DEBUG;_LIB;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)GWCA\</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ForcedIncludeFiles>GWCA\Utilities\Export.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderOutputFile>$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,19 +196,17 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;WIN32;NDEBUG;_LIB;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)GWCA\</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>GWCA\Utilities\Export.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderOutputFile>$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

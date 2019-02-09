@@ -1,8 +1,5 @@
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#include "stdafx.h"
 
-#include <Windows.h>
 #include <Psapi.h>
 
 #include <GWCA/Utilities/Scanner.h>

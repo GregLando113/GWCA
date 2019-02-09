@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GWCA/GameEntities/Position.h>
 #include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameContainers/Vector.h>
 
 namespace GW {
     typedef uint32_t AgentID;

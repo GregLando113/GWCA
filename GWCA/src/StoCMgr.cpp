@@ -1,15 +1,11 @@
-#include <assert.h>
-#include <stdint.h>
-#include <Windows.h>
-
-#include <map>
-#include <functional>
+#include "stdafx.h"
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/GameEntities/Position.h>
+#include <GWCA/GameContainers/Vector.h>
+
 #include <GWCA/Packets/StoC.h>
 
 #include <GWCA/Managers/StoCMgr.h>

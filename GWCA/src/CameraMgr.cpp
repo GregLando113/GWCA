@@ -1,14 +1,10 @@
-#include <assert.h>
-#include <stdint.h>
-
-#include <Windows.h>
+#include "stdafx.h"
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Scanner.h>
 #include <GWCA/Utilities/MemoryPatcher.h>
 
-// @Cleanup: Fix this Position & StoC includes
-#include <GWCA/GameEntities/Position.h>
+#include <GWCA/GameContainers/Vector.h>
 
 #include <GWCA/GameEntities/Camera.h>
 
@@ -95,21 +91,21 @@ void GW::CameraMgr::ForwardMovement(float amount, bool true_forward) {
     if (amount == 0.f) return;
     Camera *cam = GetCamera();
     if (true_forward) {
-        float pitchX = sqrt(1.f - cam->pitch * cam->pitch);
-        cam->look_at_target.x += amount * pitchX * cos(cam->yaw);
-        cam->look_at_target.y += amount * pitchX * sin(cam->yaw);
+        float pitchX = sqrtf(1.f - cam->pitch * cam->pitch);
+        cam->look_at_target.x += amount * pitchX * cosf(cam->yaw);
+        cam->look_at_target.y += amount * pitchX * sinf(cam->yaw);
         cam->look_at_target.z += amount * cam->pitch;
     } else {
-        cam->look_at_target.x += amount * cos(cam->yaw);
-        cam->look_at_target.y += amount * sin(cam->yaw);
+        cam->look_at_target.x += amount * cosf(cam->yaw);
+        cam->look_at_target.y += amount * sinf(cam->yaw);
     }
 }
 
 void GW::CameraMgr::SideMovement(float amount) {
     if (amount == 0.f) return;
     Camera *cam = GetCamera();
-    cam->look_at_target.x += amount * -sin(cam->yaw);
-    cam->look_at_target.y += amount *  cos(cam->yaw);
+    cam->look_at_target.x += amount * -sinf(cam->yaw);
+    cam->look_at_target.y += amount *  cosf(cam->yaw);
 }
 
 void GW::CameraMgr::RotateMovement(float angle) {
@@ -122,22 +118,22 @@ void GW::CameraMgr::RotateMovement(float angle) {
     float py = cam->look_at_target.y - pos_y;
 
     Vec3f newPos;
-    newPos.x = pos_x + (cos(angle) * px - sin(angle) * py);
-    newPos.y = pos_y + (sin(angle) * px + cos(angle) * py);
+    newPos.x = pos_x + (cosf(angle) * px - sinf(angle) * py);
+    newPos.y = pos_y + (sinf(angle) * px + cosf(angle) * py);
     newPos.z = cam->look_at_target.z;
 
     SetYaw(cam->yaw + angle);
     GetCamera()->look_at_target = newPos;
 }
 
-GW::Vector3f GW::CameraMgr::ComputeCamPos(float dist) {
+GW::Vec3f GW::CameraMgr::ComputeCamPos(float dist) {
     if (dist == 0) dist = GetCameraZoom();
 
-    Vector3f newPos = GetLookAtTarget();
+    Vec3f newPos = GetLookAtTarget();
 
-    float pitchX = sqrt(1.f - GetCamera()->pitch*GetCamera()->pitch);
-    newPos.x -= dist * pitchX * cos(GetCamera()->yaw);
-    newPos.y -= dist * pitchX * sin(GetCamera()->yaw);
+    float pitchX = sqrtf(1.f - GetCamera()->pitch*GetCamera()->pitch);
+    newPos.x -= dist * pitchX * cosf(GetCamera()->yaw);
+    newPos.y -= dist * pitchX * sinf(GetCamera()->yaw);
     newPos.z -= dist * 0.95f * GetCamera()->pitch; // 0.95 is the max pitch, not 1.0
 
     return newPos;

@@ -1,5 +1,4 @@
-#include <stdint.h>
-#include <Windows.h>
+#include "stdafx.h"
 
 #include <GWCA/Utilities/MemoryPatcher.h>
 

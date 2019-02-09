@@ -1,6 +1,4 @@
-#include <assert.h>
-#include <stdint.h>
-#include <Windows.h>
+#include "stdafx.h"
 
 #include <GWCA/CtoSHeaders.h>
 #include <GWCA/Constants/Constants.h>

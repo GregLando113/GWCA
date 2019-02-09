@@ -1,10 +1,4 @@
-#include <stdint.h>
-
-#include <map>
-#include <vector>
-#include <functional>
-
-#include <Windows.h>
+#include "stdafx.h"
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>

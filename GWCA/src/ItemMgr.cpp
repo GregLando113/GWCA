@@ -1,7 +1,4 @@
-#include <stdint.h>
-#include <Windows.h>
-
-#include <functional>
+#include "stdafx.h"
 
 #include <GWCA/CtoSHeaders.h>
 #include <GWCA/Constants/Constants.h>
@@ -9,7 +6,7 @@
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 
-#include <GWCA/GameEntities/Position.h>
+#include <GWCA/GameContainers/Vector.h>
 #include <GWCA/Packets/StoC.h>
 
 #include <GWCA/GameEntities/Item.h>
@@ -107,7 +104,7 @@ DWORD GW::Items::DepositGold(DWORD amount) {
     DWORD gold_character = GetGoldAmountOnCharacter();
     DWORD will_move = 0;
     if (amount == 0) {
-        will_move = min(1000000 - gold_storage, gold_character);
+        will_move = std::min(1000000 - gold_storage, gold_character);
     } else {
         if (gold_storage + amount > 1000000)
             return 0;
@@ -126,7 +123,7 @@ DWORD GW::Items::WithdrawGold(DWORD amount) {
     DWORD gold_character = GetGoldAmountOnCharacter();
     DWORD will_move = 0;
     if (amount == 0) {
-        will_move = min(gold_storage, 100000 - gold_character);
+        will_move = std::min(gold_storage, 100000 - gold_character);
     } else {
         if (gold_character + amount > 100000)
             return 0;

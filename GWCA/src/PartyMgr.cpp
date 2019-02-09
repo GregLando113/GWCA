@@ -1,9 +1,4 @@
-#include <math.h>
-#include <assert.h>
-#include <stdint.h>
-#include <Windows.h>
-
-#include <string>
+#include "stdafx.h"
 
 #include <GWCA/CtoSHeaders.h>
 #include <GWCA/Utilities/Export.h>
@@ -11,7 +6,7 @@
 #include <GWCA/Utilities/Scanner.h>
 
 // #include <GWCA/GameContainers/List.h>
-#include <GWCA/GameEntities/Position.h>
+#include <GWCA/GameContainers/Vector.h>
 
 #include <GWCA/GameEntities/NPC.h>
 #include <GWCA/GameEntities/Agent.h>

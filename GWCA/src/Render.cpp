@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <assert.h>
-#include <stdint.h>
-#include <Windows.h>
-
-#include <functional>
+#include "stdafx.h"
 
 #include <GWCA/GameContainers/Array.h>
 

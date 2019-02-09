@@ -1,14 +1,11 @@
-#include <stdio.h>
-#include <assert.h>
-#include <stdint.h>
-#include <Windows.h>
+#include "stdafx.h"
 
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Scanner.h>
 
-#include <GWCA/GameEntities/Position.h>
+#include <GWCA/GameContainers/Vector.h>
 
 #include <GWCA/GameEntities/Item.h>
 #include <GWCA/Context/GameContext.h>

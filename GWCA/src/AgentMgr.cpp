@@ -1,15 +1,12 @@
-#include <stdint.h>
-
-#include <vector>
-#include <functional>
-#include <Windows.h>
+#include "stdafx.h"
 
 #include <GWCA/CtoSHeaders.h>
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
-#include <GWCA/GameEntities/Position.h>
+
+#include <GWCA/GameContainers/Vector.h>
 
 #include <GWCA/GameEntities/NPC.h>
 #include <GWCA/GameEntities/Hero.h>
@@ -88,11 +85,11 @@ DWORD GW::Agents::GetMouseoverId() {
     return *MouseOverAgentIDPtr;
 }
 
-float GW::Agents::GetDistance(Vector2f a, Vector2f b) {
+float GW::Agents::GetDistance(Vec2f a, Vec2f b) {
     return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 
-float GW::Agents::GetSqrDistance(Vector2f a, Vector2f b) {
+float GW::Agents::GetSqrDistance(Vec2f a, Vec2f b) {
     return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 }
 

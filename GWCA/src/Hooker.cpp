@@ -1,4 +1,4 @@
-#include <Windows.h>
+#include "stdafx.h"
 
 #include <GWCA/Utilities/Hooker.h>
 #include <Dependencies/minhook/include/MinHook.h>

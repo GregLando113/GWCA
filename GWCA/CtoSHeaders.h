@@ -34,6 +34,7 @@ const unsigned short CtoGS_MSGSalvageMod = 0x80;
 const unsigned short CtoGS_MSGIdentifyItem = 0x71;
 const unsigned short CtoGS_MSGMoveItem = 0x77;
 const unsigned short CtoGS_MSGAcceptAllItems = 0x78;
+const unsigned short CtoGS_MSGMoveItemSplitStack = 0x7A;
 const unsigned short CtoGS_MSGUseItem = 0x83;
 const unsigned short CtoGS_MSGStartTrade = 0x4F;
 const unsigned short CtoGS_MSGAcknowledgeTrade = 0x0;

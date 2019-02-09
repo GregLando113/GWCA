@@ -111,8 +111,8 @@ namespace GW {
         /* +h0084 */ float name_tag_x; // Exactly the same as X above
         /* +h0088 */ float name_tag_y; // Exactly the same as Y above
         /* +h008C */ float name_tag_z; // Z coord in float
-        /* +h0090 */ uint16_t  visual_effects; // Number of Visual Effects of Agent (Skills, Weapons); 1 = Always set;
-        //           uint16_t  padding;
+        /* +h0090 */ uint16_t visual_effects; // Number of Visual Effects of Agent (Skills, Weapons); 1 = Always set;
+        /* +h0092 */ uint16_t h0092;
         /* +h0094 */ uint32_t h0094[2];
         /* +h009C */ uint32_t type; // Livings = 0xDB, Gadgets = 0x200, Items = 0x400.
         /* +h00A0 */ float move_x; //If moving, how much on the X axis per second
@@ -130,8 +130,8 @@ namespace GW {
         /* +h00E4 */ uint32_t h00E4[2];
         /* +h00EC */ float weapon_attack_speed; // The base attack speed in float of last attacks weapon. 1.33 = axe, sWORD, daggers etc.
         /* +h00F0 */ float attack_speed_modifier; // Attack speed modifier of the last attack. 0.67 = 33% increase (1-.33)
-        /* +h00F4 */ uint16_t  player_number; // Selfexplanatory. All non-players have identifiers for their type. Two of the same mob = same number
-        //           uint16_t  padding;
+        /* +h00F4 */ uint16_t player_number; // Selfexplanatory. All non-players have identifiers for their type. Two of the same mob = same number
+        /* +h00F6 */ uint16_t h00F6;
         /* +h00F8 */ uint32_t transmog_npc_id; // Actually, it's 0x20000000 | npc_id, It's not defined for npc, minipet, etc...
         /* +h00FC */ Equipment** equip;
         /* +h0100 */ uint32_t h0100;

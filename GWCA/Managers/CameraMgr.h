@@ -1,13 +1,17 @@
 #pragma once
 
 namespace GW {
+    struct Vec3f;
     struct Camera;
 
     namespace CameraMgr {
         GWCA_API void RestoreHooks();
 
         // ==== Camera ====
-        GWCA_API GW::Camera* GetCamera();
+        GWCA_API Camera *GetCamera();
+
+        // @Cleanup:
+        // Remove this from headers or put it with the Camera struct
 
         // X,Y,Z of camera in game world.
         inline Vec3f GetCameraPosition() { return GetCamera()->position; }
@@ -44,7 +48,7 @@ namespace GW {
             cam->position.z = newPos.z;
         }
 
-        inline void SetLookAtTarget(Vec3f const& newPos) {
+        inline void SetLookAtTarget(Vec3f newPos) {
             Camera *cam = GetCamera();
             cam->look_at_target.x = newPos.x;
             cam->look_at_target.y = newPos.y;
@@ -72,7 +76,7 @@ namespace GW {
 
         // ==== Projection matrix ====
         // Returns (possible?) projection matrix of the game. Needs to be delved into.
-        GWCA_API float* GetProjectionMatrix();
+        GWCA_API float *GetProjectionMatrix();
 
 
         // ==== Camera patches ====

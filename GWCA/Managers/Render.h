@@ -10,10 +10,10 @@ namespace GW {
         // 
         // Important: if you use this, you should call  GW::Terminate() 
         // or at least GW::Render::RestoreHooks() from within the callback
-        GWCA_API void SetRenderCallback(std::function<void(IDirect3DDevice9*)> callback);
+        GWCA_API void SetRenderCallback(std::function<void(IDirect3DDevice9 *)> callback);
 
         // Set up a callback for directx device reset
-        GWCA_API void SetResetCallback(std::function<void(IDirect3DDevice9*)> callback);
+        GWCA_API void SetResetCallback(std::function<void(IDirect3DDevice9 *)> callback);
 
         GWCA_API void RestoreHooks();
 

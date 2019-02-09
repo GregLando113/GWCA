@@ -2,8 +2,7 @@
 
 namespace GW {
     namespace Chat {
-        using Color = DWORD;
-        using wchar = wchar_t;
+        typedef uint32_t Color;
 
         enum Channel {
             CHANNEL_ALLIANCE    = 0,
@@ -29,37 +28,39 @@ namespace GW {
         };
 
         struct ChatTemplate {
-            DWORD unk0;
-            DWORD type; // 0 = build, 1 = equipement
-            GW::Array<wchar_t> code;
-            wchar_t *name;
+            uint32_t        unk0;
+            uint32_t        type; // 0 = build, 1 = equipement
+            Array<wchar_t>  code;
+            wchar_t        *name;
         };
         
         // void SetChatChannelColor(Channel channel, Color sender, Color message);
         // void RegisterEvent(Event e);
 
-        GWCA_API bool IsTyping();
+        GWCA_API bool GetIsTyping();
 
         // Send a message to an in-game channel (! for all, @ for guild, etc)
-        GWCA_API void SendChat(char channel, const wchar *msg);
-        GWCA_API void SendChat(char channel, const char  *msg);
+        GWCA_API void SendChat(char channel, const wchar_t *msg);
+        GWCA_API void SendChat(char channel, const char    *msg);
 
-        GWCA_API void SendChat(const wchar *from, const wchar *msg);
-        GWCA_API void SendChat(const char  *from, const char  *msg);
+        GWCA_API void SendChat(const wchar_t *from, const wchar_t *msg);
+        GWCA_API void SendChat(const char    *from, const char    *msg);
 
         // Emulates a message in a given channel.
-        GWCA_API void WriteChat(Channel channel, const wchar *message);
-        GWCA_API void WriteChat(Channel channel, const char  *message);
+        GWCA_API void WriteChat(Channel channel, const wchar_t *message);
+        GWCA_API void WriteChat(Channel channel, const char    *message);
 
-        GWCA_API void WriteChat(Channel channel, const wchar *sender, const wchar *msg);
-        GWCA_API void WriteChat(Channel channel, const char  *sender, const char  *msg);
+        GWCA_API void WriteChat(Channel channel, const wchar_t *sender, const wchar_t *msg);
+        GWCA_API void WriteChat(Channel channel, const char    *sender, const char    *msg);
 
-        GWCA_API void WriteChatF(Channel channel, const wchar *sender, const char *fmt, ...);
+        GWCA_API void WriteChatF(Channel channel, const wchar_t *sender, const char *fmt, ...);
 
-        typedef std::function<void(const wchar_t *msg, int argc, LPWSTR *argv)> CmdCB;
+        typedef std::function<void(const wchar_t *msg, int argc, wchar_t **argv)> CmdCB;
         GWCA_API void CreateCommand(std::wstring cmd, CmdCB callback);
         GWCA_API void DeleteCommand(std::wstring cmd);
 
+        // @Cleanup:
+        // move those out
         extern bool ShowTimestamps;
         // extern bool KeepChatHistory; @Deprecated
         extern bool Timestamp_24hFormat;
@@ -70,8 +71,8 @@ namespace GW {
 
         // SendChat callback can modify the msg before it is send.
         // Pay attention to not overflow the buffer.
-        GWCA_API void SetSendChatCallback(std::function<
-            void(Channel chan, wchar_t msg[140])>);
+        GWCA_API void SetSendChatCallback(
+            std::function<void (Channel chan, wchar_t *msg)>);
 
         GWCA_API void SetOpenLinks(bool b);
 
@@ -81,12 +82,12 @@ namespace GW {
         GWCA_API void  GetDefaultColors(Channel chan, Color *sender, Color *message);
 
         GWCA_API void SetChatEventCallback(std::function<
-            void(DWORD, DWORD, wchar_t*, void*)> callback);
+            void (uint32_t, uint32_t, wchar_t *, void *)> callback);
 
         GWCA_API void SetLocalMessageCallback(std::function<
-            bool(int, wchar_t*)> callback);
+            bool (int, wchar_t *)> callback);
 
         GWCA_API void SetWhisperCallback(std::function<
-            void(const wchar_t[20], const wchar_t[140])> callback);
+            void(wchar_t *, wchar_t *)> callback);
     };
 }

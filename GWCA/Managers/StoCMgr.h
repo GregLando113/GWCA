@@ -10,32 +10,36 @@ namespace GW {
     namespace Packet {
         namespace StoC {
             struct PacketBase;
+
+            template <typename T>
+            struct Packet;
         }
     }
 
     namespace StoC {
         template <typename T>
-        using CallbackFunc = std::function<bool(T*)>;
+        using CallbackFunc = std::function<bool (T*)>;
         
         void Initialize();
         void RestoreHooks();
 
-        GWCA_API DWORD AddCallback(DWORD header, std::function<bool(Packet::StoC::PacketBase *)> callback);
+        GWCA_API uint32_t AddCallback(uint32_t header,
+            std::function<bool (Packet::StoC::PacketBase *)> callback);
         
         /* Use this to add handlers to the stocmgr, primary function. */
         template <typename T>
-        DWORD AddCallback(CallbackFunc<T> handler) {
-            DWORD header = Packet::StoC::Packet<T>::STATIC_HEADER;
+        uint32_t AddCallback(CallbackFunc<T> handler) {
+            uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
             return AddCallback(header, [handler](Packet::StoC::PacketBase *pak) -> bool {
-                return handler((T*)pak);
+                return handler((T *)pak);
             });
         }
         
-        GWCA_API void RemoveCallback(DWORD header, DWORD identifier);
+        GWCA_API void RemoveCallback(uint32_t header, uint32_t identifier);
 
         template <typename T>
-        void RemoveCallback(DWORD identifier) {
-            DWORD header = Packet::StoC::Packet<T>::STATIC_HEADER;
+        void RemoveCallback(uint32_t identifier) {
+            uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
             RemoveCallback(header, identifier);
         }
 

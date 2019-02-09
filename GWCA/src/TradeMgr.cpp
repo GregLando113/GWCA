@@ -6,26 +6,28 @@
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/TradeMgr.h>
 
-void GW::Trade::OpenTradeWindow(DWORD agentId) {
-    CtoS::SendPacket(0x8, CtoGS_MSGStartTrade, agentId);
-}
+namespace GW {
+    void Trade::OpenTradeWindow(uint32_t agent_id) {
+        CtoS::SendPacket(0x8, CtoGS_MSGStartTrade, agent_id);
+    }
 
-void GW::Trade::AcceptTrade() {
-    CtoS::SendPacket(0x4, CtoGS_MSGAcceptTrade);
-}
+    void Trade::AcceptTrade() {
+        CtoS::SendPacket(0x4, CtoGS_MSGAcceptTrade);
+    }
 
-void GW::Trade::CancelTrade() {
-    CtoS::SendPacket(0x4, CtoGS_MSGCancelTrade);
-}
+    void Trade::CancelTrade() {
+        CtoS::SendPacket(0x4, CtoGS_MSGCancelTrade);
+    }
 
-void GW::Trade::ChangeOffer() {
-    CtoS::SendPacket(0x4, CtoGS_MSGChangeOffer);
-}
+    void Trade::ChangeOffer() {
+        CtoS::SendPacket(0x4, CtoGS_MSGChangeOffer);
+    }
 
-void GW::Trade::SubmitOffer(DWORD gold) {
-    CtoS::SendPacket(0x8, CtoGS_MSGSubmitOffer, gold);
-}
+    void Trade::SubmitOffer(uint32_t gold) {
+        CtoS::SendPacket(0x8, CtoGS_MSGSubmitOffer, gold);
+    }
 
-void GW::Trade::OfferItem(DWORD itemId, DWORD quantity) {
-    CtoS::SendPacket(0xC, CtoGS_MSGAddItemTrade, itemId, quantity);
-}
+    void Trade::OfferItem(uint32_t item_id, uint32_t quantity) {
+        CtoS::SendPacket(0xC, CtoGS_MSGAddItemTrade, item_id, quantity);
+    }
+} // namespace GW

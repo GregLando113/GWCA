@@ -4,15 +4,15 @@ namespace GW {
     namespace Merchant {
 
         struct TransactionInfo {
-            uint32_t itemcount;
-            uint32_t* itemids;
-            uint32_t* itemquantities;
+            uint32_t  item_count;
+            uint32_t *item_ids;
+            uint32_t *item_quantities;
         };
 
         struct QuoteInfo {
-            uint32_t unknown; // = 0
-            uint32_t itemcount;
-            uint32_t* itemids;
+            uint32_t  unknown; // = 0
+            uint32_t  item_count;
+            uint32_t *item_ids;
         };
 
         enum TransactionType : uint32_t {
@@ -39,6 +39,6 @@ namespace GW {
         );
 
         // note: can contain pointers to random items from your inventory
-        GWCA_API GW::MerchItemArray GetMerchantItemsArray();
+        GWCA_API MerchItemArray GetMerchantItemsArray();
     };
 }

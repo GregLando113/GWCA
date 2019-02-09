@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/GameEntities/Agent.h>
@@ -10,37 +11,40 @@
 
 #include <GWCA/Managers/MemoryMgr.h>
 
-uint32_t GW::SkillbarSkill::GetRecharge() const {
-    if (recharge == 0) return 0;
-    return recharge - MemoryMgr::GetSkillTimer();
-}
+namespace GW {
 
-GW::Skillbar GW::Skillbar::GetPlayerSkillbar() {
-    GW::SkillbarArray sb = SkillbarArray::GetSkillbarArray();
-    if (sb.valid()) {
-        return sb[0];
-    } else {
-        return GW::Skillbar();
-    }
-}
-
-GW::Maybe<GW::SkillbarSkill> GW::Skillbar::GetSkillById(GW::Constants::SkillID skillId) {
-    for (auto skill : skills) {
-        if (skill.skill_id == static_cast<uint32_t>(skillId))
-            return Just<SkillbarSkill>(skill);
+    uint32_t SkillbarSkill::GetRecharge() const {
+        if (recharge == 0) return 0;
+        return recharge - MemoryMgr::GetSkillTimer();
     }
 
-    return Nothing<SkillbarSkill>();
-}
+    Skillbar *Skillbar::GetPlayerSkillbar() {
+        SkillbarArray sb = SkillbarArray::GetSkillbarArray();
+        if (sb.valid()) {
+            return &sb[0];
+        } else {
+            return NULL;
+        }
+    }
 
-GW::SkillbarArray GW::SkillbarArray::GetSkillbarArray() {
-    return GameContext::instance()->world->skillbar;
-}
+    SkillbarSkill *Skillbar::GetSkillById(Constants::SkillID skill_id) {
+        for (size_t i = 0; i < ArrayCount(skills); i++) {
+            if (skills[i].skill_id == static_cast<uint32_t>(skill_id))
+                return &skills[i];
+        }
+        return NULL;
+    }
 
-uint32_t GW::Effect::GetTimeElapsed() const {
-    return MemoryMgr::GetSkillTimer() - timestamp;
-}
+    SkillbarArray SkillbarArray::GetSkillbarArray() {
+        return GameContext::instance()->world->skillbar;
+    }
 
-uint32_t GW::Effect::GetTimeRemaining() const {
-    return (uint32_t)(duration * 1000) - GetTimeElapsed();
+    uint32_t Effect::GetTimeElapsed() const {
+        return MemoryMgr::GetSkillTimer() - timestamp;
+    }
+
+    uint32_t Effect::GetTimeRemaining() const {
+        return (uint32_t)(duration * 1000) - GetTimeElapsed();
+    }
+
 }

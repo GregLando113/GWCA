@@ -1,7 +1,10 @@
 #pragma once
 
 namespace GW {
+    struct GamePos;
     struct PartyInfo;
+
+    typedef AgentID uint32_t;
 
     namespace PartyMgr {
 
@@ -15,12 +18,12 @@ namespace GW {
         // Set party ready status.
         GWCA_API void Tick(bool flag = true);
 
-        GWCA_API GW::PartyInfo* GetPartyInfo();
+        GWCA_API PartyInfo *GetPartyInfo();
 
-        GWCA_API DWORD GetPartySize();
-        GWCA_API DWORD GetPartyPlayerCount();
-        GWCA_API DWORD GetPartyHeroCount();
-        GWCA_API DWORD GetPartyHenchmanCount();
+        GWCA_API uint32_t GetPartySize();
+        GWCA_API uint32_t GetPartyPlayerCount();
+        GWCA_API uint32_t GetPartyHeroCount();
+        GWCA_API uint32_t GetPartyHenchmanCount();
 
         GWCA_API bool GetIsPartyDefeated();
 
@@ -31,7 +34,7 @@ namespace GW {
         GWCA_API bool GetIsPartyTicked();
 
         // check if selected party member is ticked
-        GWCA_API bool GetIsTicked(DWORD player_index);
+        GWCA_API bool GetIsTicked(uint32_t player_index);
 
         // check if the player is ticked
         GWCA_API bool GetIsPlayerTicked();
@@ -47,16 +50,16 @@ namespace GW {
         GWCA_API void LeaveParty();
 
         // hero managment
-        GWCA_API void AddHero(DWORD heroid);
-        GWCA_API void KickHero(DWORD heroid);
+        GWCA_API void AddHero(uint32_t heroid);
+        GWCA_API void KickHero(uint32_t heroid);
         GWCA_API void KickAllHeroes();
 
         // hero flagging
-        GWCA_API void FlagHero(DWORD hero_index, GW::GamePos pos);
-        GWCA_API void FlagHeroAgent(GW::AgentID agent_id, GW::GamePos pos);
-        GWCA_API void UnflagHero(DWORD hero_index);
+        GWCA_API void FlagHero(uint32_t hero_index, GamePos pos);
+        GWCA_API void FlagHeroAgent(AgentID agent_id, GamePos pos);
+        GWCA_API void UnflagHero(uint32_t hero_index);
 
-        GWCA_API void FlagAll(GW::GamePos pos);
+        GWCA_API void FlagAll(GamePos pos);
         GWCA_API void UnflagAll();
     };
 }

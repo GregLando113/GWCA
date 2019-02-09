@@ -22,161 +22,164 @@
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 
-bool GW::Map::IsMapLoaded() {
-    return GameContext::instance()->map != nullptr;
-}
-
-void GW::Map::Travel(GW::Constants::MapID MapID,
-    int District /*= 0*/, int Region /*= 0*/, int Language /*= 0*/) {
-
-    struct ZoneMap {
-        const DWORD header = CtoGS_MSGTravelTo;
-        DWORD mapid;
-        int region;
-        int district;
-        int language;
-        DWORD unk;
-    };
-
-    if (GetInstanceType() == GW::Constants::InstanceType::Loading) return;
-
-    static ZoneMap *pak = new ZoneMap();
-
-    pak->mapid = static_cast<DWORD>(MapID);
-    pak->district = District;
-    pak->region = Region;
-    pak->language = Language;
-    pak->unk = 0;
-
-    CtoS::SendPacket<ZoneMap>(pak);
-}
-
-void GW::Map::Travel(GW::Constants::MapID MapID, GW::Constants::District district, int district_number) {
-    switch (district) {
-    case Constants::District::Current:
-        Travel(MapID, district_number, GetRegion(), GetLanguage());
-        break;
-    case Constants::District::International:
-        Travel(MapID, district_number, Constants::Region::International, 0);
-        break;
-    case Constants::District::American:
-        Travel(MapID, district_number, Constants::Region::America, 0);
-        break;
-    case Constants::District::EuropeEnglish:
-        Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::English);
-        break;
-    case Constants::District::EuropeFrench:
-        Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::French);
-        break;
-    case Constants::District::EuropeGerman:
-        Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::German);
-        break;
-    case Constants::District::EuropeItalian:
-        Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Italian);
-        break;
-    case Constants::District::EuropeSpanish:
-        Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Spanish);
-        break;
-    case Constants::District::EuropePolish:
-        Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Polish);
-        break;
-    case Constants::District::EuropeRussian:
-        Travel(MapID, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Russian);
-        break;
-    case Constants::District::AsiaKorean:
-        Travel(MapID, district_number, Constants::Region::Korea, 0);
-        break;
-    case Constants::District::AsiaChinese:
-        Travel(MapID, district_number, Constants::Region::China, 0);
-        break;
-    case Constants::District::AsiaJapanese:
-        Travel(MapID, district_number, Constants::Region::Japan, 0);
-        break;
-    }
-}
-
-DWORD GW::Map::GetInstanceTime() {
-    return GameContext::instance()->agent->instance_timer;
-}
-
-GW::Constants::MapID GW::Map::GetMapID() {
-    static DWORD* mapid_ptr = nullptr;
-    if (mapid_ptr == nullptr) {
-        // For Map IDs
-        BYTE* addr = (BYTE*)Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0);
-        printf("[SCAN] MapIDPtr = %p\n", addr);
-        if (addr) {
-            mapid_ptr = *(DWORD**)(addr + 0x46);
-        }
-    }
-    return (GW::Constants::MapID)(*mapid_ptr);
-}
-
 namespace {
-    BYTE* GetMapInfoPtr() {
-        static BYTE* MapInfoPtr = nullptr;
-        if (MapInfoPtr == nullptr) {
-            MapInfoPtr = (BYTE*)GW::Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
+    uintptr_t GetMapInfoPtr() {
+        static uintptr_t MapInfoPtr = 0;
+        if (!MapInfoPtr) {
+            MapInfoPtr = GW::Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
             if (MapInfoPtr) {
-                printf("[SCAN] MapInfoPtr = %p\n", MapInfoPtr);
-                MapInfoPtr = *(BYTE**)(MapInfoPtr + 7);
+                printf("[SCAN] MapInfoPtr = %08lX\n", MapInfoPtr);
+                MapInfoPtr = *(uintptr_t *)(MapInfoPtr + 7);
             }
         }
         return MapInfoPtr;
     }
 }
 
-int GW::Map::GetRegion() {
-    return *(int*)(GetMapInfoPtr() + 0x10);
-}
-
-int GW::Map::GetLanguage() {
-    return *(int*)(GetMapInfoPtr() + 0xC);
-}
-
-int GW::Map::GetDistrict() {
-    GW::CharContext *ctx = GW::GameContext::instance()->character;
-    if (!ctx) return 0;
-    return ctx->district_number;
-}
-
-GW::Constants::InstanceType GW::Map::GetInstanceType() {
-    return *(GW::Constants::InstanceType*)(MemoryMgr::agArrayPtr - 0xF0);
-}
-
-GW::MissionMapIconArray GW::Map::GetMissionMapIconArray() {
-    return GameContext::instance()->world->mission_map_icons;
-}
-
-GW::PathingMapArray GW::Map::GetPathingMap() {
-    return GameContext::instance()->map->sub1->sub2->pmaps;
-}
-
-DWORD GW::Map::GetFoesKilled() {
-    return GameContext::instance()->world->foes_killed;
-}
-
-DWORD GW::Map::GetFoesToKill() {
-    return GameContext::instance()->world->foes_to_kill;
-}
-
-GW::AreaInfo& GW::Map::GetMapInfo(Constants::MapID MapID) {
-    static AreaInfo *infos = nullptr;
-    if (!infos) {
-        DWORD *tmp = (DWORD *)GW::Scanner::Find("\x8B\xC6\xC1\xE0\x05\x2B\xC6\x5E\x8D\x04", "xxxxxxxxxx", 11);
-        printf("[SCAN] AreaInfoPtr = %p\n", tmp);
-        infos = (AreaInfo *)*tmp;
+namespace GW {
+    bool Map::GetIsMapLoaded() {
+        return GameContext::instance()->map != nullptr;
     }
-    return infos[(DWORD)MapID];
-}
 
-bool GW::Map::GetIsInCinematic(void) {
-    GW::GameContext *game_ctx = GW::GameContext().instance();
-    if (!(game_ctx && game_ctx->cinematic))
-        return false;
-    return (game_ctx->cinematic->h0004 != 0);
-}
+    void Map::Travel(Constants::MapID map_id,
+        int district, int region, int language) {
 
-void GW::Map::SkipCinematic(void) {
-    GW::CtoS::SendPacket(4, CtoGS_MSGSkipCinematic);
-}
+        struct ZoneMap {
+            uint32_t header = CtoGS_MSGTravelTo;
+            uint32_t mapid;
+            int region;
+            int district;
+            int language;
+            uint32_t unk;
+        };
+
+        if (GetInstanceType() == Constants::InstanceType::Loading)
+            return;
+
+        ZoneMap pak;
+        pak.mapid = static_cast<uint32_t>(map_id);
+        pak.district = district;
+        pak.region = region;
+        pak.language = language;
+        pak.unk = 0;
+
+        CtoS::SendPacket<ZoneMap>(&pak);
+    }
+
+    void Map::Travel(Constants::MapID map_id, Constants::District district, int district_number) {
+        switch (district) {
+        case Constants::District::Current:
+            Travel(map_id, district_number, GetRegion(), GetLanguage());
+            break;
+        case Constants::District::International:
+            Travel(map_id, district_number, Constants::Region::International, 0);
+            break;
+        case Constants::District::American:
+            Travel(map_id, district_number, Constants::Region::America, 0);
+            break;
+        case Constants::District::EuropeEnglish:
+            Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::English);
+            break;
+        case Constants::District::EuropeFrench:
+            Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::French);
+            break;
+        case Constants::District::EuropeGerman:
+            Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::German);
+            break;
+        case Constants::District::EuropeItalian:
+            Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Italian);
+            break;
+        case Constants::District::EuropeSpanish:
+            Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Spanish);
+            break;
+        case Constants::District::EuropePolish:
+            Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Polish);
+            break;
+        case Constants::District::EuropeRussian:
+            Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Russian);
+            break;
+        case Constants::District::AsiaKorean:
+            Travel(map_id, district_number, Constants::Region::Korea, 0);
+            break;
+        case Constants::District::AsiaChinese:
+            Travel(map_id, district_number, Constants::Region::China, 0);
+            break;
+        case Constants::District::AsiaJapanese:
+            Travel(map_id, district_number, Constants::Region::Japan, 0);
+            break;
+        }
+    }
+
+    uint32_t Map::GetInstanceTime() {
+        return GameContext::instance()->agent->instance_timer;
+    }
+
+    Constants::MapID Map::GetMapID() {
+        static uint32_t* map_id_ptr = nullptr;
+        if (map_id_ptr == nullptr) {
+            // For Map IDs
+            uintptr_t addr = Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0);
+            printf("[SCAN] MapIDPtr = %08lX\n", addr);
+            if (addr) {
+                map_id_ptr = *(uint32_t **)(addr + 0x46);
+            }
+        }
+        return (Constants::MapID)(*map_id_ptr);
+    }
+
+    int Map::GetRegion() {
+        return *(int *)(GetMapInfoPtr() + 0x10);
+    }
+
+    int Map::GetLanguage() {
+        return *(int *)(GetMapInfoPtr() + 0xC);
+    }
+
+    int Map::GetDistrict() {
+        CharContext *ctx = GameContext::instance()->character;
+        if (!ctx) return 0;
+        return ctx->district_number;
+    }
+
+    Constants::InstanceType Map::GetInstanceType() {
+        return *(Constants::InstanceType *)(MemoryMgr::AgentArrayPtr - 0xF0);
+    }
+
+    MissionMapIconArray Map::GetMissionMapIconArray() {
+        return GameContext::instance()->world->mission_map_icons;
+    }
+
+    PathingMapArray Map::GetPathingMap() {
+        return GameContext::instance()->map->sub1->sub2->pmaps;
+    }
+
+    uint32_t Map::GetFoesKilled() {
+        return GameContext::instance()->world->foes_killed;
+    }
+
+    uint32_t Map::GetFoesToKill() {
+        return GameContext::instance()->world->foes_to_kill;
+    }
+
+    AreaInfo *Map::GetMapInfo(Constants::MapID map_id) {
+        static AreaInfo *infos = nullptr;
+        if (!infos) {
+            uintptr_t tmp = Scanner::Find(
+                "\x8B\xC6\xC1\xE0\x05\x2B\xC6\x5E\x8D\x04", "xxxxxxxxxx", 11);
+            printf("[SCAN] AreaInfoPtr = %08lX\n", tmp);
+            infos = *(AreaInfo **)tmp;
+        }
+        return &infos[(uint32_t)map_id];
+    }
+
+    bool Map::GetIsInCinematic(void) {
+        GameContext *game_ctx = GameContext().instance();
+        if (!(game_ctx && game_ctx->cinematic))
+            return false;
+        return (game_ctx->cinematic->h0004 != 0);
+    }
+
+    void Map::SkipCinematic(void) {
+        CtoS::SendPacket(4, CtoGS_MSGSkipCinematic);
+    }
+} // namespace GW

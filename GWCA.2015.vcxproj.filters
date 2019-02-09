@@ -247,9 +247,6 @@
     <ClInclude Include="GWCA\Utilities\Macros.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="GWCA\Managers\ConnMgr.h">
-      <Filter>Managers</Filter>
-    </ClInclude>
     <ClInclude Include="GWCA\Context\Cinematic.h">
       <Filter>Context</Filter>
     </ClInclude>
@@ -344,9 +341,6 @@
       <Filter>src\Utilities\minhook</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\src\UIMgr.cpp">
-      <Filter>src\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="GWCA\src\ConnMgr.cpp">
       <Filter>src\Managers</Filter>
     </ClCompile>
     <ClCompile Include="GWCA\stdafx.cpp" />

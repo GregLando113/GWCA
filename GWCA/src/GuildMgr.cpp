@@ -10,36 +10,39 @@
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/GuildMgr.h>
 
-GW::GuildContext* GW::GuildMgr::GetGuildContext() {
-    return GameContext::instance()->guild;
-}
+namespace GW {
 
-wchar_t* GW::GuildMgr::GetPlayerGuildAnnouncer() {
-    return GameContext::instance()->guild->announcement_author;
-}
+    GuildContext *GuildMgr::GetGuildContext() {
+        return GameContext::instance()->guild;
+    }
 
-wchar_t* GW::GuildMgr::GetPlayerGuildAnnouncement() {
-    return GameContext::instance()->guild->announcement;
-}
+    wchar_t *GuildMgr::GetPlayerGuildAnnouncer() {
+        return GameContext::instance()->guild->announcement_author;
+    }
 
-DWORD GW::GuildMgr::GetPlayerGuildIndex() {
-    return GameContext::instance()->guild->player_guild_index;
-}
+    wchar_t *GuildMgr::GetPlayerGuildAnnouncement() {
+        return GameContext::instance()->guild->announcement;
+    }
 
-GW::GuildArray GW::GuildMgr::GetGuildArray() {
-    return GameContext::instance()->guild->guilds;
-}
+    uint32_t GuildMgr::GetPlayerGuildIndex() {
+        return GameContext::instance()->guild->player_guild_index;
+    }
 
-void GW::GuildMgr::TravelGH() {
-    GW::GHKey playerguild = GameContext::instance()->guild->player_gh_key;
+    GuildArray GuildMgr::GetGuildArray() {
+        return GameContext::instance()->guild->guilds;
+    }
 
-    CtoS::SendPacket(0x18, CtoGS_MSGTravelGH, playerguild.k[0], playerguild.k[1], playerguild.k[2], playerguild.k[3]);
-}
+    void GuildMgr::TravelGH() {
+        GHKey guild_uuid = GameContext::instance()->guild->player_gh_key;
+        CtoS::SendPacket(0x18, CtoGS_MSGTravelGH,
+            guild_uuid.k[0], guild_uuid.k[1], guild_uuid.k[2], guild_uuid.k[3]);
+    }
 
-void GW::GuildMgr::TravelGH(GW::GHKey key) {
-    CtoS::SendPacket(0x18, CtoGS_MSGTravelGH, key.k[0], key.k[1], key.k[2], key.k[3]);
-}
+    void GuildMgr::TravelGH(GHKey key) {
+        CtoS::SendPacket(0x18, CtoGS_MSGTravelGH, key.k[0], key.k[1], key.k[2], key.k[3]);
+    }
 
-void GW::GuildMgr::LeaveGH() {
-    CtoS::SendPacket(0x8, CtoGS_MSGLeaveGH, 0x1);
-}
+    void GuildMgr::LeaveGH() {
+        CtoS::SendPacket(0x8, CtoGS_MSGLeaveGH, 0x1);
+    }
+} // namespace GW

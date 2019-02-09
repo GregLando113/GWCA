@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/Utilities/Maybe.h>
 
 namespace GW {
     struct Skill { // total : 0xA0/160
@@ -75,9 +74,9 @@ namespace GW {
         /* +h00B4 */ uint32_t h00B4[2];
 
         bool IsValid() const { return agent_id > 0; }
-        // Same as SkillbarArray::GetSkillbarArray()[0] with checks. 
-        static Skillbar GetPlayerSkillbar();
-        Maybe<SkillbarSkill> GetSkillById(Constants::SkillID skill_id);
+
+        static Skillbar *GetPlayerSkillbar();
+        SkillbarSkill   *GetSkillById(Constants::SkillID skill_id);
     };
     static_assert(sizeof(Skillbar) == 188, "struct Skillbar has incorect size");
 
@@ -96,8 +95,6 @@ namespace GW {
 
         uint32_t GetTimeElapsed() const;
         uint32_t GetTimeRemaining() const;
-        static Effect Nil() { return Effect(); }
-        Effect() : skill_id(0), effect_type(0), effect_id(0), agent_id(0), duration(0.0f), timestamp(0) {}
     };
     static_assert(sizeof(Effect) == 24, "struct Effect has incorect size");
 
@@ -106,9 +103,6 @@ namespace GW {
         /* +h0004 */ uint32_t h0004;
         /* +h0008 */ uint32_t buff_id; // id of buff in the buff array
         /* +h000C */ uint32_t target_agent_id; // agent id of the target (0 if no target)
-
-        static Buff Nil() { return Buff(); }
-        Buff() : skill_id(0), h0004(0), buff_id(0), target_agent_id(0) {}
     };
     static_assert(sizeof(Buff) == 16, "struct Buff has incorect size");
 

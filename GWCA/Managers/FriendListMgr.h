@@ -2,21 +2,31 @@
 
 namespace GW {
 
+    struct Friend;
+    struct FriendList;
+
+    namespace Constants {
+        enum class OnlineStatus;
+    }
+
     namespace FriendListMgr {
 
         GWCA_API FriendList *GetFriendList();
 
         GWCA_API Friend *GetFriend(wchar_t *account, wchar_t *playing);
 
-        inline Friend *GetFriend(DWORD index) { 
-            return GetFriendList()->friends[index + 1]; }
+        // @Cleanup:
+        // move this to cpp
+        // inline Friend *GetFriend(uint32_t index) { 
+        //     return GetFriendList()->friends[index + 1];
+        // }
 
-        inline DWORD GetNumberOfFriends() { return GetFriendList()->number_of_friend; }
-        inline DWORD GetNumberOfIgnores() { return GetFriendList()->number_of_ignore; }
-        inline DWORD GetNumberOfPartners() { return GetFriendList()->number_of_partner; }
-        inline DWORD GetNumberOfTraders() { return GetFriendList()->number_of_trade; }
+        // inline uint32_t GetNumberOfFriends() { return GetFriendList()->number_of_friend; }
+        // inline uint32_t GetNumberOfIgnores() { return GetFriendList()->number_of_ignore; }
+        // inline uint32_t GetNumberOfPartners() { return GetFriendList()->number_of_partner; }
+        // inline uint32_t GetNumberOfTraders() { return GetFriendList()->number_of_trade; }
 
-        inline DWORD GetMyStatus() { return GetFriendList()->player_status; }
+        // inline uint32_t GetMyStatus() { return GetFriendList()->player_status; }
 
         GWCA_API void SetFriendListStatus(Constants::OnlineStatus status);
 

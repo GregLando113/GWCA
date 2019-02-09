@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA", "GWCA\GWCA.2015.vcxproj", "{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA_example", "example\GWCA_example.vcxproj", "{D60712B8-DA82-45D7-9D57-3E89C13DDE35}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA_Test_Static", "tests\GWCA_Test_Static.vcxproj", "{A917F016-425B-485A-AB6B-9F0331B5CF5D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MinHook", "MinHook\MinHook.vcxproj", "{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x86.ActiveCfg = Debug|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x86.Build.0 = Debug|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x86.ActiveCfg = Release|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x86.Build.0 = Release|Win32
+		{D60712B8-DA82-45D7-9D57-3E89C13DDE35}.Debug|x86.ActiveCfg = Debug|Win32
+		{D60712B8-DA82-45D7-9D57-3E89C13DDE35}.Debug|x86.Build.0 = Debug|Win32
+		{D60712B8-DA82-45D7-9D57-3E89C13DDE35}.Release|x86.ActiveCfg = Release|Win32
+		{D60712B8-DA82-45D7-9D57-3E89C13DDE35}.Release|x86.Build.0 = Release|Win32
+		{A917F016-425B-485A-AB6B-9F0331B5CF5D}.Debug|x86.ActiveCfg = Debug|Win32
+		{A917F016-425B-485A-AB6B-9F0331B5CF5D}.Debug|x86.Build.0 = Debug|Win32
+		{A917F016-425B-485A-AB6B-9F0331B5CF5D}.Release|x86.ActiveCfg = Release|Win32
+		{A917F016-425B-485A-AB6B-9F0331B5CF5D}.Release|x86.Build.0 = Release|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Debug|x86.ActiveCfg = Debug|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Debug|x86.Build.0 = Debug|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Release|x86.ActiveCfg = Release|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -4,38 +4,33 @@ Release/
 *exe
 
 # Bloated Windows Databases
+.vs/
+*.db
 *.sdf
-*.opensdf
 *.suo
-
+*.opendb
+*.opensdf
 
 # Compiled Object files
-*.slo
-*.lo
 *.o
+*.lo
+*.lib
 *.obj
-
+*.slo
 
 # Precompiled Headers
-*.gch
-*.pch
-*.idb
-*.pdb
-*.ipdb
-*.iobj
 *.exp
-*.tmp
+*.gch
+*.idb
 *.ilk
+*.pdb
+*.tmp
+*.pch
+*.iobj
+*.ipch
+*.ipdb
 dox/
-GWCA_d.lib
-*.opendb
-
-GWCAd\.lib
-*.lib
 
 # Sublime Text stuff
 *.sublime-project*
 *.sublime-workspace*
-
-.vs/
-*.VC.db

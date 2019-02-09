@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MinHook\MinHook.vcxproj">
+      <Project>{ac820bba-bb5b-4d8c-96ff-ea8138ceed52}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\GWCA\Constants\AgentIDs.h" />
+    <ClInclude Include="..\..\Source\GWCA\Constants\Constants.h" />
+    <ClInclude Include="..\..\Source\GWCA\Constants\ItemIDs.h" />
+    <ClInclude Include="..\..\Source\GWCA\Constants\Maps.h" />
+    <ClInclude Include="..\..\Source\GWCA\Constants\QuestIDs.h" />
+    <ClInclude Include="..\..\Source\GWCA\Constants\Skills.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\AgentContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\CharContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\Cinematic.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\GadgetContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\GameContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\GuildContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\ItemContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\MapContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\PartyContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\TextParser.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\TradeContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\Context\WorldContext.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameContainers\Array.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameContainers\List.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameContainers\Vector.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Agent.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Attribute.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Camera.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Friendslist.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Guild.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Hero.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Item.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Map.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Match.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\NPC.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Party.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Pathing.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Player.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Quest.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Skill.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameEntities\Title.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\AgentMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\CameraMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\ChatMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\CtoSMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\EffectMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\FriendListMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\GameThreadMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\GuildMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\ItemMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\MapMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\MemoryMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\MerchantMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\PartyMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\PlayerMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\Render.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\SkillbarMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\StoCMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\TradeMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\UIMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Packets\StoC.h" />
+    <ClInclude Include="..\..\Source\GWCA\stdafx.h" />
+    <ClInclude Include="..\..\Source\GWCA\Utilities\Export.h" />
+    <ClInclude Include="..\..\Source\GWCA\Utilities\Hooker.h" />
+    <ClInclude Include="..\..\Source\GWCA\Utilities\Macros.h" />
+    <ClInclude Include="..\..\Source\GWCA\Utilities\MemoryPatcher.h" />
+    <ClInclude Include="..\..\Source\GWCA\Utilities\Scanner.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\GWCA\src\AgentMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\CameraMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\ChatMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\CtoSMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\EffectMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\FriendListMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\GameThreadMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\GuildMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\GWCA.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\Hooker.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\ItemMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\MapMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\MemoryMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\MemoryPatcher.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\MerchantMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\PartyMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\PlayerMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\Render.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\Scanner.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\Skill.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\SkillbarMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\StoCMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\TradeMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\UIMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\Vector.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GWCA</RootNamespace>
+    <ProjectName>GWCA</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Source\;$(SolutionDir)..\Source\GWCA\;$(SolutionDir)..\Dependencies\MinHook\Include\</AdditionalIncludeDirectories>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ForcedIncludeFiles>GWCA\Utilities\Export.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderOutputFile>$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Source\;$(SolutionDir)..\Source\GWCA\;$(SolutionDir)..\Dependencies\MinHook\Include\</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ForcedIncludeFiles>GWCA\Utilities\Export.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderOutputFile>$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

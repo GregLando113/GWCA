@@ -42,8 +42,10 @@ namespace {
     SendDialog_pt SendDialog_Func;
 
     void __fastcall OnSendDialog(uint32_t dialog_id) {
+        HookBase::EnterHook();
         last_dialog_id = dialog_id;
-        return RetSendDialog(dialog_id);
+        RetSendDialog(dialog_id);
+        HookBase::LeaveHook();
     };
 
     typedef void(__fastcall *ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);

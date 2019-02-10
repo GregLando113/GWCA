@@ -38,8 +38,10 @@ namespace {
     PostProcessEffect_pt PostProcessEffect_Func;
 
     void __fastcall OnPostProcessEffect(uint32_t intensity, uint32_t tint) {
+        HookBase::EnterHook();
         alcohol_level = intensity;
         RetPostProcessEffect(intensity, tint);
+        HookBase::LeaveHook();
     }
 
     void Init() {

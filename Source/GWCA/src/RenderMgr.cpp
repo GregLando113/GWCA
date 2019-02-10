@@ -49,25 +49,34 @@ namespace {
     std::function<void (IDirect3DDevice9 *)> reset_callback;
 
     bool __fastcall OnGwEndScene(gwdx *ctx, void *unk) {
+        HookBase::EnterHook();
         gwdx_ptr = ctx;
         if (render_callback)
             render_callback(ctx->device);
-        return RetGwEndScene(ctx, unk);
+        bool retval = RetGwEndScene(ctx, unk);
+        HookBase::LeaveHook();
+        return retval;
     }
 
     bool __fastcall OnGwReset(gwdx *ctx) {
+        HookBase::EnterHook();
         gwdx_ptr = ctx;
         if (reset_callback)
             reset_callback(ctx->device);
-        return RetGwReset(ctx);
+        bool retval = RetGwReset(ctx);
+        HookBase::LeaveHook();
+        return retval;
     }
 
     bool __fastcall OnScreenCapture(gwdx *ctx, void *unk) {
+        HookBase::EnterHook();
         // @Enhancement: This should probably be an option.
         if (!GW::UI::GetIsShiftScrennShot() && render_callback) {
             render_callback(ctx->device);
         }
-        return RetScreenCapture(ctx, unk);
+        bool retval = RetScreenCapture(ctx, unk);
+        HookBase::LeaveHook();
+        return retval;
     }
 
     void Init() {

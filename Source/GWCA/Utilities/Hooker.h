@@ -7,7 +7,7 @@ namespace GW {
         void* _detourFunc = nullptr;
         void* _retourFunc = nullptr;
         void* _sourceFunc = nullptr;
-        
+
     public:
         static void Initialize();
         static void Deinitialize();
@@ -20,6 +20,10 @@ namespace GW {
 
         static void CreateHook(void *target, void *detour, void **trampoline);
         static void RemoveHook(void *target);
+
+        static void EnterHook();
+        static void LeaveHook();
+        static int  GetInHookCount();
     };
     
     template <typename T>

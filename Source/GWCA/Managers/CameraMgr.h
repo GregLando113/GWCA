@@ -8,8 +8,6 @@ namespace GW {
     extern Module CameraModule;
 
     namespace CameraMgr {
-        GWCA_API void RestoreHooks();
-
         // ==== Camera ====
         GWCA_API Camera *GetCamera();
 

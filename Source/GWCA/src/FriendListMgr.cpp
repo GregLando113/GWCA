@@ -22,10 +22,12 @@ namespace {
 
     std::function<void (Friend *f, FriendStatus status)> OnFriendStatus_callback;
     void __fastcall OnFriendStatusHandler(FriendStatus status, wchar_t *account, wchar_t *playing) {
+        HookBase::EnterHook();
         RetFriendStatusHandler(status, account, playing);
         Friend *_friend = FriendListMgr::GetFriend(account, playing);
         if (_friend && OnFriendStatus_callback)
             OnFriendStatus_callback(_friend, status);
+        HookBase::LeaveHook();
     }
 
     typedef void(__fastcall *SetOnlineStatus_pt)(uint32_t status);

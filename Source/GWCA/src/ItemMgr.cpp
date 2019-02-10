@@ -35,6 +35,7 @@ namespace {
 
     static std::function<void (uint32_t type, uint32_t slot, Bag *bag)> ItemClickCallback;
     void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *info) {
+        HookBase::EnterHook();
         // click type:
         //  2  add (when you load / open chest)
         //  5  click
@@ -52,6 +53,7 @@ namespace {
             ItemClickCallback(type, slot, bag);
 
         RetItemClick(bag_id, edx, info);
+        HookBase::LeaveHook();
     }
 
     void Init() {

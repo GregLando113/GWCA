@@ -33,12 +33,16 @@ namespace {
 
     // Parameter is always 1 or 2 creating "Ready" or "Not ready"
     uint32_t __stdcall OnTick(uint32_t unk1) {
+        HookBase::EnterHook();
         // this func is always called twice so use this hack to tick only once
         static bool toggle = true;
         toggle = !toggle;
-        if (toggle) return 4;
+        if (toggle)
+            goto leave;
         if (tick_work_as_toggle)
             PartyMgr::Tick(!PartyMgr::GetIsPlayerTicked());
+    leave:;
+        HookBase::LeaveHook();
         return 4;
     }
 

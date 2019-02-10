@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include <map>
+#include <atomic>
 #include <string>
 #include <vector>
 #include <sstream>

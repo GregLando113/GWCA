@@ -66,9 +66,6 @@ namespace GW {
         GWCA_API void SetTimestampsFormat(bool use_24h);
         GWCA_API void SetTimestampsColor(Color color);
 
-        GWCA_API void Initialize();
-        GWCA_API void RestoreHooks();
-
         // SendChat callback can modify the msg before it is send.
         // Pay attention to not overflow the buffer.
         GWCA_API void SetSendChatCallback(

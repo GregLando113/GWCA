@@ -106,8 +106,10 @@ namespace {
     ChatEvent_pt RetChatEvent;
     ChatEvent_pt ChatEvent_Func;
     void __fastcall OnChatEvent(uint32_t event_id, uint32_t type, wchar_t *info, void *unk) {
+        HookBase::EnterHook();
         if (ChatEvent_callback) ChatEvent_callback(event_id, type, info, unk);
-        return RetChatEvent(event_id, type, info, unk);
+        RetChatEvent(event_id, type, info, unk);
+        HookBase::LeaveHook();
     }
 
     typedef Chat::Color* (__fastcall *GetChannelColor_pt)(Chat::Color *color, Chat::Channel chan);
@@ -123,9 +125,10 @@ namespace {
     LocalMessage_pt RetLocalMessage;
     std::function<bool (int, wchar_t *)> LocalMessage_callback;
     void __fastcall OnLocalMessage(int channel, wchar_t *message) {
-        if (LocalMessage_callback && !LocalMessage_callback(channel, message))
-            return;
-        return RetLocalMessage(channel, message);
+        HookBase::EnterHook();
+        if (LocalMessage_callback && LocalMessage_callback(channel, message))
+            RetLocalMessage(channel, message);
+        HookBase::LeaveHook();
     }
 
     std::function<void (Chat::Channel chan, wchar_t *msg)> SendChat_callback;
@@ -145,9 +148,11 @@ namespace {
     WriteWhisper_pt WriteWhisper_Func;
     std::function<void (wchar_t *, wchar_t *)> WriteWhisper_callback;
     void __fastcall OnWriteWhisper(uint32_t unk, wchar_t *from, wchar_t *msg) {
+        HookBase::EnterHook();
         if (WriteWhisper_callback)
             WriteWhisper_callback(from, msg);
         RetWriteWhisper(unk, from, msg);
+        HookBase::LeaveHook();
     }
 
     typedef void (GWCALL *PrintChat_pt)(void *ctx, uint32_t thiscall,
@@ -158,10 +163,12 @@ namespace {
     void GWCALL OnPrintChat(void *ctx, int thiscall,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint)
     {
+        HookBase::EnterHook();
         assert(ChatBuffer_Addr && 0 <= channel && channel < Chat::CHANNEL_COUNT);
 
         if (!ShowTimestamps) {
             RetPrintChat(ctx, thiscall, channel, str, timestamp, reprint);
+            HookBase::LeaveHook();
             return;
         }
 
@@ -192,6 +199,7 @@ namespace {
             }
         }
         RetPrintChat(ctx, thiscall, channel, buffer, timestamp, reprint);
+        HookBase::LeaveHook();
     }
 
     Chat::Channel GetChannel(wchar_t opcode) {
@@ -208,6 +216,7 @@ namespace {
     }
 
     void __fastcall OnSendChat(wchar_t *message) {
+        HookBase::EnterHook();
         if (*message == '/') {
             int argc;
             wchar_t **argv;
@@ -218,6 +227,7 @@ namespace {
                 callback->second(message, argc, argv);
                 // No reasons to foward the function call to it's original.
                 LocalFree(argv);
+                HookBase::LeaveHook();
                 return;
             }
             LocalFree(argv);
@@ -226,9 +236,11 @@ namespace {
         if (SendChat_callback)
             SendChat_callback(GetChannel(*message), &message[1]);
         RetSendChat(message);
+        HookBase::LeaveHook();
     }
 
     void __fastcall OnOpenTemplate(uint32_t unk, Chat::ChatTemplate* info) {
+        HookBase::EnterHook();
         if (open_links
             && info
             && info->code.valid()
@@ -239,15 +251,20 @@ namespace {
         } else {
             RetOpenTemplate(unk, info);
         }
+        HookBase::LeaveHook();
     }
 
     Chat::Color* __fastcall OnGetSenderColor(Chat::Color *color, Chat::Channel chan) {
+        HookBase::EnterHook();
         *color = ChatSenderColor[(int)chan];
+        HookBase::LeaveHook();
         return color;
     };
 
     Chat::Color* __fastcall OnGetMessageColor(Chat::Color *color, Chat::Channel chan) {
+        HookBase::EnterHook();
         *color = ChatMessageColor[(int)chan];
+        HookBase::LeaveHook();
         return color;
     };
 

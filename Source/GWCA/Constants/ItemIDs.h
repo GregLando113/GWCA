@@ -60,6 +60,7 @@ namespace GW {
             const int Eggs = 22752;
             const int Kabobs = 17060;
             const int Warsupplies = 35121;
+            const int LunarPig = 29424;
             const int LunarRat = 29425;
             const int LunarOx = 29426;
             const int LunarTiger = 29427;

@@ -102,7 +102,7 @@ namespace GW {
     Module UIModule = {
         "UIModule",     // name
         NULL,           // param
-        NULL,           // init_module
+        ::Init,         // init_module
         NULL,           // exit_module
         NULL,           // exit_module
         NULL,           // remove_hooks

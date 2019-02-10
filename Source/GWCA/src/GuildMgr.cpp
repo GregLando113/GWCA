@@ -7,10 +7,21 @@
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/GuildContext.h>
 
+#include <GWCA/Managers/Module.h>
+
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/GuildMgr.h>
 
 namespace GW {
+
+    Module GuildModule {
+        "GuildModule",  // name
+        NULL,           // param
+        NULL,           // init_module
+        NULL,           // exit_module
+        NULL,           // exit_module
+        NULL,           // remove_hooks
+    };
 
     GuildContext *GuildMgr::GetGuildContext() {
         return GameContext::instance()->guild;

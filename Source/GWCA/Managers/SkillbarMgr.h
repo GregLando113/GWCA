@@ -6,6 +6,9 @@ namespace GW {
         enum class SkillID;
     }
 
+    struct Module;
+    extern Module SkillbarModule;
+
     namespace SkillbarMgr {
 
         // Get the skill slot in the player bar of the player.

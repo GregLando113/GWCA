@@ -6,6 +6,9 @@ namespace GW {
     // @Cleanup: @Fix: This should be replaced by an UUID type
     struct GHKey;
 
+    struct Module;
+    extern Module GuildModule;
+
     namespace GuildMgr {
 
         GWCA_API GuildContext *GetGuildContext();

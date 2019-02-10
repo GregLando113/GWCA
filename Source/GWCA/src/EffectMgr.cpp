@@ -5,6 +5,7 @@
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
+#include <GWCA/Utilities/Macros.h>
 
 #include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Array.h>
@@ -19,6 +20,8 @@
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
 
+#include <GWCA/Managers/Module.h>
+
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/StoCMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
@@ -26,36 +29,53 @@
 #include <GWCA/Managers/GameThreadMgr.h>
 
 namespace {
+    using namespace GW;
+
     uint32_t alcohol_level = 0;
     // post processing effects hook
-    typedef void(__fastcall *PPEFunc_t)(uint32_t intensity, uint32_t tint);
-    GW::THook<PPEFunc_t> ppe_hook;
-    void __fastcall ppe_detour(uint32_t intensity, uint32_t tint) {
+    typedef void(__fastcall *PostProcessEffect_pt)(uint32_t intensity, uint32_t tint);
+    PostProcessEffect_pt RetPostProcessEffect;
+    PostProcessEffect_pt PostProcessEffect_Func;
+
+    void __fastcall OnPostProcessEffect(uint32_t intensity, uint32_t tint) {
         alcohol_level = intensity;
-        ppe_hook.Original()(intensity, tint);
+        RetPostProcessEffect(intensity, tint);
     }
+
+    void Init() {
+        PostProcessEffect_pt PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find(
+            "\x55\x8B\xEC\x83\xEC\x10\x89\x4D\xF8\xC7\x45\xFC", "xxxxxxxxxxxx", 0);
+        printf("[SCAN] PostProcessEffect = %p\n", PostProcessEffect_Func);
+    }
+
+    void CreateHooks() {
+        if (Verify(PostProcessEffect_Func))
+            HookBase::CreateHook(PostProcessEffect_Func, OnPostProcessEffect, (void **)&RetPostProcessEffect);
+    }
+
+    void RemoveHooks() {
+        if (PostProcessEffect_Func)
+            HookBase::RemoveHook(PostProcessEffect_Func);
+    }
+
 }
 
 namespace GW {
-    void Effects::SetupPostProcessingEffectHook() {
-        if (ppe_hook.Empty()) {
-            PPEFunc_t ppe_original = (PPEFunc_t)Scanner::Find(
-                "\x55\x8B\xEC\x83\xEC\x10\x89\x4D\xF8\xC7\x45\xFC", "xxxxxxxxxxxx", 0);
-            printf("[SCAN] PostProcessEffectFunction = %p\n", ppe_original);
-            ppe_hook.Detour(ppe_original, ppe_detour, 6);
-        }   
-    }
-
-    void Effects::RestoreHooks() {
-        HookBase::DisableHooks(&ppe_hook);
-    }
+    Module EffectModule = {
+        "EffectModule",     // name
+        NULL,               // param
+        ::Init,             // init_module
+        NULL,               // exit_module
+        ::CreateHooks,      // exit_module
+        ::RemoveHooks,      // remove_hooks
+    };
 
     uint32_t Effects::GetAlcoholLevel() {
         return alcohol_level;
     }
 
     void Effects::GetDrunkAf(uint32_t intensity, uint32_t tint) {
-        ppe_hook.Original()(intensity, tint);
+        RetPostProcessEffect(intensity, tint);
     }
 
     Effect *Effects::GetPlayerEffectById(Constants::SkillID skill_id) {

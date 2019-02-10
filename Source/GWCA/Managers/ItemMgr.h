@@ -9,9 +9,10 @@ namespace GW {
         enum class Bag;
     }
 
-    namespace Items {
-        GWCA_API void RestoreHooks();
+    struct Module;
+    extern Module ItemModule;
 
+    namespace Items {
         // Get full array of items sorted by ItemID.
         GWCA_API ItemArray GetItemArray();
 

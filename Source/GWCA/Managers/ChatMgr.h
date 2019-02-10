@@ -1,6 +1,9 @@
 #pragma once
 
 namespace GW {
+    struct Module;
+    extern Module ChatModule;
+
     namespace Chat {
         typedef uint32_t Color;
 
@@ -59,12 +62,9 @@ namespace GW {
         GWCA_API void CreateCommand(std::wstring cmd, CmdCB callback);
         GWCA_API void DeleteCommand(std::wstring cmd);
 
-        // @Cleanup:
-        // move those out
-        extern bool ShowTimestamps;
-        // extern bool KeepChatHistory; @Deprecated
-        extern bool Timestamp_24hFormat;
-        extern Color TimestampsColor;
+        GWCA_API void ToggleTimestamps(bool enable);
+        GWCA_API void SetTimestampsFormat(bool use_24h);
+        GWCA_API void SetTimestampsColor(Color color);
 
         GWCA_API void Initialize();
         GWCA_API void RestoreHooks();

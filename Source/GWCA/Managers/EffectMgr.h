@@ -9,12 +9,10 @@ namespace GW {
         enum class SkillID;
     }
 
+    struct Module;
+    extern Module EffectModule;
+
     namespace Effects {
-        GWCA_API void RestoreHooks();
-
-        // will save the alcohol level when it changes
-        GWCA_API void SetupPostProcessingEffectHook();
-
         // Returns current level of intoxication, 0-5 scale.
         // If > 0 then skills that benefit from drunk will work.
         // Important: requires SetupPostProcessingEffectHook() above.

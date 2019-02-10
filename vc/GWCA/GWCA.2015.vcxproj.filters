@@ -180,9 +180,6 @@
     <ClInclude Include="..\..\Source\GWCA\Managers\PlayerMgr.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\GWCA\Managers\Render.h">
-      <Filter>Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\GWCA\Managers\SkillbarMgr.h">
       <Filter>Manager</Filter>
     </ClInclude>
@@ -214,6 +211,9 @@
       <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\GWCA\stdafx.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\RenderMgr.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\GWCA\src\CameraMgr.cpp">
@@ -264,9 +264,6 @@
     <ClCompile Include="..\..\Source\GWCA\src\PlayerMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\GWCA\src\Render.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\GWCA\src\Scanner.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -292,5 +289,8 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\GWCA\stdafx.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\RenderMgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

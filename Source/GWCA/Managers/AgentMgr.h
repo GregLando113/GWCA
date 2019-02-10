@@ -3,21 +3,17 @@
 namespace GW {
     struct NPC;
     struct Agent;
+    struct Module;
+
+    extern Module AgentModule;
 
     namespace Agents {
-        GWCA_API void Initialize();
-
         // === Dialogs ===
         // Same as pressing button (id) while talking to an NPC.
         GWCA_API void SendDialog(uint32_t dialog_id);
 
-        GWCA_API void SetupLastDialogHook();
-        GWCA_API void RestoreLastDialogHook();
-
         // Returns last dialog id sent to the server. Requires the hook.
         GWCA_API uint32_t GetLastDialogId();
-
-        inline void RestoreHooks() { RestoreLastDialogHook(); }
 
         // === Agent Array ===
         // Get Current AgentID's of player or target.

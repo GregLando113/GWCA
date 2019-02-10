@@ -4,6 +4,7 @@
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Vector.h>
@@ -18,25 +19,55 @@
 #include <GWCA/Context/AgentContext.h>
 #include <GWCA/Context/WorldContext.h>
 
+#include <GWCA/Managers/Module.h>
+
 #include <GWCA/Managers/MapMgr.h>
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 
 namespace {
-    uintptr_t GetMapInfoPtr() {
-        static uintptr_t MapInfoPtr = 0;
-        if (!MapInfoPtr) {
-            MapInfoPtr = GW::Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 0);
-            if (MapInfoPtr) {
-                printf("[SCAN] MapInfoPtr = %08lX\n", MapInfoPtr);
-                MapInfoPtr = *(uintptr_t *)(MapInfoPtr + 7);
-            }
+    using namespace GW;
+
+    uintptr_t map_id_addr;
+    uintptr_t map_info_addr;
+    uintptr_t area_info_addr;
+
+    void Init() {
+        {
+            uintptr_t address = GW::Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 7);
+            printf("[SCAN] map_info_addr = %p\n", (void *)address);
+            if (Verify(address))
+                map_info_addr = *(uintptr_t *)(address);
         }
-        return MapInfoPtr;
+
+        {
+            uintptr_t address = Scanner::Find(
+                "\x8B\xC6\xC1\xE0\x05\x2B\xC6\x5E\x8D\x04", "xxxxxxxxxx", 11);
+            printf("[SCAN] area_info_addr = %p\n", (void *)address);
+            area_info_addr = *(uintptr_t *)address;
+        }
+
+        {
+            // For Map IDs
+            uintptr_t address = Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0x46);
+            printf("[SCAN] MapIDPtr = %p\n", (void *)address);
+            if (Verify(address))
+                map_id_addr = *(uintptr_t *)address;
+        }
     }
 }
 
 namespace GW {
+
+    Module MapModule {
+        "MapModule",    // name
+        NULL,           // param
+        ::Init,         // init_module
+        NULL,           // exit_module
+        NULL,           // exit_module
+        NULL,           // remove_hooks
+    };
+
     bool Map::GetIsMapLoaded() {
         return GameContext::instance()->map != nullptr;
     }
@@ -115,24 +146,15 @@ namespace GW {
     }
 
     Constants::MapID Map::GetMapID() {
-        static uint32_t* map_id_ptr = nullptr;
-        if (map_id_ptr == nullptr) {
-            // For Map IDs
-            uintptr_t addr = Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0);
-            printf("[SCAN] MapIDPtr = %08lX\n", addr);
-            if (addr) {
-                map_id_ptr = *(uint32_t **)(addr + 0x46);
-            }
-        }
-        return (Constants::MapID)(*map_id_ptr);
+        return (Constants::MapID)(*(uint32_t *)map_id_addr);
     }
 
     int Map::GetRegion() {
-        return *(int *)(GetMapInfoPtr() + 0x10);
+        return *(int32_t *)(map_info_addr + 0x10);
     }
 
     int Map::GetLanguage() {
-        return *(int *)(GetMapInfoPtr() + 0xC);
+        return *(int32_t *)(map_info_addr + 0xC);
     }
 
     int Map::GetDistrict() {
@@ -162,14 +184,11 @@ namespace GW {
     }
 
     AreaInfo *Map::GetMapInfo(Constants::MapID map_id) {
-        static AreaInfo *infos = nullptr;
-        if (!infos) {
-            uintptr_t tmp = Scanner::Find(
-                "\x8B\xC6\xC1\xE0\x05\x2B\xC6\x5E\x8D\x04", "xxxxxxxxxx", 11);
-            printf("[SCAN] AreaInfoPtr = %08lX\n", tmp);
-            infos = *(AreaInfo **)tmp;
-        }
-        return &infos[(uint32_t)map_id];
+        AreaInfo *infos = (AreaInfo *)area_info_addr;
+        if (Verify(infos))
+            return &infos[(uint32_t)map_id];
+        else
+            return NULL;
     }
 
     bool Map::GetIsInCinematic(void) {

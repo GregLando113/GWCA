@@ -1,6 +1,9 @@
 #pragma once
 
 namespace GW {
+    struct Module;
+    extern Module CtoSModule;
+
     namespace CtoS {
         // Send packet that uses only dword parameters, can copypaste most gwa2 sendpackets :D
         GWCA_API void SendPacket(uint32_t size, ...);

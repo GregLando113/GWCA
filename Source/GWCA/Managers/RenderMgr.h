@@ -4,6 +4,10 @@
 struct IDirect3DDevice9;
 
 namespace GW {
+
+    struct Module;
+    extern Module RenderModule;
+
     namespace Render {
         // Set up a callback for drawing on screen. 
         // Will be called after GW render. 
@@ -14,8 +18,6 @@ namespace GW {
 
         // Set up a callback for directx device reset
         GWCA_API void SetResetCallback(std::function<void(IDirect3DDevice9 *)> callback);
-
-        GWCA_API void RestoreHooks();
 
         // Check if gw is in fullscreen
         // Note: requires one or both callbacks to be set and called before

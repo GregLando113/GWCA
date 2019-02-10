@@ -9,6 +9,9 @@ namespace GW {
         enum class Profession;
     }
 
+    struct Module;
+    extern Module PlayerModule;
+
     namespace PlayerMgr {
 
         GWCA_API void SetActiveTitle(Constants::TitleID title_id);

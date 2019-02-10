@@ -9,6 +9,9 @@ namespace GW {
         enum class OnlineStatus;
     }
 
+    struct Module;
+    extern Module FriendListModule;
+
     namespace FriendListMgr {
 
         GWCA_API FriendList *GetFriendList();

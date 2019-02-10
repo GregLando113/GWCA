@@ -3,6 +3,9 @@
 namespace GW {
     struct Vec3f;
     struct Camera;
+    struct Module;
+
+    extern Module CameraModule;
 
     namespace CameraMgr {
         GWCA_API void RestoreHooks();

@@ -4,6 +4,7 @@
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Macros.h>
 
 #include <GWCA/GameContainers/Vector.h>
 
@@ -13,15 +14,14 @@
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
 
+#include <GWCA/Managers/Module.h>
+
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/SkillbarMgr.h>
-
-typedef void(__fastcall *UseSkill_t)(uint32_t, uint32_t, uint32_t, uint32_t);
-static UseSkill_t UseSkill;
 
 static const char _Base64ToValue[128] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
@@ -52,18 +52,37 @@ static int _ReadBits(char **str, int n) {
     return val;
 }
 
+typedef void(__fastcall *UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
+static UseSkill_pt UseSkill_Func;
+
+static uintptr_t skill_array_addr;
+
+static void Init() {
+    {
+        uintptr_t address = GW::Scanner::Find(
+            "\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 8);
+        printf("[SCAN] SkillArray = %p\n", (void *)address);
+        if (Verify(address))
+            skill_array_addr = *(uintptr_t *)address;
+    }
+
+    UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
+        "\x55\x8B\xEC\x83\xEC\x10\x53\x56\x8B\xD9\x57\x8B\xF2\x89\x5D\xF0", "xxxxxxxxxxxxxxxx", 0);
+}
+
 namespace GW {
+
+    Module SkillbarModule = {
+        "SkillbarModule",   // name
+        NULL,               // param
+        ::Init,             // init_module
+        NULL,               // exit_module
+        NULL,               // exit_module
+        NULL,               // remove_hooks
+    };
+
     Skill SkillbarMgr::GetSkillConstantData(uint32_t skill_id) {
-        static Skill *skill_constants = nullptr;
-        if (skill_constants == nullptr) {
-            // Skill array.
-            uintptr_t SkillArray = Scanner::Find(
-                "\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 0);
-            printf("[SCAN] SkillArray Addr = %08lX\n", SkillArray);
-            if (SkillArray) {
-                skill_constants = *(Skill **)(SkillArray + 8);
-            }
-        }
+        Skill *skill_constants = (Skill *)skill_array_addr;
         return skill_constants[skill_id];
     }
 
@@ -259,14 +278,8 @@ namespace GW {
     }
 
     void SkillbarMgr::UseSkill(uint32_t slot, uint32_t target, uint32_t call_target) {
-        static UseSkill_t useskill_func = nullptr;
-        if (useskill_func == nullptr) {
-            useskill_func = (UseSkill_t)Scanner::Find(
-                "\x55\x8B\xEC\x83\xEC\x10\x53\x56\x8B\xD9\x57\x8B\xF2\x89\x5D\xF0", "xxxxxxxxxxxxxxxx", 0);
-            printf("UseSkillFunction = %p\n", useskill_func);
-        }
-        if (useskill_func) {
-            useskill_func(Agents::GetPlayerId(), slot, target, call_target);
+        if (Verify(UseSkill_Func)) {
+            UseSkill_Func(Agents::GetPlayerId(), slot, target, call_target);
         }
     }
 

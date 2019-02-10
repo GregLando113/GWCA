@@ -3,9 +3,12 @@
 #include <GWCA/CtoSHeaders.h>
 
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Array.h>
+
+#include <GWCA/Managers/Module.h>
 
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/CtoSMgr.h>
@@ -13,44 +16,17 @@
 #include <GWCA/Managers/GameThreadMgr.h>
 
 namespace {
-    typedef void __fastcall GwSendUIMessage_t(unsigned message, void* wParam, void* lParam);
-    GwSendUIMessage_t* g_uiSendMessage = nullptr;
+    using namespace GW;
 
-    typedef void __fastcall GwLoadSettings_t(uint32_t size, uint8_t *data);
-    GwLoadSettings_t *GwLoadSettings = nullptr;
+    typedef void (__fastcall *SendUIMessage_pt)(uint32_t message, void *wParam, void *lParam);
+    SendUIMessage_pt SendUIMessage_Func;
 
-    GW::UI::ArrayByte *GwSettings = nullptr;
+    typedef void (__fastcall *LoadSettings_pt)(uint32_t size, uint8_t *data);
+    LoadSettings_pt LoadSettings_Func;
 
-    uint32_t *gw_ui_drawn = nullptr;
-    uint32_t *gw_shift_screen = nullptr;
-
-    void Initialize() {
-        g_uiSendMessage = (GwSendUIMessage_t *)GW::Scanner::Find(
-            "\x8B\xDA\x1B\xF6\xF7\xDE\x4E\x83\xFF\x40\x73\x14\x68", 
-            "xxxxxxxxxxxxx", -0xB);
-        printf("[SCAN] UI::SendUIMessage = %p\n", g_uiSendMessage);
-
-        GwLoadSettings = (GwLoadSettings_t *)GW::Scanner::Find("\x33\xC9\xE8\x00\x00\x00\x00\x5F\x5E\xE9", "xxx????xxx", -37);
-        printf("[SCAN] UI::LoadSettings = %p\n", GwLoadSettings);
-
-        {
-            uintptr_t temp = GW::Scanner::Find("\x57\x77\x04\x8B\xF8\xEB\x18", "xxxxxxx", +15);
-            printf("[SCAN] UI::GwSettings = %p\n", (void *)temp);
-            GwSettings = *(GW::UI::ArrayByte **)temp;
-        }
-
-        {
-            uintptr_t temp = GW::Scanner::Find("\x85\xC0\x74\x58\x5F\x5E\xE9", "xxxxxxx", +16);
-            printf("[SCAN] UI::gw_ui_drawn = %p\n", (void *)temp);
-            gw_ui_drawn = *(uint32_t **)temp;
-        }
-
-        {
-            uintptr_t temp = GW::Scanner::Find("\x85\xC0\x0F\x85\x00\x00\x00\x00\x85\xC9\x75\x00", "xxxx????xxx?", +14);
-            printf("[SCAN] UI::gw_shift_screen = %p\n", (void *)temp);
-            gw_shift_screen = *(uint32_t **)temp;
-        }
-    }
+    uintptr_t GameSettings_Addr;
+    uintptr_t ui_drawn_addr;
+    uintptr_t shift_screen_addr;
 
     struct AsyncBuffer {
         void *buffer;
@@ -84,30 +60,67 @@ namespace {
     typedef void (__fastcall *DecodeStr_Callback)(void *param, const wchar_t *s);
     void AsyncDecodeStr(const wchar_t *enc_str, DecodeStr_Callback callback, void *param) {
         typedef void(__fastcall *AsyncDecodeStr_t)(const wchar_t *s, DecodeStr_Callback cb, void *param);
-        AsyncDecodeStr_t Gw_AsyncDecodeStr = (AsyncDecodeStr_t)GW::MemoryMgr::AsyncDecodeStringPtr;
+        AsyncDecodeStr_t Gw_AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
         assert(enc_str && Gw_AsyncDecodeStr && callback);
         Gw_AsyncDecodeStr(enc_str, callback, param);
+    }
+
+    void Init() {
+        SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
+            "\x8B\xDA\x1B\xF6\xF7\xDE\x4E\x83\xFF\x40\x73\x14\x68", "xxxxxxxxxxxxx", -0xB);
+        printf("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
+
+        LoadSettings_Func = (LoadSettings_pt)Scanner::Find(
+            "\x33\xC9\xE8\x00\x00\x00\x00\x5F\x5E\xE9", "xxx????xxx", -37);
+        printf("[SCAN] LoadSettings = %p\n", LoadSettings_Func);
+
+        {
+            uintptr_t address = Scanner::Find("\x57\x77\x04\x8B\xF8\xEB\x18", "xxxxxxx", +15);
+            printf("[SCAN] GameSettings = %p\n", (void *)address);
+            if (Verify(address))
+                GameSettings_Addr = *(uintptr_t *)address;
+        }
+
+        {
+            uintptr_t address = Scanner::Find("\x85\xC0\x74\x58\x5F\x5E\xE9", "xxxxxxx", +16);
+            printf("[SCAN] ui_drawn_addr = %p\n", (void *)address);
+            if (Verify(address))
+                ui_drawn_addr = *(uintptr_t *)address;
+        }
+
+        {
+            uintptr_t address = Scanner::Find(
+                "\x85\xC0\x0F\x85\x00\x00\x00\x00\x85\xC9\x75\x00", "xxxx????xxx?", +14);
+            printf("[SCAN] shift_screen_addr = %p\n", (void *)address);
+            shift_screen_addr = *(uintptr_t *)address;
+        }
     }
 }
 
 namespace GW {
+
+    Module UIModule = {
+        "UIModule",     // name
+        NULL,           // param
+        NULL,           // init_module
+        NULL,           // exit_module
+        NULL,           // exit_module
+        NULL,           // remove_hooks
+    };
+
     void UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)
     {
-        if (!g_uiSendMessage) {
-            ::Initialize();
-        }
-        g_uiSendMessage(message, (void*)wParam, (void*)lParam);
+        if (Verify(SendUIMessage_Func))
+            SendUIMessage_Func(message, (void *)wParam, (void *)lParam);
     }
 
-    void UI::SendUIMessage(unsigned message, void * wParam, void * lParam)
+    void UI::SendUIMessage(unsigned message, void *wParam, void *lParam)
     {
-        if (!g_uiSendMessage) {
-            ::Initialize();
-        }
-        g_uiSendMessage(message, (void*)wParam, (void*)lParam);
+        if (Verify(SendUIMessage_Func))
+            SendUIMessage_Func(message, (void *)wParam, (void *)lParam);
     }
 
-    void UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint pts[8])
+    void UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
     {
         struct P037 {                   // Used to send pings and drawings in the minimap. Related to StoC::P133
             const unsigned header = CtoGS_MSGDrawMap;
@@ -125,31 +138,32 @@ namespace GW {
     }
 
     void UI::LoadSettings(size_t size, uint8_t *data) {
-        if (!GwLoadSettings) {
-            ::Initialize();
-        }
-        GwLoadSettings(size, data);
+        if (Verify(LoadSettings_Func))
+            LoadSettings_Func(size, data);
     }
 
     UI::ArrayByte UI::GetSettings() {
-        if (!GwSettings) {
-            ::Initialize();
-        }
-        return *GwSettings;
+        ArrayByte *GameSettings = (ArrayByte *)GameSettings_Addr;
+        if (Verify(GameSettings))
+            return *GameSettings;
+        else
+            return ArrayByte();
     }
 
     bool UI::GetIsUIDrawn() {
-        if (!gw_ui_drawn) {
-            ::Initialize();
-        }
-        return (*gw_ui_drawn == 0);
+        uint32_t *ui_drawn = (uint32_t *)ui_drawn_addr;
+        if (Verify(ui_drawn))
+            return (*ui_drawn == 0);
+        else
+            return true;
     }
 
     bool UI::GetIsShiftScrennShot() {
-        if (!gw_shift_screen) {
-            ::Initialize();
-        }
-        return (*gw_shift_screen != 0);
+        uint32_t *shift_screen = (uint32_t *)shift_screen_addr;
+        if (Verify(shift_screen))
+            return (*shift_screen != 0);
+        else
+            return false;
     }
 
     void UI::AsyncDecodeStr(const wchar_t *enc_str, wchar_t *buffer, size_t size) {

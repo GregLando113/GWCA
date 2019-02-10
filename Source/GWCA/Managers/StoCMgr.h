@@ -16,13 +16,13 @@ namespace GW {
         }
     }
 
+    struct Module;
+    extern Module StoCModule;
+
     namespace StoC {
         template <typename T>
         using CallbackFunc = std::function<bool (T*)>;
         
-        void Initialize();
-        void RestoreHooks();
-
         GWCA_API uint32_t AddCallback(uint32_t header,
             std::function<bool (Packet::StoC::PacketBase *)> callback);
         

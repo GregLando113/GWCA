@@ -67,7 +67,7 @@
     <ClInclude Include="..\..\Source\GWCA\Managers\MerchantMgr.h" />
     <ClInclude Include="..\..\Source\GWCA\Managers\PartyMgr.h" />
     <ClInclude Include="..\..\Source\GWCA\Managers\PlayerMgr.h" />
-    <ClInclude Include="..\..\Source\GWCA\Managers\Render.h" />
+    <ClInclude Include="..\..\Source\GWCA\Managers\RenderMgr.h" />
     <ClInclude Include="..\..\Source\GWCA\Managers\SkillbarMgr.h" />
     <ClInclude Include="..\..\Source\GWCA\Managers\StoCMgr.h" />
     <ClInclude Include="..\..\Source\GWCA\Managers\TradeMgr.h" />
@@ -98,7 +98,7 @@
     <ClCompile Include="..\..\Source\GWCA\src\MerchantMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\PartyMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\PlayerMgr.cpp" />
-    <ClCompile Include="..\..\Source\GWCA\src\Render.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\RenderMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\Scanner.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\Skill.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\SkillbarMgr.cpp" />

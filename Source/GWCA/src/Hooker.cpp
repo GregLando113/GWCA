@@ -13,30 +13,30 @@ void GW::HookBase::Deinitialize()
     MH_Uninitialize();
 }
 
-void GW::HookBase::EnqueueHook(HookBase* base)
+void GW::HookBase::EnableHooks(void *target)
 {
-    MH_CreateHook(base->_sourceFunc, base->_detourFunc, &base->_retourFunc);
-    EnableHooks(base);
-}
-
-void  GW::HookBase::RemoveHook(HookBase* base)
-{
-    MH_RemoveHook(base->_sourceFunc);
-    base->_retourFunc = nullptr;
-}
-
-void GW::HookBase::EnableHooks(HookBase* base)
-{
-    if (base == nullptr)
+    if (target) {
+        MH_EnableHook(target);
+    } else {
         MH_EnableHook(MH_ALL_HOOKS);
-    else
-        MH_EnableHook(base->_sourceFunc);
+    }
 }
 
-void GW::HookBase::DisableHooks(HookBase* base)
+void GW::HookBase::DisableHooks(void *target)
 {
-    if (base == nullptr)
+    if (target) {
+        MH_DisableHook(target);
+    } else {
         MH_DisableHook(MH_ALL_HOOKS);
-    else
-        MH_DisableHook(base->_sourceFunc);
+    }
+}
+
+void GW::HookBase::CreateHook(void *target, void *detour, void **trampoline)
+{
+    MH_CreateHook(target, detour, trampoline);
+}
+
+void GW::HookBase::RemoveHook(void *target)
+{
+    MH_RemoveHook(target);
 }

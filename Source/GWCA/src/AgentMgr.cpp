@@ -5,6 +5,7 @@
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
+#include <GWCA/Utilities/Macros.h>
 
 #include <GWCA/GameContainers/Vector.h>
 
@@ -21,6 +22,8 @@
 #include <GWCA/Context/WorldContext.h>
 #include <GWCA/Context/GadgetContext.h>
 
+#include <GWCA/Managers/Module.h>
+
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/MapMgr.h>
 #include <GWCA/Managers/CtoSMgr.h>
@@ -30,43 +33,75 @@
 #include <GWCA/Managers/GameThreadMgr.h>
 
 namespace {
-    GW::Hook lastdialoglog_hook;
-    BYTE* last_dialog_ret = nullptr;
+    using namespace GW;
+
     uint32_t last_dialog_id = 0;
-    void __declspec(naked) dialoglog_detour() {
-        _asm MOV last_dialog_id, ESI
-        _asm JMP last_dialog_ret
+
+    typedef void (__fastcall *SendDialog_pt)(uint32_t dialog_id);
+    SendDialog_pt RetSendDialog;
+    SendDialog_pt SendDialog_Func;
+
+    void __fastcall OnSendDialog(uint32_t dialog_id) {
+        last_dialog_id = dialog_id;
+        return RetSendDialog(dialog_id);
+    };
+
+    typedef void(__fastcall *ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
+    ChangeTarget_pt ChangeTarget_Func;
+
+    typedef void(__fastcall *Move_pt)(GamePos *pos);
+    Move_pt Move_Func;
+
+    uintptr_t PlayerAgentIdPtr = 0;
+    uintptr_t TargetAgentIdPtr = 0;
+    uintptr_t MouseOverAgentIdPtr = 0;
+
+    AgentList *AgentListPtr = nullptr;
+
+    void Init() {
+        // Agent Array
+        uintptr_t AgentArrayPtr = MemoryMgr::AgentArrayPtr;
+        PlayerAgentIdPtr        = AgentArrayPtr - 0x54;
+        TargetAgentIdPtr        = AgentArrayPtr - 0x500;
+        MouseOverAgentIdPtr     = AgentArrayPtr - 0x4F4;
+
+        AgentListPtr = (AgentList *)(AgentArrayPtr - 0x40);
+        
+        Move_Func = (Move_pt)Scanner::Find(
+                "\xD9\x07\xD8\x5D\xF0\xDF\xE0\xF6\xC4\x01", "xxxxxxxxxx", -0x12);
+        printf("[SCAN] MoveFunction = %p\n", Move_Func);
+
+        SendDialog_Func = (SendDialog_pt)Scanner::Find(
+            "\x55\x8B\xEC\x83\xEC\x28\x53\x56\x57\x8B\xF2\x8B\xD9", "xxxxxxxxxxxxx", -0x30);
+        printf("[SCAN] DialogFunc = %p\n", SendDialog_Func);
+
+        ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
+                "\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
+        printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
     }
 
-    uintptr_t PlayerAgentIDPtr = 0;
-    uintptr_t TargetAgentIDPtr = 0;
-    uintptr_t MouseOverAgentIDPtr = 0;
+    void CreateHooks() {
+        if (Verify(SendDialog_Func))
+            HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void **)&RetSendDialog);
+    }
 
-    GW::AgentList *AgentListPtr = nullptr;
+    void RemoveHooks() {
+        if (SendDialog_Func)
+            HookBase::RemoveHook(SendDialog_Func);
+    }
 }
 
 namespace GW {
-    void Agents::Initialize() {
-        // Agent Array
-        uintptr_t AgentArrayPtr = MemoryMgr::AgentArrayPtr;
-        PlayerAgentIDPtr = AgentArrayPtr - 0x54;
-        TargetAgentIDPtr = AgentArrayPtr - 0x500;
-        MouseOverAgentIDPtr = AgentArrayPtr - 0x4F4;
 
-        AgentListPtr = (AgentList *)(AgentArrayPtr - 0x40);
-    }
+    Module AgentModule = {
+        "AgentModule",      // name
+        NULL,               // param
+        ::Init,             // init_module
+        NULL,               // exit_module
+        ::CreateHooks,      // exit_module
+        ::RemoveHooks,      // remove_hooks
+    };
 
-    void Agents::SetupLastDialogHook() {
-        if (lastdialoglog_hook.Empty()) {
-            uintptr_t dialog_func = Scanner::Find(
-                "\x55\x8B\xEC\x83\xEC\x28\x53\x56\x57\x8B\xF2\x8B\xD9", "xxxxxxxxxxxxx", -0x28);
-            printf("[SCAN] DialogFunc = %08lX\n", dialog_func);
-            last_dialog_ret = (BYTE*)lastdialoglog_hook.Detour((uint8_t *)dialog_func, (BYTE*)dialoglog_detour, 9);
-        }
-    }
-    void Agents::RestoreLastDialogHook() {
-        HookBase::DisableHooks(&lastdialoglog_hook);
-    }
     uint32_t Agents::GetLastDialogId() { 
         return last_dialog_id;
     }
@@ -78,26 +113,19 @@ namespace GW {
         return *(AgentArray *)MemoryMgr::AgentArrayPtr;
     }
     uint32_t Agents::GetPlayerId() {
-        return *(uint32_t *)PlayerAgentIDPtr;
+        return *(uint32_t *)PlayerAgentIdPtr;
     }
     uint32_t Agents::GetTargetId() {
-        return *(uint32_t *)TargetAgentIDPtr;
+        return *(uint32_t *)TargetAgentIdPtr;
     }
     uint32_t Agents::GetMouseoverId() {
-        return *(uint32_t *)MouseOverAgentIDPtr;
+        return *(uint32_t *)MouseOverAgentIdPtr;
     }
 
     void Agents::ChangeTarget(AgentID agent_id) {
-        typedef void(__fastcall *ChangeTarget_t)(uint32_t agent_id, uint32_t unk1);
-        static ChangeTarget_t change_target_func = nullptr;
-        if (!change_target_func) {
-            change_target_func = (ChangeTarget_t)Scanner::Find(
-                "\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
-            printf("[SCAN] ChangeTargetFunction = %p\n", change_target_func);
-        }
-        AgentArray& arr = GetAgentArray();
-        if (change_target_func && arr.valid() && arr[agent_id] != nullptr)
-            change_target_func(agent_id, 0);
+        AgentArray agents = GetAgentArray();
+        if (Verify(ChangeTarget_Func) && agents.valid() && agents[agent_id] != nullptr)
+            ChangeTarget_Func(agent_id, 0);
     }
 
     void Agents::Move(float x, float y, uint32_t zplane /*= 0*/) {
@@ -109,15 +137,8 @@ namespace GW {
     }
 
     void Agents::Move(GamePos pos) {
-        typedef void(__fastcall *Move_t)(GamePos *pos);
-        static Move_t move_func = nullptr;
-        if (!move_func) {
-            move_func = (Move_t)Scanner::Find(
-                "\xD9\x07\xD8\x5D\xF0\xDF\xE0\xF6\xC4\x01", "xxxxxxxxxx", -0x12);
-            printf("[SCAN] MoveFunction = %p\n", move_func);
-        }
-        if (move_func)
-            move_func(&pos);
+        if (Verify(Move_Func))
+            Move_Func(&pos);
     }
 
     MapAgentArray Agents::GetMapAgentArray() {

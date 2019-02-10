@@ -4,16 +4,16 @@ namespace GW {
     struct GamePos;
     struct PartyInfo;
 
-    typedef AgentID uint32_t;
+    typedef uint32_t AgentID;
+
+    struct Module;
+    extern Module PartyModule;
 
     namespace PartyMgr {
 
         // set or unset the fact that ticking will work as a toggle instead
         // of showing a drop-down menu
-        GWCA_API void SetTickToggle();
-        GWCA_API void RestoreTickToggle();
-
-        inline void RestoreHooks() { RestoreTickToggle(); }
+        GWCA_API void SetTickToggle(bool enable);
 
         // Set party ready status.
         GWCA_API void Tick(bool flag = true);

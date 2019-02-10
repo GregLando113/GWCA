@@ -3,25 +3,28 @@
 namespace GW {
     
     class HookBase {
-        protected:
+    protected:
         void* _detourFunc = nullptr;
         void* _retourFunc = nullptr;
         void* _sourceFunc = nullptr;
         
-        public:
+    public:
         static void Initialize();
         static void Deinitialize();
         
-        static void EnqueueHook(HookBase* base);
-        static void RemoveHook(HookBase* base);
+        // static void EnqueueHook(HookBase* base);
+        // static void RemoveHook(HookBase* base);
         
-        static void EnableHooks(HookBase* base = nullptr);
-        static void DisableHooks(HookBase* base = nullptr);
+        static void EnableHooks(void *target = NULL);
+        static void DisableHooks(void *target = NULL);
+
+        static void CreateHook(void *target, void *detour, void **trampoline);
+        static void RemoveHook(void *target);
     };
     
     template <typename T>
-        class THook : public HookBase {
-        public:
+    class THook : public HookBase {
+    public:
         T Original() { return (T)_retourFunc; };
         bool Valid() { return _retourFunc != nullptr; };
         bool Empty() { return _retourFunc == nullptr; };

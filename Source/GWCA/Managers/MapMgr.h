@@ -9,6 +9,9 @@ namespace GW {
         enum class InstanceType;
     }
 
+    struct Module;
+    extern Module MapModule;
+
     namespace Map {
 
         GWCA_API bool GetIsMapLoaded();

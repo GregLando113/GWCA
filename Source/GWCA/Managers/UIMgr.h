@@ -1,6 +1,10 @@
 #pragma once
 
 namespace GW {
+
+    struct Module;
+    extern Module UIModule;
+
     namespace UI {
         enum UIMessage : unsigned int {
             kShowAgentNameTag       = 0x10000000 | 0x19,

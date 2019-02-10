@@ -11,11 +11,22 @@
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
 
+#include <GWCA/Managers/Module.h>
+
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
 
 namespace GW {
+
+    Module PlayerModule = {
+        "PlayerModule",     // name
+        NULL,               // param
+        NULL,               // init_module
+        NULL,               // exit_module
+        NULL,               // exit_module
+        NULL,               // remove_hooks
+    };
 
     void PlayerMgr::SetActiveTitle(Constants::TitleID title_id) {
         CtoS::SendPacket(0x8, CtoGS_MSGSetDisplayedTitle, (uint32_t)title_id);

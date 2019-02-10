@@ -1,6 +1,9 @@
 #pragma once
 
 namespace GW {
+    struct Module;
+    extern Module TradeModule;
+
     namespace Trade {
         GWCA_API void OpenTradeWindow(uint32_t agent_id);
         GWCA_API void AcceptTrade();

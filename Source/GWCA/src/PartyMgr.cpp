@@ -16,40 +16,57 @@
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PartyContext.h>
 
+#include <GWCA/Managers/Module.h>
+
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
 
 namespace {
-    typedef uint32_t(__stdcall *Tick_t)(uint32_t unk1);
-    GW::THook<Tick_t> hk_tick_;
+    using namespace GW;
+
+    typedef uint32_t (__stdcall *Tick_pt)(uint32_t unk1);
+    Tick_pt RetTick;
+    Tick_pt Tick_Func;
+
+    bool tick_work_as_toggle = false;
 
     // Parameter is always 1 or 2 creating "Ready" or "Not ready"
-    uint32_t __stdcall DetourTick(uint32_t unk1) {
+    uint32_t __stdcall OnTick(uint32_t unk1) {
         // this func is always called twice so use this hack to tick only once
         static bool toggle = true;
         toggle = !toggle;
         if (toggle) return 4;
-
-        GW::PartyMgr::Tick(!GW::PartyMgr::GetIsPlayerTicked());
+        if (tick_work_as_toggle)
+            PartyMgr::Tick(!PartyMgr::GetIsPlayerTicked());
         return 4;
+    }
+
+    void Init() {
+        Tick_pt Tick_Func = (Tick_pt)Scanner::Find("\x74\x0A\x48\x75\x14\xB9", "xxxxxx", -33);
+        printf("[SCAN] addr_tick = %p\n", Tick_Func);
+    }
+
+    void CreateHooks() {
+        HookBase::CreateHook(Tick_Func, OnTick, (void **)&RetTick);
+    }
+
+    void RemoveHooks() {
+        HookBase::RemoveHook(Tick_Func);
     }
 }
 
 namespace GW {
+
+    Module PartyModule = {
+        "PartyModule",  // name
+        NULL,           // param
+        ::Init,         // init_module
+        NULL,           // exit_module
+        ::CreateHooks,  // exit_module
+        ::RemoveHooks,  // remove_hooks
+    };
     
-    void PartyMgr::SetTickToggle() {
-        if (hk_tick_.Empty()) {
-            Tick_t addr_tick = (Tick_t)Scanner::Find("\x74\x0A\x48\x75\x14\xB9", "xxxxxx", -33);
-            printf("[SCAN] addr_tick = %p\n", addr_tick);
-            hk_tick_.Detour(addr_tick, DetourTick);
-        }
-    }
-
-    void PartyMgr::RestoreTickToggle() {
-        HookBase::DisableHooks(&hk_tick_);
-    }
-
     void PartyMgr::Tick(bool flag) {
         CtoS::SendPacket(0x8, CtoGS_MSGTick, flag);
     }
@@ -203,6 +220,10 @@ namespace GW {
 
     void PartyMgr::UnflagAll() {
         FlagAll(GamePos(HUGE_VALF, HUGE_VALF, 0)); 
+    }
+
+    void PartyMgr::SetTickToggle(bool enable) {
+        tick_work_as_toggle = enable;
     }
 
 } // namespace GW

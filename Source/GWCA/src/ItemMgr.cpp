@@ -5,6 +5,7 @@
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
+#include <GWCA/Utilities/Macros.h>
 
 #include <GWCA/GameContainers/Vector.h>
 #include <GWCA/Packets/StoC.h>
@@ -15,12 +16,87 @@
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/ItemContext.h>
 
+#include <GWCA/Managers/Module.h>
+
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/ItemMgr.h>
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/StoCMgr.h>
 
+namespace {
+    using namespace GW;
+
+    uintptr_t storage_pannel_addr;
+    uintptr_t storage_open_addr;
+
+    typedef void (__fastcall *ItemClick_pt)(uint32_t *bag_id, uint32_t edx, uint32_t *info);
+    ItemClick_pt RetItemClick;
+    ItemClick_pt ItemClick_Func;
+
+    static std::function<void (uint32_t type, uint32_t slot, Bag *bag)> ItemClickCallback;
+    void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *info) {
+        // click type:
+        //  2  add (when you load / open chest)
+        //  5  click
+        //  7  release
+        //  8  double click
+        //  9  move
+        //  10 drag-add
+        //  12 drag-remove
+        uint32_t type = info[2];
+        uint32_t slot = info[1] - 2; // for some reason the slot is offset by 2
+
+        Bag *bag = Items::GetBag(*bag_id + 1);
+
+        if (Verify(bag) && ItemClickCallback)
+            ItemClickCallback(type, slot, bag);
+
+        RetItemClick(bag_id, edx, info);
+    }
+
+    void Init() {
+        {
+            uintptr_t address = Scanner::Find(
+                "\x0F\x84\xFC\x01\x00\x00\x8B\x43\x14", "xxxxxxxxx", -4);
+            printf("[SCAN] StoragePannel = %p\n", (void *)address);
+            if (Verify(address))
+                storage_pannel_addr = *(uintptr_t *)address;
+        }
+
+        {
+            uintptr_t address = Scanner::Find(
+                "\x40\x85\xD2\xA3\x00\x00\x00\x00\x75\x05", "xxxx????xx", 4);
+            printf("[SCAN] StorageOpen = %p\n", (void *)address);
+            if (Verify(address))
+                storage_open_addr = *(uintptr_t *)address;
+        }
+
+        ItemClick_Func = (ItemClick_pt)Scanner::Find("\x74\x73\x8B\x50\x08", "xxxxx", -25);
+        printf("[SCAN] ItemClick = %p\n", ItemClick_Func);
+    }
+
+    void CreateHooks() {
+        if (Verify(ItemClick_Func))
+            HookBase::CreateHook(ItemClick_Func, OnItemClick, (void **)&RetItemClick);
+    }
+
+    void RemoveHooks() {
+        if (ItemClick_Func)
+            HookBase::RemoveHook(ItemClick_Func);
+    }
+}
+
 namespace GW {
+
+    Module ItemModule = {
+        "ItemModule",   // name
+        NULL,           // param
+        ::Init,         // init_module
+        NULL,           // exit_module
+        ::CreateHooks,  // exit_module
+        ::RemoveHooks,  // remove_hooks
+    };
+
     void Items::OpenXunlaiWindow() {
         Packet::StoC::DataWindow pack;
         pack.agent = 0;
@@ -343,69 +419,24 @@ namespace GW {
     }
 
     int Items::GetStoragePage(void) {
-        static uint32_t *addr;
-        if (!addr) {
-            uintptr_t storage_pannel_addr = Scanner::Find(
-                "\x0F\x84\xFC\x01\x00\x00\x8B\x43\x14", "xxxxxxxxx", -4);
-            printf("[SCAN] StoragePannel = %08lX\n", storage_pannel_addr);
-            if (storage_pannel_addr) addr = *(uint32_t **)storage_pannel_addr;
+        if (Verify(storage_pannel_addr)) {
+            // @Cleanup: 20 being the position for the storage, but this
+            // array hold way more, for instance the current chat channel
+            return ((uint32_t *)storage_pannel_addr)[20];
+        } else {
+            return 0;
         }
-        assert(addr);
-        // @Cleanup: 20 being the position for the storage, but this array hold way more, for instance the current chat channel
-        return addr[20];
     }
 
     bool Items::GetIsStorageOpen(void) {
-        static uint32_t *addr;
-        if (!addr) {
-            uintptr_t storage_open_addr = Scanner::Find(
-                "\x40\x85\xD2\xA3\x00\x00\x00\x00\x75\x05", "xxxx????xx", 4);
-            printf("[SCAN] StorageOpen = %08lX\n", storage_open_addr);
-            assert(storage_open_addr);
-            addr = *(uint32_t **)storage_open_addr;
-        }
-        assert(addr);
-        return *addr != 0;
-    }
-
-    typedef void (__fastcall *ItemClick_t)(uint32_t *bag_id, uint32_t edx, uint32_t *info);
-    static THook<ItemClick_t> ItemClickHook;
-    static std::function<void (uint32_t type, uint32_t slot, Bag *bag)> ItemClickCallback;
-
-    static void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *info)
-    {
-        // click type:
-        //  2  add (when you load / open chest)
-        //  5  click
-        //  7  release
-        //  8  double click
-        //  9  move
-        //  10 drag-add
-        //  12 drag-remove
-        uint32_t type = info[2];
-        uint32_t slot = info[1] - 2; // for some reason the slot is offset by 2
-
-        Bag *bag = Items::GetBag(*bag_id + 1);
-        assert(bag);
-
-        if (ItemClickCallback) {
-            ItemClickCallback(type, slot, bag);
-        }
-
-        ItemClickHook.Original()(bag_id, edx, info);
+        if (Verify(storage_open_addr))
+            return *(uint32_t *)storage_open_addr != 0;
+        else
+            return false;
     }
 
     void Items::SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, Bag *bag)> callback) {
-        if (ItemClickHook.Empty()) {
-            ItemClick_t ItemClick = (ItemClick_t)Scanner::Find("\x74\x73\x8B\x50\x08", "xxxxx", -25);
-            printf("[SCAN] ItemClick = %p\n", ItemClick);
-            ItemClickHook.Detour(ItemClick, OnItemClick);
-        }
         ItemClickCallback = callback;
-    }
-
-    void Items::RestoreHooks() {
-        HookBase::DisableHooks(&ItemClickHook);
     }
 
     void Items::AsyncGetItemByName(Item *item, std::wstring& res) {

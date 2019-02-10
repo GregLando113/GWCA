@@ -1,6 +1,10 @@
 #pragma once
 
 namespace GW {
+
+    struct Module;
+    extern Module MerchantModule;
+
     namespace Merchant {
 
         struct TransactionInfo {

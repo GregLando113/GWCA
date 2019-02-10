@@ -45,32 +45,33 @@ namespace GW {
     };
 
     struct Item { // total: 0x54/84
-        /* +h0000 */ DWORD ItemId;
-        /* +h0004 */ DWORD AgentId;
-        /* +h0008 */ Bag  *BagEquiped; // Only valid if Item is a equipped Bag
-        /* +h000C */ Bag  *Bag;
-        /* +h0010 */ ItemModifier *ModStruct; // Pointer to an array of mods.
-        /* +h0014 */ DWORD ModStructSize; // Size of this array.
-        /* +h0018 */ wchar *Customized;
-        /* +h001C */ DWORD ModelFileID;
-        /* +h0020 */ BYTE Type;
-        /* +h0021 */ BYTE h0021;
-        /* +h0022 */ WORD ExtraId;
-        /* +h0024 */ WORD Value;
-        /* +h0026 */ BYTE h0026[4];
-        /* +h002A */ WORD Interaction;
-        /* +h002C */ DWORD ModelId;
-        /* +h0030 */ wchar *InfoString;
-        /* +h0034 */ wchar *NameString;
-        /* +h0038 */ wchar *CompleteName; // with color, quantity, etc.
-        /* +h003C */ wchar *SingleItemName; // with color, w/o quantity, named as single item
-        /* +h0040 */ BYTE h003C[10];
-        /* +h004A */ BYTE IsMaterialSalvageable; // Only valid for type 11 (Materials)
-        /* +h004B */ BYTE Unknown001; // probably used for quantity extension for new material storage
-        /* +h004C */ WORD Quantity;
-        /* +h004E */ BYTE Equipped;
-        /* +h004F */ BYTE Profession;
-        /* +h0050 */ BYTE Slot;
+        /* +h0000 */ uint32_t       item_id;
+        /* +h0004 */ uint32_t       agent_id;
+        /* +h0008 */ Bag           *bag_equiped; // Only valid if Item is a equipped Bag
+        /* +h000C */ Bag           *bag;
+        /* +h0010 */ ItemModifier  *mod_struct; // Pointer to an array of mods.
+        /* +h0014 */ uint32_t       mod_struct_size; // Size of this array.
+        /* +h0018 */ wchar_t       *customized;
+        /* +h001C */ uint32_t       model_file_id;
+        /* +h0020 */ uint8_t        type;
+        /* +h0021 */ uint8_t        h0021;
+        /* +h0022 */ uint16_t       extra_id;
+        /* +h0024 */ uint16_t       value;
+        /* +h0026 */ uint16_t       h0026;
+        /* +h0028 */ uint16_t       h0028;
+        /* +h002A */ uint16_t       interaction;
+        /* +h002C */ uint32_t       model_id;
+        /* +h0030 */ wchar_t       *info_string;
+        /* +h0034 */ wchar_t       *name_enc;
+        /* +h0038 */ wchar_t       *complete_name_enc; // with color, quantity, etc.
+        /* +h003C */ wchar_t       *single_item_name; // with color, w/o quantity, named as single item
+        /* +h0040 */ uint8_t        h003C[10];
+        /* +h004A */ uint8_t        is_material_salvageable; // Only valid for type 11 (Materials)
+        /* +h004B */ uint8_t        h004B; // probably used for quantity extension for new material storage
+        /* +h004C */ uint16_t       quantity;
+        /* +h004E */ uint8_t        equipped;
+        /* +h004F */ uint8_t        profession;
+        /* +h0050 */ uint8_t        slot;
 
         bool GetIsStackable();
         bool GetIsMaterial();
@@ -86,52 +87,52 @@ namespace GW {
 
     struct Inventory { // total: 0x98/152
         union {
-        /* +h0000 */ Bag *Bags[23];
+        /* +h0000 */ Bag *bags[23];
             struct {
-        /* +h0000 */ Bag *UnusedBag;
-        /* +h0004 */ Bag *Backpack;
-        /* +h0008 */ Bag *BeltPouch;
-        /* +h000C */ Bag *Bag1;
-        /* +h0010 */ Bag *Bag2;
-        /* +h0014 */ Bag *EquipmentPack;
-        /* +h0018 */ Bag *MaterialStorage;
-        /* +h001C */ Bag *UnclaimedItems;
-        /* +h0020 */ Bag *Storage1;
-        /* +h0024 */ Bag *Storage2;
-        /* +h0028 */ Bag *Storage3;
-        /* +h002C */ Bag *Storage4;
-        /* +h0030 */ Bag *Storage5;
-        /* +h0034 */ Bag *Storage6;
-        /* +h0038 */ Bag *Storage7;
-        /* +h003C */ Bag *Storage8;
-        /* +h0040 */ Bag *Storage9;
-        /* +h0044 */ Bag *Storage10;
-        /* +h0048 */ Bag *Storage11;
-        /* +h004C */ Bag *Storage12;
-        /* +h0050 */ Bag *Storage13;
-        /* +h0054 */ Bag *Storage14;
-        /* +h0058 */ Bag *EquippedItems;
+        /* +h0000 */ Bag *unused_bag;
+        /* +h0004 */ Bag *backpack;
+        /* +h0008 */ Bag *belt_pouch;
+        /* +h000C */ Bag *bag1;
+        /* +h0010 */ Bag *bag2;
+        /* +h0014 */ Bag *equipment_pack;
+        /* +h0018 */ Bag *material_storage;
+        /* +h001C */ Bag *unclaimed_items;
+        /* +h0020 */ Bag *storage1;
+        /* +h0024 */ Bag *storage2;
+        /* +h0028 */ Bag *storage3;
+        /* +h002C */ Bag *storage4;
+        /* +h0030 */ Bag *storage5;
+        /* +h0034 */ Bag *storage6;
+        /* +h0038 */ Bag *storage7;
+        /* +h003C */ Bag *storage8;
+        /* +h0040 */ Bag *storage9;
+        /* +h0044 */ Bag *storage10;
+        /* +h0048 */ Bag *storage11;
+        /* +h004C */ Bag *storage12;
+        /* +h0050 */ Bag *storage13;
+        /* +h0054 */ Bag *storage14;
+        /* +h0058 */ Bag *equipped_items;
             };
         };
-        /* +h005C */ Item *Bundle;
-        /* +h0060 */ DWORD h004C;
+        /* +h005C */ Item *bundle;
+        /* +h0060 */ uint32_t h004C;
         union {
-        /* +h0064 */ WeapondSet WeaponSets[4];
+        /* +h0064 */ WeapondSet weapon_sets[4];
             struct {
-        /* +h0064 */ Item *WeaponSet0;
-        /* +h0068 */ Item *OffhandSet0;
-        /* +h006C */ Item *WeaponSet1;
-        /* +h0070 */ Item *OffhandSet1;
-        /* +h0074 */ Item *WeaponSet2;
-        /* +h0078 */ Item *OffhandSet2;
-        /* +h007C */ Item *WeaponSet3;
-        /* +h0080 */ Item *OffhandSet3;
+        /* +h0064 */ Item *weapon_set0;
+        /* +h0068 */ Item *offhand_set0;
+        /* +h006C */ Item *weapon_set1;
+        /* +h0070 */ Item *offhand_set1;
+        /* +h0074 */ Item *weapon_set2;
+        /* +h0078 */ Item *offhand_set2;
+        /* +h007C */ Item *weapon_set3;
+        /* +h0080 */ Item *offhand_set3;
             };
         };
-        /* +h0084 */ DWORD ActiveWeaponSet;
-        /* +h0088 */ DWORD h0074[2];
-        /* +h0090 */ DWORD GoldCharacter;
-        /* +h0094 */ DWORD GoldStorage;
+        /* +h0084 */ uint32_t active_weapon_set;
+        /* +h0088 */ uint32_t h0074[2];
+        /* +h0090 */ uint32_t gold_character;
+        /* +h0094 */ uint32_t gold_storage;
     };
     static_assert(sizeof(Inventory) == 152, "struct Inventory has incorect size");
 

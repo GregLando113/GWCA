@@ -89,7 +89,7 @@ namespace {
             "\xC3\x39\x86\x94\x00\x00\x00\x74\x0C", "xxxxxxxxx", -69);
         printf("[SCAN] GwScreenCapture = %p\n", ScreenCapture_Func);
 
-        GwReset_pt GwReset_Func = (GwReset_pt)Scanner::Find(
+        GwReset_Func = (GwReset_pt)Scanner::Find(
             "\x55\x8B\xEC\x81\xEC\x98\x00\x00\x00\x53\x56\x57\x8B\xF1\x33\xD2", "xxxxxxxxxxxxxxxx", 0);
         printf("[SCAN] GwReset = %p\n", GwReset_Func);
     }

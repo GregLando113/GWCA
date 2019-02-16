@@ -27,7 +27,7 @@ namespace GW {
         /* +h0034 */ uint32_t zone_id;
     };
 
-    using FriendsListArray = Array<Friend *>;
+    typedef Array<Friend *> FriendsListArray;
 
     struct FriendList {
         /* +h0000 */ FriendsListArray friends;

@@ -6,6 +6,7 @@
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
+#include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Vector.h>
 #include <GWCA/Packets/StoC.h>

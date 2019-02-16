@@ -75,15 +75,11 @@ namespace GW {
 
         bool IsValid() const { return agent_id > 0; }
 
-        static Skillbar *GetPlayerSkillbar();
-        SkillbarSkill   *GetSkillById(Constants::SkillID skill_id);
+        SkillbarSkill *GetSkillById(Constants::SkillID skill_id);
     };
     static_assert(sizeof(Skillbar) == 188, "struct Skillbar has incorect size");
 
-    struct SkillbarArray : Array<Skillbar> {
-        // Get array of skillbars, [0] = player [1-7] = heroes.
-        static SkillbarArray GetSkillbarArray();
-    };
+    typedef Array<Skillbar> SkillbarArray;
 
     struct Effect { // total: 0x18/24
         /* +h0000 */ uint32_t skill_id; // skill id of the effect
@@ -106,8 +102,8 @@ namespace GW {
     };
     static_assert(sizeof(Buff) == 16, "struct Buff has incorect size");
 
-    using EffectArray = Array<Effect>;
-    using BuffArray = Array<Buff>;
+    typedef Array<Buff> BuffArray;
+    typedef Array<Effect> EffectArray;
 
     struct AgentEffects { // total: 0x24/36
         /* +h0000 */ uint32_t agent_id;
@@ -116,5 +112,5 @@ namespace GW {
     };
     static_assert(sizeof(AgentEffects) == 36, "struct AgentEffects has incorect size");
 
-    using AgentEffectsArray = Array<AgentEffects>;
+    typedef Array<AgentEffects> AgentEffectsArray;
 }

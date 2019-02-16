@@ -16,5 +16,5 @@ namespace GW {
     };
     static_assert(sizeof(Title) == 40, "struct Title has incorect size");
 
-    using TitleArray = Array<Title>;
+    typedef Array<Title> TitleArray;
 }

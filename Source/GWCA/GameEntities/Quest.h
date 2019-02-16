@@ -25,5 +25,5 @@ namespace GW {
     };
     static_assert(sizeof(MissionObjective) == 12, "struct MissionObjective has incorect size");
 
-    using QuestLog = Array<Quest>;
+    typedef Array<Quest> QuestLog;
 }

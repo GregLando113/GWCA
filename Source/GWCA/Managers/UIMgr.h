@@ -6,7 +6,9 @@ namespace GW {
     extern Module UIModule;
 
     namespace UI {
-        enum UIMessage : unsigned int {
+        typedef GW::Array<unsigned char> ArrayByte;
+
+        enum UIMessage : uint32_t {
             kShowAgentNameTag       = 0x10000000 | 0x19,
             kHideAgentNameTag       = 0x10000000 | 0x1A,
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B,
@@ -26,8 +28,6 @@ namespace GW {
         GWCA_API void SendUIMessage(unsigned message, void* wParam = nullptr, void* lParam = nullptr);
 
         GWCA_API void DrawOnCompass(unsigned sessionid, unsigned ptcount, CompassPoint pts[8]);
-
-        using ArrayByte = GW::Array<unsigned char>;
 
         // Call from GameThread to be safe
         GWCA_API void LoadSettings(size_t size, uint8_t *data);

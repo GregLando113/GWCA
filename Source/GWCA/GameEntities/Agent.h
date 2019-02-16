@@ -2,10 +2,12 @@
 
 #include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/GameContainers/Vector.h>
 
 namespace GW {
     typedef uint32_t AgentID;
+
+    struct Vec3f;
+    struct GamePos;
 
     struct Agent {
         // Courtesy of DerMonech14
@@ -259,10 +261,10 @@ namespace GW {
         wchar_t *name_enc;
     };
 
-    using AgentArray = Array<Agent *>;
-    using AgentList  = TList<Agent>;
+    typedef TList<Agent> AgentList;
+    typedef Array<Agent *> AgentArray;
 
-    using MapAgentArray = Array<MapAgent>;
-    using AgentMovementArray = Array<AgentMovement *>;
-    using AgentInfoArray = Array<AgentInfo>;
+    typedef Array<MapAgent> MapAgentArray;
+    typedef Array<AgentInfo> AgentInfoArray;
+    typedef Array<AgentMovement *> AgentMovementArray;
 }

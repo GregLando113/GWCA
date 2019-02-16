@@ -2,6 +2,7 @@
 
 #include <GWCA/CtoSHeaders.h>
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameEntities/Guild.h>
 #include <GWCA/Context/GameContext.h>

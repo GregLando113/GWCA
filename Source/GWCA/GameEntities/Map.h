@@ -17,7 +17,7 @@ namespace GW {
     };
     static_assert(sizeof(MissionMapIcon) == 40, "struct MissionMapIcon has incorect size");
 
-    using MissionMapIconArray = Array<MissionMapIcon>;
+    typedef Array<MissionMapIcon> MissionMapIconArray;
 
     enum RegionType : uint32_t {
         RegionType_AllianceBattle,

@@ -150,6 +150,11 @@ namespace GW {
         }
     }
 
+    void CameraMgr::VerticalMovement(float amount) {
+        Camera *cam = GetCamera();
+        cam->look_at_target.z += amount;
+    }
+
     void CameraMgr::SideMovement(float amount) {
         if (amount == 0.f) return;
         Camera *cam = GetCamera();
@@ -171,14 +176,15 @@ namespace GW {
         newPos.y = pos_y + (sinf(angle) * px + cosf(angle) * py);
         newPos.z = cam->look_at_target.z;
 
-        SetYaw(cam->yaw + angle);
+        cam->SetYaw(cam->yaw + angle);
         GetCamera()->look_at_target = newPos;
     }
 
     Vec3f CameraMgr::ComputeCamPos(float dist) {
-        if (dist == 0) dist = GetCameraZoom();
+        Camera *cam = GetCamera();
+        if (dist == 0) dist = cam->GetCameraZoom();
 
-        Vec3f newPos = GetLookAtTarget();
+        Vec3f newPos = cam->GetLookAtTarget();
 
         float pitchX = sqrtf(1.f - GetCamera()->pitch*GetCamera()->pitch);
         newPos.x -= dist * pitchX * cosf(GetCamera()->yaw);
@@ -186,5 +192,10 @@ namespace GW {
         newPos.z -= dist * 0.95f * GetCamera()->pitch; // 0.95 is the max pitch, not 1.0
 
         return newPos;
+    }
+
+    void CameraMgr::UpdateCameraPos() {
+        Camera *cam = GetCamera();
+        cam->SetCameraPos(ComputeCamPos());
     }
 } // namespace GW

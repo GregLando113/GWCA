@@ -5,6 +5,8 @@ namespace GW {
     struct Friend;
     struct FriendList;
 
+    enum FriendStatus : uint32_t;
+
     namespace Constants {
         enum class OnlineStatus;
     }

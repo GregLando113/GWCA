@@ -30,6 +30,6 @@ namespace GW {
     };
     static_assert(sizeof(HeroInfo) == 120, "struct HeroInfo has incorect size");
 
-    using HeroFlagArray = Array<HeroFlag>;
-    using HeroInfoArray = Array<HeroInfo>;
+    typedef Array<HeroFlag> HeroFlagArray;
+    typedef Array<HeroInfo> HeroInfoArray;
 }

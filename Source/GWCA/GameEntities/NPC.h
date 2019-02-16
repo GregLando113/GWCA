@@ -21,5 +21,5 @@ namespace GW {
     };
     static_assert(sizeof(NPC) == 48, "struct NPC has incorect size");
 
-    using NPCArray = Array<NPC>;
+    typedef Array<NPC> NPCArray;
 }

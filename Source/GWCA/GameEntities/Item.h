@@ -1,15 +1,14 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/Constants/ItemIDs.h>
 
 namespace GW {
-    using ItemID = uint32_t;
+    typedef uint32_t ItemID;
 
     struct Bag;
     struct Item;
 
-    using ItemArray = Array<Item *>;
+    typedef Array<Item *> ItemArray;
 
     struct Bag { // total: 0x28/40
         /* +h0000 */ uint32_t bag_type; // Bag 1, Equipped 2, NotCollected 3, Storage 4, MaterialStorage 5
@@ -136,7 +135,7 @@ namespace GW {
     };
     static_assert(sizeof(Inventory) == 152, "struct Inventory has incorect size");
 
-    using MerchItemArray = Array<ItemID>;
+    typedef Array<ItemID> MerchItemArray;
 
     inline size_t Bag::find1(uint32_t model_id, size_t pos) {
         for (size_t i = pos; i < items.size(); i++) {

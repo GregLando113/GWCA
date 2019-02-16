@@ -6,15 +6,15 @@
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
+#include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Vector.h>
 
 #include <GWCA/GameEntities/NPC.h>
-#include <GWCA/GameEntities/Hero.h>
+#include <GWCA/GameEntities/Item.h>
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Party.h>
 #include <GWCA/GameEntities/Player.h>
-#include <GWCA/GameEntities/Pathing.h>
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/AgentContext.h>
@@ -130,6 +130,11 @@ namespace GW {
             ChangeTarget_Func(agent_id, 0);
     }
 
+    void Agents::ChangeTarget(Agent *agent) {
+        if (agent)
+            ChangeTarget(agent->agent_id);
+    }
+
     void Agents::Move(float x, float y, uint32_t zplane /*= 0*/) {
         GamePos pos;
         pos.x = x;
@@ -210,6 +215,14 @@ namespace GW {
 
     NPCArray Agents::GetNPCArray() {
         return GameContext::instance()->world->npcs;
+    }
+
+    NPC *Agents::GetNPCByID(uint32_t npc_id) {
+        NPCArray npcs = GetNPCArray();
+        if (npc_id >= npcs.size())
+            return NULL;
+        else
+            return &npcs[npc_id];
     }
 
     std::wstring Agents::GetAgentName(Agent *agent) {

@@ -29,5 +29,5 @@ namespace GW {
     };
     static_assert(sizeof(PathingMap) == 84, "struct PathingMap has incorect size");
 
-    using PathingMapArray = Array<PathingMap>;
+    typedef Array<PathingMap> PathingMapArray;
 }

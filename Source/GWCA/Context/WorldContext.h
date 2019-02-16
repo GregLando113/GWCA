@@ -2,18 +2,37 @@
 
 #include <GWCA/GameContainers/Array.h>
 
-#include <GWCA/GameEntities/Map.h>
-#include <GWCA/GameEntities/NPC.h>
-#include <GWCA/GameEntities/Hero.h>
-#include <GWCA/GameEntities/Item.h>
-#include <GWCA/GameEntities/Agent.h>
-#include <GWCA/GameEntities/Quest.h>
-#include <GWCA/GameEntities/Skill.h>
-#include <GWCA/GameEntities/Title.h>
-#include <GWCA/GameEntities/Player.h>
-#include <GWCA/GameEntities/Attribute.h>
-
 namespace GW {
+    typedef uint32_t ItemID;
+
+    struct NPC;
+    struct Quest;
+    struct Title;
+    struct Player;
+    struct HeroInfo;
+    struct HeroFlag;
+    struct MapAgent;
+    struct Skillbar;
+    struct AgentInfo;
+    struct AgentEffects;
+    struct PartyAttribute;
+    struct MissionMapIcon;
+    struct MissionObjective;
+
+    typedef Array<NPC> NPCArray;
+    typedef Array<Quest> QuestLog;
+    typedef Array<Title> TitleArray;
+    typedef Array<ItemID> MerchItemArray;
+    typedef Array<Player> PlayerArray;
+    typedef Array<HeroFlag> HeroFlagArray;
+    typedef Array<HeroInfo> HeroInfoArray;
+    typedef Array<MapAgent> MapAgentArray;
+    typedef Array<Skillbar> SkillbarArray;
+    typedef Array<AgentInfo> AgentInfoArray;
+    typedef Array<AgentEffects> AgentEffectsArray;
+    typedef Array<MissionMapIcon> MissionMapIconArray;
+    typedef Array<PartyAttribute> PartyAttributeArray;
+
     struct WorldContext {
         struct sub1 {
             wchar_t* name;

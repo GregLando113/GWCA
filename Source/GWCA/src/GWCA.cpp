@@ -4,20 +4,15 @@
 
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/GameContainers/Array.h>
 #include <GWCA/GameContainers/Vector.h>
 #include <GWCA/Packets/StoC.h>
 
 #include <GWCA/Utilities/Hooker.h>
+#include <GWCA/Utilities/Macros.h>
+#include <GWCA/Utilities/Scanner.h>
 
-#include <GWCA/GameEntities/Map.h>
-#include <GWCA/GameEntities/NPC.h>
-#include <GWCA/GameEntities/Item.h>
-#include <GWCA/GameEntities/Agent.h>
-#include <GWCA/GameEntities/Guild.h>
-#include <GWCA/GameEntities/Skill.h>
-#include <GWCA/GameEntities/Camera.h>
-#include <GWCA/GameEntities/Player.h>
-#include <GWCA/GameEntities/Pathing.h>
+#include <GWCA/Context/GameContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -40,7 +35,8 @@
 #include <GWCA/Managers/GameThreadMgr.h>
 
 namespace GW {
-    std::vector<Module *> modules;
+    static std::vector<Module *> modules;
+    static uintptr_t base_ptr;
 
     bool Initialize() {
         modules.push_back(&UIModule);
@@ -61,6 +57,11 @@ namespace GW {
         modules.push_back(&GameThreadModule);
 
         if (MemoryMgr::Scan()) {
+
+            uintptr_t address = Scanner::Find("\x85\xC0\x75\x0F\x8B\xCE", "xxxxxx", -4);
+            printf("[SCAN] base_ptr = %p\n", (void *)address);
+            if (Verify(address))
+                base_ptr = *(uintptr_t *)address;
 
             for (Module *module : modules) {
                 printf("Initializing module '%s'\n", module->name);
@@ -96,5 +97,9 @@ namespace GW {
             if (module->exit_module)
                 module->exit_module();
         }
+    }
+
+    GameContext* GameContext::instance() {
+        return *(GameContext**)((*(uint8_t **)base_ptr) + 0x18);
     }
 } // namespace GW

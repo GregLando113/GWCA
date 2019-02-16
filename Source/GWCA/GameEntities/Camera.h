@@ -37,5 +37,34 @@ namespace GW {
         /* +h00C0 */ float field_of_view;
         /* +h00C4 */ float field_of_view2;
         // ...
+
+        float GetYaw()          { return yaw; }
+        float GetPitch()        { return pitch; }
+        float GetFieldOfView()  { return field_of_view; }
+
+        void SetYaw(float yaw) {
+            this->yaw_to_go = yaw;
+            this->yaw = yaw;
+        }
+
+        void SetPitch(float pitch) {
+            this->pitch_to_go = pitch;
+        }
+
+        float GetCameraZoom()     { return distance; }
+        Vec3f GetLookAtTarget()   { return look_at_target; }
+        Vec3f GetCameraPosition() { return position; }
+
+        void SetCameraPos(Vec3f newPos) {
+            this->position.x = newPos.x;
+            this->position.y = newPos.y;
+            this->position.z = newPos.z;
+        }
+
+        void SetLookAtTarget(Vec3f newPos) {
+            this->look_at_target.x = newPos.x;
+            this->look_at_target.y = newPos.y;
+            this->look_at_target.z = newPos.z;
+        }
     };
 }

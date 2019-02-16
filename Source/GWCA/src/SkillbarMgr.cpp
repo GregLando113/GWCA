@@ -5,10 +5,12 @@
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
+#include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Vector.h>
 
 #include <GWCA/GameEntities/Party.h>
+#include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Skill.h>
 
 #include <GWCA/Context/GameContext.h>
@@ -289,7 +291,7 @@ namespace GW {
 
     int SkillbarMgr::GetSkillSlot(Constants::SkillID skill_id) {
         uint32_t id = static_cast<uint32_t>(skill_id);
-        Skillbar *bar = Skillbar::GetPlayerSkillbar();
+        Skillbar *bar = SkillbarMgr::GetPlayerSkillbar();
         if (!bar || !bar->IsValid()) return -1;
         for (int i = 0; i < 8; ++i) {
             if (bar->skills[i].skill_id == id) {
@@ -297,5 +299,18 @@ namespace GW {
             }
         }
         return -1;
+    }
+
+    SkillbarArray SkillbarMgr::GetSkillbarArray() {
+        return GameContext::instance()->world->skillbar;
+    }
+
+    Skillbar *SkillbarMgr::GetPlayerSkillbar() {
+        SkillbarArray sb = SkillbarMgr::GetSkillbarArray();
+        if (sb.valid()) {
+            return &sb[0];
+        } else {
+            return NULL;
+        }
     }
 } // namespace GW

@@ -3,6 +3,7 @@
 namespace GW {
 
     struct Player;
+    typedef Array<Player> PlayerArray;
 
     namespace Constants {
         enum TitleID : uint32_t;

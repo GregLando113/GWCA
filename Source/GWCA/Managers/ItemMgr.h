@@ -5,6 +5,8 @@ namespace GW {
     struct Bag;
     struct Item;
 
+    typedef Array<Item *> ItemArray;
+
     namespace Constants {
         enum class Bag;
     }

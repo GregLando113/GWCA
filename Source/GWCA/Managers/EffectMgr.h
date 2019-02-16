@@ -4,6 +4,11 @@ namespace GW {
 
     struct Buff;
     struct Effect;
+    struct AgentEffects;
+
+    typedef Array<Buff> BuffArray;
+    typedef Array<Effect> EffectArray;
+    typedef Array<AgentEffects> AgentEffectsArray;
 
     namespace Constants {
         enum class SkillID;

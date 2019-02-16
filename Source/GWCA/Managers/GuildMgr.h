@@ -1,7 +1,10 @@
 #pragma once
 
 namespace GW {
+    struct Guild;
     struct GuildContext;
+
+    typedef Array<Guild *> GuildArray;
 
     // @Cleanup: @Fix: This should be replaced by an UUID type
     struct GHKey;

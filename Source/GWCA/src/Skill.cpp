@@ -3,6 +3,8 @@
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/GameContainers/Vector.h>
+
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Skill.h>
 
@@ -18,25 +20,12 @@ namespace GW {
         return recharge - MemoryMgr::GetSkillTimer();
     }
 
-    Skillbar *Skillbar::GetPlayerSkillbar() {
-        SkillbarArray sb = SkillbarArray::GetSkillbarArray();
-        if (sb.valid()) {
-            return &sb[0];
-        } else {
-            return NULL;
-        }
-    }
-
     SkillbarSkill *Skillbar::GetSkillById(Constants::SkillID skill_id) {
         for (size_t i = 0; i < ArrayCount(skills); i++) {
             if (skills[i].skill_id == static_cast<uint32_t>(skill_id))
                 return &skills[i];
         }
         return NULL;
-    }
-
-    SkillbarArray SkillbarArray::GetSkillbarArray() {
-        return GameContext::instance()->world->skillbar;
     }
 
     uint32_t Effect::GetTimeElapsed() const {

@@ -5,13 +5,10 @@
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Scanner.h>
 
-// #include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Vector.h>
 
-#include <GWCA/GameEntities/NPC.h>
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Party.h>
-#include <GWCA/GameEntities/Player.h>
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PartyContext.h>

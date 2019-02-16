@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GWCA/Utilities/Scanner.h>
-
 namespace GW {
     struct Cinematic;
     struct MapContext;
@@ -17,15 +15,7 @@ namespace GW {
 
     struct GameContext {
 
-        static GameContext* instance() {
-            static uint8_t* baseptr = nullptr;
-
-            if (baseptr == nullptr) {
-                baseptr = *(uint8_t**)Scanner::Find("\x85\xC0\x75\x0F\x8B\xCE", "xxxxxx", -4);
-            }
-
-            return *(GameContext**)((*(uint8_t**)baseptr) + 0x18);
-        }
+        static GameContext* instance();
 
         /* +h0000 */ void* h0000;
         /* +h0004 */ void* h0004;

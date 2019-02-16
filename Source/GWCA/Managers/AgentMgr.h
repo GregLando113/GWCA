@@ -1,10 +1,19 @@
 #pragma once
 
 namespace GW {
+    typedef uint32_t AgentID;
+
     struct NPC;
     struct Agent;
-    struct Module;
+    struct Player;
+    struct MapAgent;
 
+    typedef Array<NPC> NPCArray;
+    typedef Array<Agent *> AgentArray;
+    typedef Array<Player> PlayerArray;
+    typedef Array<MapAgent> MapAgentArray;
+
+    struct Module;
     extern Module AgentModule;
 
     namespace Agents {
@@ -37,11 +46,11 @@ namespace GW {
         GWCA_API PlayerArray GetPlayerArray();
 
         GWCA_API NPCArray GetNPCArray();
-        inline NPC *GetNPCByID(uint32_t npc_id) { return &GetNPCArray().at(npc_id); }
+        GWCA_API NPC *GetNPCByID(uint32_t npc_id);
 
         // Change targeted agent to (Agent)
+        GWCA_API void ChangeTarget(Agent *agent);
         GWCA_API void ChangeTarget(AgentID agent_id);
-        inline void ChangeTarget(Agent *agent) { if (agent) ChangeTarget(agent->agent_id); }
 
         // Move to specified coordinates.
         // Note: will do nothing if coordinate is outside the map!

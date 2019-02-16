@@ -3,8 +3,7 @@
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
-    using PlayerID = uint32_t;
-    using wchar = wchar_t;
+    typedef uint32_t PlayerID;
 
     struct Player { // total: 0x4C/76
         /* +h0000 */ uint32_t agent_id;
@@ -22,5 +21,5 @@ namespace GW {
     };
     static_assert(sizeof(Player) == 76, "struct Player has incorect size");
 
-    using PlayerArray = Array<Player>;
+    typedef Array<Player> PlayerArray;
 }

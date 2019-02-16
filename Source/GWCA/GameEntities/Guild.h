@@ -21,7 +21,7 @@ namespace GW {
     };
     static_assert(sizeof(GuildPlayer) == 372, "struct GuildPlayer has incorect size");
 
-    using GuildRoster = Array<GuildPlayer *>;
+    typedef Array<GuildPlayer *> GuildRoster;
 
     struct GuildHistoryEvent { // total: 0x208/520
         /* +h0000 */ uint32_t time1; // Guessing one of these is time in ms
@@ -30,7 +30,7 @@ namespace GW {
     };
     static_assert(sizeof(GuildHistoryEvent) == 520, "struct GuildHistoryEvent has incorect size");
 
-    using GuildHistory = Array<GuildHistoryEvent *>;
+    typedef Array<GuildHistoryEvent *> GuildHistory;
 
     struct Guild { // total: 0xAC/172
         /* +h0000 */ GHKey key;
@@ -54,5 +54,5 @@ namespace GW {
     };
     static_assert(sizeof(Guild) == 172, "struct Guild has incorect size");
 
-    using GuildArray = Array<Guild *>;
+    typedef Array<Guild *> GuildArray;
 }

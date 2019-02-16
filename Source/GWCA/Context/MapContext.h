@@ -1,9 +1,11 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/GameEntities/Pathing.h>
 
 namespace GW {
+    struct PathingMap;
+
+    typedef Array<PathingMap> PathingMapArray;
 
     struct MapContext {
         /* +h0000 */ float map_boundaries[5];

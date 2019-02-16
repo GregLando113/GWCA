@@ -3,6 +3,11 @@
 namespace GW {
 
     struct AreaInfo;
+    struct PathingMap;
+    struct MissionMapIcon;
+
+    typedef Array<PathingMap> PathingMapArray;
+    typedef Array<MissionMapIcon> MissionMapIconArray;
 
     namespace Constants {
         enum class MapID;

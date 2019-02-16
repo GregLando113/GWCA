@@ -16,5 +16,5 @@ namespace GW {
         Attribute attribute[49];
     };
 
-    using PartyAttributeArray = Array<PartyAttribute>;
+    typedef Array<PartyAttribute> PartyAttributeArray;
 }

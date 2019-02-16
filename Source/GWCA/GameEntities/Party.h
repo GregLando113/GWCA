@@ -34,9 +34,9 @@ namespace GW {
     };
     static_assert(sizeof(HenchmanPartyMember) == 52, "struct HenchmanPartyMember has incorect size");
     
-    using PlayerPartyMemberArray = Array<PlayerPartyMember>;
-    using HeroPartyMemberArray = Array<HeroPartyMember>;
-    using HenchmanPartyMemberArray = Array<HenchmanPartyMember>;
+    typedef Array<HeroPartyMember> HeroPartyMemberArray;
+    typedef Array<PlayerPartyMember> PlayerPartyMemberArray;
+    typedef Array<HenchmanPartyMember> HenchmanPartyMemberArray;
     
     struct PartyInfo { // total: 0x84/132
         /* +h0000 */ uint32_t party_id;

@@ -4,6 +4,8 @@ namespace GW {
     namespace Constants {
 
         namespace ModelID { // this is actually agent->PlayerNumber for agents
+			const int Rotscale = 2833;
+
             const int EoE = 2872;
             const int QZ = 2882;
             const int Winnowing = 2871;
@@ -13,6 +15,9 @@ namespace GW {
             const int FrozenSoil = 2878;
             const int Quicksand = 5714;
             const int Lacerate = 4228;
+
+			const int ProphetVaresh = 5288;
+			const int CommanderVaresh = 5289;
 
             const int Boo = 7445;
 
@@ -348,7 +353,8 @@ namespace GW {
 			}
 
 			namespace EotnDungeons {
-				const int StormcloudIncubus = 6847;
+				const int DiscOfChaos = 6067;
+				const int PlagueOfDestruction = 6079;
 				const int ZhimMonns = 6242;
 				const int Khabuus = 6244;
 				const int DuncanTheBlack = 6401;
@@ -356,14 +362,49 @@ namespace GW {
 				const int RandStormweaver = 6403;
 				const int Selvetarm = 6404;
 				const int Forgewright = 6405;
+				const int HavokSoulwail = 6423;
+				const int RragarManeater3 = 6554; // lvl 3
+				const int RragarManeater12 = 6555; // lvl 1 and 2
+				const int Arachni = 6789;
+				const int Hidesplitter = 6797;
+				const int PrismaticOoze = 6802;
+				const int IlsundurLordofFire = 6810;
+				const int EldritchEttin = 6817;
+				const int TPSRegulartorGolem = 6828;
+				const int MalfunctioningEnduringGolem = 6830;
+				const int StormcloudIncubus = 6847;
+				const int CyndrTheMountainHeart = 6910;
+				const int InfernalSiegeWurm = 6923; // kath lvl1 boss
 				const int Frostmaw = 6928;
-				
+				const int RemnantOfAntiquities = 6930;
+				const int MurakaiLadyOfTheNight = 7004;
+				const int ZoldarkTheUnholy = 7006;
+
+				const int Brigand = 7005; // soo
+				const int FendiNin = 7009;
+				const int SoulOfFendiNin = 7010;
+
+				const int KeymasterOfMurakai = 7014;
+				const int AngrySnowman = 7407;
 			}
-			
-			namespace SoO {
-				const int Brigand = 7005;
-				const int Fendi = 7009;
-				const int Fendi_soul = 7010;
+
+			namespace BonusMissionPack {
+				const int WarAshenskull = 7075;
+				const int RoxAshreign = 7076;
+				const int AnrakTindershot = 7077;
+				const int DettMortash = 7078;
+				const int AkinCinderspire = 7079;
+				const int TwangSootpaws = 7080;
+				const int MagisEmberglow = 7081;
+				const int MerciaTheSmug = 7110;
+				const int OptimusCaliph = 7111;
+				const int LazarusTheDire = 7112;
+				const int AdmiralJakman = 7175;
+				const int PalawaJoko = 7194;
+				const int YuriTheHand = 7142;
+				const int MasterRiyo = 7143;
+				const int CaptainSunpu = 7145;
+				const int MinisterWona = 7146;
 			}
         }
     }

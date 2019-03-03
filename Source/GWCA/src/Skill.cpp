@@ -3,7 +3,7 @@
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Constants/Constants.h>
 
-#include <GWCA/GameContainers/Vector.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Skill.h>

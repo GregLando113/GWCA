@@ -2,6 +2,7 @@
 
 namespace GW {
     typedef uint32_t AgentID;
+    struct GamePos;
 
     struct NPC;
     struct Agent;

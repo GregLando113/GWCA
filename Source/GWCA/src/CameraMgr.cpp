@@ -5,7 +5,7 @@
 #include <GWCA/Utilities/Scanner.h>
 #include <GWCA/Utilities/MemoryPatcher.h>
 
-#include <GWCA/GameContainers/Vector.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/GameEntities/Camera.h>
 
@@ -197,5 +197,10 @@ namespace GW {
     void CameraMgr::UpdateCameraPos() {
         Camera *cam = GetCamera();
         cam->SetCameraPos(ComputeCamPos());
+    }
+
+    float CameraMgr::GetFieldOfView() {
+        Camera *cam = GetCamera();
+        return cam->GetFieldOfView();
     }
 } // namespace GW

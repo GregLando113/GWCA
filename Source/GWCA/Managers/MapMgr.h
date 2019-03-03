@@ -11,6 +11,7 @@ namespace GW {
 
     namespace Constants {
         enum class MapID;
+        enum class District;
         enum class InstanceType;
     }
 

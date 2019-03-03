@@ -5,7 +5,7 @@
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Scanner.h>
 
-#include <GWCA/GameContainers/Vector.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Party.h>

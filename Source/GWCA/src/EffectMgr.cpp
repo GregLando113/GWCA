@@ -9,7 +9,7 @@
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/GameContainers/Vector.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/Packets/StoC.h>
 

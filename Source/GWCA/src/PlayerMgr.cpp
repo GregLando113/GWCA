@@ -5,7 +5,7 @@
 
 #include <GWCA/Utilities/Export.h>
 
-#include <GWCA/GameContainers/Vector.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Player.h>

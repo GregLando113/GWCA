@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/GameContainers/Vector.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 namespace GW
 {

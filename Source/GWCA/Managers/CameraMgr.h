@@ -29,6 +29,8 @@ namespace GW {
         // Returns (possible?) projection matrix of the game. Needs to be delved into.
         GWCA_API float *GetProjectionMatrix();
 
+        GWCA_API float GetFieldOfView();
+
 
         // ==== Camera patches ====
         // Unlock camera & return the new state of it

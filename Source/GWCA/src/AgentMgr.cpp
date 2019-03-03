@@ -8,7 +8,7 @@
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
-#include <GWCA/GameContainers/Vector.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/GameEntities/NPC.h>
 #include <GWCA/GameEntities/Item.h>

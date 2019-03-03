@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GWCA/GameContainers/List.h>
+
 namespace GW {
     struct PartyInfo;
 

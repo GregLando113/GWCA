@@ -282,14 +282,14 @@
     <ClCompile Include="..\..\Source\GWCA\src\UIMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\GWCA\src\Vector.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\GWCA\src\AgentMgr.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\GWCA\stdafx.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\RenderMgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GWCA\src\GamePos.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

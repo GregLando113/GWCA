@@ -78,6 +78,10 @@ namespace GW {
         return rhs;
     }
 
+    inline bool operator==(Vec3f lhs, Vec3f rhs) {
+        return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.z == rhs.z);
+    }
+
     struct Vec2f {
         float x;
         float y;
@@ -152,6 +156,10 @@ namespace GW {
         return rhs;
     }
 
+    inline bool operator==(Vec2f lhs, Vec2f rhs) {
+        return (lhs.x == rhs.x) && (lhs.y == rhs.y);
+    }
+
     inline float GetSquareDistance(Vec3f p1, Vec3f p2) {
         return (p1.x - p2.x) + (p1.y - p2.y) + (p1.z - p2.z);
     }
@@ -220,4 +228,8 @@ namespace GW {
             return Vec2f(x, y);
         }
     };
+
+    inline bool operator==(GamePos lhs, GamePos rhs) {
+        return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.zplane == rhs.zplane);
+    }
 }

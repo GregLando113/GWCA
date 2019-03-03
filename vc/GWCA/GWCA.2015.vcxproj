@@ -87,6 +87,7 @@
     <ClCompile Include="..\..\Source\GWCA\src\CtoSMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\EffectMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\FriendListMgr.cpp" />
+    <ClCompile Include="..\..\Source\GWCA\src\GamePos.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\GameThreadMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\GuildMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\GWCA.cpp" />
@@ -105,7 +106,6 @@
     <ClCompile Include="..\..\Source\GWCA\src\StoCMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\TradeMgr.cpp" />
     <ClCompile Include="..\..\Source\GWCA\src\UIMgr.cpp" />
-    <ClCompile Include="..\..\Source\GWCA\src\Vector.cpp" />
     <ClCompile Include="..\..\Source\GWCA\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

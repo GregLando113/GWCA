@@ -203,4 +203,9 @@ namespace GW {
         Camera *cam = GetCamera();
         return cam->GetFieldOfView();
     }
+
+    float CameraMgr::GetYaw() {
+        Camera *cam = GetCamera();
+        return cam->GetYaw();
+    }
 } // namespace GW

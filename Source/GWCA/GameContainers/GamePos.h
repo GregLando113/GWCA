@@ -182,7 +182,7 @@ namespace GW {
     float GetNorm(Vec3f p);
     float GetNorm(Vec2f p);
 
-    inline Vec3f& Normalize(Vec3f& v) {
+    inline Vec3f Normalize(Vec3f v) {
         float n = GetNorm(v);
         v.x /= n;
         v.y /= n;
@@ -190,20 +190,21 @@ namespace GW {
         return v;
     }
 
-    inline Vec2f& Normalize(Vec2f& v) {
+    inline Vec2f Normalize(Vec2f v) {
         float n = GetNorm(v);
         v.x /= n;
         v.y /= n;
         return v;
     }
 
-    inline Vec2f& Rotate(Vec2f& v, float cos, float sin) {
-        v.x = (v.x * cos) - (v.y * sin);
-        v.y = (v.x * sin) + (v.y * cos);
-        return v;
+    inline Vec2f Rotate(Vec2f v, float cos, float sin) {
+        Vec2f res;
+        res.x = (v.x * cos) - (v.y * sin);
+        res.y = (v.x * sin) + (v.y * cos);
+        return res;
     }
 
-    Vec2f& Rotate(Vec2f& v, float rotation);
+    Vec2f Rotate(Vec2f v, float rotation);
 
     struct GamePos {
         float    x;

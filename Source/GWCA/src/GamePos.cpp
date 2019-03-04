@@ -20,7 +20,7 @@ namespace GW
         return sqrtf(GetSquaredNorm(p));
     }
 
-    Vec2f& Rotate(Vec2f& v, float rotation) {
+    Vec2f Rotate(Vec2f v, float rotation) {
         return Rotate(v, cosf(rotation), sinf(rotation));
     }
 }

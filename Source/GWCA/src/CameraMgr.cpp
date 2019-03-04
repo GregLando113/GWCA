@@ -62,21 +62,21 @@ namespace {
     }
 
     void CreateHooks() {
-        if (Verify(patch_max_dist)) {
+        if (Verify(patch_max_dist_addr)) {
             patch_max_dist = new MemoryPatcher(patch_max_dist_addr, "\xEB\x01", 2);
             patch_max_dist->TooglePatch(true);
         }
-        if (Verify(patch_fov)) {
+        if (Verify(patch_fov_addr)) {
             patch_fov = new MemoryPatcher(patch_fov_addr, "\xC3", 1);
-            patch_max_dist->TooglePatch(true);
+            patch_fov->TooglePatch(true);
         }
-        if (Verify(patch_cam_update)) {
+        if (Verify(patch_cam_update_addr)) {
             patch_cam_update = new MemoryPatcher(patch_cam_update_addr, "\xEB\x06", 2);
-            patch_max_dist->TooglePatch(true);
+            // patch_cam_update->TooglePatch(true);
         }
-        if (Verify(patch_fog)) {
+        if (Verify(patch_fog_addr)) {
             patch_fog = new MemoryPatcher(patch_fog_addr, "\x00", 1);
-            patch_max_dist->TooglePatch(true);
+            // patch_fog->TooglePatch(true);
         }
     }
 

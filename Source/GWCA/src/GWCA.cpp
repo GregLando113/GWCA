@@ -74,7 +74,6 @@ namespace GW {
                 if (module->create_hooks)
                     module->create_hooks();
             }
-
             HookBase::EnableHooks();
 
             return true;

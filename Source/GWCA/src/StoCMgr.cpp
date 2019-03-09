@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
@@ -31,11 +32,15 @@ namespace {
     uint32_t last_identifier = 0;
 
     bool __fastcall StoCHandler_Func(Packet::StoC::PacketBase *pak) {
+        GW::HookBase::EnterHook();
         bool do_not_process = false;
         for (auto call : event_calls[pak->header]) {
             if (call.second(pak)) do_not_process = true;
         }
-        return do_not_process ? true : original_functions[pak->header].handler_func(pak);
+        if (!do_not_process)
+            original_functions[pak->header].handler_func(pak);
+        GW::HookBase::LeaveHook();
+        return true;
     }
 
     void OriginalHandler(Packet::StoC::PacketBase *packet) {
@@ -85,9 +90,7 @@ namespace {
     void RemoveHooks() {
         if (original_functions == nullptr) return;
         for (uint32_t i = 0; i < game_server_handler.size(); ++i) {
-            if (game_server_handler[i].handler_func != original_functions[i].handler_func) {
-                game_server_handler[i].handler_func = original_functions[i].handler_func;
-            }
+            game_server_handler[i].handler_func = original_functions[i].handler_func;
         }
         delete[] original_functions;
     }

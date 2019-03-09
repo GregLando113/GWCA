@@ -53,16 +53,14 @@ namespace {
         SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find(
             "\x8B\xCE\x89\x35\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\xC8", "xxxx????x????xx", -0x1C);
         printf("[SCAN] SetOnlineStatus = %p\n", SetOnlineStatus_Func);
-    }
 
-    void CreateHooks() {
         if (Verify(FriendStatusHandler_Func)) {
             HookBase::CreateHook(FriendStatusHandler_Func,
                 OnFriendStatusHandler, (void **)&RetFriendStatusHandler);
         }
     }
 
-    void RemoveHooks() {
+    void Exit() {
         if (FriendStatusHandler_Func)
             HookBase::RemoveHook(FriendStatusHandler_Func);
     }
@@ -74,9 +72,9 @@ namespace GW {
         "FiendListModule",  // name
         NULL,               // param
         ::Init,             // init_module
-        NULL,               // exit_module
-        ::CreateHooks,      // exit_module
-        ::RemoveHooks,      // remove_hooks
+        ::Exit,             // exit_module
+        NULL,               // enable_hooks
+        NULL,               // disable_hooks
     };
 
     FriendList *FriendListMgr::GetFriendList() {

@@ -2,6 +2,7 @@
 
 #include <GWCA/CtoSHeaders.h>
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Scanner.h>
 
@@ -46,14 +47,14 @@ namespace {
     void Init() {
         Tick_pt Tick_Func = (Tick_pt)Scanner::Find("\x74\x0A\x48\x75\x14\xB9", "xxxxxx", -33);
         printf("[SCAN] addr_tick = %p\n", Tick_Func);
+
+        if (Verify(Tick_Func))
+            HookBase::CreateHook(Tick_Func, OnTick, (void **)&RetTick);
     }
 
-    void CreateHooks() {
-        HookBase::CreateHook(Tick_Func, OnTick, (void **)&RetTick);
-    }
-
-    void RemoveHooks() {
-        HookBase::RemoveHook(Tick_Func);
+    void Exit() {
+        if (Tick_Func)
+            HookBase::RemoveHook(Tick_Func);
     }
 }
 
@@ -63,9 +64,9 @@ namespace GW {
         "PartyModule",  // name
         NULL,           // param
         ::Init,         // init_module
-        NULL,           // exit_module
-        ::CreateHooks,  // exit_module
-        ::RemoveHooks,  // remove_hooks
+        ::Exit,         // exit_module
+        NULL,           // enable_hooks
+        NULL,           // disable_hooks
     };
     
     void PartyMgr::Tick(bool flag) {

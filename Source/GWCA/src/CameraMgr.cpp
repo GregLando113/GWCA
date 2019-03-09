@@ -59,28 +59,18 @@ namespace {
             if (Verify(address))
                 scan_proj_matrix_addr = *(uintptr_t *)address;
         }
-    }
 
-    void CreateHooks() {
-        if (Verify(patch_max_dist_addr)) {
+        if (Verify(patch_max_dist_addr))
             patch_max_dist = new MemoryPatcher(patch_max_dist_addr, "\xEB\x01", 2);
-            patch_max_dist->TooglePatch(true);
-        }
-        if (Verify(patch_fov_addr)) {
+        if (Verify(patch_fov_addr))
             patch_fov = new MemoryPatcher(patch_fov_addr, "\xC3", 1);
-            patch_fov->TooglePatch(true);
-        }
-        if (Verify(patch_cam_update_addr)) {
+        if (Verify(patch_cam_update_addr))
             patch_cam_update = new MemoryPatcher(patch_cam_update_addr, "\xEB\x06", 2);
-            // patch_cam_update->TooglePatch(true);
-        }
-        if (Verify(patch_fog_addr)) {
+        if (Verify(patch_fog_addr))
             patch_fog = new MemoryPatcher(patch_fog_addr, "\x00", 1);
-            // patch_fog->TooglePatch(true);
-        }
     }
 
-    void RemoveHooks() {
+    void Exit() {
         if (patch_max_dist)
             delete patch_max_dist;
         if (patch_cam_update)
@@ -90,6 +80,24 @@ namespace {
         if (patch_fov)
             delete patch_fov;
     }
+
+    void EnableHooks() {
+        if (patch_max_dist)
+            patch_max_dist->TooglePatch(true);
+        if (patch_fov)
+            patch_fov->TooglePatch(true);
+    }
+
+    void DisableHooks() {
+        if (patch_max_dist)
+            patch_max_dist->TooglePatch(false);
+        if (patch_cam_update)
+            patch_cam_update->TooglePatch(false);
+        if (patch_fog)
+            patch_fog->TooglePatch(false);
+        if (patch_fov)
+            patch_fov->TooglePatch(false);
+    }
 }
 
 namespace GW {
@@ -98,9 +106,9 @@ namespace GW {
         "CameraModule",     // name
         NULL,               // param
         ::Init,             // init_module
-        NULL,               // exit_module
-        ::CreateHooks,      // exit_module
-        ::RemoveHooks,      // remove_hooks
+        ::Exit,             // exit_module
+        ::EnableHooks,      // enable_hooks
+        ::DisableHooks,     // disable_hooks
     };
 
     Camera *CameraMgr::GetCamera() {

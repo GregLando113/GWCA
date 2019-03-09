@@ -92,9 +92,7 @@ namespace {
         GwReset_Func = (GwReset_pt)Scanner::Find(
             "\x55\x8B\xEC\x81\xEC\x98\x00\x00\x00\x53\x56\x57\x8B\xF1\x33\xD2", "xxxxxxxxxxxxxxxx", 0);
         printf("[SCAN] GwReset = %p\n", GwReset_Func);
-    }
 
-    void CreateHooks() {
         if (Verify(GwEndScene_Func))
             HookBase::CreateHook(GwEndScene_Func, OnGwEndScene, (void **)&RetGwEndScene);
         if (Verify(ScreenCapture_Func))
@@ -103,7 +101,7 @@ namespace {
             HookBase::CreateHook(GwReset_Func, OnGwReset, (void **)&RetGwReset);
     }
 
-    void RemoveHooks() {
+    void Exit() {
         if (GwEndScene_Func)
             HookBase::RemoveHook(GwEndScene_Func);
         if (ScreenCapture_Func)
@@ -119,9 +117,9 @@ namespace GW {
         "RenderModule",     // name
         NULL,               // param
         ::Init,             // init_module
-        NULL,               // exit_module
-        ::CreateHooks,      // exit_module
-        ::RemoveHooks,      // remove_hooks
+        ::Exit,             // exit_module
+        NULL,               // enable_hooks
+        NULL,               // disable_hooks
     };
 
     int Render::GetIsFullscreen() {

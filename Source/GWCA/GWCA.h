@@ -52,5 +52,6 @@ THE SOFTWARE.
 
 namespace GW {
     bool Initialize();
+    void DisableHooks();
     void Terminate();
 }

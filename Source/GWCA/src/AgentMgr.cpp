@@ -80,14 +80,12 @@ namespace {
         ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
                 "\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
         printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
-    }
 
-    void CreateHooks() {
         if (Verify(SendDialog_Func))
             HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void **)&RetSendDialog);
     }
 
-    void RemoveHooks() {
+    void Exit() {
         if (SendDialog_Func)
             HookBase::RemoveHook(SendDialog_Func);
     }
@@ -99,9 +97,9 @@ namespace GW {
         "AgentModule",      // name
         NULL,               // param
         ::Init,             // init_module
-        NULL,               // exit_module
-        ::CreateHooks,      // exit_module
-        ::RemoveHooks,      // remove_hooks
+        ::Exit,             // exit_module
+        NULL,               // enable_hooks
+        NULL,               // disable_hooks
     };
 
     uint32_t Agents::GetLastDialogId() { 

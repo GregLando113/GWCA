@@ -315,9 +315,8 @@ namespace {
             if (Verify(address))
                 IsTyping_Addr = *(uintptr_t *)address;
         }
-    }
 
-    void CreateHooks() {
+
         if (Verify(ChatEvent_Func))
             HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
         if (Verify(GetSenderColor_Func))
@@ -334,7 +333,7 @@ namespace {
             HookBase::CreateHook(PrintChat_Func, OnPrintChat, (void **)&RetPrintChat);
     }
 
-    void RemoveHooks() {
+    void Exit() {
         if (ChatEvent_Func)
             HookBase::RemoveHook(ChatEvent_Func);
         if (GetSenderColor_Func)
@@ -358,9 +357,9 @@ namespace GW {
         "ChatModule",   // name
         NULL,           // param
         ::Init,         // init_module
-        NULL,           // exit_module
-        ::CreateHooks,  // exit_module
-        ::RemoveHooks,  // remove_hooks
+        ::Exit,         // exit_module
+        NULL,           // enable_hooks
+        NULL,           // disable_hooks
     };
 
     void Chat::SetChatEventCallback(std::function<void (uint32_t, uint32_t, wchar_t *, void *)> callback) {

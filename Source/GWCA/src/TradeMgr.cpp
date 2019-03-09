@@ -13,8 +13,8 @@ namespace GW {
         NULL,           // param
         NULL,           // init_module
         NULL,           // exit_module
-        NULL,           // exit_module
-        NULL,           // remove_hooks
+        NULL,           // enable_hooks
+        NULL,           // disable_hooks
     };
 
     void Trade::OpenTradeWindow(uint32_t agent_id) {

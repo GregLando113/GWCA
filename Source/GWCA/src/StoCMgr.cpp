@@ -58,7 +58,7 @@ namespace {
         }
     }
 
-    void CreateHooks() {
+    void EnableHooks() {
         struct GameServer {
             uint8_t h0000[8];
             struct {
@@ -87,7 +87,7 @@ namespace {
         }
     }
 
-    void RemoveHooks() {
+    void DisableHooks() {
         if (original_functions == nullptr) return;
         for (uint32_t i = 0; i < game_server_handler.size(); ++i) {
             game_server_handler[i].handler_func = original_functions[i].handler_func;
@@ -103,8 +103,8 @@ namespace GW {
         NULL,           // param
         ::Init,         // init_module
         NULL,           // exit_module
-        ::CreateHooks,  // exit_module
-        ::RemoveHooks,  // remove_hooks
+        ::EnableHooks,  // enable_hooks
+        ::DisableHooks, // disable_hooks
     };
 
     uint32_t StoC::AddCallback(uint32_t header,

@@ -63,18 +63,19 @@ namespace GW {
             if (Verify(address))
                 base_ptr = *(uintptr_t *)address;
 
+            HookBase::Initialize();
+
             for (Module *module : modules) {
                 printf("Initializing module '%s'\n", module->name);
                 if (module->init_module)
                     module->init_module();
             }
 
-            HookBase::Initialize();
-            for (Module *module : modules) {
-                if (module->create_hooks)
-                    module->create_hooks();
-            }
             HookBase::EnableHooks();
+            for (Module *module : modules) {
+                if (module->enable_hooks)
+                    module->enable_hooks();
+            }
 
             return true;
         } else {
@@ -82,20 +83,21 @@ namespace GW {
         }
     }
 
-    void Terminate() {
-
+    void DisableHooks() {
         HookBase::DisableHooks();
         for (Module *module : modules) {
-            if (module->remove_hooks)
-                module->remove_hooks();
+            if (module->disable_hooks)
+                module->disable_hooks();
         }
+    }
 
-        HookBase::Deinitialize();
-
+    void Terminate() {
         for (Module *module : modules) {
             if (module->exit_module)
                 module->exit_module();
         }
+
+        HookBase::Deinitialize();
     }
 
     GameContext* GameContext::instance() {

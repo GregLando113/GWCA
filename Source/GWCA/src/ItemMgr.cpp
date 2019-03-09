@@ -76,14 +76,12 @@ namespace {
 
         ItemClick_Func = (ItemClick_pt)Scanner::Find("\x74\x73\x8B\x50\x08", "xxxxx", -25);
         printf("[SCAN] ItemClick = %p\n", ItemClick_Func);
-    }
 
-    void CreateHooks() {
         if (Verify(ItemClick_Func))
             HookBase::CreateHook(ItemClick_Func, OnItemClick, (void **)&RetItemClick);
     }
 
-    void RemoveHooks() {
+    void Exit() {
         if (ItemClick_Func)
             HookBase::RemoveHook(ItemClick_Func);
     }
@@ -95,9 +93,9 @@ namespace GW {
         "ItemModule",   // name
         NULL,           // param
         ::Init,         // init_module
-        NULL,           // exit_module
-        ::CreateHooks,  // exit_module
-        ::RemoveHooks,  // remove_hooks
+        ::Exit,         // exit_module
+        NULL,           // enable_hooks
+        NULL,           // disable_hooks
     };
 
     void Items::OpenXunlaiWindow() {

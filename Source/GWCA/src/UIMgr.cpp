@@ -104,8 +104,8 @@ namespace GW {
         NULL,           // param
         ::Init,         // init_module
         NULL,           // exit_module
-        NULL,           // exit_module
-        NULL,           // remove_hooks
+        NULL,           // enable_hooks
+        NULL,           // disable_hooks
     };
 
     void UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)

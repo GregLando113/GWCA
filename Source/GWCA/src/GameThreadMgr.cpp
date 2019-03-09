@@ -63,11 +63,11 @@ namespace {
         DeleteCriticalSection(&criticalsection);
     }
 
-    void CreateHooks() {
+    void EnableHooks() {
         *g__thingy = (uintptr_t)gameLoopHook;
     }
 
-    void RemoveHooks() {
+    void DisableHooks() {
         *g__thingy = (uintptr_t)g__thingyret;
     }
 }
@@ -78,8 +78,8 @@ namespace GW {
         NULL,               // param
         ::Init,             // init_module
         ::Exit,             // exit_module
-        ::CreateHooks,      // exit_module
-        ::RemoveHooks,      // remove_hooks
+        ::EnableHooks,      // enable_hooks
+        ::DisableHooks,     // disable_hooks
     };
 
     void GameThread::ClearCalls() {

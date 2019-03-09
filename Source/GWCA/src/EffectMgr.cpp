@@ -48,14 +48,12 @@ namespace {
         PostProcessEffect_pt PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find(
             "\x55\x8B\xEC\x83\xEC\x10\x89\x4D\xF8\xC7\x45\xFC", "xxxxxxxxxxxx", 0);
         printf("[SCAN] PostProcessEffect = %p\n", PostProcessEffect_Func);
-    }
 
-    void CreateHooks() {
         if (Verify(PostProcessEffect_Func))
             HookBase::CreateHook(PostProcessEffect_Func, OnPostProcessEffect, (void **)&RetPostProcessEffect);
     }
 
-    void RemoveHooks() {
+    void Exit() {
         if (PostProcessEffect_Func)
             HookBase::RemoveHook(PostProcessEffect_Func);
     }
@@ -67,9 +65,9 @@ namespace GW {
         "EffectModule",     // name
         NULL,               // param
         ::Init,             // init_module
-        NULL,               // exit_module
-        ::CreateHooks,      // exit_module
-        ::RemoveHooks,      // remove_hooks
+        ::Exit,             // exit_module
+        NULL,               // enable_hooks
+        NULL,               // disable_hooks
     };
 
     uint32_t Effects::GetAlcoholLevel() {

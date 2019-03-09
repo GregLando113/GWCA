@@ -8,7 +8,9 @@ namespace GW {
         void       (*init_module)();
         void       (*exit_module)();
 
-        void       (*create_hooks)();
-        void       (*remove_hooks)();
+        // Call those from game thread to be safe
+        // Do not free trampoline
+        void       (*enable_hooks)();
+        void       (*disable_hooks)();
     };
 }

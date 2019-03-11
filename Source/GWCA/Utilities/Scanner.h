@@ -9,11 +9,11 @@ namespace GW {
 
         // Initializer to determine scan range.
         void Initialize(uintptr_t start, size_t size);
-        void Initialize(char* moduleName = NULL);
+        void Initialize(const char* moduleName = NULL);
         void Initialize(void* module);
 
         // Actual pattern finder.
-        uintptr_t Find(char* pattern, char* mask, int offset);
+        uintptr_t Find(const char* pattern, const char* mask, int offset);
 
         inline uintptr_t DecodeE8(uintptr_t addr) {
             assert(addr);

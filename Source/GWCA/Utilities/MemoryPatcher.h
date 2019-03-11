@@ -12,10 +12,10 @@ namespace GW {
 
         bool GetPatchState() { return flag; };
     private:
-        void  *addr;
-        void  *patch;
-        void  *backup;
-        size_t size;
+        void    *addr;
+        uint8_t *patch;
+        uint8_t *backup;
+        size_t   size;
 
         bool flag;
     };

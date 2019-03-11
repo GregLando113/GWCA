@@ -9,14 +9,14 @@ namespace {
     size_t g_size    = 0;
 }
 
-uintptr_t GW::Scanner::Find(char* pattern, char* mask, int offset) {
-    BYTE first = pattern[0];
+uintptr_t GW::Scanner::Find(const char* pattern, const char* mask, int offset) {
+    uint8_t first = pattern[0];
     int patternLength = strlen(mask);
     bool found = false;
 
     //For each byte from start to end
     for (DWORD i = g_base; i < g_base + g_size - patternLength; i++) {
-        if (*(BYTE*)i != first) {
+        if (*(uint8_t *)i != first) {
             continue;
         }
         found = true;
@@ -44,7 +44,7 @@ void GW::Scanner::Initialize(void* module) {
     g_size = (DWORD)info.SizeOfImage;
 }
 
-void GW::Scanner::Initialize(char* moduleName) {
+void GW::Scanner::Initialize(const char* moduleName) {
     HMODULE mod = GetModuleHandleA(moduleName);
     LPVOID textSection = (LPVOID)((DWORD)mod + 0x1000);
 

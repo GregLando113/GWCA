@@ -253,9 +253,9 @@ namespace GW {
                 // If we only use NPCArray, we have a problem because 2 agents can share the same PlayerNumber.
                 // In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
                 // But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
-                Array<AgentInfo> npcs = GameContext::instance()->world->agent_infos;
-                if (agent->agent_id >= npcs.size()) return;
-                str = npcs[agent->agent_id].name_enc;
+                Array<AgentInfo> agent_infos = GameContext::instance()->world->agent_infos;
+                if (agent->agent_id >= agent_infos.size()) return;
+                str = agent_infos[agent->agent_id].name_enc;
                 if (!str) {
                     NPCArray npcs = GameContext::instance()->world->npcs;
                     if (!npcs.valid()) return;

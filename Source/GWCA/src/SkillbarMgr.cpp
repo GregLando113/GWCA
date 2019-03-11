@@ -222,7 +222,7 @@ namespace GW {
         PartyInfo *info = PartyMgr::GetPartyInfo();
         if (!info) return false;
 
-        PlayerArray &players = Agents::GetPlayerArray();
+        PlayerArray players = Agents::GetPlayerArray();
         if (!players.valid()) return false;
 
         Agent *me = Agents::GetPlayer();

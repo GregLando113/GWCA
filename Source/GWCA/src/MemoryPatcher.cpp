@@ -7,10 +7,10 @@ GW::MemoryPatcher::MemoryPatcher(uintptr_t addr, void *patch, size_t size) {
     this->size = size;
     this->flag = false;
 
-    this->patch = new char[size];
+    this->patch = new uint8_t[size];
     memcpy(this->patch, patch, size);
 
-    this->backup = new char[size];
+    this->backup = new uint8_t[size];
 
     DWORD oldProt;
     VirtualProtect(this->addr, size, PAGE_EXECUTE_READ, &oldProt);

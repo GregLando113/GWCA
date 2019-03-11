@@ -224,7 +224,7 @@ namespace GW {
         }
 
         GamePos(Vec2f v)
-            : x(v.x), y(v.y)
+            : GamePos(v.x, v.y, 0)
         {
         }
 

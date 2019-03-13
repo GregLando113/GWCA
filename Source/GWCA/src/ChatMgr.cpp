@@ -321,6 +321,8 @@ namespace {
             HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
         if (Verify(GetSenderColor_Func))
             HookBase::CreateHook(GetSenderColor_Func, OnGetSenderColor, (void **)&RetGetSenderColor);
+        if (Verify(GetMessageColor_Func))
+            HookBase::CreateHook(GetMessageColor_Func, OnGetMessageColor, (void **)&RetGetMessageColor);
         if (Verify(LocalMessage_Func))
             HookBase::CreateHook(LocalMessage_Func, OnLocalMessage, (void **)&RetLocalMessage);
         if (Verify(SendChat_Func))
@@ -338,6 +340,8 @@ namespace {
             HookBase::RemoveHook(ChatEvent_Func);
         if (GetSenderColor_Func)
             HookBase::RemoveHook(GetSenderColor_Func);
+        if (GetMessageColor_Func)
+            HookBase::RemoveHook(GetMessageColor_Func);
         if (LocalMessage_Func)
             HookBase::RemoveHook(LocalMessage_Func);
         if (SendChat_Func)

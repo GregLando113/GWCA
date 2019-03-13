@@ -35,13 +35,16 @@ namespace {
         // this func is always called twice so use this hack to tick only once
         static bool toggle = true;
         toggle = !toggle;
-        if (toggle)
-            goto leave;
-        if (tick_work_as_toggle)
+
+        uint32_t retval;
+        if (!tick_work_as_toggle) {
+            retval = RetTick(unk1);
+        } else if (!toggle) {
             PartyMgr::Tick(!PartyMgr::GetIsPlayerTicked());
-    leave:;
+            retval = 4;
+        }
         HookBase::LeaveHook();
-        return 4;
+        return retval;
     }
 
     void Init() {

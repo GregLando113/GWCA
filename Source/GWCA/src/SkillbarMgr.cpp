@@ -18,6 +18,7 @@
 
 #include <GWCA/Managers/Module.h>
 
+#include <GWCA/Managers/MapMgr.h>
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
@@ -175,6 +176,9 @@ namespace GW {
     bool SkillbarMgr::LoadSkillTemplate(const char *temp) {
         using Constants::Profession;
 
+        if (Map::GetInstanceType() != Constants::InstanceType::Outpost)
+            return false;
+
         int skill_count = 0;
         int attrib_count = 0;
         int attrib_ids[10] = {0};
@@ -200,6 +204,9 @@ namespace GW {
 
     bool SkillbarMgr::LoadSkillTemplate(const char *temp, int hero_index) {
         using Constants::Profession;
+
+        if (Map::GetInstanceType() != Constants::InstanceType::Outpost)
+            return false;
 
         if (hero_index == 0)
             return LoadSkillTemplate(temp);

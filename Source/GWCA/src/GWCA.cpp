@@ -31,6 +31,7 @@
 #include <GWCA/Managers/RenderMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
+#include <GWCA/Managers/MerchantMgr.h>
 #include <GWCA/Managers/SkillbarMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
 
@@ -53,6 +54,7 @@ namespace GW {
         modules.push_back(&EffectModule);
         modules.push_back(&PlayerModule);
         modules.push_back(&RenderModule);
+        modules.push_back(&MerchantModule);
         modules.push_back(&SkillbarModule);
         modules.push_back(&GameThreadModule);
 

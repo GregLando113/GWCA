@@ -5,6 +5,7 @@ namespace GW {
     struct Module;
     extern Module MerchantModule;
 
+    typedef uint32_t ItemID;
     typedef Array<ItemID> MerchItemArray;
 
     namespace Merchant {

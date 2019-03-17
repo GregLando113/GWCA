@@ -34,6 +34,7 @@
 #include <GWCA/Managers/MerchantMgr.h>
 #include <GWCA/Managers/SkillbarMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
+#include <GWCA/Managers/FriendListMgr.h>
 
 namespace GW {
     static std::vector<Module *> modules;
@@ -57,6 +58,7 @@ namespace GW {
         modules.push_back(&MerchantModule);
         modules.push_back(&SkillbarModule);
         modules.push_back(&GameThreadModule);
+        modules.push_back(&FriendListModule);
 
         if (MemoryMgr::Scan()) {
 

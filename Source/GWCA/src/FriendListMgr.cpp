@@ -68,8 +68,8 @@ namespace {
 
 namespace GW {
 
-    Module FiendListModule = {
-        "FiendListModule",  // name
+    Module FriendListModule = {
+        "FriendListModule",  // name
         NULL,               // param
         ::Init,             // init_module
         ::Exit,             // exit_module

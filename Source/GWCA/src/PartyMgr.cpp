@@ -36,12 +36,11 @@ namespace {
         static bool toggle = true;
         toggle = !toggle;
 
-        uint32_t retval;
+        uint32_t retval = 4;
         if (!tick_work_as_toggle) {
             retval = RetTick(unk1);
         } else if (!toggle) {
             PartyMgr::Tick(!PartyMgr::GetIsPlayerTicked());
-            retval = 4;
         }
         HookBase::LeaveHook();
         return retval;

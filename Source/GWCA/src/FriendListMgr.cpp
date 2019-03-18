@@ -93,7 +93,7 @@ namespace GW {
     }
 
     Friend *FriendListMgr::GetFriend(wchar_t *account, wchar_t *playing) {
-        if (!(account && playing)) return NULL;
+        if (!(account || playing)) return NULL;
         FriendList *fl = GetFriendList();
         if (!fl) return NULL;
         uint32_t n_friends = fl->number_of_friend;

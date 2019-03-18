@@ -20,13 +20,13 @@ namespace {
     FriendStatusHandler_pt RetFriendStatusHandler;
     FriendStatusHandler_pt FriendStatusHandler_Func;
 
-    std::function<void (Friend *f, FriendStatus status)> OnFriendStatus_callback;
+    std::function<void (Friend *f, FriendStatus status, wchar_t *charname)> OnFriendStatus_callback;
     void __fastcall OnFriendStatusHandler(FriendStatus status, wchar_t *account, wchar_t *playing) {
         HookBase::EnterHook();
         RetFriendStatusHandler(status, account, playing);
         Friend *_friend = FriendListMgr::GetFriend(account, playing);
         if (_friend && OnFriendStatus_callback)
-            OnFriendStatus_callback(_friend, status);
+            OnFriendStatus_callback(_friend, status, playing);
         HookBase::LeaveHook();
     }
 
@@ -87,7 +87,7 @@ namespace GW {
     }
 
     void FriendListMgr::SetOnFriendStatusCallback(
-        std::function<void (Friend *f, FriendStatus status)> callback)
+        std::function<void (Friend *f, FriendStatus status, wchar_t *charname)> callback)
     {
         OnFriendStatus_callback = callback;
     }

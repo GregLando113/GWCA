@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/CtoSHeaders.h>
+#include <GWCA/Packets/CtoSHeaders.h>
 #include <GWCA/Constants/Skills.h>
 
 #include <GWCA/Utilities/Export.h>

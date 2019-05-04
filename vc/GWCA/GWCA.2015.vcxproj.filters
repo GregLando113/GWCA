@@ -214,6 +214,9 @@
     <ClInclude Include="..\..\Source\GWCA\Managers\RenderMgr.h">
       <Filter>Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\GWCA\Packets\CtoSHeaders.h">
+      <Filter>Packets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\GWCA\src\CameraMgr.cpp">

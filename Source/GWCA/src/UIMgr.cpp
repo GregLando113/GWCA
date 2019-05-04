@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/CtoSHeaders.h>
+#include <GWCA/Packets/CtoSHeaders.h>
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
@@ -67,7 +67,7 @@ namespace {
 
     void Init() {
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
-            "\x8B\xDA\x1B\xF6\xF7\xDE\x4E\x83\xFF\x40\x73\x14\x68", "xxxxxxxxxxxxx", -0xB);
+            "\x8B\xDA\x1B\xF6\xF7\xDE\x4E\x83\xFF\x46\x73\x14\x68", "xxxxxxxxxxxxx", -0xB);
         printf("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
 
         LoadSettings_Func = (LoadSettings_pt)Scanner::Find(

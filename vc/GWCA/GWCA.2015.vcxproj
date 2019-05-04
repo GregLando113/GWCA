@@ -72,6 +72,7 @@
     <ClInclude Include="..\..\Source\GWCA\Managers\StoCMgr.h" />
     <ClInclude Include="..\..\Source\GWCA\Managers\TradeMgr.h" />
     <ClInclude Include="..\..\Source\GWCA\Managers\UIMgr.h" />
+    <ClInclude Include="..\..\Source\GWCA\Packets\CtoSHeaders.h" />
     <ClInclude Include="..\..\Source\GWCA\Packets\StoC.h" />
     <ClInclude Include="..\..\Source\GWCA\stdafx.h" />
     <ClInclude Include="..\..\Source\GWCA\Utilities\Export.h" />

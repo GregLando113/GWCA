@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 /*
 Server to client packets, sorted by header
 
@@ -267,6 +269,22 @@ namespace GW {
                 uint32_t play;
             };
             const uint32_t Packet<CinematicPlay>::STATIC_HEADER = 0x102;
+			
+			// e.g. map doors start opening or closing.
+			struct ManipulateMapObject : Packet<ManipulateMapObject> {
+				uint16_t object_id;
+				uint8_t unk1;
+				uint32_t unk2; // 3=initial state, 2=moving
+			};
+			const uint32_t Packet<ManipulateMapObject>::STATIC_HEADER = 0x111;
+
+			// e.g. map doors stop opening or closing. 
+			struct ManipulateMapObject2 : Packet<ManipulateMapObject2> {
+				uint16_t object_id;
+				uint32_t unk1;
+				uint32_t unk2;
+			};
+			const uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = 0x114;
 
             // Gold added to inventory
             struct CharacterAddGold : Packet<CharacterAddGold> {

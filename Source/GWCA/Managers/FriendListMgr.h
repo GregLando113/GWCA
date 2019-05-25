@@ -32,6 +32,6 @@ namespace GW {
         GWCA_API void SetFriendListStatus(Constants::OnlineStatus status);
 
         GWCA_API void SetOnFriendStatusCallback(
-            std::function<void (Friend *f, GW::FriendStatus status, wchar_t *charname)>);
+            std::function<void (Friend *f, GW::FriendStatus status, wchar_t *charname, wchar_t *account_name)>);
     };
 }

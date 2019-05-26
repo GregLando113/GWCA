@@ -65,5 +65,7 @@ namespace GW {
 
         GWCA_API bool GetIsInCinematic(void);
         GWCA_API void SkipCinematic(void);
+
+        GWCA_API void EnterChallenge();
     };
 }

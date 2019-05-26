@@ -201,4 +201,8 @@ namespace GW {
     void Map::SkipCinematic(void) {
         CtoS::SendPacket(4, CtoGS_MSGSkipCinematic);
     }
+
+    void Map::EnterChallenge() {
+        CtoS::SendPacket(8, CtoGS_MSGEnterChallenge, 0);
+    }
 } // namespace GW

@@ -16,23 +16,25 @@ namespace GW {
         /* +h0074 */ wchar_t player_name[20];
         /* +h009C */ uint8_t h009C[80];
         /* +h00EC */ Array<void *> h00EC;
-        /* +h00FC */ uint8_t h00FC[40];
-        /* +h0124 */ uint32_t h0124;
-        /* +h0128 */ uint32_t token1; // world id
-        /* +h012C */ uint32_t map_id_again;
-        /* +h0130 */ uint32_t is_explorable;
-        /* +h0134 */ uint8_t host[24];
-        /* +h014C */ uint32_t token2; // player id
-        /* +h0150 */ uint8_t h0130[64];
-        /* +h0190 */ uint32_t current_map_id_again;
-        /* +h0194 */ uint32_t h0194[8];
-        /* +h01B4 */ uint32_t district_number;
-        /* +h01B8 */ uint32_t h01B8;
-        /* +h01BC */ uint32_t current_map_id;
-        /* +h01C0 */ uint32_t current_map_id_dupe;
-        /* +h01C4 */ uint8_t h01C4[8];
-        /* +h01CC */ Array<ObserverMatch *> observer_matchs;
-        /* +h01DC */ uint8_t h001DC[332];
-        /* +h0328 */ wchar_t player_email[64];
+        /* +h00FC */ uint8_t h00FC[148]; // 40
+        /* +h0190 */ uint32_t h0190;
+        /* +h0194 */ uint32_t token1; // world id
+        /* +h0198 */ uint32_t map_id_again;
+        /* +h019C */ uint32_t is_explorable;
+        /* +h01A0 */ uint8_t host[24];
+        /* +h01B8 */ uint32_t token2; // player id
+        /* +h01BC */ uint8_t h01BC[64];
+        /* +h01FC */ uint32_t current_map_id_again;
+        /* +h0200 */ uint32_t h0200[32];
+        /* +h0220 */ uint32_t district_number;
+        /* +h0224 */ uint32_t h0224;
+        /* +h0228 */ uint32_t observe_map_id;
+        /* +h022C */ uint32_t current_map_id;
+        /* +h0230 */ uint8_t h0230[8];
+        /* +h0238 */ Array<ObserverMatch *> observer_matchs;
+        /* +h0248 */ uint8_t h0248[240];
+        /* +h0338 */ uint32_t *progress_bar;
+        /* +h033C */ uint8_t h033C[108];
+        /* +h03A8 */ wchar_t player_email[64];
     };
 }

@@ -16,18 +16,18 @@ namespace {
     using namespace GW;
 
     typedef void(__fastcall *FriendStatusHandler_pt)(
-        FriendStatus status, wchar_t *account, wchar_t *playing);
+        FriendList *ctx, uint32_t edx, uint32_t friend_id, FriendStatus status);
     FriendStatusHandler_pt RetFriendStatusHandler;
     FriendStatusHandler_pt FriendStatusHandler_Func;
 
-    std::function<void (Friend *f, FriendStatus status, wchar_t *charname, wchar_t *account_name)> OnFriendStatus_callback;
-    void __fastcall OnFriendStatusHandler(FriendStatus status, wchar_t *account, wchar_t *playing) {
+    std::function<void (Friend *f, FriendStatus status)> OnFriendStatus_callback;
+    void __fastcall OnFriendStatusHandler(FriendList *ctx, uint32_t edx, uint32_t friend_id, FriendStatus status) {
         HookBase::EnterHook();
-        RetFriendStatusHandler(status, account, playing);
-        Friend *_friend = FriendListMgr::GetFriend(account, playing);
+        Friend *_friend = FriendListMgr::GetFriend(friend_id);
         if (_friend && OnFriendStatus_callback)
-            OnFriendStatus_callback(_friend, status, playing, account);
+            OnFriendStatus_callback(_friend, status);
         HookBase::LeaveHook();
+        RetFriendStatusHandler(ctx, edx, friend_id, status);
     }
 
     typedef void(__fastcall *SetOnlineStatus_pt)(uint32_t status);
@@ -38,7 +38,7 @@ namespace {
     void Init() {
         {
             uintptr_t address = Scanner::Find(
-                "\x85\xC0\x74\x19\x6A\xFF\x8D\x50\x08\x8D\x4E\x08", "xxxxxxxxxxxx", -0x18);
+                "\x85\xC0\x74\x19\x6A\xFF\x8D\x50\x18\x8D\x4E\x18", "xxxxxxxxxxxx", -0x18);
             printf("[SCAN] FriendList_Addr = %p\n", (void *)address);
             if (Verify(address)) {
                 address = *(uintptr_t *)address + (address + 5 - 1) + 2;
@@ -47,7 +47,7 @@ namespace {
         }
 
         FriendStatusHandler_Func = (FriendStatusHandler_pt)Scanner::Find(
-            "\x8B\xF1\x6A\x14\x8D\x4D\xAC\xE8", "xxxxxxxx", -7);
+            "\xC2\x08\x00\x8B\x55\x0C\x89\x56\x04", "xxxxxxxxx", -0x2F);
         printf("[SCAN] FriendStatusHandler = %p\n", FriendStatusHandler_Func);
 
         SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find(
@@ -87,7 +87,7 @@ namespace GW {
     }
 
     void FriendListMgr::SetOnFriendStatusCallback(
-        std::function<void (Friend *f, FriendStatus status, wchar_t *charname, wchar_t *account_name)> callback)
+        std::function<void (Friend *f, FriendStatus status)> callback)
     {
         OnFriendStatus_callback = callback;
     }
@@ -105,7 +105,7 @@ namespace GW {
             --n_friends;
             if (account && !wcsncmp(it->account, account, 20))
                 return it;
-            if (playing && !wcsncmp(it->name, playing, 20))
+            if (playing && !wcsncmp(it->charname, playing, 20))
                 return it;
         }
         return NULL;
@@ -113,9 +113,9 @@ namespace GW {
 
     Friend *FriendListMgr::GetFriend(uint32_t index) {
         FriendList *fl = GetFriendList();
-        if (!fl || (index + 1) >= fl->friends.size())
+        if (!fl || index >= fl->friends.size())
             return NULL;
-        return fl->friends[index + 1];
+        return fl->friends[index];
     }
 
     uint32_t FriendListMgr::GetNumberOfFriends() {

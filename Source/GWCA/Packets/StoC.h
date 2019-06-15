@@ -308,7 +308,7 @@ namespace GW {
                 uint8_t unk2;
 				uint8_t unk3[8];
             };
-            const uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = 0x197;
+            const uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = 0x19A;
 
             struct InstanceLoadInfo : Packet<InstanceLoadInfo> {
                 uint32_t agent_id;
@@ -318,7 +318,7 @@ namespace GW {
                 uint32_t language;
                 uint32_t is_observer;
             };
-            const uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = 0x19B;
+            const uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = 0x19E;
 
             struct GameSrvTransfer : Packet<GameSrvTransfer> {
                 uint8_t host[24]; // ip of the game server
@@ -328,23 +328,23 @@ namespace GW {
                 uint32_t is_explorable; // uint8_t
                 uint32_t token2; // player id
             };
-            const uint32_t Packet<GameSrvTransfer>::STATIC_HEADER = 0x1A7;
+            const uint32_t Packet<GameSrvTransfer>::STATIC_HEADER = 0x1AA;
 
             struct DoACompleteZone : Packet<DoACompleteZone> {
                 wchar_t message[122];
             };
-            const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 0x1B1;
+            const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 0x1B4;
 
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
                 // uint16_t
                 // uint16_t
                 // uint8_t
             };
-            const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1CD;
+            const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D0;
 
             struct PartyDefeated : Packet<PartyDefeated> {
             };
-            const uint32_t Packet<PartyDefeated>::STATIC_HEADER = 0x1DA;
+            const uint32_t Packet<PartyDefeated>::STATIC_HEADER = 0x1DD;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace GW {
             kHideAgentNameTag       = 0x10000000 | 0x1A,
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B,
             kWriteToChatLog         = 0x10000000 | 0x7E,
-            kOpenWhisper            = 0x10000000 | 0x8F // wparam = wchar* name
+            kOpenWhisper            = 0x10000000 | 0x90 // wparam = wchar* name
         };
 
         struct CompassPoint {

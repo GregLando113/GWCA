@@ -19,8 +19,8 @@ namespace GW {
         GWCA_API FriendList *GetFriendList();
 
         GWCA_API Friend *GetFriend(wchar_t *account, wchar_t *playing);
-
         GWCA_API Friend *GetFriend(uint32_t index);
+        GWCA_API Friend *GetFriend(const uint8_t *uuid);
 
         GWCA_API uint32_t GetNumberOfFriends();
         GWCA_API uint32_t GetNumberOfIgnores();
@@ -32,6 +32,6 @@ namespace GW {
         GWCA_API void SetFriendListStatus(Constants::OnlineStatus status);
 
         GWCA_API void SetOnFriendStatusCallback(
-            std::function<void (Friend *f, FriendStatus status)>);
+            std::function<void (Friend *f, FriendStatus status, const wchar_t *name, const wchar_t *charname)>);
     };
 }

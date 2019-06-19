@@ -16,18 +16,20 @@ namespace {
     using namespace GW;
 
     typedef void(__fastcall *FriendStatusHandler_pt)(
-        FriendList *ctx, uint32_t edx, uint32_t friend_id, FriendStatus status);
+        FriendStatus status, const uint8_t *uuid, const wchar_t *name, const wchar_t *charname);
     FriendStatusHandler_pt RetFriendStatusHandler;
     FriendStatusHandler_pt FriendStatusHandler_Func;
 
-    std::function<void (Friend *f, FriendStatus status)> OnFriendStatus_callback;
-    void __fastcall OnFriendStatusHandler(FriendList *ctx, uint32_t edx, uint32_t friend_id, FriendStatus status) {
+    std::function<void (Friend *f, FriendStatus status, const wchar_t *name, const wchar_t *charname)> OnFriendStatus_callback;
+    void __fastcall OnFriendStatusHandler(FriendStatus status, 
+        const uint8_t *uuid, const wchar_t *name, const wchar_t *charname)
+    {
         HookBase::EnterHook();
-        Friend *_friend = FriendListMgr::GetFriend(friend_id);
+        Friend *_friend = FriendListMgr::GetFriend(uuid);
         if (_friend && OnFriendStatus_callback)
-            OnFriendStatus_callback(_friend, status);
+            OnFriendStatus_callback(_friend, status, name, charname);
         HookBase::LeaveHook();
-        RetFriendStatusHandler(ctx, edx, friend_id, status);
+        RetFriendStatusHandler(status, uuid, name, charname);
     }
 
     typedef void(__fastcall *SetOnlineStatus_pt)(uint32_t status);
@@ -47,7 +49,7 @@ namespace {
         }
 
         FriendStatusHandler_Func = (FriendStatusHandler_pt)Scanner::Find(
-            "\xC2\x08\x00\x8B\x55\x0C\x89\x56\x04", "xxxxxxxxx", -0x2F);
+            "\x89\x45\x9C\x8B\x4A\x04\x8B\x42", "xxxxxxxx", -0xB);
         printf("[SCAN] FriendStatusHandler = %p\n", FriendStatusHandler_Func);
 
         SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find(
@@ -87,7 +89,7 @@ namespace GW {
     }
 
     void FriendListMgr::SetOnFriendStatusCallback(
-        std::function<void (Friend *f, FriendStatus status)> callback)
+        std::function<void (Friend *f, FriendStatus status, const wchar_t *name, const wchar_t *charname)> callback)
     {
         OnFriendStatus_callback = callback;
     }
@@ -116,6 +118,18 @@ namespace GW {
         if (!fl || index >= fl->friends.size())
             return NULL;
         return fl->friends[index];
+    }
+
+    Friend *FriendListMgr::GetFriend(const uint8_t *uuid) {
+        FriendList *fl = GetFriendList();
+        FriendsListArray& friends = fl->friends;
+        for (size_t i = 0; i < friends.size(); i++) {
+            Friend *it = friends[i];
+            if (!it) continue;
+            if (!memcmp(it->uuid, uuid, 16))
+                return it;
+        }
+        return nullptr;
     }
 
     uint32_t FriendListMgr::GetNumberOfFriends() {

@@ -16,18 +16,34 @@ namespace {
     using namespace GW;
 
     typedef void(__fastcall *FriendStatusHandler_pt)(
-        FriendList *ctx, uint32_t edx, uint32_t friend_id, FriendStatus status);
+		FriendList *ctx, uint32_t status_int, uint32_t friend_id, wchar_t *charname);
     FriendStatusHandler_pt RetFriendStatusHandler;
     FriendStatusHandler_pt FriendStatusHandler_Func;
+	std::map<uint32_t, uint32_t> prev_statuses;
+	std::map<uint32_t, uint32_t>::iterator prev_status_iterator;
 
-    std::function<void (Friend *f, FriendStatus status)> OnFriendStatus_callback;
-    void __fastcall OnFriendStatusHandler(FriendList *ctx, uint32_t edx, uint32_t friend_id, FriendStatus status) {
-        HookBase::EnterHook();
-        Friend *_friend = FriendListMgr::GetFriend(friend_id);
-        if (_friend && OnFriendStatus_callback)
-            OnFriendStatus_callback(_friend, status);
-        HookBase::LeaveHook();
-        RetFriendStatusHandler(ctx, edx, friend_id, status);
+	void PopulatePrevFriendStatuses() {
+		FriendList* flist = FriendListMgr::GetFriendList();
+		for (size_t i = 0; i < flist->friends.size(); i++) {
+			Friend* f = flist->friends[i];
+			if (!f) continue;
+			prev_statuses.insert_or_assign(f->friend_id, f->status);
+		}
+	}
+
+    std::function<void (Friend *f, FriendStatus status, FriendStatus prev_status, wchar_t *charname)> OnFriendStatus_callback;
+    void __fastcall OnFriendStatusHandler(FriendList *ctx, FriendStatus status, uint32_t friend_id, wchar_t *charname) {
+		HookBase::EnterHook();
+		Friend *_friend = FriendListMgr::GetFriend(friend_id);
+		FriendStatus prev_status = GW::FriendStatus::FriendStatus_Offline;
+		prev_status_iterator = prev_statuses.find(friend_id);
+		if (prev_status_iterator != prev_statuses.end())
+			prev_status = (FriendStatus)prev_status_iterator->second;
+		if (_friend && OnFriendStatus_callback)
+			OnFriendStatus_callback(_friend, status, prev_status, charname);
+		prev_statuses.insert_or_assign(_friend->friend_id, _friend->status);
+		HookBase::LeaveHook();
+		RetFriendStatusHandler(ctx, status, friend_id, charname);
     }
 
     typedef void(__fastcall *SetOnlineStatus_pt)(uint32_t status);
@@ -47,7 +63,7 @@ namespace {
         }
 
         FriendStatusHandler_Func = (FriendStatusHandler_pt)Scanner::Find(
-            "\xC2\x08\x00\x8B\x55\x0C\x89\x56\x04", "xxxxxxxxx", -0x2F);
+            "\x55\x8B\xEC\x51\x53\x56\x57\x8B\x7D\x0C\x8B\xF1", "xxxxxxxxxxxx", 0);
         printf("[SCAN] FriendStatusHandler = %p\n", FriendStatusHandler_Func);
 
         SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find(
@@ -55,10 +71,13 @@ namespace {
         printf("[SCAN] SetOnlineStatus = %p\n", SetOnlineStatus_Func);
 
         if (Verify(FriendStatusHandler_Func)) {
+			
             HookBase::CreateHook(FriendStatusHandler_Func,
                 OnFriendStatusHandler, (void **)&RetFriendStatusHandler);
         }
+		PopulatePrevFriendStatuses();
     }
+	
 
     void Exit() {
         if (FriendStatusHandler_Func)
@@ -87,7 +106,7 @@ namespace GW {
     }
 
     void FriendListMgr::SetOnFriendStatusCallback(
-        std::function<void (Friend *f, FriendStatus status)> callback)
+        std::function<void (Friend *f, FriendStatus status, FriendStatus prev_status, wchar_t *charname)> callback)
     {
         OnFriendStatus_callback = callback;
     }

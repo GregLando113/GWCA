@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "Skills.h"
 #include "Maps.h"
 #include "ItemIDs.h"
@@ -180,30 +182,30 @@ namespace GW {
 
         enum class InterfaceSize { SMALL = 0, NORMAL, LARGE, LARGER };
         namespace HealthbarHeight {
-            const int Small = 25;
-            const int Normal = 22;
-            const int Large = 28;
-            const int Larger = 31;
+            constexpr int Small = 25;
+            constexpr int Normal = 22;
+            constexpr int Large = 28;
+            constexpr int Larger = 31;
         }
 
         // travel, region, districts
         namespace Region { // in-game region code
-            const int International = -2;
-            const int America = 0;
-            const int Korea = 1;
-            const int Europe = 2;
-            const int China = 3;
-            const int Japan = 4;
+            constexpr int International = -2;
+            constexpr int America = 0;
+            constexpr int Korea = 1;
+            constexpr int Europe = 2;
+            constexpr int China = 3;
+            constexpr int Japan = 4;
         };
 
         namespace EuropeLanguage { // in-game language code for the european region
-            const int English = 0;
-            const int French = 2;
-            const int German = 3;
-            const int Italian = 4;
-            const int Spanish = 5;
-            const int Polish = 9;
-            const int Russian = 10;
+            constexpr int English = 0;
+            constexpr int French = 2;
+            constexpr int German = 3;
+            constexpr int Italian = 4;
+            constexpr int Spanish = 5;
+            constexpr int Polish = 9;
+            constexpr int Russian = 10;
         };
 
         enum class District { // arbitrary enum for game district
@@ -223,57 +225,57 @@ namespace GW {
         };
 
         namespace Range {
-            const float Adjacent = 166.0f;
-            const float Nearby = 238.0f;
-            const float Area = 322.0f;
-            const float Earshot = 1010.0f;
-            const float Spellcast = 1246.0f;
-            const float Spirit = 2500.0f;
-            const float Compass = 5000.0f;
+            constexpr float Adjacent = 166.0f;
+            constexpr float Nearby = 238.0f;
+            constexpr float Area = 322.0f;
+            constexpr float Earshot = 1010.0f;
+            constexpr float Spellcast = 1246.0f;
+            constexpr float Spirit = 2500.0f;
+            constexpr float Compass = 5000.0f;
         };
 
         namespace SqrRange {
-            const float Adjacent = Range::Adjacent * Range::Adjacent;
-            const float Nearby = Range::Nearby * Range::Nearby;
-            const float Area = Range::Area * Range::Area;
-            const float Earshot = Range::Earshot * Range::Earshot;
-            const float Spellcast = Range::Spellcast * Range::Spellcast;
-            const float Spirit = Range::Spirit * Range::Spirit;
-            const float Compass = Range::Compass * Range::Compass;
+            constexpr float Adjacent = Range::Adjacent * Range::Adjacent;
+            constexpr float Nearby = Range::Nearby * Range::Nearby;
+            constexpr float Area = Range::Area * Range::Area;
+            constexpr float Earshot = Range::Earshot * Range::Earshot;
+            constexpr float Spellcast = Range::Spellcast * Range::Spellcast;
+            constexpr float Spirit = Range::Spirit * Range::Spirit;
+            constexpr float Compass = Range::Compass * Range::Compass;
         };
 
         namespace DialogID {
-            const int UwTeleVale = 138;
-            const int UwTelePlanes = 139;
-            const int UwTeleWastes = 140;
-            const int UwTeleLab = 141;
-            const int UwTeleMnt = 142;
-            const int UwTelePits = 143;
-            const int UwTelePools = 144;
+            constexpr int UwTeleVale = 138;
+            constexpr int UwTelePlanes = 139;
+            constexpr int UwTeleWastes = 140;
+            constexpr int UwTeleLab = 141;
+            constexpr int UwTeleMnt = 142;
+            constexpr int UwTelePits = 143;
+            constexpr int UwTelePools = 144;
 
-            const int FowCraftArmor = 127;
+            constexpr int FowCraftArmor = 127;
 
-            const int FerryKamadanToDocks = 133; // Assistant Hahnna
-            const int FerryDocksToKaineng = 136; // Mhenlo
-            const int FerryDocksToLA = 137;      // Mhenlo
-            const int FerryGateToLA = 133;       // Lionguard Neiro
+            constexpr int FerryKamadanToDocks = 133; // Assistant Hahnna
+            constexpr int FerryDocksToKaineng = 136; // Mhenlo
+            constexpr int FerryDocksToLA = 137;      // Mhenlo
+            constexpr int FerryGateToLA = 133;       // Lionguard Neiro
 
             // Profession Changer Dialogs.
-            const int ProfChangeWarrior = 0x184;
-            const int ProfChangeRanger = 0x284;
-            const int ProfChangeMonk = 0x384;
-            const int ProfChangeNecro = 0x484;
-            const int ProfChangeMesmer = 0x584;
-            const int ProfChangeEle = 0x684;
-            const int ProfChangeAssassin = 0x784;
-            const int ProfChangeRitualist = 0x884;
-            const int ProfChangeParagon = 0x984;
-            const int ProfChangeDervish = 0xA84;
+            constexpr int ProfChangeWarrior = 0x184;
+            constexpr int ProfChangeRanger = 0x284;
+            constexpr int ProfChangeMonk = 0x384;
+            constexpr int ProfChangeNecro = 0x484;
+            constexpr int ProfChangeMesmer = 0x584;
+            constexpr int ProfChangeEle = 0x684;
+            constexpr int ProfChangeAssassin = 0x784;
+            constexpr int ProfChangeRitualist = 0x884;
+            constexpr int ProfChangeParagon = 0x984;
+            constexpr int ProfChangeDervish = 0xA84;
         }
 
         namespace Camera {
-            const float FIRST_PERSON_DIST = 2.f;
-            const float DEFAULT_DIST = 750.f;
+            constexpr float FIRST_PERSON_DIST = 2.f;
+            constexpr float DEFAULT_DIST = 750.f;
         }
     }
 }

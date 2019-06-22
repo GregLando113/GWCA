@@ -84,9 +84,6 @@
     <ClInclude Include="..\..\Source\GWCA\GameContainers\List.h">
       <Filter>GameContainers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\GWCA\GameContainers\Vector.h">
-      <Filter>GameContainers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\GWCA\GameContainers\Array.h">
       <Filter>GameContainers</Filter>
     </ClInclude>
@@ -216,6 +213,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\GWCA\Packets\CtoSHeaders.h">
       <Filter>Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GWCA\GameContainers\GamePos.h">
+      <Filter>GameContainers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {

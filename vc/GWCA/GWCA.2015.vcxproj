@@ -35,8 +35,8 @@
     <ClInclude Include="..\..\Source\GWCA\Context\TradeContext.h" />
     <ClInclude Include="..\..\Source\GWCA\Context\WorldContext.h" />
     <ClInclude Include="..\..\Source\GWCA\GameContainers\Array.h" />
+    <ClInclude Include="..\..\Source\GWCA\GameContainers\GamePos.h" />
     <ClInclude Include="..\..\Source\GWCA\GameContainers\List.h" />
-    <ClInclude Include="..\..\Source\GWCA\GameContainers\Vector.h" />
     <ClInclude Include="..\..\Source\GWCA\GameEntities\Agent.h" />
     <ClInclude Include="..\..\Source\GWCA\GameEntities\Attribute.h" />
     <ClInclude Include="..\..\Source\GWCA\GameEntities\Camera.h" />

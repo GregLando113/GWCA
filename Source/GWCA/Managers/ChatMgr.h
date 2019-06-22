@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <functional>
+
 namespace GW {
     struct Module;
     extern Module ChatModule;

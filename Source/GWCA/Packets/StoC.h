@@ -342,6 +342,9 @@ namespace GW {
             };
             const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D0;
 
+			struct PartyPlayerRemove : Packet<PartyPlayerRemove> {};
+			const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D5;
+
             struct PartyDefeated : Packet<PartyDefeated> {
             };
             const uint32_t Packet<PartyDefeated>::STATIC_HEADER = 0x1DD;

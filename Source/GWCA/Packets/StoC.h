@@ -269,22 +269,22 @@ namespace GW {
                 uint32_t play;
             };
             const uint32_t Packet<CinematicPlay>::STATIC_HEADER = 0x102;
-			
-			// e.g. map doors start opening or closing.
-			struct ManipulateMapObject : Packet<ManipulateMapObject> {
-				uint16_t object_id;
-				uint8_t unk1;
-				uint32_t unk2; // 3=initial state, 2=moving
-			};
-			const uint32_t Packet<ManipulateMapObject>::STATIC_HEADER = 0x111;
 
-			// e.g. map doors stop opening or closing. 
-			struct ManipulateMapObject2 : Packet<ManipulateMapObject2> {
-				uint16_t object_id;
-				uint32_t unk1;
-				uint32_t unk2;
-			};
-			const uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = 0x114;
+            // e.g. map doors start opening or closing.
+            struct ManipulateMapObject : Packet<ManipulateMapObject> {
+                uint16_t object_id;
+                uint8_t unk1;
+                uint32_t unk2; // 3=initial state, 2=moving
+            };
+            const uint32_t Packet<ManipulateMapObject>::STATIC_HEADER = 0x111;
+
+            // e.g. map doors stop opening or closing.
+            struct ManipulateMapObject2 : Packet<ManipulateMapObject2> {
+                uint16_t object_id;
+                uint32_t unk1;
+                uint32_t unk2;
+            };
+            const uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = 0x114;
 
             // Gold added to inventory
             struct CharacterAddGold : Packet<CharacterAddGold> {
@@ -306,7 +306,7 @@ namespace GW {
                 uint16_t spawn_plane;
                 uint8_t unk1;
                 uint8_t unk2;
-				uint8_t unk3[8];
+                uint8_t unk3[8];
             };
             const uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = 0x19A;
 
@@ -342,8 +342,8 @@ namespace GW {
             };
             const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D0;
 
-			struct PartyPlayerRemove : Packet<PartyPlayerRemove> {};
-			const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D5;
+            struct PartyPlayerRemove : Packet<PartyPlayerRemove> {};
+            const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D5;
 
             struct PartyDefeated : Packet<PartyDefeated> {
             };

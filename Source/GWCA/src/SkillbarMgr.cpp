@@ -84,7 +84,7 @@ namespace GW {
         NULL,               // disable_hooks
     };
 
-    Skill SkillbarMgr::GetSkillConstantData(uint32_t skill_id) {
+    Skill& SkillbarMgr::GetSkillConstantData(uint32_t skill_id) {
         Skill *skill_constants = (Skill *)skill_array_addr;
         return skill_constants[skill_id];
     }

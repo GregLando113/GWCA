@@ -28,7 +28,7 @@ namespace GW {
         GWCA_API void UseSkillByID(uint32_t skill_id, uint32_t target = 0, uint32_t call_target = 0);
 
         // Get skill structure of said id, houses pretty much everything you would want to know about the skill.
-        GWCA_API Skill GetSkillConstantData(uint32_t skill_id);
+        GWCA_API Skill& GetSkillConstantData(uint32_t skill_id);
 
         GWCA_API void ChangeSecondary(uint32_t profession, int hero_index = 0);
 

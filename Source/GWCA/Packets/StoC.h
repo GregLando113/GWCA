@@ -286,6 +286,23 @@ namespace GW {
             };
             const uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = 0x114;
 
+			struct TownAllianceObject : Packet<TownAllianceObject> {
+				uint32_t map_id;
+				uint32_t rank;
+				uint32_t allegiance;
+				uint32_t faction;
+				wchar_t name[32];
+				wchar_t tag[5];
+				uint32_t cape_bg_color;
+				uint32_t cape_detail_color;
+				uint32_t cape_emblem_color;
+				uint32_t cape_shape;
+				uint32_t cape_detail;
+				uint32_t cape_emblem;
+				uint32_t cape_trim;
+			};
+			const uint32_t Packet<TownAllianceObject>::STATIC_HEADER = 0x11D;
+
             // Gold added to inventory
             struct CharacterAddGold : Packet<CharacterAddGold> {
                 uint32_t unk;

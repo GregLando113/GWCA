@@ -1,14 +1,18 @@
 #pragma once
 
+#include <stdint.h>
+
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameEntities/Item.h>
+
 
 namespace GW {
 
     struct TradeContext {
-        static const uint32_t TRADE_CLOSED = 0;
-        static const uint32_t TRADE_INITIATED = 1;
-        static const uint32_t TRADE_OFFER_SEND = 2;
-        static const uint32_t TRADE_ACCEPTED = 4;
+        static constexpr uint32_t TRADE_CLOSED = 0;
+        static constexpr uint32_t TRADE_INITIATED = 1;
+        static constexpr uint32_t TRADE_OFFER_SEND = 2;
+        static constexpr uint32_t TRADE_ACCEPTED = 4;
 
         struct Item {
             ItemID item_id;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/Constants/ItemIDs.h>
 
 namespace GW {
     typedef uint32_t ItemID;

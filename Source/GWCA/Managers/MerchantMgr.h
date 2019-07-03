@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GWCA/GameContainers/Array.h>
+
 namespace GW {
 
     struct Module;

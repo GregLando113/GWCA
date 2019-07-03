@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 /*
 Server to client packets, sorted by header

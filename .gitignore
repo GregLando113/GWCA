@@ -34,3 +34,4 @@ dox/
 # Sublime Text stuff
 *.sublime-project*
 *.sublime-workspace*
+*.vcxproj.user

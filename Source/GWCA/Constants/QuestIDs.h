@@ -4,48 +4,48 @@ namespace GW {
     namespace Constants {
         namespace QuestID {
             namespace UW {
-                const int Chamber = 101;
-                const int Wastes = 102;
-                const int UWG = 103;
-                const int Mnt = 104;
-                const int Pits = 105;
-                const int Planes = 106;
-                const int Pools = 107;
-                const int Escort = 108;
-                const int Restore = 109;
-                const int Vale = 110;
+                constexpr int Chamber = 101;
+                constexpr int Wastes = 102;
+                constexpr int UWG = 103;
+                constexpr int Mnt = 104;
+                constexpr int Pits = 105;
+                constexpr int Planes = 106;
+                constexpr int Pools = 107;
+                constexpr int Escort = 108;
+                constexpr int Restore = 109;
+                constexpr int Vale = 110;
             }
 
             namespace Fow {
-                const int Defend = 202;
-                const int ArmyOfDarknesses = 203;
-                const int WailingLord = 204;
-                const int Griffons = 205;
-                const int Slaves = 206;
-                const int Restore = 207;
-                const int Hunt = 208;
-                const int Forgemaster = 209;
-                const int Tos = 211;
-                const int Toc = 212;
-                const int Khobay = 224;
+                constexpr int Defend = 202;
+                constexpr int ArmyOfDarknesses = 203;
+                constexpr int WailingLord = 204;
+                constexpr int Griffons = 205;
+                constexpr int Slaves = 206;
+                constexpr int Restore = 207;
+                constexpr int Hunt = 208;
+                constexpr int Forgemaster = 209;
+                constexpr int Tos = 211;
+                constexpr int Toc = 212;
+                constexpr int Khobay = 224;
             }
 
             namespace Doa {
                 // gloom
-                const int DeathbringerCompany = 749;
-                const int RiftBetweenUs = 752;
-                const int ToTheRescue = 753;
+                constexpr int DeathbringerCompany = 749;
+                constexpr int RiftBetweenUs = 752;
+                constexpr int ToTheRescue = 753;
 
                 // city
-                const int City = 751;
+                constexpr int City = 751;
 
                 // Veil
-                const int BreachingStygianVeil = 742;
-                const int BroodWars = 755;
+                constexpr int BreachingStygianVeil = 742;
+                constexpr int BroodWars = 755;
 
                 // Foundry
-                const int FoundryBreakout = 743;
-                const int FoundryOfFailedCreations = 744;
+                constexpr int FoundryBreakout = 743;
+                constexpr int FoundryOfFailedCreations = 744;
             }
         }
     }

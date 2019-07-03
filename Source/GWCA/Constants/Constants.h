@@ -82,7 +82,7 @@ namespace GW {
 			Storage_11,Storage_12,Storage_13,Storage_14,Material_Storage
 		};
 
-        const size_t BagMax = (size_t)Bag::Max;
+        constexpr size_t BagMax = (size_t)Bag::Max;
 
         enum class AgentType {
             Living = 0xDB, Gadget = 0x200, Item = 0x400
@@ -120,7 +120,7 @@ namespace GW {
             N_MATS
         };
 
-        const Profession HeroProfs[] = {
+        constexpr Profession HeroProfs[] = {
             Profession::None,
             Profession::Mesmer, // Norgu
             Profession::Warrior,// Goren

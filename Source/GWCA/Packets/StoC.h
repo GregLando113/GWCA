@@ -164,6 +164,14 @@ namespace GW {
             };
             const uint32_t Packet<AgentScale>::STATIC_HEADER = 0x9B;
 
+            struct DisplayDialogue : Packet<DisplayDialogue> {
+                uint32_t agent_id;
+                wchar_t name[32];
+                uint32_t type;
+                wchar_t message[122];
+            };
+            const uint32_t Packet<DisplayDialogue>::STATIC_HEADER = 0x9F;
+
             // agent animation lock (and probably something else)
             struct GenericValue : Packet<GenericValue> {
                 uint32_t unk1;

@@ -14,7 +14,6 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{8B852BC5-203D-4894-B95B-F7CAB774B6C1}</ProjectGuid>
     <RootNamespace>Teleport</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

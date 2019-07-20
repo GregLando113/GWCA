@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Teleport", "Teleport.vcxproj", "{8B852BC5-203D-4894-B95B-F7CAB774B6C1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA", "..\..\vc\GWCA.vcxproj", "{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MinHook", "..\..\vc\MinHook.vcxproj", "{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B852BC5-203D-4894-B95B-F7CAB774B6C1}.Debug|x86.ActiveCfg = Debug|Win32
+		{8B852BC5-203D-4894-B95B-F7CAB774B6C1}.Debug|x86.Build.0 = Debug|Win32
+		{8B852BC5-203D-4894-B95B-F7CAB774B6C1}.Release|x86.ActiveCfg = Release|Win32
+		{8B852BC5-203D-4894-B95B-F7CAB774B6C1}.Release|x86.Build.0 = Release|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x86.ActiveCfg = Debug|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x86.Build.0 = Debug|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x86.ActiveCfg = Release|Win32
+		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x86.Build.0 = Release|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Debug|x86.ActiveCfg = Debug|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Debug|x86.Build.0 = Debug|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Release|x86.ActiveCfg = Release|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5A2B60CC-CD42-4914-A64C-778CA61AC8E9}
+	EndGlobalSection
+EndGlobal

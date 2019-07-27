@@ -225,7 +225,7 @@ static void PrintField(FieldType field, uint32_t count, uint8_t **bytes, uint32_
         size_t length = wcsnlen(str, count);
         wprintf(L"String(%lu) \"%.*s\"\n", length, static_cast<int>(length), str);
         // PrintString(length, str);
-        *bytes += count;
+        *bytes += (count * 2);
         break;
     }
     case FieldType::Array8: {

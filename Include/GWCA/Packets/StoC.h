@@ -106,7 +106,7 @@ namespace GW {
             struct MessageNPC : Packet<MessageNPC> {
                 uint32_t agent_id;
                 uint32_t type;
-                wchar_t sender_name[32];
+                wchar_t sender_name[8];
             };
             const uint32_t Packet<MessageNPC>::STATIC_HEADER = 0x5F;
 

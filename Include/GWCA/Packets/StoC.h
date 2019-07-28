@@ -102,6 +102,14 @@ namespace GW {
             };
             const uint32_t Packet<MessageServer>::STATIC_HEADER = 0x5E;
 
+            // Deliver chat message (sender is an NPC)
+            struct MessageNPC : Packet<MessageNPC> {
+                uint32_t agent_id;
+                uint32_t type;
+                wchar_t sender_name[8];
+            };
+            const uint32_t Packet<MessageNPC>::STATIC_HEADER = 0x5F;
+
             /*
             struct P088 : Packet<P088> {
                 uint32_t agent_id;

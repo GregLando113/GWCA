@@ -215,6 +215,8 @@ namespace GW {
         inline bool GetIsKnockedDown()     const { return model_state == 1104; }
         inline bool GetIsMoving()          const { return model_state == 12 || model_state == 76   || model_state == 204; }
         inline bool GetIsAttacking()       const { return model_state == 96 || model_state == 1088 || model_state == 1120; }
+        inline bool GetIsCasting()         const { return model_state == 65 || model_state == 581; }
+        inline bool GetIsIdle()            const { return model_state == 68 || model_state == 64 || model_state == 100; }
 
         inline bool IsPlayer()             const { return login_number != 0; }
         inline bool IsNPC()                const { return login_number == 0; }

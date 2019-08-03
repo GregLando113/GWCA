@@ -95,7 +95,7 @@ namespace GW {
             };
             const uint32_t Packet<NPCModelFile>::STATIC_HEADER = 0x57;
 
-            struct PlayerJoinMap : Packet<PlayerJoinMap> {
+            struct PlayerJoinInstance : Packet<PlayerJoinInstance> {
                 uint32_t player_number;
                 uint32_t agent_id;
                 uint32_t file_id1; // dword
@@ -104,7 +104,12 @@ namespace GW {
                 uint32_t file_id2; // dword
                 wchar_t player_name[32];
             };
-            const uint32_t Packet<PlayerJoinMap>::STATIC_HEADER = 0x59;
+            const uint32_t Packet<PlayerJoinInstance>::STATIC_HEADER = 0x59;
+
+            struct PlayerLeaveInstance : Packet<PlayerLeaveInstance> {
+                uint32_t player_number;
+            };
+            const uint32_t Packet<PlayerLeaveInstance>::STATIC_HEADER = 0x5A;
 
             // Define chat message
             struct MessageCore : Packet<MessageCore> {

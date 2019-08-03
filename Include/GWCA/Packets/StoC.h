@@ -25,6 +25,16 @@ namespace GW {
                 static const uint32_t STATIC_HEADER;
             };
             
+            struct TradeStart : Packet<TradeStart> {
+                uint32_t player_number;
+            };
+            const uint32_t Packet<TradeStart>::STATIC_HEADER = 0x0;
+
+            struct TradeCancel : Packet<TradeCancel> {
+                uint32_t player_number;
+            };
+            const uint32_t Packet<TradeCancel>::STATIC_HEADER = 0x1;
+
             struct AgentSetPlayer : Packet<AgentSetPlayer> {
                 uint32_t unk1;
                 uint32_t unk2;

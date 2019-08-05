@@ -25,6 +25,12 @@ namespace GW {
                 static const uint32_t STATIC_HEADER;
             };
             
+            // Called when the client needs to remove an agent from memory (e.g. out of range)
+            struct AgentRemove : Packet<AgentRemove> {
+                uint32_t agent_id;
+            };
+            const uint32_t Packet<AgentRemove>::STATIC_HEADER = 0x22;
+
             struct AgentSetPlayer : Packet<AgentSetPlayer> {
                 uint32_t unk1;
                 uint32_t unk2;
@@ -89,6 +95,22 @@ namespace GW {
             };
             const uint32_t Packet<NPCModelFile>::STATIC_HEADER = 0x57;
 
+            struct PlayerJoinInstance : Packet<PlayerJoinInstance> {
+                uint32_t player_number;
+                uint32_t agent_id;
+                uint32_t file_id1; // dword
+                uint32_t unk2; // byte
+                uint32_t unk3; // dword
+                uint32_t file_id2; // dword
+                wchar_t player_name[32];
+            };
+            const uint32_t Packet<PlayerJoinInstance>::STATIC_HEADER = 0x59;
+
+            struct PlayerLeaveInstance : Packet<PlayerLeaveInstance> {
+                uint32_t player_number;
+            };
+            const uint32_t Packet<PlayerLeaveInstance>::STATIC_HEADER = 0x5A;
+
             // Define chat message
             struct MessageCore : Packet<MessageCore> {
                 wchar_t message[122]; // prefixType="int16"
@@ -133,6 +155,8 @@ namespace GW {
                 uint32_t type; // enum ChatChannel above.
             };
             const uint32_t Packet<MessageLocal>::STATIC_HEADER = 0x61;
+
+            
 
             // Alcohol Post Process Effect
             struct PostProcess : Packet<PostProcess> {

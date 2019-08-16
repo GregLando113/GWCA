@@ -54,7 +54,7 @@ namespace GW {
             }
         }
 
-    protected:
+    public:
         T*       m_buffer;    // +h0000
         uint32_t m_capacity;  // +h0004
         uint32_t m_size;      // +h0008

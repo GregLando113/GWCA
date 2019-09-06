@@ -70,6 +70,7 @@ namespace GW {
 
         GWCA_API void ToggleTimestamps(bool enable);
         GWCA_API void SetTimestampsFormat(bool use_24h);
+        GWCA_API void SetTimestampsFormat(bool use_24h, bool show_seconds);
         GWCA_API void SetTimestampsColor(Color color);
 
         // SendChat callback can modify the msg before it is send.

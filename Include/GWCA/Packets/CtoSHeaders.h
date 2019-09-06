@@ -62,6 +62,7 @@ constexpr unsigned short CtoGS_MSGCommandHero = 0x1E;
 constexpr unsigned short CtoGS_MSGCommandAll = 0x1F;
 constexpr unsigned short CtoGS_MSGAddHero = 0x23;
 constexpr unsigned short CtoGS_MSGKickHero = 0x24;
+constexpr unsigned short CtoGS_MSGPingWeaponSet = 0x2B;
 constexpr unsigned short CtoGS_MSGTravelGH = 0xB7;
 constexpr unsigned short CtoGS_MSGTravelTo = 0xB8;
 constexpr unsigned short CtoGS_MSGLeaveGH = 0xB9;

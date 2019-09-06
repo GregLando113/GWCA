@@ -34,6 +34,33 @@ namespace GW {
                 uint32_t player_number;
             };
             const uint32_t Packet<TradeCancel>::STATIC_HEADER = 0x1;
+            struct Ping : Packet<Ping> {
+                uint32_t ping;
+            };
+            const uint32_t Packet<Ping>::STATIC_HEADER = 0xC;
+
+            // Called when the client needs to add an agent to memory (i.e. agent appeared within compass range)
+            struct AgentAdd : Packet<AgentAdd> {
+                uint32_t agent_id;
+                uint32_t agent_type; // Bitwise field. 0x20000000 = NPC | PlayerNumber, 0x30000000 = Player | PlayerNumber, 0x00000000 = Signpost
+                uint32_t unk2; // byte, agent_type > 0 ? 1 : 4
+                uint32_t unk3; // byte
+                Vec2f position;
+                uint32_t unk4; // word
+                Vec2f unk5;
+                uint32_t unk6; // word
+                float speed; // default 288.0
+                float unk7; // default 1.0
+                uint32_t unknown_bitwise_1;
+                uint32_t allegiance_bits;
+                uint32_t unk8[5];
+                Vec2f unk9;
+                Vec2f unk10; // inf, inf
+                uint32_t unk11[2];
+                Vec2f unk12; // inf, inf
+                uint32_t unk13;
+            };
+            const uint32_t Packet<AgentAdd>::STATIC_HEADER = 0x21;
 
             // Called when the client needs to remove an agent from memory (e.g. out of range)
             struct AgentRemove : Packet<AgentRemove> {
@@ -49,7 +76,7 @@ namespace GW {
 
             struct AgentUpdateAllegiance : Packet<AgentUpdateAllegiance> {
                 uint32_t agent_id;
-                uint32_t unk1; // more than just allegiance, determines things that change.
+                uint32_t allegiance_bits; // more than just allegiance, determines things that change.
             };
             const uint32_t Packet<AgentUpdateAllegiance>::STATIC_HEADER = 0x30;
 
@@ -59,6 +86,11 @@ namespace GW {
                 uint32_t agent_id; // target agent
             };
             const uint32_t Packet<AgentPinged>::STATIC_HEADER = 0x35;
+
+            struct PartyRemoveAlly : Packet<PartyRemoveAlly> {
+                uint32_t agent_id; // target agent
+            };
+            const uint32_t Packet<PartyRemoveAlly>::STATIC_HEADER = 0x3E;
 
             // prety much a bond from someone else / hero bond
             struct AddExternalBond : Packet<AddExternalBond> {
@@ -130,14 +162,14 @@ namespace GW {
             // Deliver chat message (no owner)
             struct MessageServer : Packet<MessageServer> {
                 uint32_t id; // some kind of ID of the affected target
-                uint32_t type; // enum ChatChannel above.
+                uint32_t channel; // enum ChatChannel above.
             };
             const uint32_t Packet<MessageServer>::STATIC_HEADER = 0x5E;
 
             // Deliver chat message (sender is an NPC)
             struct MessageNPC : Packet<MessageNPC> {
                 uint32_t agent_id;
-                uint32_t type;
+                uint32_t channel; // enum ChatChannel above.
                 wchar_t sender_name[8];
             };
             const uint32_t Packet<MessageNPC>::STATIC_HEADER = 0x5F;
@@ -153,7 +185,7 @@ namespace GW {
 
             // Deliver chat message (player sender in guild or alliance chat)
             struct MessageGlobal : Packet<MessageGlobal> {
-                uint32_t id; // some kind of ID
+                uint32_t channel; // enum ChatChannel above.
                 wchar_t sender_name[32]; // full in-game name
                 wchar_t sender_guild[6]; // guild tag for alliance chat, empty for guild chat
             };
@@ -161,8 +193,8 @@ namespace GW {
 
             // Deliver chat message (player sender in the instance)
             struct MessageLocal : Packet<MessageLocal> {
-                uint32_t id; // PlayerNumber of the sender
-                uint32_t type; // enum ChatChannel above.
+                uint32_t player_number; // PlayerNumber of the sender
+                uint32_t channel; // enum ChatChannel above.
             };
             const uint32_t Packet<MessageLocal>::STATIC_HEADER = 0x61;
 
@@ -174,6 +206,19 @@ namespace GW {
                 uint32_t tint;
             };
             const uint32_t Packet<PostProcess>::STATIC_HEADER = 0x6B;
+
+            struct AgentUnk1 : Packet<AgentUnk1> {
+                uint32_t agent_id;
+                uint32_t unk1;
+            };
+            const uint32_t Packet<AgentUnk1>::STATIC_HEADER = 0x6C;
+
+            struct AgentUnk2 : Packet<AgentUnk2> {
+                uint32_t agent_id;
+                uint32_t unk1; // 1 = minipet, 2 = Ally?, 3 = summon
+                uint32_t unk2; // always 0
+            };
+            const uint32_t Packet<AgentUnk2>::STATIC_HEADER = 0x6D;
 
             struct DataWindow : Packet<DataWindow> {
                 uint32_t agent;
@@ -206,6 +251,12 @@ namespace GW {
             };
             const uint32_t Packet<AgentScale>::STATIC_HEADER = 0x9B;
 
+            struct AgentName : Packet<AgentName> {
+                uint32_t agent_id;
+                wchar_t name_enc[8];
+            };
+            const uint32_t Packet<AgentName>::STATIC_HEADER = 0x9C;
+
             struct DisplayDialogue : Packet<DisplayDialogue> {
                 uint32_t agent_id;
                 wchar_t name[32];
@@ -230,6 +281,22 @@ namespace GW {
                 uint32_t value;
             };
             const uint32_t Packet<GenericValueTarget>::STATIC_HEADER = 0xA1;
+
+            // agent animation lock (and probably something else)
+            struct GenericFloat : Packet<GenericFloat> {
+                uint32_t unk1;
+                uint32_t agent_id;
+                uint32_t unk2;
+            };
+            const uint32_t Packet<GenericFloat>::STATIC_HEADER = 0xA2;
+
+            // Update Target Generic Value
+            struct GenericValue2 : Packet<GenericValue2> {
+                uint32_t unk1;
+                uint32_t agent_id;
+                uint32_t unk2;
+            };
+            const uint32_t Packet<GenericValue2>::STATIC_HEADER = 0xA3;
 
             // damage or healing done packet, but also has other purposes.
             // to be investigated further.
@@ -259,12 +326,37 @@ namespace GW {
             };
             const uint32_t Packet<SpeechBubble>::STATIC_HEADER = 0xA6;
 
+            struct Packet167 : Packet<Packet167> {
+                uint32_t agent_id;
+                uint32_t unk2;
+            };
+            const uint32_t Packet<Packet167>::STATIC_HEADER = 0xA7;
+
+            struct Packet48 : Packet<Packet48> {
+                uint32_t agent_id;
+                uint32_t modifier_1;
+            };
+            const uint32_t Packet<Packet48>::STATIC_HEADER = 48;
+
+            struct PartyAllyAdd : Packet<PartyAllyAdd> { // When an NPC is added as an ally to your party.
+                uint32_t agent_id;
+                uint32_t allegiance_bits;
+                uint32_t agent_type; // Bitwise field. 0x20000000 = NPC | PlayerNumber, 0x30000000 = Player | PlayerNumber, 0x00000000 = Signpost
+            };
+            const uint32_t Packet<PartyAllyAdd>::STATIC_HEADER = 0xAB;
+
             // agent change model
             struct AgentModel : Packet<AgentModel> {
                 uint32_t agent_id;
                 uint32_t model_id;
             };
             const uint32_t Packet<AgentModel>::STATIC_HEADER = 0xAF;
+
+            struct PartyUpdateSize : Packet<PartyUpdateSize> {
+                uint32_t party_id;
+                uint32_t size;
+            };
+            const uint32_t Packet<PartyUpdateSize>::STATIC_HEADER = 0xB1;
 
             struct ObjectiveAdd : Packet<ObjectiveAdd> {
                 uint32_t objective_id;
@@ -300,7 +392,7 @@ namespace GW {
             // update agent state
             struct AgentState : Packet<AgentState> {
                 uint32_t agent_id;
-                uint32_t state; // bitmap of agent states (0 neutral, 2 condition, 128 enchanted, 1024 degen?, 2048 hexed, 8192 sitting, etc)
+                uint32_t state; // bitmap of agent states (0 neutral, 2 condition, 16 dead, 128 enchanted, 1024 degen?, 2048 hexed, 8192 sitting, etc)
             };
             const uint32_t Packet<AgentState>::STATIC_HEADER = 0xF2;
 
@@ -320,21 +412,27 @@ namespace GW {
             };
             const uint32_t Packet<CinematicPlay>::STATIC_HEADER = 0x102;
 
-            // e.g. map doors start opening or closing.
-            struct ManipulateMapObject : Packet<ManipulateMapObject> {
-                uint16_t object_id;
-                uint8_t unk1;
-                uint32_t unk2; // 3=initial state, 2=moving
+            // e.g. map doors start opening or closing. AKA "update object animation"
+            struct ManipulateMapObject : Packet<ManipulateMapObject> { 
+                uint32_t object_id; // Door ID
+                uint32_t animation_type; // (3 = door closing, 9 = ???, 16 = door opening)
+                uint32_t animation_stage; // (2 = start, 3 = stop)
             };
             const uint32_t Packet<ManipulateMapObject>::STATIC_HEADER = 0x111;
 
-            // e.g. map doors stop opening or closing.
-            struct ManipulateMapObject2 : Packet<ManipulateMapObject2> {
-                uint16_t object_id;
-                uint32_t unk1;
-                uint32_t unk2;
+            // e.g. map doors stop opening or closing. "update object state"
+            struct ManipulateMapObject2 : Packet<ManipulateMapObject2> { 
+                uint32_t object_id; // Door ID
+                uint32_t unk1; // 
+                uint32_t state; // Open = 1, Closed = 0
             };
             const uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = 0x114;
+
+            struct DungeonChestReward : Packet<DungeonChestReward> {
+                uint32_t agent_id; // Of the chest
+                uint32_t unk1; 
+            };
+            const uint32_t Packet<DungeonChestReward>::STATIC_HEADER = 0x118;
 
             struct TownAllianceObject : Packet<TownAllianceObject> {
                 uint32_t map_id;
@@ -402,19 +500,49 @@ namespace GW {
             };
             const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 0x1B4;
 
+            struct ErrorMessage : Packet<ErrorMessage> {
+                uint32_t message_enc_id;
+            };
+            const uint32_t Packet<ErrorMessage>::STATIC_HEADER = 0x1C1;
+
+            struct PartyHenchmanAdd : Packet<PartyHenchmanAdd> {
+                uint32_t party_id;
+                uint32_t agent_id;
+                wchar_t name_enc[8];
+                uint32_t profession;
+                uint32_t level;
+            };
+            const uint32_t Packet<PartyHenchmanAdd>::STATIC_HEADER = 0x1C4;
+
+            struct PartyHenchmanRemove : Packet<PartyHenchmanRemove> {
+                uint32_t party_id;
+                uint32_t agent_id;
+            };
+            const uint32_t Packet<PartyHenchmanRemove>::STATIC_HEADER = 0x1C5;
+
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
-                // uint16_t
-                // uint16_t
-                // uint8_t
+                uint32_t invite_stage; // uint16_t (2 = Invited,3 = Added)
+                uint32_t player_id;
+                uint32_t party_id;
             };
             const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D0;
 
-            struct PartyPlayerRemove : Packet<PartyPlayerRemove> {};
+            struct PartyPlayerRemove : Packet<PartyPlayerRemove> {
+                uint32_t party_id;
+                uint32_t player_id;
+            };
             const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D5;
 
             struct PartyDefeated : Packet<PartyDefeated> {
             };
             const uint32_t Packet<PartyDefeated>::STATIC_HEADER = 0x1DD;
+
+            struct PartyLock : Packet<PartyLock> { // Sent when party window is locked/unlocked e.g. pending mission entry
+                uint32_t unk1; // 2 = locked?
+                uint32_t unk2; // 1 = locked?
+                wchar_t unk3[8];
+            };
+            const uint32_t Packet<PartyLock>::STATIC_HEADER = 0x1DE;
         }
     }
 }

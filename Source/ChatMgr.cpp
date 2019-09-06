@@ -46,7 +46,8 @@ namespace {
 
     bool ShowTimestamps = false;
     bool Timestamp_24hFormat = false;
-    Chat::Color TimestampsColor = COLOR_RGB(0xff, 0xff, 0xff);
+    bool Timestamp_seconds = false;
+    Chat::Color TimestampsColor = COLOR_RGB(0xc0, 0xc0, 0xbf);
 
     std::unordered_map<std::wstring, Chat::CmdCB> SlashCmdList;
 
@@ -180,23 +181,27 @@ namespace {
 
         WORD hour = localtime.wHour;
         WORD minute = localtime.wMinute;
+        WORD second = localtime.wSecond;
 
-        if (Timestamp_24hFormat)
+        if (!Timestamp_24hFormat)
             hour %= 12;
 
         wchar_t buffer[1024];
+        wchar_t t_buffer[16];
+        if (localtime.wYear == 0) {
+             wsprintfW(t_buffer, Timestamp_seconds ? L"[--:--:--]" : L"[--:--]");
+        }
+        else {
+            if(Timestamp_seconds)
+                wsprintfW(t_buffer, L"[%02d:%02d:%02d]", hour, minute, second);
+            else
+                wsprintfW(t_buffer, L"[%02d:%02d]", hour, minute);
+        }
+            
         if (ChannelThatParseColorTag[channel]) {
-            if (localtime.wYear == 0) {
-                wsprintfW(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, str);
-            } else {
-                wsprintfW(buffer, L"\x108\x107<c=#%06x>[%02d:%02d] </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), hour, minute, str);
-            }
+            wsprintfW(buffer, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), t_buffer, str);
         } else {
-            if (localtime.wYear == 0) {
-                wsprintfW(buffer, L"\x108\x107[--:--] \x01\x02%s", str);
-            } else {
-                wsprintfW(buffer, L"\x108\x107[%02d:%02d] \x01\x02%s", hour, minute, str);
-            }
+            wsprintfW(buffer, L"\x108\x107%s \x01\x02%s", t_buffer, str);
         }
         RetPrintChat(ctx, thiscall, channel, buffer, timestamp, reprint);
         HookBase::LeaveHook();
@@ -608,9 +613,12 @@ namespace GW {
     void Chat::ToggleTimestamps(bool enable) {
         ShowTimestamps = enable;
     }
-
     void Chat::SetTimestampsFormat(bool use_24h) {
         Timestamp_24hFormat = use_24h;
+    }
+    void Chat::SetTimestampsFormat(bool use_24h, bool show_seconds) {
+        Timestamp_24hFormat = use_24h;
+        Timestamp_seconds = show_seconds;
     }
 
     void Chat::SetTimestampsColor(Color color) {

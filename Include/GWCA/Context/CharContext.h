@@ -34,7 +34,7 @@ namespace GW {
         /* +h0238 */ Array<ObserverMatch *> observer_matchs;
         /* +h0248 */ uint8_t h0248[240];
         /* +h0338 */ uint32_t *progress_bar;
-        /* +h033C */ uint8_t h033C[108];
+        /* +h033C */ uint8_t h033C[12];
         /* +h03A8 */ wchar_t player_email[64];
     };
 }

@@ -24,7 +24,6 @@ namespace GW {
             public:
                 static const uint32_t STATIC_HEADER;
             };
-            
             struct TradeStart : Packet<TradeStart> {
                 uint32_t player_number;
             };
@@ -34,6 +33,7 @@ namespace GW {
                 uint32_t player_number;
             };
             const uint32_t Packet<TradeCancel>::STATIC_HEADER = 0x1;
+
             struct Ping : Packet<Ping> {
                 uint32_t ping;
             };

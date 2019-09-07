@@ -389,6 +389,13 @@ namespace GW {
             };
             const uint32_t Packet<SkillActivate>::STATIC_HEADER = 0xE5;
 
+            struct VanquishComplete : Packet<VanquishComplete> {
+                uint32_t map_id;
+                uint32_t experience;
+                uint32_t gold;
+            };
+            const uint32_t Packet<VanquishComplete>::STATIC_HEADER = 0xEB;
+
             // update agent state
             struct AgentState : Packet<AgentState> {
                 uint32_t agent_id;

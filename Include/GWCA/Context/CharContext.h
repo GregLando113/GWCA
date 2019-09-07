@@ -25,16 +25,16 @@ namespace GW {
         /* +h01B8 */ uint32_t token2; // player id
         /* +h01BC */ uint8_t h01BC[64];
         /* +h01FC */ uint32_t current_map_id_again;
-        /* +h0200 */ uint32_t h0200[32];
+        /* +h0200 */ uint32_t h0200[8];
         /* +h0220 */ uint32_t district_number;
-        /* +h0224 */ uint32_t h0224;
+        /* +h0224 */ uint32_t language;
         /* +h0228 */ uint32_t observe_map_id;
         /* +h022C */ uint32_t current_map_id;
         /* +h0230 */ uint8_t h0230[8];
         /* +h0238 */ Array<ObserverMatch *> observer_matchs;
         /* +h0248 */ uint8_t h0248[240];
         /* +h0338 */ uint32_t *progress_bar;
-        /* +h033C */ uint8_t h033C[12];
+        /* +h033C */ uint8_t h033C[108];
         /* +h03A8 */ wchar_t player_email[64];
     };
 }

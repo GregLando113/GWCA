@@ -158,7 +158,7 @@ namespace GW {
     }
 
     int Map::GetDistrict() {
-        WorldContext *ctx = GW::GameContext::instance()->world;
+        CharContext *ctx = GameContext::instance()->character;
         if (!ctx) return 0;
         return ctx->district_number;
     }

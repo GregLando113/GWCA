@@ -76,7 +76,7 @@ namespace GW {
         /* +h062C */ Array<void *> h062C;
         /* +h063C */ uint8_t h063C[68];
         /* +h0680 */ Array<void *> h0680; // Struct size = 0x138 i think, has a vtable
-        /* +h0690 */ uint32_t district_number;
+        /* +h0690 */ uint32_t salvage_session_id;
         /* +h0694 */ uint32_t h0694[10];
         /* +h06BC */ Array<void *> h06BC;
         /* +h06CC */ Array<void *> h06CC;

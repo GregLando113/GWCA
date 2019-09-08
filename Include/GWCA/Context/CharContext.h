@@ -5,7 +5,7 @@
 namespace GW {
     struct ObserverMatch;
 
-    struct CharContext { // total: 0x03A8
+    struct CharContext { // total: 0x400
         /* +h0000 */ Array<void *> h0000;
         /* +h0010 */ uint8_t h0010[4];
         /* +h0014 */ Array<void *> h0014;
@@ -26,15 +26,15 @@ namespace GW {
         /* +h01BC */ uint8_t h01BC[64];
         /* +h01FC */ uint32_t current_map_id_again;
         /* +h0200 */ uint32_t h0200[8];
-        /* +h0220 */ uint32_t district_number;
-        /* +h0224 */ uint32_t language;
-        /* +h0228 */ uint32_t observe_map_id;
-        /* +h022C */ uint32_t current_map_id;
-        /* +h0230 */ uint8_t h0230[8];
-        /* +h0238 */ Array<ObserverMatch *> observer_matchs;
-        /* +h0248 */ uint8_t h0248[240];
-        /* +h0338 */ uint32_t *progress_bar;
-        /* +h033C */ uint8_t h033C[108];
-        /* +h03A8 */ wchar_t player_email[64];
+        /* +h0208 */ uint32_t district_number;
+        /* +h020C */ uint32_t language;
+        /* +h0210 */ uint32_t observe_map_id;
+        /* +h0214 */ uint32_t current_map_id;
+        /* +h0218 */ uint8_t h0218[8];
+        /* +h0220 */ Array<ObserverMatch *> observer_matchs;
+        /* +h0230 */ uint8_t h0230[240];
+        /* +h0320 */ uint32_t *progress_bar;
+        /* +h0324 */ uint8_t h0324[108];
+        /* +h0380 */ wchar_t player_email[64];
     };
 }

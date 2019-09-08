@@ -198,8 +198,6 @@ namespace GW {
             };
             const uint32_t Packet<MessageLocal>::STATIC_HEADER = 0x61;
 
-            
-
             // Alcohol Post Process Effect
             struct PostProcess : Packet<PostProcess> {
                 uint32_t level;
@@ -207,11 +205,18 @@ namespace GW {
             };
             const uint32_t Packet<PostProcess>::STATIC_HEADER = 0x6B;
 
-            struct AgentUnk1 : Packet<AgentUnk1> {
+            struct DungeonReward : Packet<DungeonReward> {
+                uint32_t experience;
+                uint32_t gold;
+                uint32_t skill_points;
+            };
+            const uint32_t Packet<DungeonReward>::STATIC_HEADER = 0x6C;
+
+            /*struct AgentUnk1 : Packet<AgentUnk1> {
                 uint32_t agent_id;
                 uint32_t unk1;
             };
-            const uint32_t Packet<AgentUnk1>::STATIC_HEADER = 0x6C;
+            const uint32_t Packet<AgentUnk1>::STATIC_HEADER = 0x6C;*/
 
             struct AgentUnk2 : Packet<AgentUnk2> {
                 uint32_t agent_id;
@@ -389,12 +394,7 @@ namespace GW {
             };
             const uint32_t Packet<SkillActivate>::STATIC_HEADER = 0xE5;
 
-            struct VanquishComplete : Packet<VanquishComplete> {
-                uint32_t map_id;
-                uint32_t experience;
-                uint32_t gold;
-            };
-            const uint32_t Packet<VanquishComplete>::STATIC_HEADER = 0xEB;
+
 
             // update agent state
             struct AgentState : Packet<AgentState> {
@@ -413,6 +413,19 @@ namespace GW {
                 uint32_t price;
             };
             const uint32_t Packet<QuotedItemPrice>::STATIC_HEADER = 0xF8;
+
+            struct VanquishProgress : Packet<VanquishProgress> {
+                uint32_t foes_killed;
+                uint32_t foes_remaining;
+            };
+            const uint32_t Packet<VanquishProgress>::STATIC_HEADER = 0xFB;
+
+            struct VanquishComplete : Packet<VanquishComplete> {
+                uint32_t map_id;
+                uint32_t experience;
+                uint32_t gold;
+            };
+            const uint32_t Packet<VanquishComplete>::STATIC_HEADER = 0xFC;
 
             struct CinematicPlay : Packet<CinematicPlay> {
                 uint32_t play;
@@ -435,11 +448,11 @@ namespace GW {
             };
             const uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = 0x114;
 
-            struct DungeonChestReward : Packet<DungeonChestReward> {
+            /*struct DungeonChestReward : Packet<DungeonChestReward> {
                 uint32_t agent_id; // Of the chest
                 uint32_t unk1; 
             };
-            const uint32_t Packet<DungeonChestReward>::STATIC_HEADER = 0x118;
+            const uint32_t Packet<DungeonChestReward>::STATIC_HEADER = 0x118;*/
 
             struct TownAllianceObject : Packet<TownAllianceObject> {
                 uint32_t map_id;

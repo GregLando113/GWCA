@@ -36,6 +36,7 @@ namespace {
     SetOnlineStatus_pt SetOnlineStatus_Func;
 
     uintptr_t FriendList_Addr;
+    uintptr_t FriendListStatus_Addr;
 
     void Init() {
         {
@@ -56,9 +57,15 @@ namespace {
             "\x8B\xCE\x89\x35\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\xC8", "xxxx????x????xx", -0x1C);
         printf("[SCAN] SetOnlineStatus = %p\n", SetOnlineStatus_Func);
 
+        FriendListStatus_Addr = (uintptr_t)SetOnlineStatus_Func + 0x20;
+        printf("[SCAN] FriendListStatus_Addr = %p\n", (void*)FriendListStatus_Addr);
+        FriendListStatus_Addr = *(uintptr_t*)FriendListStatus_Addr;
+
         if (Verify(FriendStatusHandler_Func)) {
             HookBase::CreateHook(FriendStatusHandler_Func,
                 OnFriendStatusHandler, (void **)&RetFriendStatusHandler);
+            
+            
         }
     }
 
@@ -149,11 +156,7 @@ namespace GW {
     }
 
     uint32_t FriendListMgr::GetMyStatus() {
-        FriendList *fl = GetFriendList();
-        if (fl)
-            return fl->player_status;
-        else
-            return 0;
+        return *(int32_t*)(FriendListStatus_Addr);
     }
 
 } // namespace GW

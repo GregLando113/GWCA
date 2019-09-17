@@ -141,7 +141,7 @@ namespace GW {
                 uint32_t player_number;
                 uint32_t agent_id;
                 uint32_t file_id1; // dword
-                uint32_t unk2; // byte
+                uint32_t secondary_profession; // byte
                 uint32_t unk3; // dword
                 uint32_t file_id2; // dword
                 wchar_t player_name[32];
@@ -357,8 +357,9 @@ namespace GW {
             };
             const uint32_t Packet<AgentModel>::STATIC_HEADER = 0xAF;
 
+            // Changes the number above the player's head when leading a party
             struct PartyUpdateSize : Packet<PartyUpdateSize> {
-                uint32_t party_id;
+                uint32_t player_id;
                 uint32_t size;
             };
             const uint32_t Packet<PartyUpdateSize>::STATIC_HEADER = 0xB1;
@@ -541,7 +542,7 @@ namespace GW {
             const uint32_t Packet<PartyHenchmanRemove>::STATIC_HEADER = 0x1C5;
 
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
-                uint32_t invite_stage; // uint16_t (2 = Invited,3 = Added)
+                uint32_t invite_stage; // uint16_t (2 = Invited, 1 = Added)
                 uint32_t player_id;
                 uint32_t party_id;
             };

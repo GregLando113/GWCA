@@ -472,6 +472,30 @@ namespace GW {
             };
             const uint32_t Packet<TownAllianceObject>::STATIC_HEADER = 0x11D;
 
+			// Info about the guild you're in (or the guild you're visiting)
+			struct GuildGeneral : Packet<GuildGeneral> {
+				uint32_t local_id; // 1 = current guild hall, 2 = my guild.
+				uint32_t ghkey[4]; // blob[16]
+				wchar_t name[32];
+				wchar_t tag[5];
+				uint32_t cape_bg_color;
+				uint32_t cape_detail_color;
+				uint32_t cape_emblem_color;
+				uint32_t cape_shape;
+				uint32_t cape_detail;
+				uint32_t cape_emblem;
+				uint32_t cape_trim;
+				uint32_t unk1; // Word
+				uint32_t unk2; // byte
+				uint32_t unk3; // byte
+				uint32_t faction;
+				uint32_t unk4; // dword
+				uint32_t rank;
+				uint32_t allegiance;
+				uint32_t unk5; // byte
+			};
+			const uint32_t Packet<GuildGeneral>::STATIC_HEADER = 0x124;
+
             // Gold added to inventory
             struct CharacterAddGold : Packet<CharacterAddGold> {
                 uint32_t unk;
@@ -541,10 +565,11 @@ namespace GW {
             };
             const uint32_t Packet<PartyHenchmanRemove>::STATIC_HEADER = 0x1C5;
 
+
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
-                uint32_t invite_stage; // uint16_t (2 = Invited, 1 = Added)
-                uint32_t player_id;
-                uint32_t party_id;
+                uint32_t party_id; // word
+                uint32_t player_id; // word
+                uint32_t state; // byte
             };
             const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D0;
 
@@ -553,6 +578,16 @@ namespace GW {
                 uint32_t player_id;
             };
             const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D5;
+
+			struct PartyPlayerStreamStart : Packet<PartyPlayerStreamStart> {
+				uint32_t party_id; // word
+			};
+			const uint32_t Packet<PartyPlayerStreamStart>::STATIC_HEADER = 0x1D7;
+
+			struct PartyPlayerStreamEnd : Packet<PartyPlayerStreamEnd> {
+				uint32_t party_id; // word
+			};
+			const uint32_t Packet<PartyPlayerStreamEnd>::STATIC_HEADER = 0x1D8;
 
             struct PartyDefeated : Packet<PartyDefeated> {
             };

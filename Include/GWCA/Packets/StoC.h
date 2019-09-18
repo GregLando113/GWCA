@@ -449,12 +449,6 @@ namespace GW {
             };
             const uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = 0x114;
 
-            /*struct DungeonChestReward : Packet<DungeonChestReward> {
-                uint32_t agent_id; // Of the chest
-                uint32_t unk1; 
-            };
-            const uint32_t Packet<DungeonChestReward>::STATIC_HEADER = 0x118;*/
-
             struct TownAllianceObject : Packet<TownAllianceObject> {
                 uint32_t map_id;
                 uint32_t rank;
@@ -472,9 +466,10 @@ namespace GW {
             };
             const uint32_t Packet<TownAllianceObject>::STATIC_HEADER = 0x11D;
 
-			// Info about the guild you're in (or the guild you're visiting)
+			// Info about any guilds applicable to current outpost.
+			// NOTE: When entering a guild hall, that guild will always be the first added (local_id = 1).
 			struct GuildGeneral : Packet<GuildGeneral> {
-				uint32_t local_id; // 1 = current guild hall, 2 = my guild.
+				uint32_t local_id;
 				uint32_t ghkey[4]; // blob[16]
 				wchar_t name[32];
 				wchar_t tag[5];
@@ -546,7 +541,7 @@ namespace GW {
             const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 0x1B4;
 
             struct ErrorMessage : Packet<ErrorMessage> {
-                uint32_t message_enc_id;
+                uint32_t message_id;
             };
             const uint32_t Packet<ErrorMessage>::STATIC_HEADER = 0x1C1;
 

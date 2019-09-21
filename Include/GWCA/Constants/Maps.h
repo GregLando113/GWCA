@@ -759,6 +759,8 @@ namespace GW {
             The_Final_Confrontation,
             Lakeside_County_1070_AE,
             Ashford_Catacombs_1070_AE,
+
+            Count,
         };
 
         // This array needs testing lol.

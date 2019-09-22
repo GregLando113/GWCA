@@ -1,0 +1,3 @@
+[submodule "Examples/WorldInformation/imgui"]
+	path = Examples/WorldInformation/imgui
+	url = https://github.com/ocornut/imgui

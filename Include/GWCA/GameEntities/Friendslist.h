@@ -32,12 +32,12 @@ namespace GW {
 
     struct FriendList {
         /* +h0000 */ FriendsListArray friends;
-        /* +h0010 */ uint32_t h0010[5];
+        /* +h0010 */ uint8_t  h0010[20];
         /* +h0024 */ uint32_t number_of_friend;
         /* +h0028 */ uint32_t number_of_ignore;
         /* +h002C */ uint32_t number_of_partner;
         /* +h0030 */ uint32_t number_of_trade;
-        /* +h0034 */ uint32_t h0034[18];
-        /* +h007C */ uint32_t player_status;
+        /* +h0034 */ uint8_t  h0034[108];
+        /* +h00A0 */ uint32_t player_status;
     };
 }

@@ -102,14 +102,19 @@ namespace {
         COLOR_RGB(0xE0, 0xE0, 0xE0)
     };
 
-    std::function<void (uint32_t, uint32_t, wchar_t *, void *)> ChatEvent_callback;
+	std::vector<std::function<bool(uint32_t, uint32_t, wchar_t*, void*)>> ChatEvent_Callbacks;
     typedef void(__fastcall *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
     ChatEvent_pt RetChatEvent;
     ChatEvent_pt ChatEvent_Func;
     void __fastcall OnChatEvent(uint32_t event_id, uint32_t type, wchar_t *info, void *unk) {
         HookBase::EnterHook();
-        if (ChatEvent_callback) ChatEvent_callback(event_id, type, info, unk);
-        RetChatEvent(event_id, type, info, unk);
+		bool consume = false;
+		for (auto cb : ChatEvent_Callbacks) {
+			if (cb(event_id, type, info, unk))
+				consume = true;
+		}
+        if(!consume)
+			RetChatEvent(event_id, type, info, unk);
         HookBase::LeaveHook();
     }
 
@@ -117,6 +122,7 @@ namespace {
     GetChannelColor_pt RetGetSenderColor;
     GetChannelColor_pt GetSenderColor_Func;
     Chat::Color* __fastcall OnGetSenderColor(Chat::Color *color, Chat::Channel chan);
+
     GetChannelColor_pt RetGetMessageColor;
     GetChannelColor_pt GetMessageColor_Func;
     Chat::Color* __fastcall OnGetMessageColor(Chat::Color *color, Chat::Channel chan);
@@ -132,10 +138,11 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    std::function<void (Chat::Channel chan, wchar_t *msg)> SendChat_callback;
+	
     typedef void(__fastcall *SendChat_pt)(wchar_t *message);
     SendChat_pt SendChat_Func;
     SendChat_pt RetSendChat;
+	std::vector<std::function<bool(Chat::Channel chan, wchar_t* msg)>> SendChat_Callbacks;
     void __fastcall OnSendChat(wchar_t *_message);
 
     typedef void(__fastcall *OpenTemplate_pt)(uint32_t unk, Chat::ChatTemplate* info);
@@ -147,26 +154,57 @@ namespace {
     typedef void(__fastcall *WriteWhisper_pt)(uint32_t, wchar_t *, wchar_t *);
     WriteWhisper_pt RetWriteWhisper;
     WriteWhisper_pt WriteWhisper_Func;
-    std::function<void (wchar_t *, wchar_t *)> WriteWhisper_callback;
+	std::vector<std::function<bool(wchar_t*, wchar_t*)>> WriteWhisper_callbacks;
     void __fastcall OnWriteWhisper(uint32_t unk, wchar_t *from, wchar_t *msg) {
         HookBase::EnterHook();
-        if (WriteWhisper_callback)
-            WriteWhisper_callback(from, msg);
-        RetWriteWhisper(unk, from, msg);
+		bool consume = false;
+		for (auto cb : WriteWhisper_callbacks) {
+			if (cb(from, msg))
+				consume = true;
+		}
+		if (!consume)
+			RetWriteWhisper(unk, from, msg);
         HookBase::LeaveHook();
     }
 
-    typedef void (GWCALL *PrintChat_pt)(void *ctx, uint32_t thiscall,
+	typedef void(__fastcall* StartWhisper_pt)(uint32_t unk1, wchar_t* name, wchar_t* name2);
+	StartWhisper_pt StartWhisper_Func;
+	StartWhisper_pt RetStartWhisper;
+	std::vector<std::function<bool(wchar_t*)>> StartWhisper_callbacks;
+	void __fastcall OnStartWhisper(uint32_t unk1, wchar_t* name, wchar_t* name2) {
+		GW::HookBase::EnterHook();
+		bool consume = false;
+		for (auto cb : StartWhisper_callbacks) {
+			if (cb(name))
+				consume = true;
+		}
+		if (!consume) {
+			if (wcscmp(name, name2) != 0)
+				wcscpy(name2, name); // Update name2 if name has been changed by a hook
+			RetStartWhisper(unk1, name, name2);
+		}
+		GW::HookBase::LeaveHook();
+	}
+
+    typedef void (__fastcall*PrintChat_pt)(void *ctx, uint32_t thiscall,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint);
     PrintChat_pt RetPrintChat;
     PrintChat_pt PrintChat_Func;
-
-    void GWCALL OnPrintChat(void *ctx, int thiscall,
+	std::vector<std::function<bool(Chat::Channel channel, wchar_t* str, FILETIME timestamp, int reprint)>> PrintChat_callbacks;
+    void __fastcall OnPrintChat(void *ctx, int thiscall,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint)
     {
         HookBase::EnterHook();
         assert(ChatBuffer_Addr && 0 <= channel && channel < Chat::CHANNEL_COUNT);
-
+		bool consume = false;
+		for (auto cb : PrintChat_callbacks) {
+			if (cb(channel, str,timestamp,reprint))
+				consume = true;
+		}
+		if (consume || !str) {
+			HookBase::LeaveHook();
+			return;
+		}
         if (!ShowTimestamps) {
             RetPrintChat(ctx, thiscall, channel, str, timestamp, reprint);
             HookBase::LeaveHook();
@@ -222,6 +260,16 @@ namespace {
 
     void __fastcall OnSendChat(wchar_t *message) {
         HookBase::EnterHook();
+		GW::Chat::Channel channel = GetChannel(*message);
+		bool consume = false;
+		for (auto cb : SendChat_Callbacks) {
+			if (cb(channel, &message[1]))
+				consume = true;
+		}
+		if (consume || !message[1]) {
+			HookBase::LeaveHook();
+			return;
+		}
         if (*message == '/') {
             int argc;
             wchar_t **argv;
@@ -237,10 +285,7 @@ namespace {
             }
             LocalFree(argv);
         }
-
-        if (SendChat_callback)
-            SendChat_callback(GetChannel(*message), &message[1]);
-        RetSendChat(message);
+		RetSendChat(message);
         HookBase::LeaveHook();
     }
 
@@ -293,6 +338,10 @@ namespace {
             "\x81\xEC\x1C\x01\x00\x00\x56\x8B\xF2", "xxxxxxxxx", -3);
         printf("[SCAN] SendChat = %p\n", SendChat_Func);
 
+		StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
+			"\x55\x8B\xEC\x51\x53\x56\x8B\xF1\x57\xBA\x05\x00\x00\x00", "xxxxxxxxxxxxxx", 0);
+		printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
+
         OpenTemplate_Func = (OpenTemplate_pt)Scanner::Find(
             "\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
         printf("[SCAN] OpenTemplate = %p\n", OpenTemplate_Func);
@@ -321,7 +370,8 @@ namespace {
                 IsTyping_Addr = *(uintptr_t *)address;
         }
 
-
+		if (Verify(StartWhisper_Func))
+			HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
         if (Verify(ChatEvent_Func))
             HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
         if (Verify(GetSenderColor_Func))
@@ -341,6 +391,8 @@ namespace {
     }
 
     void Exit() {
+		if(StartWhisper_Func)
+			HookBase::RemoveHook(StartWhisper_Func);
         if (ChatEvent_Func)
             HookBase::RemoveHook(ChatEvent_Func);
         if (GetSenderColor_Func)
@@ -371,17 +423,97 @@ namespace GW {
         NULL,           // disable_hooks
     };
 
+	// Add callback for in-game event. Returns index of added callback. TODO: Label arguments!!
+	uint32_t Chat::AddChatEventCallback(std::function<bool(uint32_t, uint32_t, wchar_t*, void*)> callback) {
+		ChatEvent_Callbacks.push_back(callback);
+		return ChatEvent_Callbacks.size() - 1;
+	}
+	// Remove callback. Returns true on success, false on invalid index.
+	bool Chat::RemoveChatEventCallback(uint32_t idx) {
+		if (idx < 0 || idx > ChatEvent_Callbacks.size() - 1)
+			return false;
+		ChatEvent_Callbacks.erase(ChatEvent_Callbacks.begin() + idx);
+		return true;
+	}
+	// Legacy function, use AddChatEventCallback instead.
     void Chat::SetChatEventCallback(std::function<void (uint32_t, uint32_t, wchar_t *, void *)> callback) {
-        ChatEvent_callback = callback;
+		AddChatEventCallback([callback](uint32_t a, uint32_t b, wchar_t* c, void* d) -> bool {
+			callback(a, b, c, d);
+			return false;
+		});
     }
 
     void Chat::SetLocalMessageCallback(std::function<bool (int, wchar_t *)> callback) {
         LocalMessage_callback = callback;
     }
 
-    void Chat::SetSendChatCallback(std::function<void(Chat::Channel chan, wchar_t *msg)> callback) {
-        SendChat_callback = callback;
-    }
+	// Called when current player sends an outgoing message. Returns index of added callback.
+	uint32_t Chat::AddSendChatCallback(std::function<bool(Chat::Channel chan, wchar_t* msg) > callback) {
+		SendChat_Callbacks.push_back(callback);
+		return SendChat_Callbacks.size() - 1;
+	}
+	// Remove callback. Returns true on success, false on invalid index.
+	bool Chat::RemoveSendChatCallback(uint32_t idx) {
+		if (idx < 0 || idx > SendChat_Callbacks.size() - 1)
+			return false;
+		SendChat_Callbacks.erase(SendChat_Callbacks.begin() + idx);
+		return true;
+	}
+	// Legacy function, use AddSendChatCallback instead
+	void Chat::SetSendChatCallback(std::function<void(Chat::Channel chan, wchar_t* msg)> callback) {
+		AddSendChatCallback([callback](Chat::Channel chan, wchar_t* msg) -> bool {
+			callback(chan,msg);
+			return false;
+		});
+	}
+
+	// Called when current player receives a whisper. Returns index of added callback.
+	uint32_t Chat::AddWhisperCallback(std::function<bool(wchar_t*, wchar_t*)> callback) {
+		WriteWhisper_callbacks.push_back(callback);
+		return WriteWhisper_callbacks.size() - 1;
+	}
+	// Remove callback. Returns true on success, false on invalid index.
+	bool Chat::RemoveWhisperCallback(uint32_t idx) {
+		if (idx < 0 || idx > WriteWhisper_callbacks.size() - 1)
+			return false;
+		WriteWhisper_callbacks.erase(WriteWhisper_callbacks.begin() + idx);
+		return true;
+	}
+	// Legacy function, use AddWhisperCallback instead
+	void Chat::SetWhisperCallback(std::function<void(wchar_t* from, wchar_t* msg)> callback) {
+		AddWhisperCallback([callback](wchar_t* from, wchar_t* msg) -> bool {
+			callback(from, msg);
+			return false;
+		});
+	}
+
+	// Called when a message is about to be shown in the chat window. Returns index of added callback.
+	uint32_t Chat::AddPrintChatCallback(std::function<
+		bool(Chat::Channel channel, wchar_t* str, FILETIME timestamp, int reprint)> callback) {
+		PrintChat_callbacks.push_back(callback);
+		return PrintChat_callbacks.size() - 1;
+	}
+	// Remove callback. Returns true on success, false on invalid index.
+	bool Chat::RemovePrintChatCallback(uint32_t idx) {
+		if (idx < 0 || idx > PrintChat_callbacks.size() - 1)
+			return false;
+		PrintChat_callbacks.erase(PrintChat_callbacks.begin() + idx);
+		return true;
+	}
+
+	// Called current player starts writing a whisper. Returns index of added callback.
+	uint32_t Chat::AddStartWhisperCallback(std::function<
+		bool(wchar_t* to)> callback) {
+		StartWhisper_callbacks.push_back(callback);
+		return StartWhisper_callbacks.size() - 1;
+	}
+	// Remove callback. Returns true on success, false on invalid index.
+	bool Chat::RemoveStartWhisperCallback(uint32_t idx) {
+		if (idx < 0 || idx > StartWhisper_callbacks.size() - 1)
+			return false;
+		StartWhisper_callbacks.erase(StartWhisper_callbacks.begin() + idx);
+		return true;
+	}
 
     void Chat::SetOpenLinks(bool b) {
         open_links = b;
@@ -469,9 +601,7 @@ namespace GW {
         }
     }
 
-    void Chat::SetWhisperCallback(std::function<void (wchar_t *, wchar_t *)> callback) {
-        WriteWhisper_callback = callback;
-    }
+
 
     bool Chat::GetIsTyping() {
         if (!Verify(IsTyping_Addr))

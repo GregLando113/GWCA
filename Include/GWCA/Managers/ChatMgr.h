@@ -73,10 +73,34 @@ namespace GW {
         GWCA_API void SetTimestampsFormat(bool use_24h, bool show_seconds);
         GWCA_API void SetTimestampsColor(Color color);
 
-        // SendChat callback can modify the msg before it is send.
-        // Pay attention to not overflow the buffer.
+		// SendChat callback can modify the msg before it is send.
+		// Pay attention to not overflow the buffer.
+		GWCA_API bool RemoveSendChatCallback(uint32_t);
+		GWCA_API uint32_t AddSendChatCallback (
+			std::function<bool(Channel chan, wchar_t* msg)>);
         GWCA_API void SetSendChatCallback(
-            std::function<void (Channel chan, wchar_t *msg)>);
+            std::function<void (Channel chan, wchar_t* msg)>);
+
+		GWCA_API bool RemoveChatEventCallback(uint32_t);
+		GWCA_API uint32_t AddChatEventCallback(std::function<
+			bool(uint32_t, uint32_t, wchar_t*, void*)>);
+		GWCA_API void SetChatEventCallback(std::function<
+			void(uint32_t, uint32_t, wchar_t*, void*)>);
+
+		GWCA_API bool RemoveWhisperCallback(uint32_t);
+		GWCA_API uint32_t AddWhisperCallback(std::function<
+			bool(wchar_t*, wchar_t*)>);
+		GWCA_API void SetWhisperCallback(std::function<
+			void(wchar_t*, wchar_t*)> callback);
+
+		GWCA_API bool RemoveStartWhisperCallback(uint32_t);
+		GWCA_API uint32_t AddStartWhisperCallback(std::function<
+			bool(wchar_t* to)>);
+
+		GWCA_API bool RemovePrintChatCallback(uint32_t);
+		GWCA_API uint32_t AddPrintChatCallback(std::function<
+			bool(Chat::Channel channel, wchar_t* str, FILETIME timestamp, int reprint)>);
+
 
         GWCA_API void SetOpenLinks(bool b);
 
@@ -85,13 +109,11 @@ namespace GW {
         GWCA_API void  GetChannelColors(Channel chan, Color *sender, Color *message);
         GWCA_API void  GetDefaultColors(Channel chan, Color *sender, Color *message);
 
-        GWCA_API void SetChatEventCallback(std::function<
-            void (uint32_t, uint32_t, wchar_t *, void *)> callback);
+
 
         GWCA_API void SetLocalMessageCallback(std::function<
             bool (int, wchar_t *)> callback);
 
-        GWCA_API void SetWhisperCallback(std::function<
-            void(wchar_t *, wchar_t *)> callback);
+
     };
 }

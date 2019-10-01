@@ -178,11 +178,8 @@ namespace {
 			if (cb(name))
 				consume = true;
 		}
-		if (!consume) {
-			if (wcscmp(name, name2) != 0)
-				wcscpy(name2, name); // Update name2 if name has been changed by a hook
+		if (!consume)
 			RetStartWhisper(unk1, name, name2);
-		}
 		GW::HookBase::LeaveHook();
 	}
 

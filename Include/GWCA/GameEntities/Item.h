@@ -58,8 +58,7 @@ namespace GW {
         /* +h0022 */ uint16_t       extra_id;
         /* +h0024 */ uint16_t       value;
         /* +h0026 */ uint16_t       h0026;
-        /* +h0028 */ uint16_t       h0028;
-        /* +h002A */ uint16_t       interaction;
+        /* +h0028 */ uint32_t       interaction;
         /* +h002C */ uint32_t       model_id;
         /* +h0030 */ wchar_t       *info_string;
         /* +h0034 */ wchar_t       *name_enc;

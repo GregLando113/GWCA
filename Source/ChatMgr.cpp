@@ -129,11 +129,16 @@ namespace {
     typedef void(__fastcall *LocalMessage_pt)(int channel, wchar_t *message);
     LocalMessage_pt LocalMessage_Func;
     LocalMessage_pt RetLocalMessage;
-    std::function<bool (int, wchar_t *)> LocalMessage_callback;
+	std::vector<std::function<bool(int channel , wchar_t* msg) >> LocalMessage_callbacks;
     void __fastcall OnLocalMessage(int channel, wchar_t *message) {
-        HookBase::EnterHook();
-        if (LocalMessage_callback && LocalMessage_callback(channel, message))
-            RetLocalMessage(channel, message);
+		HookBase::EnterHook();
+		bool consume = false;
+		for (auto cb : LocalMessage_callbacks) {
+			if (cb(channel, message))
+				consume = true;
+		}
+		if (!consume)
+			RetLocalMessage(channel, message);
         HookBase::LeaveHook();
     }
 
@@ -435,8 +440,24 @@ namespace GW {
 		});
     }
 
+	// Add callback for in-game event. Returns index of added callback.
+	uint32_t Chat::AddLocalMessageCallback(std::function<bool(int channel, wchar_t* msg)> callback) {
+		LocalMessage_callbacks.push_back(callback);
+		return LocalMessage_callbacks.size() - 1;
+	}
+	// Remove callback. Returns true on success, false on invalid index.
+	bool Chat::RemoveLocalMessageCallback(uint32_t idx) {
+		if (idx < 0 || idx > LocalMessage_callbacks.size() - 1)
+			return false;
+		LocalMessage_callbacks.erase(LocalMessage_callbacks.begin() + idx);
+		return true;
+	}
+	// Legacy function, use AddLocalMessageCallback instead.
     void Chat::SetLocalMessageCallback(std::function<bool (int, wchar_t *)> callback) {
-        LocalMessage_callback = callback;
+		AddLocalMessageCallback([callback](int a, wchar_t* b) -> bool {
+			callback(a, b);
+			return false;
+			});
     }
 
 	// Called when current player sends an outgoing message. Returns index of added callback.

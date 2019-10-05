@@ -109,8 +109,9 @@ namespace GW {
         GWCA_API void  GetChannelColors(Channel chan, Color *sender, Color *message);
         GWCA_API void  GetDefaultColors(Channel chan, Color *sender, Color *message);
 
-
-
+		GWCA_API bool RemoveLocalMessageCallback(uint32_t);
+		GWCA_API uint32_t AddLocalMessageCallback(std::function<
+			bool(int channel, wchar_t* msg)>);
         GWCA_API void SetLocalMessageCallback(std::function<
             bool (int, wchar_t *)> callback);
 

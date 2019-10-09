@@ -453,10 +453,10 @@ namespace GW {
 		return true;
 	}
 	// Legacy function, use AddLocalMessageCallback instead.
+	// NOTE: Original callback returns FALSE to consume, not TRUE
     void Chat::SetLocalMessageCallback(std::function<bool (int, wchar_t *)> callback) {
 		AddLocalMessageCallback([callback](int a, wchar_t* b) -> bool {
-			callback(a, b);
-			return false;
+			return !callback(a, b);
 			});
     }
 

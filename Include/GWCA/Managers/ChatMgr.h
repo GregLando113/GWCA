@@ -1,10 +1,11 @@
 #pragma once
 
-#include <GWCA/Utilities/Export.h>
-#include <GWCA/GameContainers/Array.h>
-
 #include <string>
 #include <functional>
+
+#include <GWCA/Utilities/Hook.h>
+#include <GWCA/Utilities/Export.h>
+#include <GWCA/GameContainers/Array.h>
 
 namespace GW {
     struct Module;
@@ -64,18 +65,13 @@ namespace GW {
 
         GWCA_API void WriteChatF(Channel channel, const wchar_t *sender, const char *fmt, ...);
 
-        typedef std::function<void(const wchar_t *msg, int argc, wchar_t **argv)> CmdCB;
+        typedef std::function<void (const wchar_t *, int, wchar_t **)> CmdCB;
         GWCA_API void CreateCommand(std::wstring cmd, CmdCB callback);
         GWCA_API void DeleteCommand(std::wstring cmd);
 
         GWCA_API void ToggleTimestamps(bool enable);
         GWCA_API void SetTimestampsFormat(bool use_24h);
         GWCA_API void SetTimestampsColor(Color color);
-
-        // SendChat callback can modify the msg before it is send.
-        // Pay attention to not overflow the buffer.
-        GWCA_API void SetSendChatCallback(
-            std::function<void (Channel chan, wchar_t *msg)>);
 
         GWCA_API void SetOpenLinks(bool b);
 
@@ -84,13 +80,26 @@ namespace GW {
         GWCA_API void  GetChannelColors(Channel chan, Color *sender, Color *message);
         GWCA_API void  GetDefaultColors(Channel chan, Color *sender, Color *message);
 
-        GWCA_API void SetChatEventCallback(std::function<
-            void (uint32_t, uint32_t, wchar_t *, void *)> callback);
+        // SendChat callback can modify the msg before it is send.
+        // Pay attention to not overflow the buffer.
+        typedef HookCallback<Channel, wchar_t *> SendChatCallback;
+        GWCA_API void RegisterSendChatCallback(
+            HookEntry *entry,
+            SendChatCallback callback);
 
-        GWCA_API void SetLocalMessageCallback(std::function<
-            bool (int, wchar_t *)> callback);
+        typedef HookCallback<uint32_t, uint32_t, wchar_t *, void *> ChatEventCallback;
+        GWCA_API void RegisterChatEventCallback(
+            HookEntry *entry,
+            ChatEventCallback callback);
 
-        GWCA_API void SetWhisperCallback(std::function<
-            void(wchar_t *, wchar_t *)> callback);
+        typedef HookCallback<int, wchar_t *> LocalMessageCallback;
+        GWCA_API void RegisterLocalMessageCallback(
+            HookEntry *entry,
+            LocalMessageCallback callback);
+
+        typedef HookCallback<wchar_t *, wchar_t *> WhisperCallback;
+        GWCA_API void RegisterWhisperCallback(
+            HookEntry *entry,
+            WhisperCallback callback);
     };
 }

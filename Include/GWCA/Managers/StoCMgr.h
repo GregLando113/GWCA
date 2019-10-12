@@ -1,6 +1,6 @@
 #pragma once
 
-#include <functional>
+#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
 namespace GW {
@@ -23,27 +23,28 @@ namespace GW {
     extern Module StoCModule;
 
     namespace StoC {
-        template <typename T>
-        using CallbackFunc = std::function<bool (T*)>;
-        
-        GWCA_API uint32_t AddCallback(uint32_t header,
-            std::function<bool (Packet::StoC::PacketBase *)> callback);
+        typedef HookCallback<Packet::StoC::PacketBase *> PacketCallback;
+        GWCA_API void RegisterPacketCallback(
+            HookEntry *entry,
+            uint32_t header,
+            PacketCallback callback);
         
         /* Use this to add handlers to the stocmgr, primary function. */
         template <typename T>
-        uint32_t AddCallback(CallbackFunc<T> handler) {
+        void RegisterPacketCallback(HookEntry *entry, HookCallback<T *> handler) {
             uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
-            return AddCallback(header, [handler](Packet::StoC::PacketBase *pak) -> bool {
-                return handler((T *)pak);
+            return RegisterPacketCallback(entry, header,
+                [handler](HookStatus *status, Packet::StoC::PacketBase *pak) -> void {
+                return handler(status, static_cast<T *>(pak));
             });
         }
         
-        GWCA_API void RemoveCallback(uint32_t header, uint32_t identifier);
+        GWCA_API void RemoveCallback(uint32_t header, HookEntry *entry);
 
         template <typename T>
-        void RemoveCallback(uint32_t identifier) {
+        void RemoveCallback(HookEntry *entry) {
             uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
-            RemoveCallback(header, identifier);
+            RemoveCallback(header, entry);
         }
 
 

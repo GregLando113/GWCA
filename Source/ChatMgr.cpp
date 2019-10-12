@@ -65,6 +65,19 @@ namespace {
         true
     };
 
+    Chat::Channel GetChannel(wchar_t opcode) {
+        switch (opcode) {
+            case '!': return Chat::CHANNEL_ALL;
+            case '@': return Chat::CHANNEL_GUILD;
+            case '#': return Chat::CHANNEL_GROUP;
+            case '$': return Chat::CHANNEL_TRADE;
+            case '%': return Chat::CHANNEL_ALLIANCE;
+            case '"': return Chat::CHANNEL_WHISPER;
+            case '/': return Chat::CHANNEL_COMMAND;
+            default:  return Chat::CHANNEL_UNKNOW;
+        }
+    }
+
     Chat::Color ChatSenderColor[] = {
         COLOR_RGB(0xFF, 0xC0, 0x60),
         COLOR_RGB(0x60, 0xA0, 0xFF),
@@ -101,57 +114,123 @@ namespace {
         COLOR_RGB(0xE0, 0xE0, 0xE0)
     };
 
-    std::function<void (uint32_t, uint32_t, wchar_t *, void *)> ChatEvent_callback;
+    std::unordered_map<HookEntry *, Chat::SendChatCallback>     SendChat_callbacks;
+    std::unordered_map<HookEntry *, Chat::ChatEventCallback>    ChatEvent_callbacks;
+    std::unordered_map<HookEntry *, Chat::LocalMessageCallback> LocalMessage_callbacks;
+    std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
+
     typedef void(__fastcall *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
     ChatEvent_pt RetChatEvent;
     ChatEvent_pt ChatEvent_Func;
     void __fastcall OnChatEvent(uint32_t event_id, uint32_t type, wchar_t *info, void *unk) {
         HookBase::EnterHook();
-        if (ChatEvent_callback) ChatEvent_callback(event_id, type, info, unk);
-        RetChatEvent(event_id, type, info, unk);
+        HookStatus status;
+        for (auto& it : ChatEvent_callbacks) {
+            it.second(&status, event_id, type, info, unk);
+            ++status.altitude;
+        }
+        if (!status.blocked)
+            RetChatEvent(event_id, type, info, unk);
         HookBase::LeaveHook();
     }
 
     typedef Chat::Color* (__fastcall *GetChannelColor_pt)(Chat::Color *color, Chat::Channel chan);
     GetChannelColor_pt RetGetSenderColor;
     GetChannelColor_pt GetSenderColor_Func;
-    Chat::Color* __fastcall OnGetSenderColor(Chat::Color *color, Chat::Channel chan);
+    Chat::Color* __fastcall OnGetSenderColor(Chat::Color *color, Chat::Channel chan) {
+        HookBase::EnterHook();
+        *color = ChatSenderColor[(int)chan];
+        HookBase::LeaveHook();
+        return color;
+    };
+
+
     GetChannelColor_pt RetGetMessageColor;
     GetChannelColor_pt GetMessageColor_Func;
-    Chat::Color* __fastcall OnGetMessageColor(Chat::Color *color, Chat::Channel chan);
+    Chat::Color* __fastcall OnGetMessageColor(Chat::Color *color, Chat::Channel chan) {
+        HookBase::EnterHook();
+        *color = ChatMessageColor[(int)chan];
+        HookBase::LeaveHook();
+        return color;
+    };
 
     typedef void(__fastcall *LocalMessage_pt)(int channel, wchar_t *message);
     LocalMessage_pt LocalMessage_Func;
     LocalMessage_pt RetLocalMessage;
-    std::function<bool (int, wchar_t *)> LocalMessage_callback;
     void __fastcall OnLocalMessage(int channel, wchar_t *message) {
         HookBase::EnterHook();
-        if (LocalMessage_callback && LocalMessage_callback(channel, message))
+        HookStatus status;
+        for (auto& it : LocalMessage_callbacks) {
+            it.second(&status, channel, message);
+            ++status.altitude;
+        }
+        if (!status.blocked)
             RetLocalMessage(channel, message);
         HookBase::LeaveHook();
     }
 
-    std::function<void (Chat::Channel chan, wchar_t *msg)> SendChat_callback;
     typedef void(__fastcall *SendChat_pt)(wchar_t *message);
     SendChat_pt SendChat_Func;
     SendChat_pt RetSendChat;
-    void __fastcall OnSendChat(wchar_t *_message);
+    void __fastcall OnSendChat(wchar_t *message) {
+        HookBase::EnterHook();
+        if (*message == '/') {
+            int argc;
+            wchar_t **argv;
+            argv = CommandLineToArgvW(message + 1, &argc);
+
+            auto callback = SlashCmdList.find(argv[0]);
+            if (callback != SlashCmdList.end()) {
+                callback->second(message, argc, argv);
+                // No reasons to foward the function call to it's original.
+                LocalFree(argv);
+                HookBase::LeaveHook();
+                return;
+            }
+            LocalFree(argv);
+        }
+
+        HookStatus status;
+        for (auto& it : SendChat_callbacks) {
+            it.second(&status, GetChannel(*message), &message[1]);
+            ++status.altitude;
+        }
+        if (!status.blocked)
+            RetSendChat(message);
+        HookBase::LeaveHook();
+    }
 
     typedef void(__fastcall *OpenTemplate_pt)(uint32_t unk, Chat::ChatTemplate* info);
     OpenTemplate_pt RetOpenTemplate;
     OpenTemplate_pt OpenTemplate_Func;
-    void __fastcall OnOpenTemplate(uint32_t unk, Chat::ChatTemplate* info);
     bool open_links = false;
+    void __fastcall OnOpenTemplate(uint32_t unk, Chat::ChatTemplate* info) {
+        HookBase::EnterHook();
+        if (open_links
+            && info
+            && info->code.valid()
+            && info->name
+            && (!wcsncmp(info->name, L"http://", 7)
+                || !wcsncmp(info->name, L"https://", 8))) {
+            ShellExecuteW(NULL, L"open", info->name, NULL, NULL, SW_SHOWNORMAL);
+        } else {
+            RetOpenTemplate(unk, info);
+        }
+        HookBase::LeaveHook();
+    }
 
     typedef void(__fastcall *WriteWhisper_pt)(uint32_t, wchar_t *, wchar_t *);
     WriteWhisper_pt RetWriteWhisper;
     WriteWhisper_pt WriteWhisper_Func;
-    std::function<void (wchar_t *, wchar_t *)> WriteWhisper_callback;
     void __fastcall OnWriteWhisper(uint32_t unk, wchar_t *from, wchar_t *msg) {
         HookBase::EnterHook();
-        if (WriteWhisper_callback)
-            WriteWhisper_callback(from, msg);
-        RetWriteWhisper(unk, from, msg);
+        HookStatus status;
+        for (auto& it : Whisper_callbacks) {
+            it.second(&status, from, msg);
+            ++status.altitude;
+        }
+        if (!status.blocked)
+            RetWriteWhisper(unk, from, msg);
         HookBase::LeaveHook();
     }
 
@@ -159,7 +238,6 @@ namespace {
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint);
     PrintChat_pt RetPrintChat;
     PrintChat_pt PrintChat_Func;
-
     void GWCALL OnPrintChat(void *ctx, int thiscall,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint)
     {
@@ -201,72 +279,6 @@ namespace {
         RetPrintChat(ctx, thiscall, channel, buffer, timestamp, reprint);
         HookBase::LeaveHook();
     }
-
-    Chat::Channel GetChannel(wchar_t opcode) {
-        switch (opcode) {
-            case '!': return Chat::CHANNEL_ALL;
-            case '@': return Chat::CHANNEL_GUILD;
-            case '#': return Chat::CHANNEL_GROUP;
-            case '$': return Chat::CHANNEL_TRADE;
-            case '%': return Chat::CHANNEL_ALLIANCE;
-            case '"': return Chat::CHANNEL_WHISPER;
-            case '/': return Chat::CHANNEL_COMMAND;
-            default:  return Chat::CHANNEL_UNKNOW;
-        }
-    }
-
-    void __fastcall OnSendChat(wchar_t *message) {
-        HookBase::EnterHook();
-        if (*message == '/') {
-            int argc;
-            wchar_t **argv;
-            argv = CommandLineToArgvW(message + 1, &argc);
-
-            auto callback = SlashCmdList.find(argv[0]);
-            if (callback != SlashCmdList.end()) {
-                callback->second(message, argc, argv);
-                // No reasons to foward the function call to it's original.
-                LocalFree(argv);
-                HookBase::LeaveHook();
-                return;
-            }
-            LocalFree(argv);
-        }
-
-        if (SendChat_callback)
-            SendChat_callback(GetChannel(*message), &message[1]);
-        RetSendChat(message);
-        HookBase::LeaveHook();
-    }
-
-    void __fastcall OnOpenTemplate(uint32_t unk, Chat::ChatTemplate* info) {
-        HookBase::EnterHook();
-        if (open_links
-            && info
-            && info->code.valid()
-            && info->name
-            && (!wcsncmp(info->name, L"http://", 7)
-                || !wcsncmp(info->name, L"https://", 8))) {
-            ShellExecuteW(NULL, L"open", info->name, NULL, NULL, SW_SHOWNORMAL);
-        } else {
-            RetOpenTemplate(unk, info);
-        }
-        HookBase::LeaveHook();
-    }
-
-    Chat::Color* __fastcall OnGetSenderColor(Chat::Color *color, Chat::Channel chan) {
-        HookBase::EnterHook();
-        *color = ChatSenderColor[(int)chan];
-        HookBase::LeaveHook();
-        return color;
-    };
-
-    Chat::Color* __fastcall OnGetMessageColor(Chat::Color *color, Chat::Channel chan) {
-        HookBase::EnterHook();
-        *color = ChatMessageColor[(int)chan];
-        HookBase::LeaveHook();
-        return color;
-    };
 
     void Init() {
         ChatEvent_pt ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x28);
@@ -366,16 +378,32 @@ namespace GW {
         NULL,           // disable_hooks
     };
 
-    void Chat::SetChatEventCallback(std::function<void (uint32_t, uint32_t, wchar_t *, void *)> callback) {
-        ChatEvent_callback = callback;
+    void Chat::RegisterSendChatCallback(
+        HookEntry *entry,
+        SendChatCallback callback)
+    {
+        SendChat_callbacks.insert({entry, callback});
     }
 
-    void Chat::SetLocalMessageCallback(std::function<bool (int, wchar_t *)> callback) {
-        LocalMessage_callback = callback;
+    void Chat::RegisterChatEventCallback(
+        HookEntry *entry,
+        ChatEventCallback callback)
+    {
+        ChatEvent_callbacks.insert({entry, callback});
     }
 
-    void Chat::SetSendChatCallback(std::function<void(Chat::Channel chan, wchar_t *msg)> callback) {
-        SendChat_callback = callback;
+    void Chat::RegisterLocalMessageCallback(
+        HookEntry *entry,
+        LocalMessageCallback callback)
+    {
+        LocalMessage_callbacks.insert({entry, callback});
+    }
+
+    void Chat::RegisterWhisperCallback(
+        HookEntry *entry,
+        WhisperCallback callback)
+    {
+        Whisper_callbacks.insert({entry, callback});
     }
 
     void Chat::SetOpenLinks(bool b) {
@@ -462,10 +490,6 @@ namespace GW {
             *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
             break;
         }
-    }
-
-    void Chat::SetWhisperCallback(std::function<void (wchar_t *, wchar_t *)> callback) {
-        WriteWhisper_callback = callback;
     }
 
     bool Chat::GetIsTyping() {

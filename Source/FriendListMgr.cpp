@@ -20,16 +20,23 @@ namespace {
     FriendStatusHandler_pt RetFriendStatusHandler;
     FriendStatusHandler_pt FriendStatusHandler_Func;
 
-    std::function<void (Friend *f, FriendStatus status, const wchar_t *name, const wchar_t *charname)> OnFriendStatus_callback;
+    HookCallback<Friend *, FriendStatus, const wchar_t *, const wchar_t *> OnFriendStatus_callback;
+    std::unordered_map<HookEntry *, FriendListMgr::FriendStatusCallback> FriendStatus_callbacks;
     void __fastcall OnFriendStatusHandler(FriendStatus status, 
         const uint8_t *uuid, const wchar_t *name, const wchar_t *charname)
     {
         HookBase::EnterHook();
         Friend *_friend = FriendListMgr::GetFriend(uuid);
-        if (_friend && OnFriendStatus_callback)
-            OnFriendStatus_callback(_friend, status, name, charname);
+        HookStatus hook_status;
+        if (_friend) {
+            for (auto& it : FriendStatus_callbacks) {
+                it.second(&hook_status, _friend, status, name, charname);
+                ++hook_status.altitude;
+            }
+        }
+        if (!hook_status.blocked)
+            RetFriendStatusHandler(status, uuid, name, charname);
         HookBase::LeaveHook();
-        RetFriendStatusHandler(status, uuid, name, charname);
     }
 
     typedef void(__fastcall *SetOnlineStatus_pt)(uint32_t status);
@@ -88,10 +95,11 @@ namespace GW {
             SetOnlineStatus_Func((uint32_t)status);
     }
 
-    void FriendListMgr::SetOnFriendStatusCallback(
-        std::function<void (Friend *f, FriendStatus status, const wchar_t *name, const wchar_t *charname)> callback)
+    void FriendListMgr::RegisterFriendStatusCallback(
+        HookEntry *entry,
+        FriendStatusCallback callback)
     {
-        OnFriendStatus_callback = callback;
+        FriendStatus_callbacks.insert({entry, callback});
     }
 
     Friend *FriendListMgr::GetFriend(wchar_t *account, wchar_t *playing) {

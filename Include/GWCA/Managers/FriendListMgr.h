@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
 namespace GW {
@@ -33,7 +34,9 @@ namespace GW {
 
         GWCA_API void SetFriendListStatus(Constants::OnlineStatus status);
 
-        GWCA_API void SetOnFriendStatusCallback(
-            std::function<void (Friend *f, FriendStatus status, const wchar_t *name, const wchar_t *charname)>);
+        typedef HookCallback<Friend *, FriendStatus, const wchar_t *, const wchar_t *> FriendStatusCallback;
+        GWCA_API void RegisterFriendStatusCallback(
+            HookEntry *entry,
+            FriendStatusCallback callback);
     };
 }

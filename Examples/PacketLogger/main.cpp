@@ -48,6 +48,7 @@ enum class FieldType {
 static volatile bool running;
 static StoCHandlerArray  game_server_handler;
 static std::vector<bool> ignored_packets;
+static std::vector<GW::HookEntry> hook_entries;
 
 static void InitStoC()
 {
@@ -76,6 +77,7 @@ static void InitStoC()
     GameServer **addr = (GameServer **)StoCHandler_Addr;
     game_server_handler = (*addr)->gs_codec->handlers;
     ignored_packets.resize(game_server_handler.size());
+    hook_entries.resize(game_server_handler.size());
 
     ignored_packets[12] = true;
     ignored_packets[13] = true;
@@ -323,12 +325,12 @@ static void PrintNestedField(uint32_t *fields, uint32_t n_fields,
     }
 }
 
-static bool PacketHandler(GW::Packet::StoC::PacketBase *packet)
+static void PacketHandler(GW::HookStatus *status, GW::Packet::StoC::PacketBase *packet)
 {
     if (packet->header >= game_server_handler.size())
-        return false;
+        return;
     if (ignored_packets[packet->header])
-        return false;
+        return;
 
     StoCHandler handler = game_server_handler[packet->header];
     uint8_t *packet_raw = reinterpret_cast<uint8_t*>(packet);
@@ -343,7 +345,7 @@ static bool PacketHandler(GW::Packet::StoC::PacketBase *packet)
     printf("}\n");
 
     // Returns false means to forward the packet to the game
-    return false;
+    return;
 }
 
 static void GameLoop(IDirect3DDevice9* device)
@@ -356,7 +358,7 @@ static void GameLoop(IDirect3DDevice9* device)
 
         InitStoC();
         for (size_t i = 0; i < game_server_handler.size(); i++) {
-            GW::StoC::AddCallback(i, PacketHandler);
+            GW::StoC::RegisterPacketCallback(&hook_entries[i], i, PacketHandler);
         }
 
         GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "PacketLogger: Initialized");

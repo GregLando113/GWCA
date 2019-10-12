@@ -21,7 +21,7 @@ namespace GW {
 
         GWCA_API FriendList *GetFriendList();
 
-        GWCA_API Friend *GetFriend(wchar_t *account, wchar_t *playing);
+        GWCA_API Friend *GetFriend(wchar_t *alias, wchar_t *charname);
         GWCA_API Friend *GetFriend(uint32_t index);
         GWCA_API Friend *GetFriend(const uint8_t *uuid);
 

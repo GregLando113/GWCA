@@ -16,26 +16,26 @@ namespace {
     using namespace GW;
 
     typedef void(__fastcall *FriendStatusHandler_pt)(
-        FriendStatus status, const uint8_t *uuid, const wchar_t *name, const wchar_t *charname);
+        FriendStatus status, const uint8_t *uuid, const wchar_t *alias, const wchar_t *charname);
     FriendStatusHandler_pt RetFriendStatusHandler;
     FriendStatusHandler_pt FriendStatusHandler_Func;
 
     HookCallback<Friend *, FriendStatus, const wchar_t *, const wchar_t *> OnFriendStatus_callback;
     std::unordered_map<HookEntry *, FriendListMgr::FriendStatusCallback> FriendStatus_callbacks;
     void __fastcall OnFriendStatusHandler(FriendStatus status, 
-        const uint8_t *uuid, const wchar_t *name, const wchar_t *charname)
+        const uint8_t *uuid, const wchar_t *alias, const wchar_t *charname)
     {
         HookBase::EnterHook();
         Friend *_friend = FriendListMgr::GetFriend(uuid);
         HookStatus hook_status;
         if (_friend) {
             for (auto& it : FriendStatus_callbacks) {
-                it.second(&hook_status, _friend, status, name, charname);
+                it.second(&hook_status, _friend, status, alias, charname);
                 ++hook_status.altitude;
             }
         }
         if (!hook_status.blocked)
-            RetFriendStatusHandler(status, uuid, name, charname);
+            RetFriendStatusHandler(status, uuid, alias, charname);
         HookBase::LeaveHook();
     }
 
@@ -119,8 +119,8 @@ namespace GW {
         FriendStatus_callbacks.insert({entry, callback});
     }
 
-    Friend *FriendListMgr::GetFriend(wchar_t *account, wchar_t *playing) {
-        if (!(account || playing)) return NULL;
+    Friend *FriendListMgr::GetFriend(wchar_t *alias, wchar_t *playing) {
+        if (!(alias || playing)) return NULL;
         FriendList *fl = GetFriendList();
         if (!fl) return NULL;
         uint32_t n_friends = fl->number_of_friend;
@@ -130,7 +130,7 @@ namespace GW {
             if (it->type != FriendType_Friend) continue;
             if (n_friends == 0) break;
             --n_friends;
-            if (account && !wcsncmp(it->account, account, 20))
+            if (alias && !wcsncmp(it->alias, alias, 20))
                 return it;
             if (playing && !wcsncmp(it->charname, playing, 20))
                 return it;
@@ -205,6 +205,6 @@ namespace GW {
     {
         if (!_friend)
             return;
-        RemoveFriend_Func(_friend->uuid, _friend->account, 0);
+        RemoveFriend_Func(_friend->uuid, _friend->alias, 0);
     }
 } // namespace GW

@@ -42,6 +42,15 @@ namespace {
     typedef void(__fastcall *SetOnlineStatus_pt)(uint32_t status);
     SetOnlineStatus_pt SetOnlineStatus_Func;
 
+    // type:
+    //  1 = Friend
+    //  2 = Ignore
+    typedef void (__fastcall *AddFriend_pt)(const wchar_t *name, const wchar_t *alias, uint32_t type);
+    AddFriend_pt AddFriend_Func;
+
+    typedef void (__fastcall *RemoveFriend_pt)(const uint8_t *uuid, const wchar_t *name, uint32_t arg8);
+    RemoveFriend_pt RemoveFriend_Func;
+
     uintptr_t FriendList_Addr;
 
     void Init() {
@@ -67,6 +76,14 @@ namespace {
             HookBase::CreateHook(FriendStatusHandler_Func,
                 OnFriendStatusHandler, (void **)&RetFriendStatusHandler);
         }
+
+        AddFriend_Func = (AddFriend_pt)Scanner::Find(
+            "\x8B\x5D\x08\x83\xFB\x03\x74\x00\x83", "xxxxxxx?x", -0x46);
+        printf("[SCAN] AddFriend_Func = %p\n", AddFriend_Func);
+
+        RemoveFriend_Func = (RemoveFriend_pt)Scanner::Find(
+            "\x8B\x4D\x08\x8D\x50\x2C\x89\x48\x28", "xxxxxxxxx", -0x29);
+        printf("[SCAN] RemoveFriend_Func = %p\n", RemoveFriend_Func);
     }
 
     void Exit() {
@@ -164,4 +181,30 @@ namespace GW {
             return 0;
     }
 
+    static void InternalAddFriend(uint32_t type, const wchar_t *name, const wchar_t *alias)
+    {
+        wchar_t buffer[32];
+        if (!alias) {
+            wcsncpy(buffer, name, 32);
+            alias = buffer;
+        }
+        AddFriend_Func(name, alias, type);
+    }
+
+    void FriendListMgr::AddFriend(const wchar_t *name, const wchar_t *alias)
+    {
+        InternalAddFriend(1, name, alias);
+    }
+
+    void FriendListMgr::AddIgnore(const wchar_t *name, const wchar_t *alias)
+    {
+        InternalAddFriend(2, name, alias);
+    }
+
+    void FriendListMgr::RemoveFriend(Friend *_friend)
+    {
+        if (!_friend)
+            return;
+        RemoveFriend_Func(_friend->uuid, _friend->account, 0);
+    }
 } // namespace GW

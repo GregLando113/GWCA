@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
 namespace GW {
@@ -92,8 +93,10 @@ namespace GW {
         GWCA_API bool GetIsStorageOpen(void);
 
         // The callback should return false if it want to foward the info to Gw.
-        GWCA_API void SetOnItemClick(
-            std::function<void (uint32_t type, uint32_t slot, Bag *bag)> callback);
+        typedef HookCallback<uint32_t, uint32_t, Bag *> ItemClickCallback;
+        GWCA_API void RegisterItemClickCallback(
+            HookEntry *entry,
+            ItemClickCallback callback);
 
         // Returns the slot of the materials in the storage page. (-1 if not found)
         GWCA_API int GetMaterialSlot(uint32_t model_id);

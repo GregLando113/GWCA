@@ -22,7 +22,7 @@ namespace GW {
         /* +h0000 */ uint32_t type; // 0 = Friend, 1 = Ignore, 2 = Played, 3 = Trade
         /* +h0004 */ uint32_t status; // 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
         /* +h0008 */ uint8_t uuid[16];
-        /* +h0018 */ wchar_t account[20];
+        /* +h0018 */ wchar_t alias[20];
         /* +h002C */ wchar_t charname[20];
         /* +h0040 */ uint32_t friend_id;
         /* +h0044 */ uint32_t zone_id;

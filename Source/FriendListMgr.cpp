@@ -16,24 +16,40 @@ namespace {
     using namespace GW;
 
     typedef void(__fastcall *FriendStatusHandler_pt)(
-        FriendStatus status, const uint8_t *uuid, const wchar_t *name, const wchar_t *charname);
+        FriendStatus status, const uint8_t *uuid, const wchar_t *alias, const wchar_t *charname);
     FriendStatusHandler_pt RetFriendStatusHandler;
     FriendStatusHandler_pt FriendStatusHandler_Func;
 
-    std::function<void (Friend *f, FriendStatus status, const wchar_t *name, const wchar_t *charname)> OnFriendStatus_callback;
+    HookCallback<Friend *, FriendStatus, const wchar_t *, const wchar_t *> OnFriendStatus_callback;
+    std::unordered_map<HookEntry *, FriendListMgr::FriendStatusCallback> FriendStatus_callbacks;
     void __fastcall OnFriendStatusHandler(FriendStatus status, 
-        const uint8_t *uuid, const wchar_t *name, const wchar_t *charname)
+        const uint8_t *uuid, const wchar_t *alias, const wchar_t *charname)
     {
         HookBase::EnterHook();
         Friend *_friend = FriendListMgr::GetFriend(uuid);
-        if (_friend && OnFriendStatus_callback)
-            OnFriendStatus_callback(_friend, status, name, charname);
+        HookStatus hook_status;
+        if (_friend) {
+            for (auto& it : FriendStatus_callbacks) {
+                it.second(&hook_status, _friend, status, alias, charname);
+                ++hook_status.altitude;
+            }
+        }
+        if (!hook_status.blocked)
+            RetFriendStatusHandler(status, uuid, alias, charname);
         HookBase::LeaveHook();
-        RetFriendStatusHandler(status, uuid, name, charname);
     }
 
     typedef void(__fastcall *SetOnlineStatus_pt)(uint32_t status);
     SetOnlineStatus_pt SetOnlineStatus_Func;
+
+    // type:
+    //  1 = Friend
+    //  2 = Ignore
+    typedef void (__fastcall *AddFriend_pt)(const wchar_t *name, const wchar_t *alias, uint32_t type);
+    AddFriend_pt AddFriend_Func;
+
+    typedef void (__fastcall *RemoveFriend_pt)(const uint8_t *uuid, const wchar_t *name, uint32_t arg8);
+    RemoveFriend_pt RemoveFriend_Func;
 
     uintptr_t FriendList_Addr;
 
@@ -60,6 +76,14 @@ namespace {
             HookBase::CreateHook(FriendStatusHandler_Func,
                 OnFriendStatusHandler, (void **)&RetFriendStatusHandler);
         }
+
+        AddFriend_Func = (AddFriend_pt)Scanner::Find(
+            "\x8B\x5D\x08\x83\xFB\x03\x74\x00\x83", "xxxxxxx?x", -0x46);
+        printf("[SCAN] AddFriend_Func = %p\n", AddFriend_Func);
+
+        RemoveFriend_Func = (RemoveFriend_pt)Scanner::Find(
+            "\x8B\x4D\x08\x8D\x50\x2C\x89\x48\x28", "xxxxxxxxx", -0x29);
+        printf("[SCAN] RemoveFriend_Func = %p\n", RemoveFriend_Func);
     }
 
     void Exit() {
@@ -88,14 +112,15 @@ namespace GW {
             SetOnlineStatus_Func((uint32_t)status);
     }
 
-    void FriendListMgr::SetOnFriendStatusCallback(
-        std::function<void (Friend *f, FriendStatus status, const wchar_t *name, const wchar_t *charname)> callback)
+    void FriendListMgr::RegisterFriendStatusCallback(
+        HookEntry *entry,
+        FriendStatusCallback callback)
     {
-        OnFriendStatus_callback = callback;
+        FriendStatus_callbacks.insert({entry, callback});
     }
 
-    Friend *FriendListMgr::GetFriend(wchar_t *account, wchar_t *playing) {
-        if (!(account || playing)) return NULL;
+    Friend *FriendListMgr::GetFriend(wchar_t *alias, wchar_t *playing) {
+        if (!(alias || playing)) return NULL;
         FriendList *fl = GetFriendList();
         if (!fl) return NULL;
         uint32_t n_friends = fl->number_of_friend;
@@ -105,7 +130,7 @@ namespace GW {
             if (it->type != FriendType_Friend) continue;
             if (n_friends == 0) break;
             --n_friends;
-            if (account && !wcsncmp(it->account, account, 20))
+            if (alias && !wcsncmp(it->alias, alias, 20))
                 return it;
             if (playing && !wcsncmp(it->charname, playing, 20))
                 return it;
@@ -156,4 +181,30 @@ namespace GW {
             return 0;
     }
 
+    static void InternalAddFriend(uint32_t type, const wchar_t *name, const wchar_t *alias)
+    {
+        wchar_t buffer[32];
+        if (!alias) {
+            wcsncpy(buffer, name, 32);
+            alias = buffer;
+        }
+        AddFriend_Func(name, alias, type);
+    }
+
+    void FriendListMgr::AddFriend(const wchar_t *name, const wchar_t *alias)
+    {
+        InternalAddFriend(1, name, alias);
+    }
+
+    void FriendListMgr::AddIgnore(const wchar_t *name, const wchar_t *alias)
+    {
+        InternalAddFriend(2, name, alias);
+    }
+
+    void FriendListMgr::RemoveFriend(Friend *_friend)
+    {
+        if (!_friend)
+            return;
+        RemoveFriend_Func(_friend->uuid, _friend->alias, 0);
+    }
 } // namespace GW

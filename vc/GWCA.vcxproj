@@ -72,6 +72,7 @@
     <ClInclude Include="..\Include\GWCA\Packets\CtoSHeaders.h" />
     <ClInclude Include="..\Include\GWCA\Packets\StoC.h" />
     <ClInclude Include="..\Include\GWCA\Utilities\Export.h" />
+    <ClInclude Include="..\Include\GWCA\Utilities\Hook.h" />
     <ClInclude Include="..\Include\GWCA\Utilities\Hooker.h" />
     <ClInclude Include="..\Include\GWCA\Utilities\Macros.h" />
     <ClInclude Include="..\Include\GWCA\Utilities\MemoryPatcher.h" />

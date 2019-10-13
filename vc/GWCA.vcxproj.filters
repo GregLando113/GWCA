@@ -223,6 +223,9 @@
     <ClInclude Include="..\Source\stdafx.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\GWCA\Utilities\Hook.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\AgentMgr.cpp">

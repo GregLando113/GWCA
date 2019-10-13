@@ -34,7 +34,7 @@ namespace {
     ItemClick_pt RetItemClick;
     ItemClick_pt ItemClick_Func;
 
-    static std::function<void (uint32_t type, uint32_t slot, Bag *bag)> ItemClickCallback;
+    std::unordered_map<HookEntry *, Items::ItemClickCallback> ItemClick_callbacks;
     void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *info) {
         HookBase::EnterHook();
         // click type:
@@ -49,11 +49,15 @@ namespace {
         uint32_t slot = info[1] - 2; // for some reason the slot is offset by 2
 
         Bag *bag = Items::GetBag(*bag_id + 1);
-
-        if (Verify(bag) && ItemClickCallback)
-            ItemClickCallback(type, slot, bag);
-
-        RetItemClick(bag_id, edx, info);
+        GW::HookStatus status;
+        if (bag != nullptr) {
+            for (auto& it : ItemClick_callbacks) {
+                it.second(&status, type, slot, bag);
+                ++status.altitude;
+            }
+        }
+        if (!status.blocked)
+            RetItemClick(bag_id, edx, info);
         HookBase::LeaveHook();
     }
 
@@ -436,8 +440,11 @@ namespace GW {
             return false;
     }
 
-    void Items::SetOnItemClick(std::function<void(uint32_t type, uint32_t slot, Bag *bag)> callback) {
-        ItemClickCallback = callback;
+    void Items::RegisterItemClickCallback(
+        HookEntry *entry,
+        ItemClickCallback callback)
+    {
+        ItemClick_callbacks.insert({entry, callback});
     }
 
     void Items::AsyncGetItemByName(Item *item, std::wstring& res) {

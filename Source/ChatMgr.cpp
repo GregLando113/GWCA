@@ -118,6 +118,8 @@ namespace {
     std::unordered_map<HookEntry *, Chat::ChatEventCallback>    ChatEvent_callbacks;
     std::unordered_map<HookEntry *, Chat::LocalMessageCallback> LocalMessage_callbacks;
     std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
+	std::unordered_map<HookEntry*, Chat::PrintChatCallback>      PrintChat_callbacks;
+
 
     typedef void(__fastcall *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
     ChatEvent_pt RetChatEvent;
@@ -243,6 +245,17 @@ namespace {
     {
         HookBase::EnterHook();
         assert(ChatBuffer_Addr && 0 <= channel && channel < Chat::CHANNEL_COUNT);
+
+		HookStatus status;
+		for (auto& it : PrintChat_callbacks) {
+			it.second(&status, channel, str, timestamp, reprint);
+			++status.altitude;
+		}
+		if (status.blocked) {
+			RetPrintChat(ctx, thiscall, channel, str, timestamp, reprint);
+			HookBase::LeaveHook();
+			return;
+		}
 
         if (!ShowTimestamps) {
             RetPrintChat(ctx, thiscall, channel, str, timestamp, reprint);
@@ -405,6 +418,13 @@ namespace GW {
     {
         Whisper_callbacks.insert({entry, callback});
     }
+
+	void Chat::RegisterPrintChatCallback(
+		HookEntry* entry,
+		PrintChatCallback callback)
+	{
+		PrintChat_callbacks.insert({ entry, callback });
+	}
 
     void Chat::SetOpenLinks(bool b) {
         open_links = b;

@@ -70,7 +70,7 @@ namespace GW {
         GWCA_API void DeleteCommand(std::wstring cmd);
 
         GWCA_API void ToggleTimestamps(bool enable);
-        GWCA_API void SetTimestampsFormat(bool use_24h);
+        GWCA_API void SetTimestampsFormat(bool use_24h, bool show_timestamp_seconds = false);
         GWCA_API void SetTimestampsColor(Color color);
 
         GWCA_API void SetOpenLinks(bool b);
@@ -101,5 +101,10 @@ namespace GW {
         GWCA_API void RegisterWhisperCallback(
             HookEntry *entry,
             WhisperCallback callback);
+
+        typedef HookCallback<wchar_t*> StartWhisperCallback;
+        GWCA_API void RegisterStartWhisperCallback(
+            HookEntry* entry,
+            StartWhisperCallback callback);
     };
 }

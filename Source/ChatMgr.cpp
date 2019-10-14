@@ -421,11 +421,27 @@ namespace GW {
         SendChat_callbacks.insert({entry, callback});
     }
 
+    void Chat::RemoveSendChatCallback(
+        HookEntry *entry)
+    {
+        auto it = SendChat_callbacks.find(entry);
+        if (it != SendChat_callbacks.end())
+            SendChat_callbacks.erase(it);
+    }
+
     void Chat::RegisterChatEventCallback(
         HookEntry *entry,
         ChatEventCallback callback)
     {
         ChatEvent_callbacks.insert({entry, callback});
+    }
+
+    void Chat::RemoveChatEventCallback(
+        HookEntry *entry)
+    {
+        auto it = ChatEvent_callbacks.find(entry);
+        if (it != ChatEvent_callbacks.end())
+            ChatEvent_callbacks.erase(it);
     }
 
     void Chat::RegisterLocalMessageCallback(
@@ -435,6 +451,14 @@ namespace GW {
         LocalMessage_callbacks.insert({entry, callback});
     }
 
+    void Chat::RemoveLocalMessageCallback(
+        HookEntry *entry)
+    {
+        auto it = LocalMessage_callbacks.find(entry);
+        if (it != LocalMessage_callbacks.end())
+            LocalMessage_callbacks.erase(it);
+    }
+
     void Chat::RegisterWhisperCallback(
         HookEntry *entry,
         WhisperCallback callback)
@@ -442,11 +466,27 @@ namespace GW {
         Whisper_callbacks.insert({entry, callback});
     }
 
+    void Chat::RemoveRegisterWhisperCallback(
+        HookEntry *entry)
+    {
+        auto it = Whisper_callbacks.find(entry);
+        if (it != Whisper_callbacks.end())
+            Whisper_callbacks.erase(it);
+    }
+
     void Chat::RegisterStartWhisperCallback(
         HookEntry* entry,
         StartWhisperCallback callback)
     {
-        StartWhisper_callbacks.insert({ entry, callback });
+        StartWhisper_callbacks.insert({entry, callback});
+    }
+
+    void Chat::RemoveStartWhisperCallback(
+        HookEntry *entry)
+    {
+        auto it = StartWhisper_callbacks.find(entry);
+        if (it != StartWhisper_callbacks.end())
+            StartWhisper_callbacks.erase(it);
     }
 
     void Chat::SetOpenLinks(bool b) {

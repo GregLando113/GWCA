@@ -87,24 +87,39 @@ namespace GW {
             HookEntry *entry,
             SendChatCallback callback);
 
+        GWCA_API void RemoveSendChatCallback(
+            HookEntry *entry);
+
         typedef HookCallback<uint32_t, uint32_t, wchar_t *, void *> ChatEventCallback;
         GWCA_API void RegisterChatEventCallback(
             HookEntry *entry,
             ChatEventCallback callback);
+
+        GWCA_API void RemoveChatEventCallback(
+            HookEntry *entry);
 
         typedef HookCallback<int, wchar_t *> LocalMessageCallback;
         GWCA_API void RegisterLocalMessageCallback(
             HookEntry *entry,
             LocalMessageCallback callback);
 
+        GWCA_API void RemoveLocalMessageCallback(
+            HookEntry *entry);
+
         typedef HookCallback<wchar_t *, wchar_t *> WhisperCallback;
         GWCA_API void RegisterWhisperCallback(
             HookEntry *entry,
             WhisperCallback callback);
 
+        GWCA_API void RemoveRegisterWhisperCallback(
+            HookEntry *entry);
+
         typedef HookCallback<wchar_t*> StartWhisperCallback;
         GWCA_API void RegisterStartWhisperCallback(
             HookEntry* entry,
             StartWhisperCallback callback);
+
+        GWCA_API void RemoveStartWhisperCallback(
+            HookEntry *entry);
     };
 }

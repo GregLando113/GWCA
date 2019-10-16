@@ -39,6 +39,9 @@ namespace GW {
             HookEntry *entry,
             FriendStatusCallback callback);
 
+        GWCA_API void RemoveFriendStatusCallback(
+            HookEntry *entry);
+
         GWCA_API void AddFriend(const wchar_t *name, const wchar_t *alias = nullptr);
         GWCA_API void AddIgnore(const wchar_t *name, const wchar_t *alias = nullptr);
         GWCA_API void RemoveFriend(Friend *_friend);

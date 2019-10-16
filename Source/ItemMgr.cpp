@@ -447,6 +447,14 @@ namespace GW {
         ItemClick_callbacks.insert({entry, callback});
     }
 
+    void Items::RemoveItemClickCallback(
+        HookEntry *entry)
+    {
+        auto it = ItemClick_callbacks.find(entry);
+        if (it != ItemClick_callbacks.end())
+            ItemClick_callbacks.erase(it);
+    }
+
     void Items::AsyncGetItemByName(Item *item, std::wstring& res) {
         if (!item) return;
         if (!item || !item->complete_name_enc) return;

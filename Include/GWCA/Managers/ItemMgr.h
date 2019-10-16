@@ -98,6 +98,9 @@ namespace GW {
             HookEntry *entry,
             ItemClickCallback callback);
 
+        GWCA_API void RemoveItemClickCallback(
+            HookEntry *entry);
+
         // Returns the slot of the materials in the storage page. (-1 if not found)
         GWCA_API int GetMaterialSlot(uint32_t model_id);
         GWCA_API int GetMaterialSlot(Item *item);

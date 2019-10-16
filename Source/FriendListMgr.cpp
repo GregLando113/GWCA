@@ -119,6 +119,14 @@ namespace GW {
         FriendStatus_callbacks.insert({entry, callback});
     }
 
+    void FriendListMgr::RemoveFriendStatusCallback(
+            HookEntry *entry)
+    {
+        auto it = FriendStatus_callbacks.find(entry);
+        if (it != FriendStatus_callbacks.end())
+            FriendStatus_callbacks.erase(it);
+    }
+
     Friend *FriendListMgr::GetFriend(wchar_t *alias, wchar_t *playing) {
         if (!(alias || playing)) return NULL;
         FriendList *fl = GetFriendList();

@@ -46,7 +46,7 @@ namespace {
 
     bool ShowTimestamps = false;
     bool Timestamp_24hFormat = false;
-	bool Timestamp_seconds = false;
+    bool Timestamp_seconds = false;
     Chat::Color TimestampsColor = COLOR_RGB(0xff, 0xff, 0xff);
 
     std::unordered_map<std::wstring, Chat::CmdCB> SlashCmdList;
@@ -119,8 +119,8 @@ namespace {
     std::unordered_map<HookEntry *, Chat::ChatEventCallback>    ChatEvent_callbacks;
     std::unordered_map<HookEntry *, Chat::LocalMessageCallback> LocalMessage_callbacks;
     std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
-	std::unordered_map<HookEntry*, Chat::PrintChatCallback>      PrintChat_callbacks;
-	std::unordered_map<HookEntry*, Chat::StartWhisperCallback>      StartWhisper_callbacks;
+    std::unordered_map<HookEntry*, Chat::PrintChatCallback>      PrintChat_callbacks;
+    std::unordered_map<HookEntry *, Chat::StartWhisperCallback> StartWhisper_callbacks;
 
 
     typedef void(__fastcall *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
@@ -238,20 +238,20 @@ namespace {
         HookBase::LeaveHook();
     }
 
-	typedef void(__fastcall* StartWhisper_pt)(uint32_t unk, wchar_t* name, wchar_t* name2);
-	StartWhisper_pt StartWhisper_Func;
-	StartWhisper_pt RetStartWhisper;
-	void __fastcall OnStartWhisper(uint32_t unk, wchar_t* name, wchar_t* name2) {
-		GW::HookBase::EnterHook();
-		HookStatus status;
-		for (auto& it : StartWhisper_callbacks) {
-			it.second(&status, name);
-			++status.altitude;
-		}
-		if (!status.blocked)
-			RetStartWhisper(unk, name, name2);
-		GW::HookBase::LeaveHook();
-	}
+    typedef void(__fastcall* StartWhisper_pt)(uint32_t unk, wchar_t* name, wchar_t* name2);
+    StartWhisper_pt StartWhisper_Func;
+    StartWhisper_pt RetStartWhisper;
+    void __fastcall OnStartWhisper(uint32_t unk, wchar_t* name, wchar_t* name2) {
+        GW::HookBase::EnterHook();
+        HookStatus status;
+        for (auto& it : StartWhisper_callbacks) {
+            it.second(&status, name);
+            ++status.altitude;
+        }
+        if (!status.blocked)
+            RetStartWhisper(unk, name, name2);
+        GW::HookBase::LeaveHook();
+    }
 
     typedef void (GWCALL *PrintChat_pt)(void *ctx, uint32_t thiscall,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint);
@@ -290,8 +290,8 @@ namespace {
         WORD minute = localtime.wMinute;
         WORD second = localtime.wSecond;
 
-		if(!Timestamp_24hFormat)
-			hour %= 12;
+        if(!Timestamp_24hFormat)
+            hour %= 12;
 
         wchar_t buffer[1024];
         wchar_t t_buffer[16];
@@ -341,9 +341,9 @@ namespace {
             "\x81\xEC\x1C\x01\x00\x00\x56\x8B\xF2", "xxxxxxxxx", -3);
         printf("[SCAN] SendChat = %p\n", SendChat_Func);
 
-		StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
-			"\x55\x8B\xEC\x51\x53\x56\x8B\xF1\x57\xBA\x05\x00\x00\x00", "xxxxxxxxxxxxxx", 0);
-		printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
+        StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
+            "\x55\x8B\xEC\x51\x53\x56\x8B\xF1\x57\xBA\x05\x00\x00\x00", "xxxxxxxxxxxxxx", 0);
+        printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
 
         OpenTemplate_Func = (OpenTemplate_pt)Scanner::Find(
             "\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
@@ -373,8 +373,8 @@ namespace {
                 IsTyping_Addr = *(uintptr_t *)address;
         }
 
-		if (Verify(StartWhisper_Func))
-			HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
+        if (Verify(StartWhisper_Func))
+            HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
         if (Verify(ChatEvent_Func))
             HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
         if (Verify(GetSenderColor_Func))
@@ -394,8 +394,8 @@ namespace {
     }
 
     void Exit() {
-		if(StartWhisper_Func)
-			HookBase::RemoveHook(StartWhisper_Func);
+        if(StartWhisper_Func)
+            HookBase::RemoveHook(StartWhisper_Func);
         if (ChatEvent_Func)
             HookBase::RemoveHook(ChatEvent_Func);
         if (GetSenderColor_Func)
@@ -433,11 +433,27 @@ namespace GW {
         SendChat_callbacks.insert({entry, callback});
     }
 
+    void Chat::RemoveSendChatCallback(
+        HookEntry *entry)
+    {
+        auto it = SendChat_callbacks.find(entry);
+        if (it != SendChat_callbacks.end())
+            SendChat_callbacks.erase(it);
+    }
+
     void Chat::RegisterChatEventCallback(
         HookEntry *entry,
         ChatEventCallback callback)
     {
         ChatEvent_callbacks.insert({entry, callback});
+    }
+
+    void Chat::RemoveChatEventCallback(
+        HookEntry *entry)
+    {
+        auto it = ChatEvent_callbacks.find(entry);
+        if (it != ChatEvent_callbacks.end())
+            ChatEvent_callbacks.erase(it);
     }
 
     void Chat::RegisterLocalMessageCallback(
@@ -447,6 +463,14 @@ namespace GW {
         LocalMessage_callbacks.insert({entry, callback});
     }
 
+    void Chat::RemoveLocalMessageCallback(
+        HookEntry *entry)
+    {
+        auto it = LocalMessage_callbacks.find(entry);
+        if (it != LocalMessage_callbacks.end())
+            LocalMessage_callbacks.erase(it);
+    }
+
     void Chat::RegisterWhisperCallback(
         HookEntry *entry,
         WhisperCallback callback)
@@ -454,19 +478,35 @@ namespace GW {
         Whisper_callbacks.insert({entry, callback});
     }
 
-	void Chat::RegisterPrintChatCallback(
-		HookEntry* entry,
-		PrintChatCallback callback)
-	{
-		PrintChat_callbacks.insert({ entry, callback });
-	}
+    void Chat::RegisterPrintChatCallback(
+        HookEntry* entry,
+        PrintChatCallback callback)
+        {
+            PrintChat_callbacks.insert({ entry, callback });
+        }
 
-	void Chat::RegisterStartWhisperCallback(
-		HookEntry* entry,
-		StartWhisperCallback callback)
-	{
-		StartWhisper_callbacks.insert({ entry, callback });
-	}
+    void Chat::RemoveRegisterWhisperCallback(
+        HookEntry *entry)
+    {
+        auto it = Whisper_callbacks.find(entry);
+        if (it != Whisper_callbacks.end())
+            Whisper_callbacks.erase(it);
+    }
+
+    void Chat::RegisterStartWhisperCallback(
+        HookEntry* entry,
+        StartWhisperCallback callback)
+    {
+        StartWhisper_callbacks.insert({entry, callback});
+    }
+
+    void Chat::RemoveStartWhisperCallback(
+        HookEntry *entry)
+    {
+        auto it = StartWhisper_callbacks.find(entry);
+        if (it != StartWhisper_callbacks.end())
+            StartWhisper_callbacks.erase(it);
+    }
 
     void Chat::SetOpenLinks(bool b) {
         open_links = b;
@@ -697,7 +737,7 @@ namespace GW {
 
     void Chat::SetTimestampsFormat(bool use_24h, bool show_timestamp_seconds) {
         Timestamp_24hFormat = use_24h;
-		Timestamp_seconds = show_timestamp_seconds;
+        Timestamp_seconds = show_timestamp_seconds;
     }
 
     void Chat::SetTimestampsColor(Color color) {

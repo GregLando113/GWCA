@@ -234,62 +234,61 @@ namespace GW {
         return L"";
     }
 
-	wchar_t* Agents::GetAgentEncName(Agent* agent) {
-		if (!agent) 
-			return nullptr;
-		if (agent->GetIsCharacterType()) {
-			if (agent->login_number) {
-				PlayerArray players = GameContext::instance()->world->players;
-				if (!players.valid()) 
-					return nullptr;
-				Player* player = &players[agent->login_number];
-				if (player)
-					return player->name_enc;
-			}
-			// @Remark:
-			// For living npcs it's not elegant, but the game does it as well. See arround GetLivingName(AgentID id)@007C2A00.
-			// It first look in the AgentInfo arrays, if it doesn't find it, it does a bunch a shit and fallback on NPCArray.
-			// If we only use NPCArray, we have a problem because 2 agents can share the same PlayerNumber.
-			// In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
-			// But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
-			Array<AgentInfo> agent_infos = GameContext::instance()->world->agent_infos;
-			if (agent->agent_id >= agent_infos.size()) return nullptr;
-			if (agent_infos[agent->agent_id].name_enc)
-				return agent_infos[agent->agent_id].name_enc;
-			NPCArray npcs = GameContext::instance()->world->npcs;
-			if (!npcs.valid()) 
-				return nullptr;
-			return npcs[agent->player_number].name_enc;
-		}
-		if (agent->GetIsGadgetType()) {
-			AgentContext* ctx = GameContext::instance()->agent;
-			GadgetContext* gadget = GameContext::instance()->gadget;
-			if (!ctx || !gadget) return nullptr;
-			auto* GadgetIds = ctx->gadget_data[agent->agent_id].gadget_ids;
-			if (!GadgetIds) 
-				return nullptr;
-			if (GadgetIds->name_enc)
-				return GadgetIds->name_enc;
-			size_t id = GadgetIds->gadget_id;
-			if (gadget->GadgetInfo.size() <= id) return nullptr;
-			if (gadget->GadgetInfo[id].name_enc)
-				return gadget->GadgetInfo[id].name_enc;
-			return nullptr;
-		}
-		if (agent->GetIsItemType()) {
-			ItemArray items = Items::GetItemArray();
-			if (!items.valid()) return nullptr;
-			Item* item = items[agent->item_id];
-			if (!item || !item->name_enc) return nullptr;
-			return item->name_enc;
-		}
-		return nullptr;
-	}
+    wchar_t* Agents::GetAgentEncName(Agent* agent) {
+        if (!agent) 
+            return nullptr;
+        if (agent->GetIsCharacterType()) {
+            if (agent->login_number) {
+                PlayerArray players = GameContext::instance()->world->players;
+                if (!players.valid()) 
+                    return nullptr;
+                Player* player = &players[agent->login_number];
+                if (player)
+                    return player->name_enc;
+            }
+            // @Remark:
+            // For living npcs it's not elegant, but the game does it as well. See arround GetLivingName(AgentID id)@007C2A00.
+            // It first look in the AgentInfo arrays, if it doesn't find it, it does a bunch a shit and fallback on NPCArray.
+            // If we only use NPCArray, we have a problem because 2 agents can share the same PlayerNumber.
+            // In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
+            // But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
+            Array<AgentInfo> agent_infos = GameContext::instance()->world->agent_infos;
+            if (agent->agent_id >= agent_infos.size()) return nullptr;
+            if (agent_infos[agent->agent_id].name_enc)
+                return agent_infos[agent->agent_id].name_enc;
+            NPCArray npcs = GameContext::instance()->world->npcs;
+            if (!npcs.valid()) 
+                return nullptr;
+            return npcs[agent->player_number].name_enc;
+        }
+        if (agent->GetIsGadgetType()) {
+            AgentContext* ctx = GameContext::instance()->agent;
+            GadgetContext* gadget = GameContext::instance()->gadget;
+            if (!ctx || !gadget) return nullptr;
+            auto* GadgetIds = ctx->gadget_data[agent->agent_id].gadget_ids;
+            if (!GadgetIds) 
+                return nullptr;
+            if (GadgetIds->name_enc)
+                return GadgetIds->name_enc;
+            size_t id = GadgetIds->gadget_id;
+            if (gadget->GadgetInfo.size() <= id) return nullptr;
+            if (gadget->GadgetInfo[id].name_enc)
+                return gadget->GadgetInfo[id].name_enc;
+            return nullptr;
+        }
+        if (agent->GetIsItemType()) {
+            ItemArray items = Items::GetItemArray();
+            if (!items.valid()) return nullptr;
+            Item* item = items[agent->item_id];
+            if (!item || !item->name_enc) return nullptr;
+            return item->name_enc;
+        }
+        return nullptr;
+    }
 
     void Agents::AsyncGetAgentName(Agent *agent, std::wstring& res) {
-        res = L"";
-		wchar_t* str = GetAgentEncName(agent);
-		if (!str) return;
-		UI::AsyncDecodeStr(str, &res);
+        wchar_t* str = GetAgentEncName(agent);
+        if (!str) return;
+        UI::AsyncDecodeStr(str, &res);
     }
 } // namespace GW

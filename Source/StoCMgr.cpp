@@ -87,13 +87,11 @@ namespace {
             original_functions[i] = game_server_handlers[i];
     }
 
-    bool DisableHooks() {
-        if (original_functions == nullptr) 
-			return true;
+    void DisableHooks() {
+        if (original_functions == nullptr) return;
         for (uint32_t i = 0; i < game_server_handlers.size(); ++i)
             game_server_handlers[i].handler_func = original_functions[i].handler_func;
         delete[] original_functions;
-		return true;
     }
 }
 

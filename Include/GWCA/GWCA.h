@@ -33,6 +33,6 @@ For getting me to not make everything singletons :P
 
 namespace GW {
     bool Initialize();
-    bool DisableHooks();
+    void DisableHooks();
     void Terminate();
 }

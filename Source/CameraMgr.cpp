@@ -88,7 +88,7 @@ namespace {
             patch_fov->TooglePatch(true);
     }
 
-    void DisableHooks() {
+    bool DisableHooks() {
         if (patch_max_dist)
             patch_max_dist->TooglePatch(false);
         if (patch_cam_update)
@@ -97,6 +97,7 @@ namespace {
             patch_fog->TooglePatch(false);
         if (patch_fov)
             patch_fov->TooglePatch(false);
+		return true;
     }
 }
 

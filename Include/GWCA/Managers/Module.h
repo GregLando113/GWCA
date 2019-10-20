@@ -13,6 +13,6 @@ namespace GW {
         // Call those from game thread to be safe
         // Do not free trampoline
         void       (*enable_hooks)();
-        void       (*disable_hooks)();
+        bool       (*disable_hooks)();
     };
 }

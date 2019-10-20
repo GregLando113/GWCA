@@ -14,6 +14,7 @@ namespace {
 
     uint32_t last_identifier = 0;
     bool render_state = false;
+	bool hooks_enabled = false;
 
     typedef void(__fastcall *Render_t)(void*);
     uintptr_t *g__thingy;
@@ -65,10 +66,18 @@ namespace {
 
     void EnableHooks() {
         *g__thingy = (uintptr_t)gameLoopHook;
+		hooks_enabled = true;
     }
 
-    void DisableHooks() {
-        *g__thingy = (uintptr_t)g__thingyret;
+    bool DisableHooks() {
+		if (!hooks_enabled)
+			return true;
+		if (!calls.empty())
+			return false;
+		*g__thingy = (uintptr_t)g__thingyret;
+		hooks_enabled = false;
+		return true;
+		
     }
 }
 
@@ -100,28 +109,6 @@ namespace GW {
             RETN
         }
     }
-
-#if 0
-    void GameThread::ToggleRenderHook() {
-        static uint8_t restorebuf[5];
-        DWORD dwProt;
-
-        render_state = !render_state;
-
-        if (render_state) {
-            memcpy(restorebuf, (void *)MemoryMgr::RenderLoopLocation, 5);
-
-            VirtualProtect((void *)MemoryMgr::RenderLoopLocation, 5, PAGE_EXECUTE_READWRITE, &dwProt);
-            memset((void *)MemoryMgr::RenderLoopLocation, 0xE9, 1);
-            *(uint32_t *)(MemoryMgr::RenderLoopLocation + 1) = (uint32_t)((uintptr_t)renderHook - MemoryMgr::RenderLoopLocation) - 5;
-            VirtualProtect((void *)MemoryMgr::RenderLoopLocation, 5, dwProt, &dwProt);
-        } else {
-            VirtualProtect((void *)MemoryMgr::RenderLoopLocation, 5, PAGE_EXECUTE_READWRITE, &dwProt);
-            memcpy((void *)MemoryMgr::RenderLoopLocation, restorebuf, 5);
-            VirtualProtect((void *)MemoryMgr::RenderLoopLocation, 5, dwProt, &dwProt);
-        }
-    }
-#endif
 
     void GameThread::Enqueue(std::function<void()> f) {
         EnterCriticalSection(&criticalsection);

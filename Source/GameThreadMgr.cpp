@@ -14,6 +14,7 @@ namespace {
 
     uint32_t last_identifier = 0;
     bool render_state = false;
+	bool hooks_enabled = false;
 
     typedef void(__fastcall *Render_t)(void*);
     uintptr_t *g__thingy;
@@ -65,10 +66,18 @@ namespace {
 
     void EnableHooks() {
         *g__thingy = (uintptr_t)gameLoopHook;
+		hooks_enabled = true;
     }
 
-    void DisableHooks() {
-        *g__thingy = (uintptr_t)g__thingyret;
+    bool DisableHooks() {
+		if (!hooks_enabled)
+			return true;
+		if (!calls.empty())
+			return false;
+		*g__thingy = (uintptr_t)g__thingyret;
+		hooks_enabled = false;
+		return true;
+		
     }
 }
 

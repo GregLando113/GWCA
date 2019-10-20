@@ -41,6 +41,7 @@ namespace GW {
     static uintptr_t base_ptr;
 
     bool Initialize() {
+		modules.push_back(&GameThreadModule);
         modules.push_back(&UIModule);
         modules.push_back(&MapModule);
         modules.push_back(&ChatModule);
@@ -57,7 +58,6 @@ namespace GW {
         modules.push_back(&RenderModule);
         modules.push_back(&MerchantModule);
         modules.push_back(&SkillbarModule);
-        modules.push_back(&GameThreadModule);
         modules.push_back(&FriendListModule);
 
         if (MemoryMgr::Scan()) {
@@ -87,12 +87,15 @@ namespace GW {
         }
     }
 
-    void DisableHooks() {
-        HookBase::DisableHooks();
+    bool DisableHooks() {
         for (Module *module : modules) {
-            if (module->disable_hooks)
-                module->disable_hooks();
+			if (module->disable_hooks) {
+				if (!module->disable_hooks())
+					return false;
+			}
         }
+		HookBase::DisableHooks();
+		return true;
     }
 
     void Terminate() {

@@ -49,6 +49,8 @@ static volatile bool running;
 static StoCHandlerArray  game_server_handler;
 static std::vector<bool> ignored_packets;
 static std::vector<GW::HookEntry> hook_entries;
+static FILE* stdout_proxy;
+static FILE* stderr_proxy;
 
 static void InitStoC()
 {
@@ -148,8 +150,6 @@ template<typename T>
 static void Serialize(uint8_t **bytes, T *val)
 {
     uint8_t *b = *bytes;
-    // if we want to allign
-    // b = (uint8_t*)(((uintptr_t)b + (sizeof(T) - 1)) & ~(sizeof(T) - 1));
     memcpy(val, b, sizeof(T));
     *bytes = b + sizeof(T);
 }
@@ -252,9 +252,9 @@ static void PrintField(FieldType field, uint32_t count, uint8_t **bytes, uint32_
         Serialize<uint32_t>(bytes, &length);
         uint8_t *end = *bytes + (count * 2);
         printf("Array16(%lu) {\n", length);
-        uint16_t val;
+        uint32_t val;
         for (size_t i = 0; i < length; i++) {
-            Serialize<uint16_t>(bytes, &val);
+            Serialize<uint32_t>(bytes, &val);
             PrintIndent(indent + 4);
             printf("[%zu] => %u,\n", i, val);
         }
@@ -380,9 +380,14 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
     HMODULE hModule = static_cast<HMODULE>(lpModule);
 
     AllocConsole();
-    FILE* fh;
-    freopen_s(&fh, "CONOUT$", "w", stdout);
-    freopen_s(&fh, "CONOUT$", "w", stderr);
+#if 0
+    // If you replace the above "#if 0" by "#if 1", you will log
+    // the stdout in "log.txt" which will be in your "Gw.exe" folder.
+    freopen_s(&stdout_proxy, "log.txt", "w", stdout);
+#else
+    freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
+#endif
+    freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
     SetConsoleTitle("GWTB++ Debug Console");
 
     GW::Initialize();
@@ -401,6 +406,10 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
     // practically a short sleep is fine.
     Sleep(16);
     GW::Terminate();
+    if (stdout_proxy)
+        fclose(stdout_proxy);
+    if (stderr_proxy)
+        fclose(stderr_proxy);
     FreeConsole();
 
     FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);

@@ -94,22 +94,30 @@ namespace GW {
         CtoS::SendPacket(0xC, CtoGS_MSGChangeSecondary, agent_id, profession);
     }
 
-    void SkillbarMgr::LoadSkillbar(uint32_t *skill_ids, int hero_index) {
+    void SkillbarMgr::LoadSkillbar(uint32_t *skills, size_t n_skills, int hero_index) {
+        uint32_t skill_ids[8] = {0};
+        memcpy(skill_ids, skills, n_skills * sizeof(uint32_t));
         AgentID agent_id = Agents::GetHeroAgentID(hero_index);
         CtoS::SendPacket(0x2C, CtoGS_MSGLoadSkillbar, agent_id, 0x8,
             skill_ids[0], skill_ids[1], skill_ids[2], skill_ids[3], skill_ids[4],
             skill_ids[5], skill_ids[6], skill_ids[7]);
     }
 
-    static bool decode_skill_template(const char *temp, int *attrib_ids, int *attrib_vals,
-        int *attrib_count, int *skill_ids, int *skill_count,
-        Constants::Profession *primary, Constants::Profession *secondary)
+    void SkillbarMgr::LoadSkillbar(Constants::SkillID *skills, size_t n_skills, int hero_index) {
+        uint32_t skill_ids[8];
+        assert(n_skills <= _countof(skill_ids));
+        for (size_t i = 0; i < n_skills; i++)
+            skill_ids[i] = static_cast<uint32_t>(skills[i]);
+        return LoadSkillbar(skill_ids, n_skills, hero_index);
+    }
+
+    bool SkillbarMgr::DecodeSkillTemplate(SkillTemplate *result, const char *temp)
     {
         const int SKILL_MAX = 3410; // @Cleanup: This should go somewhere else (it could be readed from the client)
         const int ATTRIBUTE_MAX = 44; // @Cleanup: This should go somewhere else (it could be readed from the client)
 
-        int _skill_count = 0;
-        int _attrib_count = 0;
+        int skill_count = 0;
+        int attrib_count = 0;
 
         size_t len = strlen(temp);
         // char *bitStr = new char[len * 6]; // @Enhancement: this doesn't need to be a heap alloc.
@@ -143,33 +151,45 @@ namespace GW {
         if (prof1 <= 0 || prof2 < 0 || prof1 > 10 || prof2 > 10) return false;
 
         // ATTRIBUTES
-        _attrib_count = _ReadBits(&it, 4);
+        attrib_count = _ReadBits(&it, 4);
+        if (attrib_count >= _countof(result->attributes)) {
+            fprintf(stderr, "Found too many attributes %d in the template '%s'\n", attrib_count, temp);
+            return false;
+        }
+
         int bits_per_attr = _ReadBits(&it, 4) + 4;
-        for (int i = 0; i < _attrib_count; i++) {
-            attrib_ids[i] = _ReadBits(&it, bits_per_attr);
-            attrib_vals[i] = _ReadBits(&it, 4);
-            if (attrib_ids[i] > ATTRIBUTE_MAX) {
-                fprintf_s(stderr, "Attribute id %d is out of range. (max = %d)\n", attrib_ids[i], 44);
+        for (int i = 0; i < attrib_count; i++) {
+            int attrib_id = _ReadBits(&it, bits_per_attr);
+            int attrib_val = _ReadBits(&it, 4);
+            if (attrib_id > ATTRIBUTE_MAX) {
+                fprintf_s(stderr, "Attribute id %d is out of range. (max = %d)\n", attrib_id, ATTRIBUTE_MAX);
                 return false;
             }
+            result->attributes[i].attribute = static_cast<Constants::Attribute>(attrib_id);
+            result->attributes[i].points = attrib_val;
+        }
+        for (int i = attrib_count; i < _countof(result->attributes); i++) {
+            result->attributes[i].attribute = Constants::Attribute::None;
+            result->attributes[i].points = 0;
         }
 
         // SKILLS
         int bits_per_skill = _ReadBits(&it, 4) + 8;
-        for (_skill_count = 0; _skill_count < 8; _skill_count++) {
-            skill_ids[_skill_count] = _ReadBits(&it, bits_per_skill);
-            if (skill_ids[_skill_count] > SKILL_MAX) {
-                fprintf_s(stderr, "Skill id %d is out of range. (max = %d)\n", skill_ids[_skill_count], SKILL_MAX);
+        for (skill_count = 0; skill_count < _countof(result->skills); skill_count++) {
+            if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
+            int skill_id = _ReadBits(&it, bits_per_skill);
+            if (skill_id > SKILL_MAX) {
+                fprintf_s(stderr, "Skill id %d is out of range. (max = %d)\n", skill_id, SKILL_MAX);
                 return false;
             }
-            if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
+            result->skills[skill_count] = static_cast<Constants::SkillID>(skill_id);
+        }
+        for (int i = skill_count; i < _countof(result->skills); i++) {
+            result->skills[i] = Constants::SkillID::No_Skill;
         }
 
-        *attrib_count = _attrib_count;
-        *skill_count = _skill_count;
-        *primary = static_cast<Constants::Profession>(prof1);
-        *secondary = static_cast<Constants::Profession>(prof2);
-
+        result->primary = static_cast<Constants::Profession>(prof1);
+        result->secondary = static_cast<Constants::Profession>(prof2);
         return true;
     }
 
@@ -179,26 +199,22 @@ namespace GW {
         if (Map::GetInstanceType() != Constants::InstanceType::Outpost)
             return false;
 
-        int skill_count = 0;
-        int attrib_count = 0;
-        int attrib_ids[10] = {0};
-        int attrib_vals[10] = {0};
-        int skill_ids[8] = {0};
-
-        Profession primary = Profession::None;
-        Profession secondary = Profession::None;
-
-        if (!decode_skill_template(temp, attrib_ids, attrib_vals, &attrib_count, skill_ids, &skill_count, &primary, &secondary))
+        SkillTemplate skill_template;
+        if (!DecodeSkillTemplate(&skill_template, temp)) {
             return false;
+        }
 
         Agent *me = Agents::GetPlayer();
         if (!me) return false;
 
+        if (me->primary != (BYTE)skill_template.primary)
+            return false;
         // @Enhancement: Check if we already bought this secondary profession.
-        if (me->secondary != (BYTE)secondary)
-            PlayerMgr::ChangeSecondProfession(secondary);
-        LoadSkillbar((uint32_t *)skill_ids);
-        SetAttributes(attrib_count, (uint32_t *)attrib_ids, (uint32_t *)attrib_vals);
+        if (me->secondary != (BYTE)skill_template.secondary)
+            PlayerMgr::ChangeSecondProfession(skill_template.secondary);
+        // @Robustness: That cast is not very good :(
+        LoadSkillbar(skill_template.skills, _countof(skill_template.skills));
+        SetAttributes(skill_template.attributes, _countof(skill_template.attributes));
         return true;
     }
 
@@ -211,17 +227,10 @@ namespace GW {
         if (hero_index == 0)
             return LoadSkillTemplate(temp);
 
-        int skill_count = 0;
-        int attrib_count = 0;
-        int attrib_ids[10] = {0};
-        int attrib_vals[10] = {0};
-        int skill_ids[8] = {0};
-
-        Profession primary = Profession::None;
-        Profession secondary = Profession::None;
-
-        if (!decode_skill_template(temp, attrib_ids, attrib_vals, &attrib_count, skill_ids, &skill_count, &primary, &secondary))
+        SkillTemplate skill_template;
+        if (!DecodeSkillTemplate(&skill_template, temp)) {
             return false;
+        }
 
         if (!PartyMgr::GetIsPartyLoaded())
             return false;
@@ -247,14 +256,15 @@ namespace GW {
         Constants::Profession expected_primary = Constants::HeroProfs[hero.hero_id];
 
         // Hacky, because we can't check for mercenary heroes and Razah
-        if (expected_primary != primary && expected_primary != Profession::None) {
+        if (expected_primary != skill_template.primary && expected_primary != Profession::None) {
             return false;
         }
 
         // @Enhancement: We may want to check if the hero already have the secondary prof needed.
-        PlayerMgr::ChangeSecondProfession(secondary, hero_index);
-        LoadSkillbar((uint32_t *)skill_ids, hero_index);
-        SetAttributes(attrib_count, (uint32_t *)attrib_ids, (uint32_t *)attrib_vals, hero_index);
+        PlayerMgr::ChangeSecondProfession(skill_template.secondary, hero_index);
+        // @Robustness: That cast is not very good :(
+        LoadSkillbar(skill_template.skills, _countof(skill_template.skills), hero_index);
+        SetAttributes(skill_template.attributes, _countof(skill_template.attributes), hero_index);
         return true;
     }
 
@@ -284,6 +294,21 @@ namespace GW {
         }
 
         CtoS::SendPacket<tSetAttributes>(&set_attributes_buffer);
+    }
+
+    void SkillbarMgr::SetAttributes(Attribute *attributes, size_t n_attributes, int hero_index) {
+        uint32_t count;
+        uint32_t attribute_ids[16];
+        uint32_t attribute_values[16];
+
+        for (count = 0; count < _countof(attribute_ids); count++) {
+            if (attributes[count].attribute == Constants::Attribute::None)
+                break;
+            attribute_ids[count] = static_cast<uint32_t>(attributes[count].attribute);
+            attribute_values[count] = static_cast<uint32_t>(attributes[count].points);
+        }
+
+        return SetAttributes(count, attribute_ids, attribute_values, hero_index);
     }
 
     void SkillbarMgr::UseSkill(uint32_t slot, uint32_t target, uint32_t call_target) {

@@ -35,6 +35,11 @@ namespace GW {
             };
             const uint32_t Packet<TradeCancel>::STATIC_HEADER = 0x1;
 
+            struct InstanceTimer : Packet<InstanceTimer> {
+                uint32_t instance_time;
+            };
+            const uint32_t Packet<InstanceTimer>::STATIC_HEADER = 0x20;
+
             // Called when the client needs to remove an agent from memory (e.g. out of range)
             struct AgentRemove : Packet<AgentRemove> {
                 uint32_t agent_id;

@@ -39,7 +39,9 @@ namespace GW {
         /* +h0068 */ uint32_t bonusScale15;
         /* +h006C */ float aoe_range;
         /* +h0070 */ float const_effect;
-        /* +h0074 */ uint8_t h0074[32];
+        /* +h0074 */ uint8_t h0074[24];
+		/* +h008C */ uint32_t icon_file_id;
+		/* +h0090 */ uint8_t h0090[4];
         /* +h0094 */ uint32_t name; // String id
         /* +h0098 */ uint32_t h0098;
         /* +h009C */ uint32_t description; // String id

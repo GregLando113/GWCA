@@ -6,6 +6,8 @@ namespace GW {
 
     namespace Constants {
         enum class SkillID;
+        enum class Attribute;
+        enum class Profession;
     }
 
     struct Skill;
@@ -17,6 +19,17 @@ namespace GW {
     extern Module SkillbarModule;
 
     namespace SkillbarMgr {
+        struct Attribute {
+            Constants::Attribute attribute;
+            uint32_t points;
+        };
+
+        struct SkillTemplate {
+            Constants::Profession primary;
+            Constants::Profession secondary;
+            Constants::SkillID    skills[8];
+            Attribute             attributes[16];
+        };
 
         // Get the skill slot in the player bar of the player.
         // Returns -1 if the skill is not there
@@ -38,14 +51,18 @@ namespace GW {
         GWCA_API SkillbarArray GetSkillbarArray();
         GWCA_API Skillbar *GetPlayerSkillbar();
 
+        GWCA_API bool DecodeSkillTemplate(SkillTemplate *result, const char *temp);
+
         // @Remark:
         // `skill_ids` must contains at least 8 elements
-        GWCA_API void LoadSkillbar(uint32_t *skill_ids, int hero_index = 0);
+        GWCA_API void LoadSkillbar(uint32_t *skills, size_t n_skills, int hero_index = 0);
+        GWCA_API void LoadSkillbar(Constants::SkillID *skills, size_t n_skills, int hero_index = 0);
 
         GWCA_API bool LoadSkillTemplate(const char *temp);
         GWCA_API bool LoadSkillTemplate(const char *temp, int hero_index);
 
         GWCA_API void SetAttributes(uint32_t attribute_count,
             uint32_t *attribute_ids, uint32_t *attribute_values, int hero_index = 0);
+        GWCA_API void SetAttributes(Attribute *attributes, size_t n_attributes, int hero_index = 0);
     };
 }

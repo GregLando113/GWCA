@@ -14,6 +14,7 @@ namespace {
 
     uint32_t last_identifier = 0;
     bool render_state = false;
+	bool in_game_thread = false;
 
     typedef void(__fastcall *Render_t)(void*);
     uintptr_t *g__thingy;
@@ -24,6 +25,7 @@ namespace {
 
     void __stdcall CallFunctions() {
         if (TryEnterCriticalSection(&criticalsection)) {
+			in_game_thread = true;
             if (!calls.empty()) {
                 for (const auto& Call : calls) {
                     Call();
@@ -37,6 +39,7 @@ namespace {
                     Call.second();
                 }
             }
+			in_game_thread = false;
             LeaveCriticalSection(&criticalsection);
         }
     }
@@ -100,11 +103,15 @@ namespace GW {
             RETN
         }
     }
-
-    void GameThread::Enqueue(std::function<void()> f) {
-        EnterCriticalSection(&criticalsection);
-        calls.emplace_back(f);
-        LeaveCriticalSection(&criticalsection);
+	void GameThread::Enqueue(std::function<void()> f) {
+		if (in_game_thread) {
+			f();
+		}
+		else {
+			EnterCriticalSection(&criticalsection);
+			calls.emplace_back(f);
+			LeaveCriticalSection(&criticalsection);
+		}
     }
 
     uint32_t GameThread::AddPermanentCall(std::function<void()> f) {

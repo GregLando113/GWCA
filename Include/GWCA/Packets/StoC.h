@@ -225,6 +225,11 @@ namespace GW {
             };
             const uint32_t Packet<AgentUnk2>::STATIC_HEADER = 0x6D;
 
+            struct DialogBody : Packet<DialogBody> {
+                wchar_t message[122];
+            };
+            const uint32_t Packet<DialogBody>::STATIC_HEADER = 0x80;
+
             struct DataWindow : Packet<DataWindow> {
                 uint32_t agent;
                 uint32_t type; // 0=storage, 1=tournament, 2=records, 3=stylist
@@ -386,6 +391,13 @@ namespace GW {
                 uint32_t unk1;
             };
             const uint32_t Packet<TransactionDone>::STATIC_HEADER = 0xCD;
+
+            // Skill available in skills window. Signet of capture can have count > 1
+            struct UpdateSkillCount : Packet<UpdateSkillCount> {
+                uint32_t skill_id;
+                uint32_t count;
+            };
+            const uint32_t Packet<UpdateSkillCount>::STATIC_HEADER = 0xDD;
 
             // Skill Activate (begin casting)
             struct SkillActivate : Packet<SkillActivate> {

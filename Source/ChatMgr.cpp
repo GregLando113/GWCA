@@ -182,7 +182,8 @@ namespace {
             int argc;
             wchar_t **argv;
             argv = CommandLineToArgvW(message + 1, &argc);
-
+			for (unsigned int i = 0; argv[0][i]; i++)
+				argv[0][i] = towlower(argv[0][i]);
             auto callback = SlashCmdList.find(argv[0]);
             if (callback != SlashCmdList.end()) {
                 callback->second(message, argc, argv);
@@ -628,7 +629,6 @@ namespace GW {
         buffer[len + 1] = 0;
         for (size_t i = 0; i < len; i++)
             buffer[i + 1] = msg[i];
-
         SendChat_Func(buffer);
     }
 
@@ -724,6 +724,8 @@ namespace GW {
     }
 
     void Chat::CreateCommand(std::wstring cmd, CmdCB callback) {
+		for (unsigned int i = 0; cmd[i]; i++)
+			cmd[i] = towlower(cmd[i]);
         SlashCmdList[cmd] = callback;
     }
 

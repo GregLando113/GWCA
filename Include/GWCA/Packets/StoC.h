@@ -225,10 +225,23 @@ namespace GW {
             };
             const uint32_t Packet<AgentUnk2>::STATIC_HEADER = 0x6D;
 
+			struct DialogButton : Packet<DialogButton> {
+				uint32_t button_icon; // byte
+				wchar_t message[8];
+				uint32_t dialog_id;
+				uint32_t skill_id; // Default 0xFFFFFFF
+			};
+			const uint32_t Packet<DialogButton>::STATIC_HEADER = 0x7E;
+
             struct DialogBody : Packet<DialogBody> {
                 wchar_t message[122];
             };
             const uint32_t Packet<DialogBody>::STATIC_HEADER = 0x80;
+
+			struct DialogSender : Packet<DialogSender> {
+				uint32_t agent_id;
+			};
+			const uint32_t Packet<DialogSender>::STATIC_HEADER = 0x81;
 
             struct DataWindow : Packet<DataWindow> {
                 uint32_t agent;
@@ -292,13 +305,24 @@ namespace GW {
             };
             const uint32_t Packet<GenericValueTarget>::STATIC_HEADER = 0xA1;
 
+			// Update Target Generic Value
+			struct PlayEffect : Packet<PlayEffect> {
+				Vec2f coords;
+				uint32_t plane;
+				uint32_t agent_id;
+				uint32_t effect_id;
+				uint32_t data5;
+				uint32_t data6;
+			};
+			const uint32_t Packet<PlayEffect>::STATIC_HEADER = 0xA2;
+
             // agent animation lock (and probably something else)
-            struct GenericFloat : Packet<GenericFloat> {
+            /*struct GenericFloat : Packet<GenericFloat> {
                 uint32_t unk1;
                 uint32_t agent_id;
                 uint32_t unk2;
             };
-            const uint32_t Packet<GenericFloat>::STATIC_HEADER = 0xA2;
+            const uint32_t Packet<GenericFloat>::STATIC_HEADER = 0xA2;*/
 
             // Update Target Generic Value
             struct GenericValue2 : Packet<GenericValue2> {
@@ -407,7 +431,11 @@ namespace GW {
             };
             const uint32_t Packet<SkillActivate>::STATIC_HEADER = 0xE5;
 
-
+			struct ModifyFaction : Packet<ModifyFaction> {
+				uint32_t faction_type;
+				uint32_t amount;
+			};
+			const uint32_t Packet<ModifyFaction>::STATIC_HEADER = 0xEF;
 
             // update agent state
             struct AgentState : Packet<AgentState> {

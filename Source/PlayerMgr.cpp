@@ -43,15 +43,25 @@ namespace GW {
     }
 
     Player *PlayerMgr::GetPlayerByID(uint32_t player_id) {
-        return &GetPlayerArray()[player_id];
+		PlayerArray players = GetPlayerArray();
+		if (players.valid() && player_id > 0 && player_id < players.size()) {
+			return &players[player_id];
+		}
+		else {
+			return nullptr;
+		}
     }
 
     wchar_t *PlayerMgr::GetPlayerName(uint32_t player_id) {
-        return GetPlayerArray()[player_id].name;
+		GW::Player* p = GetPlayerByID(player_id);
+        return p ? p->name : nullptr;
     }
 
     void PlayerMgr::SetPlayerName(uint32_t player_id, const wchar_t *replace_name) {
-        wcsncpy(GetPlayerArray()[player_id].name_enc + 2, replace_name, 20);
+		GW::Player* p = GetPlayerByID(player_id);
+		if (p) {
+			wcsncpy(p->name_enc + 2, replace_name, 20);
+		}
     }
 
     void PlayerMgr::ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index) {

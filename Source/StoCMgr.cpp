@@ -12,6 +12,7 @@
 
 #include <GWCA/Managers/Module.h>
 #include <GWCA/Managers/StoCMgr.h>
+#include <GWCA/Managers/GameThreadMgr.h>
 
 namespace {
     using namespace GW;
@@ -125,7 +126,9 @@ namespace GW {
     void StoC::EmulatePacket(Packet::StoC::PacketBase *packet) {
         if (!Verify(original_functions))
             return;
-        OriginalHandler(packet);
+		GW::GameThread::Enqueue([packet]() {
+			OriginalHandler(packet);
+			});
     }
 
 } // namespace GW

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
 namespace GW {
@@ -89,5 +90,13 @@ namespace GW {
         GWCA_API wchar_t* GetAgentEncName(Agent* agent);
 
         GWCA_API void AsyncGetAgentName(Agent *agent, std::wstring& name);
+
+		typedef HookCallback<uint32_t> DialogCallback;
+		GWCA_API void RegisterDialogCallback(
+			HookEntry* entry,
+			DialogCallback callback);
+
+		GWCA_API void RemoveDialogCallback(
+			HookEntry* entry);
     };
 }

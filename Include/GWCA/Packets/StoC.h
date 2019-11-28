@@ -39,6 +39,11 @@ namespace GW {
             };
             const uint32_t Packet<Ping>::STATIC_HEADER = 0xC;
 
+            struct InstanceTimer : Packet<InstanceTimer> {
+                uint32_t instance_time;
+            };
+            const uint32_t Packet<InstanceTimer>::STATIC_HEADER = 0x20;
+
             // Called when the client needs to add an agent to memory (i.e. agent appeared within compass range)
             struct AgentAdd : Packet<AgentAdd> {
                 uint32_t agent_id;

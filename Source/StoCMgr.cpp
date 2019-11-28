@@ -126,9 +126,7 @@ namespace GW {
     void StoC::EmulatePacket(Packet::StoC::PacketBase *packet) {
         if (!Verify(original_functions))
             return;
-		GW::GameThread::Enqueue([packet]() {
-			OriginalHandler(packet);
-			});
+		OriginalHandler(packet);
     }
 
 } // namespace GW

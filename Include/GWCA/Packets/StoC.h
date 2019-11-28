@@ -290,9 +290,9 @@ namespace GW {
 
             // agent animation lock (and probably something else)
             struct GenericValue : Packet<GenericValue> {
-                uint32_t unk1;
+                uint32_t Value_id;
                 uint32_t agent_id;
-                uint32_t unk2;
+                uint32_t value;
             };
             const uint32_t Packet<GenericValue>::STATIC_HEADER = 0xA0;
 
@@ -430,6 +430,14 @@ namespace GW {
                 uint32_t skill_instance;
             };
             const uint32_t Packet<SkillActivate>::STATIC_HEADER = 0xE5;
+
+			struct SkillRecharge : Packet<SkillRecharge> {
+				uint32_t agent_id;
+				uint32_t skill_id;
+				uint32_t skill_instance;
+				uint32_t recharge;
+			};
+			const uint32_t Packet<SkillRecharge>::STATIC_HEADER = 0xE6;
 
 			struct ModifyFaction : Packet<ModifyFaction> {
 				uint32_t faction_type;

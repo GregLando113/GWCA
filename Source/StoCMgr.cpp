@@ -47,6 +47,7 @@ namespace {
     StoCHandler *original_functions = nullptr;
 
     std::vector<std::unordered_map<HookEntry *, StoC::PacketCallback>> packets_callbacks;
+	std::vector<std::unordered_map<HookEntry*, StoC::PacketCallback>> post_packets_callbacks;
 
     bool __fastcall StoCHandler_Func(Packet::StoC::PacketBase *pak) {
         GW::HookBase::EnterHook();
@@ -59,6 +60,10 @@ namespace {
 
         if (!status.blocked)
             original_functions[pak->header].handler_func(pak);
+
+		for (auto& it : post_packets_callbacks[pak->header]) {
+			it.second(&status, pak);
+		}
         GW::HookBase::LeaveHook();
         return true;
     }
@@ -81,6 +86,7 @@ namespace {
 
         original_functions = new StoCHandler[game_server_handlers.size()];
         packets_callbacks.resize(game_server_handlers.size());
+		post_packets_callbacks.resize(game_server_handlers.size());
     }
 
     void EnableHooks() {
@@ -116,12 +122,30 @@ namespace GW {
         game_server_handlers[header].handler_func = StoCHandler_Func;
     }
 
+	void StoC::RegisterPostPacketCallback(
+		HookEntry* entry,
+		uint32_t header,
+		PacketCallback callback)
+	{
+		post_packets_callbacks[header].insert({ entry, callback });
+		game_server_handlers[header].handler_func = StoCHandler_Func;
+	}
+
     void StoC::RemoveCallback(uint32_t header, HookEntry *entry) {
         auto& callbacks = packets_callbacks[header];
         auto it = callbacks.find(entry);
         if (it != callbacks.end())
             callbacks.erase(it);
     }
+
+	void StoC::RemovePostCallback(uint32_t header, HookEntry* entry) {
+		auto& callbacks = post_packets_callbacks[header];
+		auto it = callbacks.find(entry);
+		if (it != callbacks.end())
+			callbacks.erase(it);
+	}
+
+	
 
     void StoC::EmulatePacket(Packet::StoC::PacketBase *packet) {
         if (!Verify(original_functions))

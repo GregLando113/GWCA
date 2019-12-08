@@ -115,12 +115,17 @@ namespace {
         COLOR_RGB(0xE0, 0xE0, 0xE0)
     };
 
+    void wstring_tolower(std::wstring& s)
+    {
+        for (size_t i = 0; i < s.size(); i++)
+            s[i] = towlower(s[i]);
+    }
+
     std::unordered_map<HookEntry *, Chat::SendChatCallback>     SendChat_callbacks;
     std::unordered_map<HookEntry *, Chat::ChatEventCallback>    ChatEvent_callbacks;
     std::unordered_map<HookEntry *, Chat::LocalMessageCallback> LocalMessage_callbacks;
     std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
     std::unordered_map<HookEntry *, Chat::StartWhisperCallback> StartWhisper_callbacks;
-
 
     typedef void(__fastcall *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
     ChatEvent_pt RetChatEvent;
@@ -181,8 +186,10 @@ namespace {
             int argc;
             wchar_t **argv;
             argv = CommandLineToArgvW(message + 1, &argc);
+            std::wstring cmd = argv[0];
+            ::wstring_tolower(cmd);
 
-            auto callback = SlashCmdList.find(argv[0]);
+            auto callback = SlashCmdList.find(cmd);
             if (callback != SlashCmdList.end()) {
                 callback->second(message, argc, argv);
                 // No reasons to foward the function call to it's original.
@@ -705,10 +712,12 @@ namespace GW {
     }
 
     void Chat::CreateCommand(std::wstring cmd, CmdCB callback) {
+        ::wstring_tolower(cmd);
         SlashCmdList[cmd] = callback;
     }
 
     void Chat::DeleteCommand(std::wstring cmd) {
+        ::wstring_tolower(cmd);
         SlashCmdList.erase(cmd);
     }
 

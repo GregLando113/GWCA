@@ -2,41 +2,62 @@
 
 #include <GWCA/Utilities/MemoryPatcher.h>
 
-GW::MemoryPatcher::MemoryPatcher(uintptr_t addr, void *patch, size_t size) {
-    this->addr = (void *)addr;
-    this->size = size;
-    this->flag = false;
-
-    this->patch = new uint8_t[size];
-    memcpy(this->patch, patch, size);
-
-    this->backup = new uint8_t[size];
-
-    DWORD oldProt;
-    VirtualProtect(this->addr, size, PAGE_EXECUTE_READ, &oldProt);
-    memcpy(this->backup, this->addr, size);
-    VirtualProtect(this->addr, size, oldProt, &oldProt);
-}
-
-GW::MemoryPatcher::~MemoryPatcher() {
-    TooglePatch(false);
-    delete[] patch;
-    delete[] backup;
-}
-
-bool GW::MemoryPatcher::TooglePatch(bool flag) {
-    if (this->flag == flag)
-        return flag;
-
-    DWORD oldProt;
-    VirtualProtect(addr, size, PAGE_EXECUTE_READWRITE, &oldProt);
-    if (flag) {
-        memcpy(addr, patch, size);
-    } else {
-        memcpy(addr, backup, size);
+namespace GW {
+    MemoryPatcher::~MemoryPatcher() {
+        Reset();
     }
-    VirtualProtect(addr, size, oldProt, &oldProt);
 
-    this->flag = flag;
-    return flag;
+    void MemoryPatcher::Reset() {
+        if (GetIsEnable())
+            TooglePatch(false);
+
+        if (m_patch) {
+            delete[] m_patch;
+            m_patch = nullptr;
+        }
+        if (m_backup) {
+            delete[] m_backup;
+            m_backup = nullptr;
+        }
+
+        m_addr = nullptr;
+        m_size = 0;
+        m_enable = false;
+    }
+
+    void MemoryPatcher::SetPatch(uintptr_t addr, void *patch, size_t size) {
+        assert(m_addr == nullptr);
+
+        m_addr = reinterpret_cast<void *>(addr);
+        m_size = size;
+        m_enable = false;
+
+        m_patch = new uint8_t[size];
+        m_backup = new uint8_t[size];
+        memcpy(m_patch, patch, size);
+
+        DWORD old_prot;
+        VirtualProtect(m_addr, size, PAGE_EXECUTE_READ, &old_prot);
+        memcpy(m_backup, m_addr, size);
+        VirtualProtect(m_addr, size, old_prot, &old_prot);
+    }
+
+    bool MemoryPatcher::TooglePatch(bool flag) {
+        assert(m_addr != nullptr);
+
+        if (m_enable == flag)
+            return flag;
+
+        DWORD old_prot;
+        VirtualProtect(m_addr, m_size, PAGE_EXECUTE_READWRITE, &old_prot);
+        if (flag) {
+            memcpy(m_addr, m_patch, m_size);
+        } else {
+            memcpy(m_addr, m_backup, m_size);
+        }
+        VirtualProtect(m_addr, m_size, old_prot, &old_prot);
+
+        m_enable = flag;
+        return flag;
+    }
 }

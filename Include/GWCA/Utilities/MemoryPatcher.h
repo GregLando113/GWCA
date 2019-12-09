@@ -4,19 +4,22 @@ namespace GW {
 
     class MemoryPatcher {
     public:
-        MemoryPatcher(uintptr_t addr, void *patch, size_t size);
+        MemoryPatcher() = default;
+        MemoryPatcher(const MemoryPatcher&) = delete;
         ~MemoryPatcher();
 
+        void Reset();
+        void SetPatch(uintptr_t addr, void* patch, size_t size);
+
         bool TooglePatch(bool flag);
-        bool TooglePatch() { TooglePatch(!flag); };
+        bool TooglePatch() { TooglePatch(!m_enable); };
 
-        bool GetPatchState() { return flag; };
+        bool GetIsEnable() { return m_enable; };
     private:
-        void    *addr;
-        uint8_t *patch;
-        uint8_t *backup;
-        size_t   size;
-
-        bool flag;
+        void       *m_addr = nullptr;
+        uint8_t    *m_patch = nullptr;
+        uint8_t    *m_backup = nullptr;
+        size_t      m_size = 0;
+        bool        m_enable = false;
     };
 }

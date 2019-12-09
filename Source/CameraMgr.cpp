@@ -15,10 +15,10 @@
 namespace {
     using namespace GW;
 
-    MemoryPatcher *patch_max_dist;
-    MemoryPatcher *patch_cam_update;
-    MemoryPatcher *patch_fog;
-    MemoryPatcher *patch_fov;
+    MemoryPatcher patch_max_dist;
+    MemoryPatcher patch_cam_update;
+    MemoryPatcher patch_fog;
+    MemoryPatcher patch_fov;
 
     uintptr_t patch_fog_addr;
     uintptr_t patch_fov_addr;
@@ -61,42 +61,38 @@ namespace {
         }
 
         if (Verify(patch_max_dist_addr))
-            patch_max_dist = new MemoryPatcher(patch_max_dist_addr, "\xEB\x01", 2);
+            patch_max_dist.SetPatch(patch_max_dist_addr, "\xEB\x01", 2);
         if (Verify(patch_fov_addr))
-            patch_fov = new MemoryPatcher(patch_fov_addr, "\xC3", 1);
+            patch_fov.SetPatch(patch_fov_addr, "\xC3", 1);
         if (Verify(patch_cam_update_addr))
-            patch_cam_update = new MemoryPatcher(patch_cam_update_addr, "\xEB\x06", 2);
+            patch_cam_update.SetPatch(patch_cam_update_addr, "\xEB\x06", 2);
         if (Verify(patch_fog_addr))
-            patch_fog = new MemoryPatcher(patch_fog_addr, "\x00", 1);
+            patch_fog.SetPatch(patch_fog_addr, "\x00", 1);
     }
 
     void Exit() {
-        if (patch_max_dist)
-            delete patch_max_dist;
-        if (patch_cam_update)
-            delete patch_cam_update;
-        if (patch_fog)
-            delete patch_fog;
-        if (patch_fov)
-            delete patch_fov;
+        patch_max_dist.Reset();
+        patch_cam_update.Reset();
+        patch_fog.Reset();
+        patch_fov.Reset();
     }
 
     void EnableHooks() {
-        if (patch_max_dist)
-            patch_max_dist->TooglePatch(true);
-        if (patch_fov)
-            patch_fov->TooglePatch(true);
+        if (patch_max_dist_addr)
+            patch_max_dist.TooglePatch(true);
+        if (patch_fov_addr)
+            patch_fov.TooglePatch(true);
     }
 
     void DisableHooks() {
-        if (patch_max_dist)
-            patch_max_dist->TooglePatch(false);
-        if (patch_cam_update)
-            patch_cam_update->TooglePatch(false);
-        if (patch_fog)
-            patch_fog->TooglePatch(false);
-        if (patch_fov)
-            patch_fov->TooglePatch(false);
+        if (patch_max_dist_addr)
+            patch_max_dist.TooglePatch(false);
+        if (patch_cam_update_addr)
+            patch_cam_update.TooglePatch(false);
+        if (patch_fog_addr)
+            patch_fog.TooglePatch(false);
+        if (patch_fov_addr)
+            patch_fov.TooglePatch(false);
     }
 }
 
@@ -130,18 +126,27 @@ namespace GW {
     }
 
     bool CameraMgr::UnlockCam(bool flag) {
-        return patch_cam_update->TooglePatch(flag);
+        if (patch_cam_update_addr) {
+            return patch_cam_update.TooglePatch(flag);
+        } else {
+            return false;
+        }
     }
+
     bool CameraMgr::GetCameraUnlock() {
-        if (patch_cam_update) {
-            return patch_cam_update->GetPatchState();
+        if (patch_cam_update_addr) {
+            return patch_cam_update.GetIsEnable();
         } else {
             return false;
         }
     }
 
     bool CameraMgr::SetFog(bool flag) {
-        return patch_fog->TooglePatch(!flag);
+        if (patch_fog_addr) {
+            return patch_fog.TooglePatch(!flag);
+        } else {
+            return false;
+        }
     }
 
     void CameraMgr::ForwardMovement(float amount, bool true_forward) {

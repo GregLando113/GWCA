@@ -271,6 +271,9 @@ namespace GW {
             constexpr int ProfChangeRitualist = 0x884;
             constexpr int ProfChangeParagon = 0x984;
             constexpr int ProfChangeDervish = 0xA84;
+
+            constexpr int FactionMissionOutpost = 0x80000B;
+            constexpr int NightfallMissionOutpost = 0x85;
         }
 
         namespace Camera {

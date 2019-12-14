@@ -171,14 +171,17 @@ namespace GW {
             };
             const uint32_t Packet<MessageLocal>::STATIC_HEADER = 0x61;
 
-            
-
             // Alcohol Post Process Effect
             struct PostProcess : Packet<PostProcess> {
                 uint32_t level;
                 uint32_t tint;
             };
             const uint32_t Packet<PostProcess>::STATIC_HEADER = 0x6B;
+
+            struct DialogSender : Packet<DialogSender> {
+                uint32_t agent_id;
+            };
+            const uint32_t Packet<DialogSender>::STATIC_HEADER = 0x81;
 
             struct DataWindow : Packet<DataWindow> {
                 uint32_t agent;

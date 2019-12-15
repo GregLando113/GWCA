@@ -36,6 +36,7 @@ namespace {
     using namespace GW;
 
     uint32_t last_dialog_id = 0;
+    std::unordered_map<HookEntry*, Agents::DialogCallback> OnDialog_callbacks;
 
     typedef void (__fastcall *SendDialog_pt)(uint32_t dialog_id);
     SendDialog_pt RetSendDialog;
@@ -43,8 +44,20 @@ namespace {
 
     void __fastcall OnSendDialog(uint32_t dialog_id) {
         HookBase::EnterHook();
-        last_dialog_id = dialog_id;
-        RetSendDialog(dialog_id);
+
+        HookStatus status;
+        for (auto& it : OnDialog_callbacks) {
+            it.second(&status, dialog_id);
+            ++status.altitude;
+        }
+
+        if (status.blocked) {
+            RetSendDialog(0);
+        } else {
+            last_dialog_id = dialog_id;
+            RetSendDialog(dialog_id);
+        }
+
         HookBase::LeaveHook();
     };
 
@@ -290,5 +303,20 @@ namespace GW {
         wchar_t* str = GetAgentEncName(agent);
         if (!str) return;
         UI::AsyncDecodeStr(str, &res);
+    }
+
+    void Agents::RegisterDialogCallback(
+        HookEntry* entry,
+        DialogCallback callback)
+    {
+        OnDialog_callbacks.insert({ entry, callback });
+    }
+
+    void Agents::RemoveDialogCallback(
+        HookEntry* entry)
+    {
+        auto it = OnDialog_callbacks.find(entry);
+        if (it != OnDialog_callbacks.end())
+            OnDialog_callbacks.erase(it);
     }
 } // namespace GW

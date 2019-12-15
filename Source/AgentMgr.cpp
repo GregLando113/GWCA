@@ -95,9 +95,16 @@ namespace {
 		PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
 		if (PlayerAgentIdPtr) {
 			PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
-			AgentListPtr = (AgentList*)(AgentArrayPtr - 0x40);
+			printf("[SCAN] PlayerAgentIdPtr = %p\n", PlayerAgentIdPtr);
 		}
-        
+
+		AgentListPtr = (AgentList * )Scanner::Find("\x8D\x0C\x88\xE8\x00\x00\x00\x00\x8B\xC3", "xxxx????xx", 0x3C);
+		if (AgentListPtr) {
+			AgentListPtr = *(AgentList * *)AgentListPtr;
+			printf("[SCAN] AgentListPtr = %p\n", AgentListPtr);
+		}
+
+
         Move_Func = (Move_pt)Scanner::Find(
                 "\x55\x8B\xEC\x83\xEC\x20\x8D\x45\xF0", "xxxxxxxxx", 0);
         printf("[SCAN] MoveFunction = %p\n", Move_Func);

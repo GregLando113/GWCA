@@ -21,7 +21,6 @@ namespace {
     MemoryPatcher patch_fov;
 
     uintptr_t patch_fog_addr;
-    uintptr_t patch_fov_addr;
     uintptr_t patch_max_dist_addr;
     uintptr_t patch_cam_update_addr;
 
@@ -32,11 +31,6 @@ namespace {
         patch_fog_addr = Scanner::Find(
             "\x83\xE0\x01\x8B\x09\x50\x6A\x1C", "xxxxxxxx", +2);
         printf("[SCAN] patch_fog_addr = %p\n", (void *)patch_fog_addr);
-
-        // @Replaced
-        patch_fov_addr = Scanner::Find(
-            "\xD9\xE8\xD9\x5D\x08\xD9\x45\x08\xD9\xEE", "xxxxxxxxxx", +0x2B);
-        printf("[SCAN] patch_fov_addr = %p\n", (void *)patch_fov_addr);
 
         // @Replaced
         patch_max_dist_addr = Scanner::Find(
@@ -59,9 +53,6 @@ namespace {
         if (Verify(patch_max_dist_addr))
             // @Replaced
             patch_max_dist.SetPatch(patch_max_dist_addr, "\x90\x90\x90", 3);
-        if (Verify(patch_fov_addr))
-            // @Replaced
-            patch_fov.SetPatch(patch_fov_addr, "\x90\x90\x90\x90\x90\x90", 6);
         if (Verify(patch_cam_update_addr))
             // @Replaced
             patch_cam_update.SetPatch(patch_cam_update_addr, "\xEB\x0C", 2);
@@ -73,14 +64,11 @@ namespace {
         patch_max_dist.Reset();
         patch_cam_update.Reset();
         patch_fog.Reset();
-        patch_fov.Reset();
     }
 
     void EnableHooks() {
         if (patch_max_dist_addr)
             patch_max_dist.TooglePatch(true);
-        if (patch_fov_addr)
-            patch_fov.TooglePatch(true);
     }
 
     void DisableHooks() {
@@ -90,8 +78,6 @@ namespace {
             patch_cam_update.TooglePatch(false);
         if (patch_fog_addr)
             patch_fog.TooglePatch(false);
-        if (patch_fov_addr)
-            patch_fov.TooglePatch(false);
     }
 }
 

@@ -42,7 +42,7 @@ namespace {
     SendDialog_pt RetSendDialog;
     SendDialog_pt SendDialog_Func;
 
-    void __fastcall OnSendDialog(uint32_t dialog_id) {
+    void OnSendDialog(uint32_t dialog_id) {
         HookBase::EnterHook();
 
         HookStatus status;
@@ -61,7 +61,7 @@ namespace {
         HookBase::LeaveHook();
     };
 
-    typedef void(__fastcall *ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
+    typedef void(*ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
     ChangeTarget_pt ChangeTarget_Func;
 
     typedef void(*Move_pt)(GamePos *pos);

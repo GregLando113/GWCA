@@ -67,7 +67,7 @@ namespace {
     typedef void(*Move_pt)(GamePos *pos);
     Move_pt Move_Func;
 
-	uintptr_t AgentArrayPtr = 0;
+    uintptr_t AgentArrayPtr = 0;
     uintptr_t PlayerAgentIdPtr = 0;
     uintptr_t TargetAgentIdPtr = 0;
     uintptr_t MouseOverAgentIdPtr = 0;
@@ -77,43 +77,47 @@ namespace {
     void Init() {
         // Agent Array
 
-		// MouseOverAgentPtr: 369D35
+        // MouseOverAgentPtr: 369D35
 
+        // @Replaced
+        ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
+            "\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
+        printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
 
-		ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
-			"\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
-		printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
+        if (ChangeTarget_Func) {
+            AgentArrayPtr = DECODE_RELATIVE((uintptr_t)ChangeTarget_Func + 0x1E); // ManagerFindAgent()
+            AgentArrayPtr = *(uintptr_t*)(AgentArrayPtr + 0x13); // Agentz
 
-		if (ChangeTarget_Func) {
-			AgentArrayPtr = DECODE_RELATIVE((uintptr_t)ChangeTarget_Func + 0x1E); // ManagerFindAgent()
-			AgentArrayPtr = *(uintptr_t*)(AgentArrayPtr + 0x13); // Agentz
+            TargetAgentIdPtr = *(uintptr_t*)((uintptr_t)ChangeTarget_Func + 0x91);
+            MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;
+        }
 
-			TargetAgentIdPtr = *(uintptr_t*)((uintptr_t)ChangeTarget_Func + 0x91);
-			MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;
-		}
+        // @Replaced
+        PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
+        if (PlayerAgentIdPtr) {
+            PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
+            printf("[SCAN] PlayerAgentIdPtr = %p\n", (void *)PlayerAgentIdPtr);
+        }
 
-		PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
-		if (PlayerAgentIdPtr) {
-			PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
-			printf("[SCAN] PlayerAgentIdPtr = %p\n", PlayerAgentIdPtr);
-		}
+        // @Replaced
+        AgentListPtr = (AgentList * )Scanner::Find("\x8D\x0C\x88\xE8\x00\x00\x00\x00\x8B\xC3", "xxxx????xx", 0x3C);
+        if (AgentListPtr) {
+            AgentListPtr = *(AgentList * *)AgentListPtr;
+            printf("[SCAN] AgentListPtr = %p\n", AgentListPtr);
+        }
 
-		AgentListPtr = (AgentList * )Scanner::Find("\x8D\x0C\x88\xE8\x00\x00\x00\x00\x8B\xC3", "xxxx????xx", 0x3C);
-		if (AgentListPtr) {
-			AgentListPtr = *(AgentList * *)AgentListPtr;
-			printf("[SCAN] AgentListPtr = %p\n", AgentListPtr);
-		}
-
-
+        // @Replaced
+        // Ideally we wouldn't scan a pattern from where we hook or other software hooks.
         Move_Func = (Move_pt)Scanner::Find(
                 "\x55\x8B\xEC\x83\xEC\x20\x8D\x45\xF0", "xxxxxxxxx", 0);
         printf("[SCAN] MoveFunction = %p\n", Move_Func);
 
+        // @Replaced
         SendDialog_Func = (SendDialog_pt)Scanner::Find(
             "\x83\xC8\x01\x89\x46\x24\x8B\x46\x28\x83\xE8\x00\x74\x0D", "xxxxxxxxxxxxxx", 0x15);
-		if (SendDialog_Func) {
-			SendDialog_Func = (SendDialog_pt)((uintptr_t)SendDialog_Func + *(uintptr_t*)SendDialog_Func + 4);
-		}
+        if (SendDialog_Func) {
+            SendDialog_Func = (SendDialog_pt)((uintptr_t)SendDialog_Func + *(uintptr_t*)SendDialog_Func + 4);
+        }
         printf("[SCAN] DialogFunc = %p\n", SendDialog_Func);
 
         if (Verify(SendDialog_Func))

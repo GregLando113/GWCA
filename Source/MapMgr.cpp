@@ -23,7 +23,6 @@
 
 #include <GWCA/Managers/MapMgr.h>
 #include <GWCA/Managers/CtoSMgr.h>
-#include <GWCA/Managers/MemoryMgr.h>
 
 namespace {
     using namespace GW;
@@ -31,6 +30,7 @@ namespace {
     uintptr_t map_id_addr;
     uintptr_t map_info_addr;
     uintptr_t area_info_addr;
+    uintptr_t instance_type_addr;
 
     void Init() {
         {
@@ -51,11 +51,19 @@ namespace {
 
         {
             // @Replaced
-            // For Map IDs
             uintptr_t address = Scanner::Find("\x56\x57\x8B\xF3\xBF", "xxxxx", +5);
-            printf("[SCAN] MapIDPtr = %p\n", (void *)address);
+            printf("[SCAN] map_id_addr = %p\n", (void *)address);
             if (Verify(address))
                 map_id_addr = *(uintptr_t *)address;
+        }
+
+        {
+            // @Replaced
+            uintptr_t address = Scanner::Find(
+                "\x6A\x2C\x50\xE8\x00\x00\x00\x00\x83\xC4\x08\xC7", "xxxx????xxxx", +0x17);
+            printf("[SCAN] instance_type_addr = %p\n", (void *)address);
+            if (Verify(address))
+                instance_type_addr = *(uintptr_t *)address;
         }
     }
 }
@@ -167,7 +175,7 @@ namespace GW {
     }
 
     Constants::InstanceType Map::GetInstanceType() {
-        return *(Constants::InstanceType *)(MemoryMgr::AgentArrayPtr - 0xF0);
+        return *(Constants::InstanceType *)instance_type_addr;
     }
 
     MissionMapIconArray Map::GetMissionMapIconArray() {

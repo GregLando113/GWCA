@@ -15,7 +15,9 @@ namespace GW {
 
         // set or unset the fact that ticking will work as a toggle instead
         // of showing a drop-down menu
+    #if 0
         GWCA_API void SetTickToggle(bool enable);
+    #endif
 
         // Set party ready status.
         GWCA_API void Tick(bool flag = true);

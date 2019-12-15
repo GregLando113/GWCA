@@ -23,6 +23,7 @@
 namespace {
     using namespace GW;
 
+#if 0
     typedef uint32_t (__stdcall *Tick_pt)(uint32_t unk1);
     Tick_pt RetTick;
     Tick_pt Tick_Func;
@@ -45,8 +46,10 @@ namespace {
         HookBase::LeaveHook();
         return retval;
     }
+#endif
 
     void Init() {
+    #if 0
         // @Replace:
         // This actually doesn't work, but the pattern is the right place
         Tick_pt Tick_Func = (Tick_pt)Scanner::Find(
@@ -55,11 +58,14 @@ namespace {
 
         if (Verify(Tick_Func))
             HookBase::CreateHook(Tick_Func, OnTick, (void **)&RetTick);
+    #endif
     }
 
     void Exit() {
+    #if 0
         if (Tick_Func)
             HookBase::RemoveHook(Tick_Func);
+    #endif
     }
 }
 
@@ -229,8 +235,10 @@ namespace GW {
         FlagAll(GamePos(HUGE_VALF, HUGE_VALF, 0)); 
     }
 
+#if 0
     void PartyMgr::SetTickToggle(bool enable) {
         tick_work_as_toggle = enable;
     }
+#endif
 
 } // namespace GW

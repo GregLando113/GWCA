@@ -27,6 +27,7 @@ namespace {
     uintptr_t GameSettings_Addr;
     uintptr_t ui_drawn_addr;
     uintptr_t shift_screen_addr;
+    uintptr_t AsyncDecodeStringPtr;
 
     struct AsyncBuffer {
         void *buffer;
@@ -60,7 +61,7 @@ namespace {
     typedef void (__fastcall *DecodeStr_Callback)(void *param, const wchar_t *s);
     void AsyncDecodeStr(const wchar_t *enc_str, DecodeStr_Callback callback, void *param) {
         typedef void(__fastcall *AsyncDecodeStr_t)(const wchar_t *s, DecodeStr_Callback cb, void *param);
-        AsyncDecodeStr_t Gw_AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
+        AsyncDecodeStr_t Gw_AsyncDecodeStr = (AsyncDecodeStr_t)AsyncDecodeStringPtr;
         assert(enc_str && Gw_AsyncDecodeStr && callback);
         Gw_AsyncDecodeStr(enc_str, callback, param);
     }
@@ -99,6 +100,10 @@ namespace {
             printf("[SCAN] shift_screen_addr = %p\n", (void *)address);
             shift_screen_addr = *(uintptr_t *)address;
         }
+
+        // @Replaced
+        AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
+        printf("[SCAN] AsyncDecodeStringPtr = %08lX\n", AsyncDecodeStringPtr);
     }
 }
 

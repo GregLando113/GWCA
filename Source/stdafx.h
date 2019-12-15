@@ -40,3 +40,4 @@
 #endif
 
 #include <Windows.h>
+#include <ShellApi.h>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
 
@@ -17,7 +18,8 @@ namespace GW {
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B,
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
-            kTravel                 = 0x10000000 | 0x17A
+            kTravel                 = 0x10000000 | 0x17A,
+            kOpenTemplate           = 0x10000000 | 0x1B9,
         };
 
         struct CompassPoint {
@@ -46,5 +48,15 @@ namespace GW {
 
         GWCA_API bool UInt32ToEncStr(uint32_t value, wchar_t *buffer, size_t count);
         GWCA_API uint32_t EncStrToUInt32(const wchar_t *enc_str);
+
+        GWCA_API void SetOpenLinks(bool toggle);
+
+        typedef HookCallback<uint32_t, void *, void *> UIMessageCallback;
+        GWCA_API void RegisterUIMessageCallback(
+            HookEntry *entry,
+            UIMessageCallback callback);
+
+        GWCA_API void RemoveUIMessageCallback(
+            HookEntry *entry);
     }
 }

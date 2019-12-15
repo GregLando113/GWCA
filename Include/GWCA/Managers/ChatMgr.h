@@ -36,13 +36,6 @@ namespace GW {
             CHANNEL_COMMAND,
             CHANNEL_UNKNOW = -1
         };
-
-        struct ChatTemplate {
-            uint32_t        unk0;
-            uint32_t        type; // 0 = build, 1 = equipement
-            Array<wchar_t>  code;
-            wchar_t        *name;
-        };
         
         // void SetChatChannelColor(Channel channel, Color sender, Color message);
         // void RegisterEvent(Event e);
@@ -72,8 +65,6 @@ namespace GW {
         GWCA_API void ToggleTimestamps(bool enable);
         GWCA_API void SetTimestampsFormat(bool use_24h, bool show_timestamp_seconds = false);
         GWCA_API void SetTimestampsColor(Color color);
-
-        GWCA_API void SetOpenLinks(bool b);
 
         GWCA_API Color SetSenderColor(Channel chan, Color col);
         GWCA_API Color SetMessageColor(Channel chan, Color col);

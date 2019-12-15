@@ -18,7 +18,7 @@
 namespace {
     using namespace GW;
 
-    typedef void (__fastcall *TransactItem_pt)(
+    typedef void (__cdecl *TransactItem_pt)(
         uint32_t type,
         uint32_t gold_give,
         Merchant::TransactionInfo give,
@@ -26,7 +26,7 @@ namespace {
         Merchant::TransactionInfo recv
     );
 
-    typedef void (__fastcall *RequestQuote_pt)(
+    typedef void (__cdecl *RequestQuote_pt)(
         uint32_t type,
         uint32_t unknown,
         Merchant::QuoteInfo give,

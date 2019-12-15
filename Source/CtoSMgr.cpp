@@ -10,20 +10,22 @@
 namespace {
     using namespace GW;
 
-    typedef void(__fastcall *SendPacket_pt)(
+    typedef void(__cdecl *SendPacket_pt)(
         uint32_t context, uint32_t size, void* packet);
     SendPacket_pt SendPacket_Func;
 
     uintptr_t game_srv_object_addr;
 
     void Init() {
+        // @Replaced
         SendPacket_Func = (SendPacket_pt)Scanner::Find(
-            "\x55\x8B\xEC\x83\xEC\x2C\x53\x56\x57\x8B\xF9\x85", "xxxxxxxxxxxx", 0);
+            "\xF7\xD9\xC7\x47\x54\x01\x00\x00\x00\x1B\xC9\x81", "xxxxxxxxxxxx", -0xC3);
         printf("[SCAN] SendPacket = %p\n", SendPacket_Func);
 
         {
+            // @Replaced: Data need to figure out relocation
             uintptr_t address = Scanner::Find(
-                "\x56\x33\xF6\x3B\xCE\x74\x0E\x56\x33\xD2", "xxxxxxxxxx", -4);
+                "\xC3\xA1\x00\x00\x00\x00\x85\xC0\x74\xF1", "xx????xxxx", +2);
             printf("[SCAN] CtoGSObjectPtr = %p\n", (void *)address);
             if (Verify(address))
                 game_srv_object_addr = *(uintptr_t *)address;

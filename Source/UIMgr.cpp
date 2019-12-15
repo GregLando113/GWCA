@@ -18,7 +18,7 @@
 namespace {
     using namespace GW;
 
-    typedef void (__fastcall *SendUIMessage_pt)(uint32_t message, void *wParam, void *lParam);
+    typedef void (__cdecl *SendUIMessage_pt)(uint32_t message, void *wParam, void *lParam);
     SendUIMessage_pt SendUIMessage_Func;
 
     typedef void (__fastcall *LoadSettings_pt)(uint32_t size, uint8_t *data);
@@ -27,6 +27,7 @@ namespace {
     uintptr_t GameSettings_Addr;
     uintptr_t ui_drawn_addr;
     uintptr_t shift_screen_addr;
+    uintptr_t AsyncDecodeStringPtr;
 
     struct AsyncBuffer {
         void *buffer;
@@ -60,40 +61,49 @@ namespace {
     typedef void (__fastcall *DecodeStr_Callback)(void *param, const wchar_t *s);
     void AsyncDecodeStr(const wchar_t *enc_str, DecodeStr_Callback callback, void *param) {
         typedef void(__fastcall *AsyncDecodeStr_t)(const wchar_t *s, DecodeStr_Callback cb, void *param);
-        AsyncDecodeStr_t Gw_AsyncDecodeStr = (AsyncDecodeStr_t)MemoryMgr::AsyncDecodeStringPtr;
+        AsyncDecodeStr_t Gw_AsyncDecodeStr = (AsyncDecodeStr_t)AsyncDecodeStringPtr;
         assert(enc_str && Gw_AsyncDecodeStr && callback);
         Gw_AsyncDecodeStr(enc_str, callback, param);
     }
 
     void Init() {
+        // @Replaced
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
-            "\x8B\xDA\x1B\xF6\xF7\xDE\x4E\x83\xFF\x46\x73\x14\x68", "xxxxxxxxxxxxx", -0xB);
+            "\x8B\x45\x08\x83\xF8\x46\x73\x16", "xxxxxxxx", -3);
         printf("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
 
+        // @Replaced
         LoadSettings_Func = (LoadSettings_pt)Scanner::Find(
-            "\x33\xC9\xE8\x00\x00\x00\x00\x5F\x5E\xE9", "xxx????xxx", -37);
+            "\xE8\x00\x00\x00\x00\xFF\x75\x0C\xFF\x75\x08\x6A\x00", "x????xxxxxxxx", -0x1E);
         printf("[SCAN] LoadSettings = %p\n", LoadSettings_Func);
 
         {
-            uintptr_t address = Scanner::Find("\x57\x77\x04\x8B\xF8\xEB\x18", "xxxxxxx", +15);
+            // @Replaced
+            uintptr_t address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
             printf("[SCAN] GameSettings = %p\n", (void *)address);
             if (Verify(address))
                 GameSettings_Addr = *(uintptr_t *)address;
         }
 
         {
-            uintptr_t address = Scanner::Find("\x85\xC0\x74\x58\x5F\x5E\xE9", "xxxxxxx", +16);
+            // @Replaced
+            uintptr_t address = Scanner::Find("\x83\xF8\x01\x75\x40\xD9\xEE\x8D\x45", "xxxxxxxxx", +0x6C);
             printf("[SCAN] ui_drawn_addr = %p\n", (void *)address);
             if (Verify(address))
                 ui_drawn_addr = *(uintptr_t *)address;
         }
 
         {
+            // @Replaced
             uintptr_t address = Scanner::Find(
-                "\x85\xC0\x0F\x85\x00\x00\x00\x00\x85\xC9\x75\x00", "xxxx????xxx?", +14);
+                "\x75\x19\x6A\x00\xC7\x05\x00\x00\x00\x00\x01\x00", "xxxxxx????xx", +6);
             printf("[SCAN] shift_screen_addr = %p\n", (void *)address);
             shift_screen_addr = *(uintptr_t *)address;
         }
+
+        // @Replaced
+        AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
+        printf("[SCAN] AsyncDecodeStringPtr = %08lX\n", AsyncDecodeStringPtr);
     }
 }
 
@@ -158,7 +168,7 @@ namespace GW {
             return true;
     }
 
-    bool UI::GetIsShiftScrennShot() {
+    bool UI::GetIsShiftScreenShot() {
         uint32_t *shift_screen = (uint32_t *)shift_screen_addr;
         if (Verify(shift_screen))
             return (*shift_screen != 0);

@@ -23,7 +23,6 @@
 
 #include <GWCA/Managers/MapMgr.h>
 #include <GWCA/Managers/CtoSMgr.h>
-#include <GWCA/Managers/MemoryMgr.h>
 
 namespace {
     using namespace GW;
@@ -31,28 +30,40 @@ namespace {
     uintptr_t map_id_addr;
     uintptr_t map_info_addr;
     uintptr_t area_info_addr;
+    uintptr_t instance_type_addr;
 
     void Init() {
         {
-            uintptr_t address = GW::Scanner::Find("\xC3\x8B\x75\xFC\x8B\x04\xB5", "xxxxxxx", 7);
+            // @Replaced
+            uintptr_t address = GW::Scanner::Find("\x8B\xF0\xEB\x03\x8B\x75\x0C\x3B", "xxxxxxxx", +0x10);
             printf("[SCAN] map_info_addr = %p\n", (void *)address);
             if (Verify(address))
                 map_info_addr = *(uintptr_t *)(address);
         }
 
         {
+            // @Replaced
             uintptr_t address = Scanner::Find(
-                "\x8B\xC6\xC1\xE0\x05\x2B\xC6\x5E\x8D\x04", "xxxxxxxxxx", 11);
+                "\x6B\xC6\x7C\x5E\x05", "xxxxx", 5);
             printf("[SCAN] area_info_addr = %p\n", (void *)address);
             area_info_addr = *(uintptr_t *)address;
         }
 
         {
-            // For Map IDs
-            uintptr_t address = Scanner::Find("\xB0\x7F\x8D\x55", "xxxx", 0x46);
-            printf("[SCAN] MapIDPtr = %p\n", (void *)address);
+            // @Replaced
+            uintptr_t address = Scanner::Find("\x56\x57\x8B\xF3\xBF", "xxxxx", +5);
+            printf("[SCAN] map_id_addr = %p\n", (void *)address);
             if (Verify(address))
                 map_id_addr = *(uintptr_t *)address;
+        }
+
+        {
+            // @Replaced
+            uintptr_t address = Scanner::Find(
+                "\x6A\x2C\x50\xE8\x00\x00\x00\x00\x83\xC4\x08\xC7", "xxxx????xxxx", +0x17);
+            printf("[SCAN] instance_type_addr = %p\n", (void *)address);
+            if (Verify(address))
+                instance_type_addr = *(uintptr_t *)address;
         }
     }
 }
@@ -164,7 +175,7 @@ namespace GW {
     }
 
     Constants::InstanceType Map::GetInstanceType() {
-        return *(Constants::InstanceType *)(MemoryMgr::AgentArrayPtr - 0xF0);
+        return *(Constants::InstanceType *)instance_type_addr;
     }
 
     MissionMapIconArray Map::GetMissionMapIconArray() {

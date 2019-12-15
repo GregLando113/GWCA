@@ -17,7 +17,7 @@
 namespace {
     using namespace GW;
 
-    typedef bool (__fastcall *StoCHandler_pt)(Packet::StoC::PacketBase *pak);
+    typedef bool (__cdecl *StoCHandler_pt)(Packet::StoC::PacketBase *pak);
     struct StoCHandler {
         uint32_t      *packet_template;
         uint32_t       template_size;
@@ -49,7 +49,7 @@ namespace {
     std::vector<std::unordered_map<HookEntry *, StoC::PacketCallback>> packets_callbacks;
 	std::vector<std::unordered_map<HookEntry*, StoC::PacketCallback>> post_packets_callbacks;
 
-    bool __fastcall StoCHandler_Func(Packet::StoC::PacketBase *pak) {
+    bool __cdecl StoCHandler_Func(Packet::StoC::PacketBase *pak) {
         GW::HookBase::EnterHook();
         HookStatus status;
 
@@ -75,7 +75,10 @@ namespace {
     void Init() {
         uintptr_t StoCHandler_Addr;
         {
-            uintptr_t address = Scanner::Find("\x50\x52\x8B\x55\x0C\xC7\x45\xF8", "xxxxxxxx", -0x23);
+            // @Replaced: Data need to figure out relocation
+            // @Remark: Same pattern as CtoGSObjectPtr in CtoSMgr.cpp
+            uintptr_t address = Scanner::Find(
+                "\xC3\xA1\x00\x00\x00\x00\x85\xC0\x74\xF1", "xx????xxxx", +2);
             printf("[SCAN] StoCHandler pattern = %p\n", (void *)address);
             if (Verify(address))
                 StoCHandler_Addr = *(uintptr_t *)address;

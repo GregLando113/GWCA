@@ -36,35 +36,38 @@ namespace {
     using namespace GW;
 
     uint32_t last_dialog_id = 0;
-	std::unordered_map<HookEntry*, Agents::DialogCallback> OnDialog_callbacks;
+    std::unordered_map<HookEntry*, Agents::DialogCallback> OnDialog_callbacks;
 
-    typedef void (__fastcall *SendDialog_pt)(uint32_t dialog_id);
+    typedef void (*SendDialog_pt)(uint32_t dialog_id);
     SendDialog_pt RetSendDialog;
     SendDialog_pt SendDialog_Func;
 
-    void __fastcall OnSendDialog(uint32_t dialog_id) {
+    void OnSendDialog(uint32_t dialog_id) {
         HookBase::EnterHook();
-		HookStatus status;
-		for (auto& it : OnDialog_callbacks) {
-			it.second(&status, dialog_id);
-			++status.altitude;
-		}
-		if (status.blocked) {
-			RetSendDialog(0);
-		}
-		else {
-			last_dialog_id = dialog_id;
-			RetSendDialog(dialog_id);
-		}
+
+        HookStatus status;
+        for (auto& it : OnDialog_callbacks) {
+            it.second(&status, dialog_id);
+            ++status.altitude;
+        }
+
+        if (status.blocked) {
+            RetSendDialog(0);
+        } else {
+            last_dialog_id = dialog_id;
+            RetSendDialog(dialog_id);
+        }
+
         HookBase::LeaveHook();
     };
 
-    typedef void(__fastcall *ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
+    typedef void(*ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
     ChangeTarget_pt ChangeTarget_Func;
 
-    typedef void(__fastcall *Move_pt)(GamePos *pos);
+    typedef void(*Move_pt)(GamePos *pos);
     Move_pt Move_Func;
 
+    uintptr_t AgentArrayPtr = 0;
     uintptr_t PlayerAgentIdPtr = 0;
     uintptr_t TargetAgentIdPtr = 0;
     uintptr_t MouseOverAgentIdPtr = 0;
@@ -73,24 +76,49 @@ namespace {
 
     void Init() {
         // Agent Array
-        uintptr_t AgentArrayPtr = MemoryMgr::AgentArrayPtr;
-        PlayerAgentIdPtr        = AgentArrayPtr - 0x54;
-        TargetAgentIdPtr        = AgentArrayPtr - 0x500;
-        MouseOverAgentIdPtr     = AgentArrayPtr - 0x4F4;
 
-        AgentListPtr = (AgentList *)(AgentArrayPtr - 0x40);
-        
+        // MouseOverAgentPtr: 369D35
+
+        // @Replaced
+        ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
+            "\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
+        printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
+
+        if (ChangeTarget_Func) {
+            AgentArrayPtr = DECODE_RELATIVE((uintptr_t)ChangeTarget_Func + 0x1E); // ManagerFindAgent()
+            AgentArrayPtr = *(uintptr_t*)(AgentArrayPtr + 0x13); // Agentz
+
+            TargetAgentIdPtr = *(uintptr_t*)((uintptr_t)ChangeTarget_Func + 0x91);
+            MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;
+        }
+
+        // @Replaced
+        PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
+        if (PlayerAgentIdPtr) {
+            PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
+            printf("[SCAN] PlayerAgentIdPtr = %p\n", (void *)PlayerAgentIdPtr);
+        }
+
+        // @Replaced
+        AgentListPtr = (AgentList * )Scanner::Find("\x8D\x0C\x88\xE8\x00\x00\x00\x00\x8B\xC3", "xxxx????xx", 0x3C);
+        if (AgentListPtr) {
+            AgentListPtr = *(AgentList * *)AgentListPtr;
+            printf("[SCAN] AgentListPtr = %p\n", AgentListPtr);
+        }
+
+        // @Replaced
+        // Ideally we wouldn't scan a pattern from where we hook or other software hooks.
         Move_Func = (Move_pt)Scanner::Find(
-                "\xD9\x07\xD8\x5D\xF0\xDF\xE0\xF6\xC4\x01", "xxxxxxxxxx", -0x12);
+                "\x55\x8B\xEC\x83\xEC\x20\x8D\x45\xF0", "xxxxxxxxx", 0);
         printf("[SCAN] MoveFunction = %p\n", Move_Func);
 
+        // @Replaced
         SendDialog_Func = (SendDialog_pt)Scanner::Find(
-            "\x55\x8B\xEC\x83\xEC\x28\x53\x56\x57\x8B\xF2\x8B\xD9", "xxxxxxxxxxxxx", -0x30);
+            "\x83\xC8\x01\x89\x46\x24\x8B\x46\x28\x83\xE8\x00\x74\x0D", "xxxxxxxxxxxxxx", 0x15);
+        if (SendDialog_Func) {
+            SendDialog_Func = (SendDialog_pt)((uintptr_t)SendDialog_Func + *(uintptr_t*)SendDialog_Func + 4);
+        }
         printf("[SCAN] DialogFunc = %p\n", SendDialog_Func);
-
-        ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
-                "\x33\xC0\x3B\xDA\x0F\x95\xC0\x33", "xxxxxxxx", -0x78);
-        printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
 
         if (Verify(SendDialog_Func))
             HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void **)&RetSendDialog);
@@ -121,7 +149,7 @@ namespace GW {
     }
 
     AgentArray Agents::GetAgentArray() {
-        return *(AgentArray *)MemoryMgr::AgentArrayPtr;
+        return *(AgentArray *)AgentArrayPtr;
     }
     uint32_t Agents::GetPlayerId() {
         return *(uint32_t *)PlayerAgentIdPtr;
@@ -303,18 +331,18 @@ namespace GW {
         UI::AsyncDecodeStr(str, &res);
     }
 
-	void Agents::RegisterDialogCallback(
-		HookEntry* entry,
-		DialogCallback callback)
-	{
-		OnDialog_callbacks.insert({ entry, callback });
-	}
-	void Agents::RemoveDialogCallback(
-		HookEntry* entry)
-	{
-		auto it = OnDialog_callbacks.find(entry);
-		if (it != OnDialog_callbacks.end())
-			OnDialog_callbacks.erase(it);
-	}
+    void Agents::RegisterDialogCallback(
+        HookEntry* entry,
+        DialogCallback callback)
+    {
+        OnDialog_callbacks.insert({ entry, callback });
+    }
 
+    void Agents::RemoveDialogCallback(
+        HookEntry* entry)
+    {
+        auto it = OnDialog_callbacks.find(entry);
+        if (it != OnDialog_callbacks.end())
+            OnDialog_callbacks.erase(it);
+    }
 } // namespace GW

@@ -253,7 +253,7 @@ namespace {
 			++status.altitude;
 		}
 		if (status.blocked) {
-			RetPrintChat(ctx, thiscall, channel, str, timestamp, reprint);
+			RetPrintChat(ctx, edx, channel, str, timestamp, reprint);
 			HookBase::LeaveHook();
 			return;
 		}
@@ -331,11 +331,11 @@ namespace {
             "\x8D\x85\xE0\xFE\xFF\xFF\x50\x68\x1C\x01", "xxxxxxxxx", -0x3E);
         printf("[SCAN] SendChat = %p\n", SendChat_Func);
 
-    #if 0
+    //#if 0
         StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
             "\x55\x8B\xEC\x51\x53\x56\x8B\xF1\x57\xBA\x05\x00\x00\x00", "xxxxxxxxxxxxxx", 0);
         printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
-    #endif
+   // #endif
 
         // @Replaced
         WriteWhisper_Func = (WriteWhisper_pt)Scanner::Find(

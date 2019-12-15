@@ -30,34 +30,46 @@ namespace {
     uintptr_t storage_pannel_addr;
     uintptr_t storage_open_addr;
 
-    typedef void (__cdecl *ItemClick_pt)(uint32_t *bag_id, uint32_t edx, uint32_t *info);
+    enum ItemClickType : uint32_t {
+        ItemClickType_Add           = 2, // (when you load / open chest)
+        ItemClickType_Click         = 5,
+        ItemClickType_Release       = 7,
+        ItemClickType_DoubleClick   = 8,
+        ItemClickType_Move          = 9,
+        ItemClickType_DragStart     = 10,
+        ItemClickType_DragStop      = 12,
+    };
+
+    struct ItemClickParam {
+        uint32_t unk0;
+        uint32_t slot;
+        uint32_t type;
+    };
+
+    typedef void (__fastcall *ItemClick_pt)(uint32_t *bag_id, void *edx, ItemClickParam *param);
     ItemClick_pt RetItemClick;
     ItemClick_pt ItemClick_Func;
 
     std::unordered_map<HookEntry *, Items::ItemClickCallback> ItemClick_callbacks;
-    void __cdecl OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *info) {
+    void __fastcall OnItemClick(uint32_t* bag_id, void *edx, ItemClickParam *param) {
         HookBase::EnterHook();
-        // click type:
-        //  2  add (when you load / open chest)
-        //  5  click
-        //  7  release
-        //  8  double click
-        //  9  move
-        //  10 drag-add
-        //  12 drag-remove
-        uint32_t type = info[2];
-        uint32_t slot = info[1] - 2; // for some reason the slot is offset by 2
+        if (!(bag_id && param)) {
+            RetItemClick(bag_id, edx, param);
+            HookBase::LeaveHook();
+            return;
+        }
 
-        Bag *bag = Items::GetBag(*bag_id + 1);
+        uint32_t slot = param->slot - 2; // for some reason the slot is offset by 2
         GW::HookStatus status;
-        if (bag != nullptr) {
+        Bag* bag = Items::GetBag(*bag_id + 1);
+        if (bag) {
             for (auto& it : ItemClick_callbacks) {
-                it.second(&status, type, slot, bag);
+                it.second(&status, param->type, slot, bag);
                 ++status.altitude;
             }
         }
         if (!status.blocked)
-            RetItemClick(bag_id, edx, info);
+            RetItemClick(bag_id, edx, param);
         HookBase::LeaveHook();
     }
 

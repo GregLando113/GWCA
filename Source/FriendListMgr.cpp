@@ -15,14 +15,14 @@
 namespace {
     using namespace GW;
 
-    typedef void(__fastcall *FriendStatusHandler_pt)(
+    typedef void(__cdecl *FriendStatusHandler_pt)(
         FriendStatus status, const uint8_t *uuid, const wchar_t *alias, const wchar_t *charname);
     FriendStatusHandler_pt RetFriendStatusHandler;
     FriendStatusHandler_pt FriendStatusHandler_Func;
 
     HookCallback<Friend *, FriendStatus, const wchar_t *, const wchar_t *> OnFriendStatus_callback;
     std::unordered_map<HookEntry *, FriendListMgr::FriendStatusCallback> FriendStatus_callbacks;
-    void __fastcall OnFriendStatusHandler(FriendStatus status, 
+    void __cdecl OnFriendStatusHandler(FriendStatus status, 
         const uint8_t *uuid, const wchar_t *alias, const wchar_t *charname)
     {
         HookBase::EnterHook();
@@ -39,16 +39,16 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__fastcall *SetOnlineStatus_pt)(uint32_t status);
+    typedef void(__cdecl *SetOnlineStatus_pt)(uint32_t status);
     SetOnlineStatus_pt SetOnlineStatus_Func;
 
     // type:
     //  1 = Friend
     //  2 = Ignore
-    typedef void (__fastcall *AddFriend_pt)(const wchar_t *name, const wchar_t *alias, uint32_t type);
+    typedef void (__cdecl *AddFriend_pt)(const wchar_t *name, const wchar_t *alias, uint32_t type);
     AddFriend_pt AddFriend_Func;
 
-    typedef void (__fastcall *RemoveFriend_pt)(const uint8_t *uuid, const wchar_t *name, uint32_t arg8);
+    typedef void (__cdecl *RemoveFriend_pt)(const uint8_t *uuid, const wchar_t *name, uint32_t arg8);
     RemoveFriend_pt RemoveFriend_Func;
 
     uintptr_t FriendList_Addr;

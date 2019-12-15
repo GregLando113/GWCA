@@ -125,10 +125,10 @@ namespace {
     std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
     std::unordered_map<HookEntry *, Chat::StartWhisperCallback> StartWhisper_callbacks;
 
-    typedef void(__fastcall *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
+    typedef void(__cdecl *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
     ChatEvent_pt RetChatEvent;
     ChatEvent_pt ChatEvent_Func;
-    void __fastcall OnChatEvent(uint32_t event_id, uint32_t type, wchar_t *info, void *unk) {
+    void __cdecl OnChatEvent(uint32_t event_id, uint32_t type, wchar_t *info, void *unk) {
         HookBase::EnterHook();
         HookStatus status;
         for (auto& it : ChatEvent_callbacks) {
@@ -257,18 +257,18 @@ namespace {
         GW::HookBase::LeaveHook();
     }
 
-    typedef void (__cdecl *PrintChat_pt)(void *ctx, uint32_t thiscall,
+    typedef void (__fastcall *PrintChat_pt)(void *ctx, uint32_t edx,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint);
     PrintChat_pt RetPrintChat;
     PrintChat_pt PrintChat_Func;
-    void __cdecl OnPrintChat(void *ctx, int thiscall,
+    void __fastcall OnPrintChat(void *ctx, uint32_t edx,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint)
     {
         HookBase::EnterHook();
         assert(ChatBuffer_Addr && 0 <= channel && channel < Chat::CHANNEL_COUNT);
 
         if (!ShowTimestamps) {
-            RetPrintChat(ctx, thiscall, channel, str, timestamp, reprint);
+            RetPrintChat(ctx, edx, channel, str, timestamp, reprint);
             HookBase::LeaveHook();
             return;
         }
@@ -289,7 +289,7 @@ namespace {
         wchar_t buffer[1024];
         wchar_t t_buffer[16];
         if (localtime.wYear == 0) {
-             wsprintfW(t_buffer, Timestamp_seconds ? L"[--:--:--]" : L"[--:--]");
+            wsprintfW(t_buffer, Timestamp_seconds ? L"[--:--:--]" : L"[--:--]");
         }
         else {
             if(Timestamp_seconds)
@@ -310,13 +310,13 @@ namespace {
                 wsprintfW(buffer, L"\x108\x107%s \x01\x02%s", t_buffer, str);
             }
         }
-        RetPrintChat(ctx, thiscall, channel, buffer, timestamp, reprint);
+        RetPrintChat(ctx, edx, channel, buffer, timestamp, reprint);
         HookBase::LeaveHook();
     }
 
     void Init() {
         // @Replaced
-        ChatEvent_pt ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x28);
+        ChatEvent_pt ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x2A);
         printf("[SCAN] Chat Event = %p\n", ChatEvent_Func);
 
         // @Replaced
@@ -340,9 +340,11 @@ namespace {
             "\x8D\x85\xE0\xFE\xFF\xFF\x50\x68\x1C\x01", "xxxxxxxxx", -0x3E);
         printf("[SCAN] SendChat = %p\n", SendChat_Func);
 
+    #if 0
         StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
             "\x55\x8B\xEC\x51\x53\x56\x8B\xF1\x57\xBA\x05\x00\x00\x00", "xxxxxxxxxxxxxx", 0);
         printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
+    #endif
 
         // @Replaced
         OpenTemplate_Func = (OpenTemplate_pt)Scanner::Find(
@@ -377,8 +379,10 @@ namespace {
                 IsTyping_Addr = *(uintptr_t *)address;
         }
 
+    #if 0
         if (Verify(StartWhisper_Func))
             HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
+    #endif
         if (Verify(ChatEvent_Func))
             HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
         if (Verify(GetSenderColor_Func))
@@ -398,8 +402,10 @@ namespace {
     }
 
     void Exit() {
+    #if 0
         if(StartWhisper_Func)
             HookBase::RemoveHook(StartWhisper_Func);
+    #endif
         if (ChatEvent_Func)
             HookBase::RemoveHook(ChatEvent_Func);
         if (GetSenderColor_Func)

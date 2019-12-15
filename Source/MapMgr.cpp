@@ -35,7 +35,7 @@ namespace {
     void Init() {
         {
             // @Replaced
-            uintptr_t address = GW::Scanner::Find("\x8B\xF0\xEB\x03\x8B\x75\x0C\x3B", "xxxxxxxx", +0x10);
+            uintptr_t address = GW::Scanner::Find("\x8B\xF0\xEB\x03\x8B\x75\x0C\x3B", "xxxxxxxx", +0xA);
             printf("[SCAN] map_info_addr = %p\n", (void *)address);
             if (Verify(address))
                 map_info_addr = *(uintptr_t *)(address);
@@ -51,7 +51,7 @@ namespace {
 
         {
             // @Replaced
-            uintptr_t address = Scanner::Find("\x56\x57\x8B\xF3\xBF", "xxxxx", +5);
+            uintptr_t address = Scanner::Find("\xE8\x00\x00\x00\x00\x6A\x3D\x57\xE8", "x????xxxx", -4);
             printf("[SCAN] map_id_addr = %p\n", (void *)address);
             if (Verify(address))
                 map_id_addr = *(uintptr_t *)address;

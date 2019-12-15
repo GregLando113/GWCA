@@ -35,7 +35,7 @@ namespace {
 
         // @Replaced
         patch_fov_addr = Scanner::Find(
-            "\xD9\xE8\xD9\x5D\x08\xD9\x45\x08\xD9\xEE", "xxxxxxxxxx", +0x11);
+            "\xD9\xE8\xD9\x5D\x08\xD9\x45\x08\xD9\xEE", "xxxxxxxxxx", +0x2B);
         printf("[SCAN] patch_fov_addr = %p\n", (void *)patch_fov_addr);
 
         // @Replaced
@@ -61,7 +61,7 @@ namespace {
             patch_max_dist.SetPatch(patch_max_dist_addr, "\x90\x90\x90", 3);
         if (Verify(patch_fov_addr))
             // @Replaced
-            patch_fov.SetPatch(patch_fov_addr, "\xEB\x4C", 2);
+            patch_fov.SetPatch(patch_fov_addr, "\x90\x90\x90\x90\x90\x90", 6);
         if (Verify(patch_cam_update_addr))
             // @Replaced
             patch_cam_update.SetPatch(patch_cam_update_addr, "\xEB\x0C", 2);

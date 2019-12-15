@@ -27,10 +27,6 @@ namespace GW {
         GWCA_API Vec3f ComputeCamPos(float dist = 0); // 2.f is the first person dist (const by gw)
         GWCA_API void UpdateCameraPos();
 
-        // ==== Projection matrix ====
-        // Returns (possible?) projection matrix of the game. Needs to be delved into.
-        GWCA_API float *GetProjectionMatrix();
-
         GWCA_API float GetFieldOfView();
         GWCA_API float GetYaw();
 

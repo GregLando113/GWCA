@@ -55,22 +55,24 @@ static int _ReadBits(char **str, int n) {
     return val;
 }
 
-typedef void(__fastcall *UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
+typedef void(__cdecl *UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
 static UseSkill_pt UseSkill_Func;
 
 static uintptr_t skill_array_addr;
 
 static void Init() {
     {
+        // @Replaced
         uintptr_t address = GW::Scanner::Find(
-            "\x8D\x04\xB6\x5E\xC1\xE0\x05\x05", "xxxxxxxx", 8);
+            "\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
         printf("[SCAN] SkillArray = %p\n", (void *)address);
         if (Verify(address))
             skill_array_addr = *(uintptr_t *)address;
     }
 
+    // @Replaced
     UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
-        "\x55\x8B\xEC\x83\xEC\x10\x53\x56\x8B\xD9\x57\x8B\xF2\x89\x5D\xF0", "xxxxxxxxxxxxxxxx", 0);
+        "\x85\xF6\x74\x5B\x83\xFE\x11\x74", "xxxxxxxx", -0x126);
 }
 
 namespace GW {

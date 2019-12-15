@@ -30,12 +30,12 @@ namespace {
     uintptr_t storage_pannel_addr;
     uintptr_t storage_open_addr;
 
-    typedef void (__fastcall *ItemClick_pt)(uint32_t *bag_id, uint32_t edx, uint32_t *info);
+    typedef void (__cdecl *ItemClick_pt)(uint32_t *bag_id, uint32_t edx, uint32_t *info);
     ItemClick_pt RetItemClick;
     ItemClick_pt ItemClick_Func;
 
     std::unordered_map<HookEntry *, Items::ItemClickCallback> ItemClick_callbacks;
-    void __fastcall OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *info) {
+    void __cdecl OnItemClick(uint32_t *bag_id, uint32_t edx, uint32_t *info) {
         HookBase::EnterHook();
         // click type:
         //  2  add (when you load / open chest)
@@ -63,22 +63,26 @@ namespace {
 
     void Init() {
         {
+            // @Replaced
             uintptr_t address = Scanner::Find(
-                "\x0F\x84\xFC\x01\x00\x00\x8B\x43\x14", "xxxxxxxxx", -4);
+                "\x0F\x84\x5D\x01\x00\x00\x83\x7B\x14", "xxxxxxxxx", -4);
             printf("[SCAN] StoragePannel = %p\n", (void *)address);
             if (Verify(address))
                 storage_pannel_addr = *(uintptr_t *)address;
         }
 
         {
+            // @Replaced
             uintptr_t address = Scanner::Find(
-                "\x40\x85\xD2\xA3\x00\x00\x00\x00\x75\x05", "xxxx????xx", 4);
+                "\xC7\x00\x0F\x00\x00\x00\x89\x48\x14", "xxxxxxxxx", -0x28);
             printf("[SCAN] StorageOpen = %p\n", (void *)address);
             if (Verify(address))
                 storage_open_addr = *(uintptr_t *)address;
         }
 
-        ItemClick_Func = (ItemClick_pt)Scanner::Find("\x74\x73\x8B\x50\x08", "xxxxx", -25);
+        // @Replaced
+        ItemClick_Func = (ItemClick_pt)Scanner::Find(
+            "\x8B\x48\x08\x83\xEA\x00\x0F\x84", "xxxxxxxx", -0x1C);
         printf("[SCAN] ItemClick = %p\n", ItemClick_Func);
 
         if (Verify(ItemClick_Func))

@@ -62,7 +62,8 @@ namespace GW {
 
         if (MemoryMgr::Scan()) {
 
-            uintptr_t address = Scanner::Find("\x85\xC0\x75\x0F\x8B\xCE", "xxxxxx", -4);
+            // We could get it from thread ctx
+            uintptr_t address = Scanner::Find("\x50\x6A\x0F\x6A\x00\xFF\x35", "xxxxxxx", +7);
             printf("[SCAN] base_ptr = %p\n", (void *)address);
             if (Verify(address))
                 base_ptr = *(uintptr_t *)address;

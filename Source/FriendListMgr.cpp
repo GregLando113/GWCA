@@ -55,34 +55,37 @@ namespace {
 
     void Init() {
         {
+            // @Remplaced
             uintptr_t address = Scanner::Find(
-                "\x85\xC0\x74\x19\x6A\xFF\x8D\x50\x18\x8D\x4E\x18", "xxxxxxxxxxxx", -0x18);
+                "\x74\x30\x8D\x47\xFF\x83\xF8\x01", "xxxxxxxx", -0xB);
             printf("[SCAN] FriendList_Addr = %p\n", (void *)address);
             if (Verify(address)) {
-                address = *(uintptr_t *)address + (address + 5 - 1) + 2;
                 FriendList_Addr = *(uintptr_t *)address;
             }
         }
 
+        // @Remplaced
         FriendStatusHandler_Func = (FriendStatusHandler_pt)Scanner::Find(
-            "\x89\x45\x9C\x8B\x4A\x04\x8B\x42", "xxxxxxxx", -0xB);
+            "\x8B\x75\x14\x8B\x01\x89\x45\x98", "xxxxxxxx", -0x17);
         printf("[SCAN] FriendStatusHandler = %p\n", FriendStatusHandler_Func);
-
-        SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find(
-            "\x8B\xCE\x89\x35\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\xC8", "xxxx????x????xx", -0x1C);
-        printf("[SCAN] SetOnlineStatus = %p\n", SetOnlineStatus_Func);
-
         if (Verify(FriendStatusHandler_Func)) {
             HookBase::CreateHook(FriendStatusHandler_Func,
                 OnFriendStatusHandler, (void **)&RetFriendStatusHandler);
         }
 
+        // @Remplaced
+        SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find(
+            "\x83\xFE\x03\x77\x40\xFF\x24\xB5\x00\x00\x00\x00\x33\xC0", "xxxxxxxx????xx", -0x26);
+        printf("[SCAN] SetOnlineStatus = %p\n", SetOnlineStatus_Func);
+
+        // @Remplaced
         AddFriend_Func = (AddFriend_pt)Scanner::Find(
-            "\x8B\x5D\x08\x83\xFB\x03\x74\x00\x83", "xxxxxxx?x", -0x46);
+            "\x8B\x75\x10\x83\xFE\x03\x74\x65", "xxxxxxxx", -0x48);
         printf("[SCAN] AddFriend_Func = %p\n", AddFriend_Func);
 
+        // @Remplaced
         RemoveFriend_Func = (RemoveFriend_pt)Scanner::Find(
-            "\x8B\x4D\x08\x8D\x50\x2C\x89\x48\x28", "xxxxxxxxx", -0x29);
+            "\x8B\x4D\x10\x89\x4E\x28\x8B\x4D\x08\xC7\x06", "xxxxxxxxxxx", -0x2D);
         printf("[SCAN] RemoveFriend_Func = %p\n", RemoveFriend_Func);
     }
 

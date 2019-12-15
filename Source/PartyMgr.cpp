@@ -47,7 +47,10 @@ namespace {
     }
 
     void Init() {
-        Tick_pt Tick_Func = (Tick_pt)Scanner::Find("\x74\x0A\x48\x75\x14\xB9", "xxxxxx", -33);
+        // @Replace:
+        // This actually doesn't work, but the pattern is the right place
+        Tick_pt Tick_Func = (Tick_pt)Scanner::Find(
+            "\x83\xC4\x04\xE9\x00\x00\x00\x00\x68\x8D\x01\x01", "xxxx????xxx", +8);
         printf("[SCAN] addr_tick = %p\n", Tick_Func);
 
         if (Verify(Tick_Func))

@@ -34,18 +34,11 @@ namespace {
     uintptr_t shift_screen_addr;
     uintptr_t AsyncDecodeStringPtr;
 
-    struct ChatTemplate {
-        uint32_t        unk0;
-        uint32_t        type; // 0 = build, 1 = equipement
-        Array<wchar_t>  code;
-        wchar_t        *name;
-    };
-
     static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
     {
         if (msgid != UI::kOpenTemplate)
             return;
-        ChatTemplate *info = static_cast<ChatTemplate *>(wParam);
+        UI::ChatTemplate *info = static_cast<UI::ChatTemplate *>(wParam);
         if (!(open_links && info && info->code.valid() && info->name))
             return;
         if (!wcsncmp(info->name, L"http://", 7) || !wcsncmp(info->name, L"https://", 8)) {

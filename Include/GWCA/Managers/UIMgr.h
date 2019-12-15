@@ -12,6 +12,13 @@ namespace GW {
     namespace UI {
         typedef GW::Array<unsigned char> ArrayByte;
 
+        struct ChatTemplate {
+            uint32_t        unk0;
+            uint32_t        type; // 0 = build, 1 = equipement
+            Array<wchar_t>  code;
+            wchar_t        *name;
+        };
+
         enum UIMessage : uint32_t {
             kShowAgentNameTag       = 0x10000000 | 0x19,
             kHideAgentNameTag       = 0x10000000 | 0x1A,

@@ -21,8 +21,6 @@
 #define COLOR_ARGB(a, r, g, b) (GW::Chat::Color)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
 #define COLOR_RGB(r, g, b) COLOR_ARGB(0xff, r, g, b)
 
-#define GWCALL __fastcall
-
 namespace {
     using namespace GW;
 
@@ -142,10 +140,10 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef Chat::Color* (__fastcall *GetChannelColor_pt)(Chat::Color *color, Chat::Channel chan);
+    typedef Chat::Color* (__cdecl *GetChannelColor_pt)(Chat::Color *color, Chat::Channel chan);
     GetChannelColor_pt RetGetSenderColor;
     GetChannelColor_pt GetSenderColor_Func;
-    Chat::Color* __fastcall OnGetSenderColor(Chat::Color *color, Chat::Channel chan) {
+    Chat::Color* __cdecl OnGetSenderColor(Chat::Color *color, Chat::Channel chan) {
         HookBase::EnterHook();
         *color = ChatSenderColor[(int)chan];
         HookBase::LeaveHook();
@@ -155,17 +153,17 @@ namespace {
 
     GetChannelColor_pt RetGetMessageColor;
     GetChannelColor_pt GetMessageColor_Func;
-    Chat::Color* __fastcall OnGetMessageColor(Chat::Color *color, Chat::Channel chan) {
+    Chat::Color* __cdecl OnGetMessageColor(Chat::Color *color, Chat::Channel chan) {
         HookBase::EnterHook();
         *color = ChatMessageColor[(int)chan];
         HookBase::LeaveHook();
         return color;
     };
 
-    typedef void(__fastcall *LocalMessage_pt)(int channel, wchar_t *message);
+    typedef void(__cdecl *LocalMessage_pt)(int channel, wchar_t *message);
     LocalMessage_pt LocalMessage_Func;
     LocalMessage_pt RetLocalMessage;
-    void __fastcall OnLocalMessage(int channel, wchar_t *message) {
+    void __cdecl OnLocalMessage(int channel, wchar_t *message) {
         HookBase::EnterHook();
         HookStatus status;
         for (auto& it : LocalMessage_callbacks) {
@@ -177,10 +175,10 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__fastcall *SendChat_pt)(wchar_t *message);
+    typedef void(__cdecl *SendChat_pt)(wchar_t *message);
     SendChat_pt SendChat_Func;
     SendChat_pt RetSendChat;
-    void __fastcall OnSendChat(wchar_t *message) {
+    void __cdecl OnSendChat(wchar_t *message) {
         HookBase::EnterHook();
         if (*message == '/') {
             int argc;
@@ -210,11 +208,11 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__fastcall *OpenTemplate_pt)(uint32_t unk, Chat::ChatTemplate* info);
+    typedef void(__cdecl *OpenTemplate_pt)(uint32_t unk, Chat::ChatTemplate* info);
     OpenTemplate_pt RetOpenTemplate;
     OpenTemplate_pt OpenTemplate_Func;
     bool open_links = false;
-    void __fastcall OnOpenTemplate(uint32_t unk, Chat::ChatTemplate* info) {
+    void __cdecl OnOpenTemplate(uint32_t unk, Chat::ChatTemplate* info) {
         HookBase::EnterHook();
         if (open_links
             && info
@@ -229,10 +227,10 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__fastcall *WriteWhisper_pt)(uint32_t, wchar_t *, wchar_t *);
+    typedef void(__cdecl *WriteWhisper_pt)(uint32_t, wchar_t *, wchar_t *);
     WriteWhisper_pt RetWriteWhisper;
     WriteWhisper_pt WriteWhisper_Func;
-    void __fastcall OnWriteWhisper(uint32_t unk, wchar_t *from, wchar_t *msg) {
+    void __cdecl OnWriteWhisper(uint32_t unk, wchar_t *from, wchar_t *msg) {
         HookBase::EnterHook();
         HookStatus status;
         for (auto& it : Whisper_callbacks) {
@@ -244,10 +242,10 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__fastcall* StartWhisper_pt)(uint32_t unk, wchar_t* name, wchar_t* name2);
+    typedef void(__cdecl* StartWhisper_pt)(uint32_t unk, wchar_t* name, wchar_t* name2);
     StartWhisper_pt StartWhisper_Func;
     StartWhisper_pt RetStartWhisper;
-    void __fastcall OnStartWhisper(uint32_t unk, wchar_t* name, wchar_t* name2) {
+    void __cdecl OnStartWhisper(uint32_t unk, wchar_t* name, wchar_t* name2) {
         GW::HookBase::EnterHook();
         HookStatus status;
         for (auto& it : StartWhisper_callbacks) {
@@ -259,11 +257,11 @@ namespace {
         GW::HookBase::LeaveHook();
     }
 
-    typedef void (GWCALL *PrintChat_pt)(void *ctx, uint32_t thiscall,
+    typedef void (__cdecl *PrintChat_pt)(void *ctx, uint32_t thiscall,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint);
     PrintChat_pt RetPrintChat;
     PrintChat_pt PrintChat_Func;
-    void GWCALL OnPrintChat(void *ctx, int thiscall,
+    void __cdecl OnPrintChat(void *ctx, int thiscall,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint)
     {
         HookBase::EnterHook();
@@ -317,52 +315,63 @@ namespace {
     }
 
     void Init() {
+        // @Replaced
         ChatEvent_pt ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x28);
         printf("[SCAN] Chat Event = %p\n", ChatEvent_Func);
 
+        // @Replaced
         GetChannelColor_pt GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find(
-            "\x56\x83\xFA\x0E\x8B\xF1\x0F\x87\x96", "xxxxxxxxx", 0);
+            "\xC7\x00\x60\xC0\xFF\xFF\x5D\xC3", "xxxxxxxx", -0x1C);
         printf("[SCAN] GetSenderColor = %p\n", GetSenderColor_Func);
 
+        // @Replaced
         GetChannelColor_pt GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find(
-            "\x83\xFA\x0E\x8B\xC1\x0F\x87\x83", "xxxxxxxx", 0);
+            "\xC7\x00\xB0\xB0\xB0\xFF\x5D\xC3", "xxxxxxxx", -0x27);
         printf("[SCAN] GetMessageColor = %p\n", GetMessageColor_Func);
 
+        // @Replaced
+        // The last 4 bytes of the patterns are the "SendUIMessage" message id (i.e. 0x1000007E)
         LocalMessage_pt LocalMessage_Func = (LocalMessage_pt)Scanner::Find(
-            "\x8D\x55\xF8\xB9\x7E\x00\x00\x10\x6A\x00", "xxxxxxxxxx", -59);
+            "\x8D\x45\xF8\x6A\x00\x50\x68\x7E\x00\x00\x10", "xxxxxxxxxxx", -0x3D);
         printf("[SCAN] LocalMessage = %p\n", LocalMessage_Func);
 
+        // @Replaced
         SendChat_Func = (SendChat_pt)Scanner::Find(
-            "\x81\xEC\x1C\x01\x00\x00\x56\x8B\xF2", "xxxxxxxxx", -3);
+            "\x8D\x85\xE0\xFE\xFF\xFF\x50\x68\x1C\x01", "xxxxxxxxx", -0x3E);
         printf("[SCAN] SendChat = %p\n", SendChat_Func);
 
         StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
             "\x55\x8B\xEC\x51\x53\x56\x8B\xF1\x57\xBA\x05\x00\x00\x00", "xxxxxxxxxxxxxx", 0);
         printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
 
+        // @Replaced
         OpenTemplate_Func = (OpenTemplate_pt)Scanner::Find(
-            "\x53\x8B\xDA\x57\x8B\xF9\x8B\x43", "xxxxxxxx", 0);
+            "\x2B\xCB\x74\x1F\x83\xE9\x01\x75\x41", "xxxxxxxxx", -0x70);
         printf("[SCAN] OpenTemplate = %p\n", OpenTemplate_Func);
 
+        // @Replaced
         WriteWhisper_Func = (WriteWhisper_pt)Scanner::Find(
-            "\x83\xC6\x2E\x8B\xC6\x83\xC0\x03", "xxxxxxxx", -0x16);
+            "\x83\xC4\x04\x8D\x58\x2E", "xxxxxx", -0x18);
         printf("[SCAN] WriteWhisper = %p\n", WriteWhisper_Func);
 
+        // @Replaced
         PrintChat_Func = (PrintChat_pt)Scanner::Find(
-            "\x83\xEC\x30\x56\x8B\xF1\x57\x81", "xxxxxxxx", -3);
+            "\x3D\x00\x00\x00\x00\x73\x2B\x6A", "x??xxxxx", -0x46);
         printf("[SCAN] PrintChat = %p\n", PrintChat_Func);
 
         {
+            // @Replaced
             uintptr_t address = Scanner::Find(
-                "\x8B\xF2\x85\xC0\x8B\xF9\x75\x00\x5F", "xxxxxxx?x", -6);
+                "\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
             printf("[SCAN] ChatBuffer_Addr = %p\n", (void *)address);
             if (Verify(address))
                 ChatBuffer_Addr = *(uintptr_t *)address;
         }
 
         {
+            // @Replaced
             uintptr_t address = Scanner::Find(
-                "\xC3\xA1\x00\x00\x00\x00\x85\xC0\x74\x10\xE8", "xx????xxxxx", -8);
+                "\xFF\xD0\xC7\x05\x00\x00\x00\x00\x01", "xxxx????x", +4);
             printf("[SCAN] IsTyping_Addr = %p\n", (void *)address);
             if (Verify(address))
                 IsTyping_Addr = *(uintptr_t *)address;

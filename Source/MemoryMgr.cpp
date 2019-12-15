@@ -71,16 +71,18 @@ bool GW::MemoryMgr::Scan() {
         return false;
     }
 
-    WinHandlePtr = Scanner::Find("\x56\x8B\xF1\x85\xC0\x89\x35", "xxxxxxx", 0);
+    // @Replaced
+    WinHandlePtr = Scanner::Find("\x83\xC4\x04\x83\x3D\x00\x00\x00\x00\x00\x75\x31", "xxxxx????xxx", -0xC);
     if (WinHandlePtr) {
         printf("[SCAN] WinHandlePtr = %08lX\n", WinHandlePtr);
-        WinHandlePtr = *(uintptr_t *)(WinHandlePtr + 7);
+        WinHandlePtr = *(uintptr_t *)WinHandlePtr;
     } else {
         printf("[SCAN] WinHandlePtr = ERR\n");
         return false;
     }
 
-    AsyncDecodeStringPtr = Scanner::Find("\x8D\x7C\x46\x02\x8B\xCE\x6A\x01", "xxxxxxxx", -136);
+    // @Replaced
+    AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
     if (AsyncDecodeStringPtr) {
         printf("[SCAN] AsyncDecodeStringPtr = %08lX\n", AsyncDecodeStringPtr);
     } else {
@@ -88,7 +90,8 @@ bool GW::MemoryMgr::Scan() {
         return false;
     }
 
-    GetPersonalDirPtr = Scanner::Find("\x81\xFF\x04\x01\x00\x00\x8B\xF2\x73\x23", "xxxxxxxxxx", -8);
+    // @Replaced
+    GetPersonalDirPtr = Scanner::Find("\x75\x2E\x6A\x01\x6A\x05\x56\x6A\x00", "xxxxxxxxx", -0x53);
     if (GetPersonalDirPtr) {
         printf("[SCAN] GetPersonalDirPtr = %08lX\n", GetPersonalDirPtr);
     } else {

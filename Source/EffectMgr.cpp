@@ -33,11 +33,11 @@ namespace {
 
     uint32_t alcohol_level = 0;
     // post processing effects hook
-    typedef void(__fastcall *PostProcessEffect_pt)(uint32_t intensity, uint32_t tint);
+    typedef void(__cdecl *PostProcessEffect_pt)(uint32_t intensity, uint32_t tint);
     PostProcessEffect_pt RetPostProcessEffect;
     PostProcessEffect_pt PostProcessEffect_Func;
 
-    void __fastcall OnPostProcessEffect(uint32_t intensity, uint32_t tint) {
+    void __cdecl OnPostProcessEffect(uint32_t intensity, uint32_t tint) {
         HookBase::EnterHook();
         alcohol_level = intensity;
         RetPostProcessEffect(intensity, tint);
@@ -46,7 +46,7 @@ namespace {
 
     void Init() {
         PostProcessEffect_pt PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find(
-            "\x55\x8B\xEC\x83\xEC\x10\x89\x4D\xF8\xC7\x45\xFC", "xxxxxxxxxxxx", 0);
+            "\xD9\x5D\x0C\xD9\x45\x0C\x8D\x45\xF8", "xxxxxxxxx", -0x1C);
         printf("[SCAN] PostProcessEffect = %p\n", PostProcessEffect_Func);
 
         if (Verify(PostProcessEffect_Func))

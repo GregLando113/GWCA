@@ -37,12 +37,14 @@ namespace {
     RequestQuote_pt RequestQuote_func;
 
     void Init() {
+        // @Replaced
         TransactItem_Func = (TransactItem_pt )Scanner::Find(
-            "\x8B\x45\x18\x83\xF8\x10\x76\x17\x68", "xxxxxxxxx", -0x2C);
+            "\x85\xFF\x74\x1D\x8B\x4D\x14\xEB\x08", "xxxxxxxxx", -0x7F);
         printf("[SCAN] TransactItem = %p\n", TransactItem_Func);
 
+        // @Replaced
         RequestQuote_func = (RequestQuote_pt )Scanner::Find(
-            "\x53\x56\x8B\x75\x0C\x57\x83\xFE\x10", "xxxxxxxxx", -0x9);
+            "\x8B\x75\x20\x83\xFE\x10\x76\x14", "xxxxxxxx", -0x35);
         printf("[SCAN] RequestQuote = %p\n", RequestQuote_func);
     }
 }

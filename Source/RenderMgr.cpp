@@ -34,21 +34,21 @@ namespace {
     }; //Size: 0x1074
     gwdx* gwdx_ptr = nullptr;
 
-    typedef bool(__fastcall *GwEndScene_pt)(gwdx *ctx, void *unk);
+    typedef bool(__cdecl *GwEndScene_pt)(gwdx *ctx, void *unk);
     GwEndScene_pt RetGwEndScene;
     GwEndScene_pt GwEndScene_Func;
 
     GwEndScene_pt RetScreenCapture;
     GwEndScene_pt ScreenCapture_Func;
 
-    typedef bool(__fastcall *GwReset_pt)(gwdx *ctx);
+    typedef bool(__cdecl *GwReset_pt)(gwdx *ctx);
     GwReset_pt RetGwReset;
     GwReset_pt GwReset_Func;
 
     std::function<void (IDirect3DDevice9 *)> render_callback;
     std::function<void (IDirect3DDevice9 *)> reset_callback;
 
-    bool __fastcall OnGwEndScene(gwdx *ctx, void *unk) {
+    bool __cdecl OnGwEndScene(gwdx *ctx, void *unk) {
         HookBase::EnterHook();
         gwdx_ptr = ctx;
         if (render_callback)
@@ -58,7 +58,7 @@ namespace {
         return retval;
     }
 
-    bool __fastcall OnGwReset(gwdx *ctx) {
+    bool __cdecl OnGwReset(gwdx *ctx) {
         HookBase::EnterHook();
         gwdx_ptr = ctx;
         if (reset_callback)
@@ -68,10 +68,10 @@ namespace {
         return retval;
     }
 
-    bool __fastcall OnScreenCapture(gwdx *ctx, void *unk) {
+    bool __cdecl OnScreenCapture(gwdx *ctx, void *unk) {
         HookBase::EnterHook();
         // @Enhancement: This should probably be an option.
-        if (!GW::UI::GetIsShiftScrennShot() && render_callback) {
+        if (!GW::UI::GetIsShiftScreenShot() && render_callback) {
             render_callback(ctx->device);
         }
         bool retval = RetScreenCapture(ctx, unk);
@@ -81,16 +81,19 @@ namespace {
 
     void Init() {
 
+        // @Replaced
         GwEndScene_Func = (GwEndScene_pt)Scanner::Find(
-            "\x55\x8B\xEC\x83\xEC\x28\x56\x8B\xF1\x57\x89\x55\xF8", "xxxxxxxxxxxxx", 0);
+            "\x89\x45\xFC\x57\x8B\x7D\x08\x8B\x8F", "xxxxxxxxx", -0xD);
         printf("[SCAN] GwEndScene = %p\n", GwEndScene_Func);
 
+        // @Replaced
         ScreenCapture_Func = (GwEndScene_pt)Scanner::Find(
-            "\xC3\x39\x86\x94\x00\x00\x00\x74\x0C", "xxxxxxxxx", -69);
+            "\x83\xC4\x10\x8B\x86\x00\x00\x00\x00\x83", "xxxxx??xxx", -0x8F);
         printf("[SCAN] GwScreenCapture = %p\n", ScreenCapture_Func);
 
+        // @Replaced
         GwReset_Func = (GwReset_pt)Scanner::Find(
-            "\x55\x8B\xEC\x81\xEC\x98\x00\x00\x00\x53\x56\x57\x8B\xF1\x33\xD2", "xxxxxxxxxxxxxxxx", 0);
+            "\x3B\x4D\xB4\x6A\x00\x1B\xDB\xF7\xDB", "xxxxxxxxx", 0x8C);
         printf("[SCAN] GwReset = %p\n", GwReset_Func);
 
         if (Verify(GwEndScene_Func))

@@ -21,7 +21,7 @@ namespace {
     typedef void (__cdecl *SendUIMessage_pt)(uint32_t message, void *wParam, void *lParam);
     SendUIMessage_pt SendUIMessage_Func;
 
-    typedef void (__fastcall *LoadSettings_pt)(uint32_t size, uint8_t *data);
+    typedef void (__cdecl *LoadSettings_pt)(uint32_t size, uint8_t *data);
     LoadSettings_pt LoadSettings_Func;
 
     uintptr_t GameSettings_Addr;
@@ -34,7 +34,7 @@ namespace {
         size_t size;
     };
 
-    void __fastcall __callback_copy_char(void *param, const wchar_t *s) {
+    void __cdecl __callback_copy_char(void *param, const wchar_t *s) {
         assert(param && s);
         AsyncBuffer *abuf = (AsyncBuffer *)param;
         char *outstr = (char *)abuf->buffer;
@@ -45,23 +45,23 @@ namespace {
         delete abuf;
     }
 
-    void __fastcall __callback_copy_wchar(void *param, const wchar_t *s) {
+    void __cdecl __callback_copy_wchar(void *param, const wchar_t *s) {
         assert(param && s);
         AsyncBuffer *abuf = (AsyncBuffer *)param;
         wcsncpy((wchar_t *)abuf->buffer, s, abuf->size);
         delete abuf;
     }
 
-    void __fastcall __calback_copy_wstring(void *param, const wchar_t *s) {
+    void __cdecl __calback_copy_wstring(void *param, const wchar_t *s) {
         assert(param && s);
         std::wstring *str = (std::wstring *)param;
         *str = s;
     }
 
-    typedef void (__fastcall *DecodeStr_Callback)(void *param, const wchar_t *s);
+    typedef void (__cdecl *DecodeStr_Callback)(void *param, const wchar_t *s);
     void AsyncDecodeStr(const wchar_t *enc_str, DecodeStr_Callback callback, void *param) {
-        typedef void(__fastcall *AsyncDecodeStr_t)(const wchar_t *s, DecodeStr_Callback cb, void *param);
-        AsyncDecodeStr_t Gw_AsyncDecodeStr = (AsyncDecodeStr_t)AsyncDecodeStringPtr;
+        typedef void(__cdecl *AsyncDecodeStr_pt)(const wchar_t *s, DecodeStr_Callback cb, void *param);
+        AsyncDecodeStr_pt Gw_AsyncDecodeStr = (AsyncDecodeStr_pt)AsyncDecodeStringPtr;
         assert(enc_str && Gw_AsyncDecodeStr && callback);
         Gw_AsyncDecodeStr(enc_str, callback, param);
     }

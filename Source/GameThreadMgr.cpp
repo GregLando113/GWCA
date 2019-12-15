@@ -18,14 +18,14 @@ namespace {
     bool render_state = false;
 	bool in_game_thread = false;
 
-    typedef void(__fastcall *Render_t)(void*);
+    typedef void(__cdecl *Render_t)(void*);
     uintptr_t *g__thingy;
     Render_t g__thingyret;
 
     std::vector<std::function<void(void)> > calls;
     std::map<uint32_t, std::function<void(void)>> calls_permanent;
 
-    void __stdcall CallFunctions() {
+    void CallFunctions() {
         if (TryEnterCriticalSection(&criticalsection)) {
 			in_game_thread = true;
             if (!calls.empty()) {
@@ -46,7 +46,7 @@ namespace {
         }
     }
 
-    void __fastcall gameLoopHook(void* unk) {
+    void __cdecl gameLoopHook(void* unk) {
         CallFunctions();
         g__thingyret(unk);
     }

@@ -93,7 +93,7 @@ namespace {
 
         // @Replaced
         GwReset_Func = (GwReset_pt)Scanner::Find(
-            "\x3B\x4D\xB4\x6A\x00\x1B\xDB\xF7\xDB", "xxxxxxxxx", 0x8C);
+            "\x3B\x4D\xB4\x6A\x00\x1B\xDB\xF7\xDB", "xxxxxxxxx", -0x8C);
         printf("[SCAN] GwReset = %p\n", GwReset_Func);
 
         if (Verify(GwEndScene_Func))

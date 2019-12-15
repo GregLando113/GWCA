@@ -1,7 +1,5 @@
 #include "stdafx.h"
 
-#include <ShellApi.h>
-
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
@@ -208,25 +206,6 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__cdecl *OpenTemplate_pt)(uint32_t unk, Chat::ChatTemplate* info);
-    OpenTemplate_pt RetOpenTemplate;
-    OpenTemplate_pt OpenTemplate_Func;
-    bool open_links = false;
-    void __cdecl OnOpenTemplate(uint32_t unk, Chat::ChatTemplate* info) {
-        HookBase::EnterHook();
-        if (open_links
-            && info
-            && info->code.valid()
-            && info->name
-            && (!wcsncmp(info->name, L"http://", 7)
-                || !wcsncmp(info->name, L"https://", 8))) {
-            ShellExecuteW(NULL, L"open", info->name, NULL, NULL, SW_SHOWNORMAL);
-        } else {
-            RetOpenTemplate(unk, info);
-        }
-        HookBase::LeaveHook();
-    }
-
     typedef void(__cdecl *WriteWhisper_pt)(uint32_t, wchar_t *, wchar_t *);
     WriteWhisper_pt RetWriteWhisper;
     WriteWhisper_pt WriteWhisper_Func;
@@ -347,11 +326,6 @@ namespace {
     #endif
 
         // @Replaced
-        OpenTemplate_Func = (OpenTemplate_pt)Scanner::Find(
-            "\x2B\xCB\x74\x1F\x83\xE9\x01\x75\x41", "xxxxxxxxx", -0x70);
-        printf("[SCAN] OpenTemplate = %p\n", OpenTemplate_Func);
-
-        // @Replaced
         WriteWhisper_Func = (WriteWhisper_pt)Scanner::Find(
             "\x83\xC4\x04\x8D\x58\x2E", "xxxxxx", -0x18);
         printf("[SCAN] WriteWhisper = %p\n", WriteWhisper_Func);
@@ -393,8 +367,6 @@ namespace {
             HookBase::CreateHook(LocalMessage_Func, OnLocalMessage, (void **)&RetLocalMessage);
         if (Verify(SendChat_Func))
             HookBase::CreateHook(SendChat_Func, OnSendChat, (void **)&RetSendChat);
-        if (Verify(OpenTemplate_Func))
-            HookBase::CreateHook(OpenTemplate_Func, OnOpenTemplate, (void **)&RetOpenTemplate);
         if (Verify(WriteWhisper_Func))
             HookBase::CreateHook(WriteWhisper_Func, OnWriteWhisper, (void **)&RetWriteWhisper);
         if (Verify(PrintChat_Func))
@@ -416,8 +388,6 @@ namespace {
             HookBase::RemoveHook(LocalMessage_Func);
         if (SendChat_Func)
             HookBase::RemoveHook(SendChat_Func);
-        if (OpenTemplate_Func)
-            HookBase::RemoveHook(OpenTemplate_Func);
         if (WriteWhisper_Func)
             HookBase::RemoveHook(WriteWhisper_Func);
         if (PrintChat_Func)
@@ -509,10 +479,6 @@ namespace GW {
         auto it = StartWhisper_callbacks.find(entry);
         if (it != StartWhisper_callbacks.end())
             StartWhisper_callbacks.erase(it);
-    }
-
-    void Chat::SetOpenLinks(bool b) {
-        open_links = b;
     }
 
     Chat::Color Chat::SetSenderColor(Channel chan, Color col) {

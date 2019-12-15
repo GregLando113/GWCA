@@ -3,6 +3,7 @@
 #include <GWCA/Packets/CtoSHeaders.h>
 
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
@@ -18,16 +19,54 @@
 namespace {
     using namespace GW;
 
-    typedef void (__cdecl *SendUIMessage_pt)(uint32_t message, void *wParam, void *lParam);
+    typedef void (__cdecl *SendUIMessage_pt)(uint32_t msgid, void *wParam, void *lParam);
     SendUIMessage_pt SendUIMessage_Func;
+    SendUIMessage_pt RetSendUIMessage;
 
     typedef void (__cdecl *LoadSettings_pt)(uint32_t size, uint8_t *data);
     LoadSettings_pt LoadSettings_Func;
+
+    bool open_links = false;
+    HookEntry open_template_hook;
 
     uintptr_t GameSettings_Addr;
     uintptr_t ui_drawn_addr;
     uintptr_t shift_screen_addr;
     uintptr_t AsyncDecodeStringPtr;
+
+    struct ChatTemplate {
+        uint32_t        unk0;
+        uint32_t        type; // 0 = build, 1 = equipement
+        Array<wchar_t>  code;
+        wchar_t        *name;
+    };
+
+    static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
+    {
+        if (msgid != UI::kOpenTemplate)
+            return;
+        ChatTemplate *info = static_cast<ChatTemplate *>(wParam);
+        if (!(open_links && info && info->code.valid() && info->name))
+            return;
+        if (!wcsncmp(info->name, L"http://", 7) || !wcsncmp(info->name, L"https://", 8)) {
+            hook_status->blocked = true;
+            ShellExecuteW(NULL, L"open", info->name, NULL, NULL, SW_SHOWNORMAL);
+        }
+    }
+
+    std::unordered_map<HookEntry *, UI::UIMessageCallback> UIMessage_callbacks;
+    static void __cdecl OnSendUIMessage(uint32_t msgid, void *wParam, void *lParam)
+    {
+        HookBase::EnterHook();
+        HookStatus status;
+        for (auto& it : UIMessage_callbacks) {
+            it.second(&status, msgid, wParam, lParam);
+            ++status.altitude;
+        }
+        if (!status.blocked)
+            RetSendUIMessage(msgid, wParam, lParam);
+        HookBase::LeaveHook();
+    }
 
     struct AsyncBuffer {
         void *buffer;
@@ -104,6 +143,16 @@ namespace {
         // @Replaced
         AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
         printf("[SCAN] AsyncDecodeStringPtr = %08lX\n", AsyncDecodeStringPtr);
+
+        if (Verify(SendUIMessage_Func))
+            HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
+
+        UI::RegisterUIMessageCallback(&open_template_hook, OnOpenTemplate);
+    }
+
+    void Exit()
+    {
+        UI::RemoveUIMessageCallback(&open_template_hook);
     }
 }
 
@@ -113,7 +162,7 @@ namespace GW {
         "UIModule",     // name
         NULL,           // param
         ::Init,         // init_module
-        NULL,           // exit_module
+        ::Exit,         // exit_module
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
@@ -223,5 +272,25 @@ namespace GW {
             val += (*enc_str & ~WORD_BIT_MORE) - WORD_VALUE_BASE;
         } while (*enc_str++ & WORD_BIT_MORE);
         return val;
+    }
+
+    void UI::SetOpenLinks(bool toggle)
+    {
+        open_links = toggle;
+    }
+
+    void UI::RegisterUIMessageCallback(
+        HookEntry *entry,
+        UIMessageCallback callback)
+    {
+        UIMessage_callbacks.insert({entry, callback});
+    }
+
+    void UI::RemoveUIMessageCallback(
+        HookEntry *entry)
+    {
+        auto it = UIMessage_callbacks.find(entry);
+        if (it != UIMessage_callbacks.end())
+            UIMessage_callbacks.erase(it);
     }
 } // namespace GW

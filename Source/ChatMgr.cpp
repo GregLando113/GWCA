@@ -332,8 +332,11 @@ namespace {
         printf("[SCAN] SendChat = %p\n", SendChat_Func);
 
     //#if 0
+            
         StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
             "\x55\x8B\xEC\x51\x53\x56\x8B\xF1\x57\xBA\x05\x00\x00\x00", "xxxxxxxxxxxxxx", 0);
+        StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
+            "\xFC\x53\x56\x8B\xF1\x57\x6A\x05\xFF\x36\xE8", "xxxxxxxxxxx", -0xF);
         printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
    // #endif
 

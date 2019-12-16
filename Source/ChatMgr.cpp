@@ -222,10 +222,10 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__cdecl* StartWhisper_pt)(uint32_t unk, wchar_t* name, wchar_t* name2);
+    typedef void(__fastcall* StartWhisper_pt)(void* ctx, uint32_t edx, wchar_t* name);
     StartWhisper_pt StartWhisper_Func;
     StartWhisper_pt RetStartWhisper;
-    void __cdecl OnStartWhisper(uint32_t unk, wchar_t* name, wchar_t* name2) {
+    void __fastcall OnStartWhisper(void* ctx, uint32_t edx, wchar_t* name) {
         GW::HookBase::EnterHook();
         HookStatus status;
         for (auto& it : StartWhisper_callbacks) {
@@ -233,7 +233,7 @@ namespace {
             ++status.altitude;
         }
         if (!status.blocked)
-            RetStartWhisper(unk, name, name2);
+            RetStartWhisper(ctx, edx, name);
         GW::HookBase::LeaveHook();
     }
 
@@ -331,14 +331,9 @@ namespace {
             "\x8D\x85\xE0\xFE\xFF\xFF\x50\x68\x1C\x01", "xxxxxxxxx", -0x3E);
         printf("[SCAN] SendChat = %p\n", SendChat_Func);
 
-    //#if 0
-            
-        StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
-            "\x55\x8B\xEC\x51\x53\x56\x8B\xF1\x57\xBA\x05\x00\x00\x00", "xxxxxxxxxxxxxx", 0);
         StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
             "\xFC\x53\x56\x8B\xF1\x57\x6A\x05\xFF\x36\xE8", "xxxxxxxxxxx", -0xF);
         printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
-   // #endif
 
         // @Replaced
         WriteWhisper_Func = (WriteWhisper_pt)Scanner::Find(
@@ -368,10 +363,8 @@ namespace {
                 IsTyping_Addr = *(uintptr_t *)address;
         }
 
-    #if 0
         if (Verify(StartWhisper_Func))
             HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
-    #endif
         if (Verify(ChatEvent_Func))
             HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
         if (Verify(GetSenderColor_Func))

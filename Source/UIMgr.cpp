@@ -33,6 +33,7 @@ namespace {
     uintptr_t ui_drawn_addr;
     uintptr_t shift_screen_addr;
     uintptr_t AsyncDecodeStringPtr;
+    uint32_t *preferences_array;
 
     static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
     {
@@ -131,6 +132,16 @@ namespace {
                 "\x75\x19\x6A\x00\xC7\x05\x00\x00\x00\x00\x01\x00", "xxxxxx????xx", +6);
             printf("[SCAN] shift_screen_addr = %p\n", (void *)address);
             shift_screen_addr = *(uintptr_t *)address;
+        }
+
+        {
+            // @Replaced
+            uintptr_t address = GW::Scanner::Find("\x75\xF6\x33\xF6\x39\x34\x9D", "xxxxxxx", +7);
+            printf("[SCAN] preferences_array = %p\n", (void *)address);
+            if (Verify(address)) {
+                address = *(uintptr_t *)address;
+                preferences_array = reinterpret_cast<uint32_t *>(address);
+            }
         }
 
         // @Replaced
@@ -270,6 +281,16 @@ namespace GW {
     void UI::SetOpenLinks(bool toggle)
     {
         open_links = toggle;
+    }
+
+    uint32_t UI::GetPreference(Preference pref)
+    {
+        return preferences_array[pref];
+    }
+
+    void UI::SetPreference(Preference pref, uint32_t value)
+    {
+        preferences_array[value];
     }
 
     void UI::RegisterUIMessageCallback(

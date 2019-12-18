@@ -29,6 +29,12 @@ namespace GW {
             kOpenTemplate           = 0x10000000 | 0x1B9,
         };
 
+        enum Preference : uint32_t {
+            Preference_InterfaceSize = 6,
+
+            Preference_Count = 8
+        };
+
         struct CompassPoint {
             CompassPoint() : x(0), y(0) {}
             CompassPoint(short _x, short _y) : x(_x), y(_y) {}
@@ -57,6 +63,9 @@ namespace GW {
         GWCA_API uint32_t EncStrToUInt32(const wchar_t *enc_str);
 
         GWCA_API void SetOpenLinks(bool toggle);
+
+        GWCA_API uint32_t GetPreference(Preference pref);
+        GWCA_API void SetPreference(Preference pref, uint32_t value);
 
         typedef HookCallback<uint32_t, void *, void *> UIMessageCallback;
         GWCA_API void RegisterUIMessageCallback(

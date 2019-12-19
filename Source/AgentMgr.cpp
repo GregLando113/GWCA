@@ -85,8 +85,10 @@ namespace {
         printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
 
         if (ChangeTarget_Func) {
-            AgentArrayPtr = DECODE_RELATIVE((uintptr_t)ChangeTarget_Func + 0x1E); // ManagerFindAgent()
-            AgentArrayPtr = *(uintptr_t*)(AgentArrayPtr + 0x13); // Agentz
+            // @Replaced
+            uintptr_t address = Scanner::Find(
+                "\xFF\x50\x10\x47\x83\xC6\x04\x3B\xFB\x75\xE1","xxxxxxxxxxx", +0xD);
+            AgentArrayPtr = *reinterpret_cast<uintptr_t*>(address);
 
             TargetAgentIdPtr = *(uintptr_t*)((uintptr_t)ChangeTarget_Func + 0x91);
             MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;

@@ -21,7 +21,7 @@ namespace GW {
     }
 
     SkillbarSkill *Skillbar::GetSkillById(Constants::SkillID skill_id) {
-        for (size_t i = 0; i < ArrayCount(skills); i++) {
+        for (size_t i = 0; i < _countof(skills); i++) {
             if (skills[i].skill_id == static_cast<uint32_t>(skill_id))
                 return &skills[i];
         }

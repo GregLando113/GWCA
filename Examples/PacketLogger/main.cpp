@@ -75,7 +75,7 @@ static void InitStoC()
     uintptr_t StoCHandler_Addr;
     // @Replaced: Data need to figure out relocation
     // @Remark: Same pattern as CtoGSObjectPtr in CtoSMgr.cpp
-    uintptr_t address = Scanner::Find(
+    uintptr_t address = GW::Scanner::Find(
         "\xC3\xA1\x00\x00\x00\x00\x85\xC0\x74\xF1", "xx????xxxx", +2);
     StoCHandler_Addr = *(uintptr_t *)address;
 

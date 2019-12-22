@@ -11,8 +11,8 @@ namespace GW {
         void Reset();
         void SetPatch(uintptr_t addr, void* patch, size_t size);
 
-        bool TooglePatch(bool flag);
-        bool TooglePatch() { TooglePatch(!m_enable); };
+        bool TogglePatch(bool flag);
+        bool TogglePatch() { TogglePatch(!m_enable); };
 
         bool GetIsEnable() { return m_enable; };
     private:

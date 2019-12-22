@@ -68,16 +68,16 @@ namespace {
 
     void EnableHooks() {
         if (patch_max_dist_addr)
-            patch_max_dist.TooglePatch(true);
+            patch_max_dist.TogglePatch(true);
     }
 
     void DisableHooks() {
         if (patch_max_dist_addr)
-            patch_max_dist.TooglePatch(false);
+            patch_max_dist.TogglePatch(false);
         if (patch_cam_update_addr)
-            patch_cam_update.TooglePatch(false);
+            patch_cam_update.TogglePatch(false);
         if (patch_fog_addr)
-            patch_fog.TooglePatch(false);
+            patch_fog.TogglePatch(false);
     }
 }
 
@@ -107,7 +107,7 @@ namespace GW {
 
     bool CameraMgr::UnlockCam(bool flag) {
         if (patch_cam_update_addr) {
-            return patch_cam_update.TooglePatch(flag);
+            return patch_cam_update.TogglePatch(flag);
         } else {
             return false;
         }
@@ -123,7 +123,7 @@ namespace GW {
 
     bool CameraMgr::SetFog(bool flag) {
         if (patch_fog_addr) {
-            return patch_fog.TooglePatch(!flag);
+            return patch_fog.TogglePatch(!flag);
         } else {
             return false;
         }

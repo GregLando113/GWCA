@@ -9,7 +9,7 @@ namespace GW {
 
     void MemoryPatcher::Reset() {
         if (GetIsEnable())
-            TooglePatch(false);
+            TogglePatch(false);
 
         if (m_patch) {
             delete[] m_patch;
@@ -42,7 +42,7 @@ namespace GW {
         VirtualProtect(m_addr, size, old_prot, &old_prot);
     }
 
-    bool MemoryPatcher::TooglePatch(bool flag) {
+    bool MemoryPatcher::TogglePatch(bool flag) {
         assert(m_addr != nullptr);
 
         if (m_enable == flag)

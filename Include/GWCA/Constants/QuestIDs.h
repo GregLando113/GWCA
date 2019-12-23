@@ -126,6 +126,31 @@ namespace GW {
                 constexpr uint32_t Destructions_Depths = 1009;
                 constexpr uint32_t A_Time_for_Heroes = 1010;
             }
+
+            namespace ZaishenBounty {
+                constexpr uint32_t Ilsundur_Lord_of_Fire = 1026;
+                constexpr uint32_t Rragar_Maneater = 1049;
+                constexpr uint32_t Murakai_Lady_of_the_Night = 1050;
+                //constexpr uint32_t Prismatic_Ooze = ; //ooze pit
+                //constexpr uint32_t Havok_Soulwail = ; //darkrime
+                //constexpr uint32_t Frostmaw_the_Kinslayer = ; //frostmaw
+                constexpr uint32_t Remnant_of_Antiquities = 1054;
+                constexpr uint32_t Plague_of_Destruction = 1055;
+                constexpr uint32_t Zoldark_the_Unholy = 1056;
+                //constexpr uint32_t Khabuus = ; //bogroot
+                //constexpr uint32_t Zhim_Monns = ; //bogroot
+                //constexpr uint32_t Eldritch_Ettin = ; //bloodstone
+                constexpr uint32_t Fendi_Nin = 1060;
+                constexpr uint32_t TPS_Regulator_Golem = 1061;
+                constexpr uint32_t Arachni = 1062;
+                constexpr uint32_t Forgewight = 1063; //slavers
+                constexpr uint32_t Selvetarm = 1064; //slavers
+                //constexpr uint32_t Justiciar_Thommis = ; //slavers
+                constexpr uint32_t Rand_Stormweaver = 1066; //slavers
+                constexpr uint32_t Duncan_the_Black = 1067; //slavers
+                constexpr uint32_t Fronis_Irontoe = 1068;
+                constexpr uint32_t Magmus = 1070;
+            }
         }
     }
 }

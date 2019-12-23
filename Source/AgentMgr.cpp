@@ -109,9 +109,8 @@ namespace {
         }
 
         // @Replaced
-        // Ideally we wouldn't scan a pattern from where we hook or other software hooks.
         Move_Func = (Move_pt)Scanner::Find(
-                "\x55\x8B\xEC\x83\xEC\x20\x8D\x45\xF0", "xxxxxxxxx", 0);
+                "\xDF\xE0\xF6\xC4\x41\x7B\x64\x56\xE8", "xxxxxxxxx", -0x48);
         printf("[SCAN] MoveFunction = %p\n", Move_Func);
 
         // @Replaced

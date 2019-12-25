@@ -23,9 +23,9 @@ namespace {
         printf("[SCAN] SendPacket = %p\n", SendPacket_Func);
 
         {
-            // @Replaced: Data need to figure out relocation
+            // @Remark: Same pattern as StoCHandler_Addr in StoCMgr.cpp
             uintptr_t address = Scanner::Find(
-                "\xC3\xA1\x00\x00\x00\x00\x85\xC0\x74\xF1", "xx????xxxx", +2);
+                "\x75\x04\x33\xC0\x5D\xC3\x8B\x41\x08\xA8\x01\x75", "xxxxxxxxxxxx", -6);
             printf("[SCAN] CtoGSObjectPtr = %p\n", (void *)address);
             if (Verify(address))
                 game_srv_object_addr = *(uintptr_t *)address;

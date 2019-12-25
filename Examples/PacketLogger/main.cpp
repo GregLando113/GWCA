@@ -19,7 +19,7 @@
 struct IDirect3DDevice9;
 
 // Taken from StoCMgr.cpp
-typedef bool (__fastcall *StoCHandler_pt)(GW::Packet::StoC::PacketBase *pak);
+typedef bool (__cdecl *StoCHandler_pt)(GW::Packet::StoC::PacketBase *pak);
 struct StoCHandler {
     uint32_t      *fields;
     uint32_t       field_count;
@@ -391,7 +391,7 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
     freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
 #endif
     freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
-    SetConsoleTitle("GWTB++ Debug Console");
+    SetConsoleTitle("PacketLogger Console");
 
     GW::Initialize();
     GW::Render::SetRenderCallback(GameLoop);
@@ -409,6 +409,7 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
     // practically a short sleep is fine.
     Sleep(16);
     GW::Terminate();
+
     if (stdout_proxy)
         fclose(stdout_proxy);
     if (stderr_proxy)

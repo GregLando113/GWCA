@@ -87,11 +87,6 @@ namespace {
         GameServer **addr = reinterpret_cast<GameServer **>(StoCHandler_Addr);
         game_server_handlers = (*addr)->gs_codec->handlers;
 
-        uint32_t elapsed = 0;
-        while (!game_server_handlers.valid() && elapsed < 3000) {
-            Sleep(elapsed+=100);
-        }
-
         original_functions = new StoCHandler[game_server_handlers.size()];
         packets_callbacks.resize(game_server_handlers.size());
 		post_packets_callbacks.resize(game_server_handlers.size());

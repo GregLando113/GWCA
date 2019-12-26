@@ -75,10 +75,9 @@ namespace {
     void Init() {
         uintptr_t StoCHandler_Addr;
         {
-            // @Replaced: Data need to figure out relocation
             // @Remark: Same pattern as CtoGSObjectPtr in CtoSMgr.cpp
             uintptr_t address = Scanner::Find(
-                "\xC3\xA1\x00\x00\x00\x00\x85\xC0\x74\xF1", "xx????xxxx", +2);
+                "\x75\x04\x33\xC0\x5D\xC3\x8B\x41\x08\xA8\x01\x75", "xxxxxxxxxxxx", -6);
             printf("[SCAN] StoCHandler pattern = %p\n", (void *)address);
             if (Verify(address))
                 StoCHandler_Addr = *(uintptr_t *)address;

@@ -3,11 +3,12 @@
 #include <Windowsx.h>
 
 #include <vector>
+#include <functional>
 
 #include <d3dx9tex.h>
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
+#include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_impl_dx9.h"
 
 #include <GWCA/GWCA.h>
@@ -503,7 +504,6 @@ static void WorldInformation_Draw(IDirect3DDevice9 *device)
         }
 
         running = false;
-        return;
     }
 }
 

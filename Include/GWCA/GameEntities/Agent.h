@@ -20,7 +20,7 @@ namespace GW {
 
             struct DyeInfo {
                 uint8_t h0000;
-                uint8_t shinyness;
+                uint8_t dye_id; // Not clean, but check GwArmory to understand
                 uint8_t dye1 : 4;
                 uint8_t dye2 : 4;
                 uint8_t dye3 : 4;

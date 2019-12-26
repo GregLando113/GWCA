@@ -75,17 +75,11 @@ namespace {
     AgentList *AgentListPtr = nullptr;
 
     void Init() {
-        // Agent Array
-
-        // MouseOverAgentPtr: 369D35
-
-        // @Replaced
         ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
             "\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
         printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
 
         if (ChangeTarget_Func) {
-            // @Replaced
             uintptr_t address = Scanner::Find(
                 "\xFF\x50\x10\x47\x83\xC6\x04\x3B\xFB\x75\xE1","xxxxxxxxxxx", +0xD);
             AgentArrayPtr = *reinterpret_cast<uintptr_t*>(address);
@@ -94,26 +88,22 @@ namespace {
             MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;
         }
 
-        // @Replaced
         PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
         if (PlayerAgentIdPtr) {
             PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
             printf("[SCAN] PlayerAgentIdPtr = %p\n", (void *)PlayerAgentIdPtr);
         }
 
-        // @Replaced
         AgentListPtr = (AgentList * )Scanner::Find("\x8D\x0C\x88\xE8\x00\x00\x00\x00\x8B\xC3", "xxxx????xx", 0x3C);
         if (AgentListPtr) {
             AgentListPtr = *(AgentList * *)AgentListPtr;
             printf("[SCAN] AgentListPtr = %p\n", AgentListPtr);
         }
 
-        // @Replaced
         Move_Func = (Move_pt)Scanner::Find(
                 "\xDF\xE0\xF6\xC4\x41\x7B\x64\x56\xE8", "xxxxxxxxx", -0x48);
         printf("[SCAN] MoveFunction = %p\n", Move_Func);
 
-        // @Replaced
         SendDialog_Func = (SendDialog_pt)Scanner::Find(
             "\x83\xC8\x01\x89\x46\x24\x8B\x46\x28\x83\xE8\x00\x74\x0D", "xxxxxxxxxxxxxx", 0x15);
         if (SendDialog_Func) {

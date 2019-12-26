@@ -15,7 +15,6 @@ uintptr_t GW::MemoryMgr::GetPersonalDirPtr = NULL;
 bool GW::MemoryMgr::Scan() {
     Scanner::Initialize();
 
-    // @Replaced
     // Skill timer to use for exact effect times.
     SkillTimerPtr = Scanner::Find(
         "\x83\xCA\x01\x89\x15\x00\x00\x00\x00\xFF\xD6\x8B", "xxxxx????xxx", +5);
@@ -27,7 +26,6 @@ bool GW::MemoryMgr::Scan() {
         return false;
     }
 
-    // @Replaced
     WinHandlePtr = Scanner::Find("\x83\xC4\x04\x83\x3D\x00\x00\x00\x00\x00\x75\x31", "xxxxx????xxx", -0xC);
     if (WinHandlePtr) {
         printf("[SCAN] WinHandlePtr = %08lX\n", WinHandlePtr);
@@ -37,7 +35,6 @@ bool GW::MemoryMgr::Scan() {
         return false;
     }
 
-    // @Replaced
     GetPersonalDirPtr = Scanner::Find("\x75\x2E\x6A\x01\x6A\x05\x56\x6A\x00", "xxxxxxxxx", -0x53);
     if (GetPersonalDirPtr) {
         printf("[SCAN] GetPersonalDirPtr = %08lX\n", GetPersonalDirPtr);

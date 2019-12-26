@@ -51,7 +51,6 @@ namespace {
     void Init() {
         InitializeCriticalSection(&criticalsection);
 
-        // @Replaced
         uintptr_t address = Scanner::Find(
             "\x2B\xCE\x8B\x15\x00\x00\x00\x00\xF7\xD9\x1B\xC9", "xxxx????xxxx", +4);
         printf("[SCAN] BasePointerLocation = %p\n", (void *)address);

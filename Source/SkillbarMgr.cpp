@@ -62,7 +62,6 @@ static uintptr_t skill_array_addr;
 
 static void Init() {
     {
-        // @Replaced
         uintptr_t address = GW::Scanner::Find(
             "\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
         printf("[SCAN] SkillArray = %p\n", (void *)address);
@@ -70,7 +69,6 @@ static void Init() {
             skill_array_addr = *(uintptr_t *)address;
     }
 
-    // @Replaced
     UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
         "\x85\xF6\x74\x5B\x83\xFE\x11\x74", "xxxxxxxx", -0x126);
 }

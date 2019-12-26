@@ -294,27 +294,22 @@ namespace {
     }
 
     void Init() {
-        // @Replaced
         ChatEvent_pt ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x2A);
         printf("[SCAN] Chat Event = %p\n", ChatEvent_Func);
 
-        // @Replaced
         GetChannelColor_pt GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find(
             "\xC7\x00\x60\xC0\xFF\xFF\x5D\xC3", "xxxxxxxx", -0x1C);
         printf("[SCAN] GetSenderColor = %p\n", GetSenderColor_Func);
 
-        // @Replaced
         GetChannelColor_pt GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find(
             "\xC7\x00\xB0\xB0\xB0\xFF\x5D\xC3", "xxxxxxxx", -0x27);
         printf("[SCAN] GetMessageColor = %p\n", GetMessageColor_Func);
 
-        // @Replaced
         // The last 4 bytes of the patterns are the "SendUIMessage" message id (i.e. 0x1000007E)
         LocalMessage_pt LocalMessage_Func = (LocalMessage_pt)Scanner::Find(
             "\x8D\x45\xF8\x6A\x00\x50\x68\x7E\x00\x00\x10", "xxxxxxxxxxx", -0x3D);
         printf("[SCAN] LocalMessage = %p\n", LocalMessage_Func);
 
-        // @Replaced
         SendChat_Func = (SendChat_pt)Scanner::Find(
             "\x8D\x85\xE0\xFE\xFF\xFF\x50\x68\x1C\x01", "xxxxxxxxx", -0x3E);
         printf("[SCAN] SendChat = %p\n", SendChat_Func);
@@ -325,18 +320,15 @@ namespace {
         printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
     #endif
 
-        // @Replaced
         WriteWhisper_Func = (WriteWhisper_pt)Scanner::Find(
             "\x83\xC4\x04\x8D\x58\x2E", "xxxxxx", -0x18);
         printf("[SCAN] WriteWhisper = %p\n", WriteWhisper_Func);
 
-        // @Replaced
         PrintChat_Func = (PrintChat_pt)Scanner::Find(
             "\x3D\x00\x00\x00\x00\x73\x2B\x6A", "x??xxxxx", -0x46);
         printf("[SCAN] PrintChat = %p\n", PrintChat_Func);
 
         {
-            // @Replaced
             uintptr_t address = Scanner::Find(
                 "\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
             printf("[SCAN] ChatBuffer_Addr = %p\n", (void *)address);
@@ -345,7 +337,6 @@ namespace {
         }
 
         {
-            // @Replaced
             uintptr_t address = Scanner::Find(
                 "\xFF\xD0\xC7\x05\x00\x00\x00\x00\x01", "xxxx????x", +4);
             printf("[SCAN] IsTyping_Addr = %p\n", (void *)address);

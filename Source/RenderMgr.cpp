@@ -81,17 +81,14 @@ namespace {
 
     void Init() {
 
-        // @Replaced
         GwEndScene_Func = (GwEndScene_pt)Scanner::Find(
             "\x89\x45\xFC\x57\x8B\x7D\x08\x8B\x8F", "xxxxxxxxx", -0xD);
         printf("[SCAN] GwEndScene = %p\n", GwEndScene_Func);
 
-        // @Replaced
         ScreenCapture_Func = (GwEndScene_pt)Scanner::Find(
             "\x83\xC4\x10\x8B\x86\x00\x00\x00\x00\x83", "xxxxx??xxx", -0x8F);
         printf("[SCAN] GwScreenCapture = %p\n", ScreenCapture_Func);
 
-        // @Replaced
         GwReset_Func = (GwReset_pt)Scanner::Find(
             "\x3B\x4D\xB4\x6A\x00\x1B\xDB\xF7\xDB", "xxxxxxxxx", -0x8C);
         printf("[SCAN] GwReset = %p\n", GwReset_Func);

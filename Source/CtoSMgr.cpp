@@ -17,7 +17,6 @@ namespace {
     uintptr_t game_srv_object_addr;
 
     void Init() {
-        // @Replaced
         SendPacket_Func = (SendPacket_pt)Scanner::Find(
             "\xF7\xD9\xC7\x47\x54\x01\x00\x00\x00\x1B\xC9\x81", "xxxxxxxxxxxx", -0xC3);
         printf("[SCAN] SendPacket = %p\n", SendPacket_Func);

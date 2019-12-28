@@ -100,18 +100,15 @@ namespace {
     }
 
     void Init() {
-        // @Replaced
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
             "\x8B\x45\x08\x83\xF8\x46\x73\x16", "xxxxxxxx", -3);
         printf("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
 
-        // @Replaced
         LoadSettings_Func = (LoadSettings_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\xFF\x75\x0C\xFF\x75\x08\x6A\x00", "x????xxxxxxxx", -0x1E);
         printf("[SCAN] LoadSettings = %p\n", LoadSettings_Func);
 
         {
-            // @Replaced
             uintptr_t address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
             printf("[SCAN] GameSettings = %p\n", (void *)address);
             if (Verify(address))
@@ -119,7 +116,6 @@ namespace {
         }
 
         {
-            // @Replaced
             uintptr_t address = Scanner::Find("\x83\xF8\x01\x75\x40\xD9\xEE\x8D\x45", "xxxxxxxxx", +0x6C);
             printf("[SCAN] ui_drawn_addr = %p\n", (void *)address);
             if (Verify(address))
@@ -127,7 +123,6 @@ namespace {
         }
 
         {
-            // @Replaced
             uintptr_t address = Scanner::Find(
                 "\x75\x19\x6A\x00\xC7\x05\x00\x00\x00\x00\x01\x00", "xxxxxx????xx", +6);
             printf("[SCAN] shift_screen_addr = %p\n", (void *)address);
@@ -135,7 +130,6 @@ namespace {
         }
 
         {
-            // @Replaced
             uintptr_t address = GW::Scanner::Find("\x75\xF6\x33\xF6\x39\x34\x9D", "xxxxxxx", +7);
             printf("[SCAN] preferences_array = %p\n", (void *)address);
             if (Verify(address)) {
@@ -144,7 +138,6 @@ namespace {
             }
         }
 
-        // @Replaced
         AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
         printf("[SCAN] AsyncDecodeStringPtr = %08lX\n", AsyncDecodeStringPtr);
 

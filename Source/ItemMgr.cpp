@@ -75,7 +75,6 @@ namespace {
 
     void Init() {
         {
-            // @Replaced
             uintptr_t address = Scanner::Find(
                 "\x0F\x84\x5D\x01\x00\x00\x83\x7B\x14", "xxxxxxxxx", -4);
             printf("[SCAN] StoragePannel = %p\n", (void *)address);
@@ -84,7 +83,6 @@ namespace {
         }
 
         {
-            // @Replaced
             uintptr_t address = Scanner::Find(
                 "\xC7\x00\x0F\x00\x00\x00\x89\x48\x14", "xxxxxxxxx", -0x28);
             printf("[SCAN] StorageOpen = %p\n", (void *)address);
@@ -92,7 +90,6 @@ namespace {
                 storage_open_addr = *(uintptr_t *)address;
         }
 
-        // @Replaced
         ItemClick_Func = (ItemClick_pt)Scanner::Find(
             "\x8B\x48\x08\x83\xEA\x00\x0F\x84", "xxxxxxxx", -0x1C);
         printf("[SCAN] ItemClick = %p\n", ItemClick_Func);

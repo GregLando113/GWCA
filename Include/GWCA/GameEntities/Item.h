@@ -35,13 +35,9 @@ namespace GW {
     struct ItemModifier {
         uint32_t mod;
 
-        uint32_t identifier() { return (mod & 0x3FF00000) >> 20; }
-        uint32_t arg1() { return (mod & 0x0001FF00) >> 8; }
-        uint32_t arg2() { return (mod & 0x000000FE); }
-        uint32_t arg3() { return (mod & 0x0003FFFF); }
-        uint32_t arg4() { return (mod & 0x00040000) >> 17; }
-        uint32_t arg5() { return (mod & 0x0001FFFE); }
-        uint32_t arg6() { return (mod & 0x00000001); }
+        uint32_t identifier() { return (mod & 0xFFFF0000) >> 16; }
+        uint32_t arg1() { return (mod & 0x0000FF00) >> 8; }
+        uint32_t arg2() { return (mod & 0x000000FF); }
     };
 
     struct Item { // total: 0x54/84

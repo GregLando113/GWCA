@@ -230,23 +230,23 @@ namespace GW {
             };
             const uint32_t Packet<AgentUnk2>::STATIC_HEADER = 0x6D;
 
-			struct DialogButton : Packet<DialogButton> {
-				uint32_t button_icon; // byte
-				wchar_t message[8];
-				uint32_t dialog_id;
-				uint32_t skill_id; // Default 0xFFFFFFF
-			};
-			const uint32_t Packet<DialogButton>::STATIC_HEADER = 0x7E;
+            struct DialogButton : Packet<DialogButton> {
+                uint32_t button_icon; // byte
+                wchar_t message[8];
+                uint32_t dialog_id;
+                uint32_t skill_id; // Default 0xFFFFFFF
+            };
+            const uint32_t Packet<DialogButton>::STATIC_HEADER = 0x7E;
 
             struct DialogBody : Packet<DialogBody> {
                 wchar_t message[122];
             };
             const uint32_t Packet<DialogBody>::STATIC_HEADER = 0x80;
 
-			struct DialogSender : Packet<DialogSender> {
-				uint32_t agent_id;
-			};
-			const uint32_t Packet<DialogSender>::STATIC_HEADER = 0x81;
+            struct DialogSender : Packet<DialogSender> {
+                uint32_t agent_id;
+            };
+            const uint32_t Packet<DialogSender>::STATIC_HEADER = 0x81;
 
             struct DataWindow : Packet<DataWindow> {
                 uint32_t agent;
@@ -255,10 +255,21 @@ namespace GW {
             };
             const uint32_t Packet<DataWindow>::STATIC_HEADER = 0x83;
 
-            struct ItemStreamEnd : Packet<ItemStreamEnd> {
+            struct WindowItems : Packet<WindowItems> {
+                uint32_t count;
+                uint32_t item_ids[16];
+            };
+            const uint32_t Packet<WindowItems>::STATIC_HEADER = 0x84;
+
+            struct WindowItemsEnd : Packet<WindowItemsEnd> {
                 uint32_t unk1;
             };
-            const uint32_t Packet<ItemStreamEnd>::STATIC_HEADER = 0x86;
+            const uint32_t Packet<WindowItemsEnd>::STATIC_HEADER = 0x85;
+
+            struct WindowPricesEnd : Packet<WindowPricesEnd> {
+                uint32_t unk1;
+            };
+            const uint32_t Packet<WindowPricesEnd>::STATIC_HEADER = 0x86;
 
             // Pings and drawing in compass
             struct CompassEvent : Packet<CompassEvent> {
@@ -310,16 +321,16 @@ namespace GW {
             };
             const uint32_t Packet<GenericValueTarget>::STATIC_HEADER = 0xA1;
 
-			// Update Target Generic Value
-			struct PlayEffect : Packet<PlayEffect> {
-				Vec2f coords;
-				uint32_t plane;
-				uint32_t agent_id;
-				uint32_t effect_id;
-				uint32_t data5;
-				uint32_t data6;
-			};
-			const uint32_t Packet<PlayEffect>::STATIC_HEADER = 0xA2;
+            // Update Target Generic Value
+            struct PlayEffect : Packet<PlayEffect> {
+                Vec2f coords;
+                uint32_t plane;
+                uint32_t agent_id;
+                uint32_t effect_id;
+                uint32_t data5;
+                uint32_t data6;
+            };
+            const uint32_t Packet<PlayEffect>::STATIC_HEADER = 0xA2;
 
             // agent animation lock (and probably something else)
             /*struct GenericFloat : Packet<GenericFloat> {
@@ -416,6 +427,17 @@ namespace GW {
             };
             const uint32_t Packet<ObjectiveUpdateName>::STATIC_HEADER = 0xBE;
 
+            struct OpenMerchantWindow : Packet<OpenMerchantWindow> {
+                uint32_t type;
+                uint32_t unk;
+            };
+            const uint32_t Packet<OpenMerchantWindow>::STATIC_HEADER = 0xC4;
+
+            struct WindowOwner : Packet<WindowOwner> {
+                uint32_t agent_id;
+            };
+            const uint32_t Packet<WindowOwner>::STATIC_HEADER = 0xC5;
+
             struct TransactionDone : Packet<TransactionDone> {
                 uint32_t unk1;
             };
@@ -436,19 +458,19 @@ namespace GW {
             };
             const uint32_t Packet<SkillActivate>::STATIC_HEADER = 0xE5;
 
-			struct SkillRecharge : Packet<SkillRecharge> {
-				uint32_t agent_id;
-				uint32_t skill_id;
-				uint32_t skill_instance;
-				uint32_t recharge;
-			};
-			const uint32_t Packet<SkillRecharge>::STATIC_HEADER = 0xE6;
+            struct SkillRecharge : Packet<SkillRecharge> {
+                uint32_t agent_id;
+                uint32_t skill_id;
+                uint32_t skill_instance;
+                uint32_t recharge;
+            };
+            const uint32_t Packet<SkillRecharge>::STATIC_HEADER = 0xE6;
 
-			struct ModifyFaction : Packet<ModifyFaction> {
-				uint32_t faction_type;
-				uint32_t amount;
-			};
-			const uint32_t Packet<ModifyFaction>::STATIC_HEADER = 0xEF;
+            struct ModifyFaction : Packet<ModifyFaction> {
+                uint32_t faction_type;
+                uint32_t amount;
+            };
+            const uint32_t Packet<ModifyFaction>::STATIC_HEADER = 0xEF;
 
             // update agent state
             struct AgentState : Packet<AgentState> {
@@ -467,6 +489,12 @@ namespace GW {
                 uint32_t price;
             };
             const uint32_t Packet<QuotedItemPrice>::STATIC_HEADER = 0xF8;
+
+            struct WindowPrices : Packet<WindowPrices> {
+                uint32_t count;
+                uint32_t item_ids[16];
+            };
+            const uint32_t Packet<WindowPrices>::STATIC_HEADER = 0xFA;
 
             struct VanquishProgress : Packet<VanquishProgress> {
                 uint32_t foes_killed;
@@ -487,7 +515,7 @@ namespace GW {
             const uint32_t Packet<CinematicPlay>::STATIC_HEADER = 0x102;
 
             // e.g. map doors start opening or closing. AKA "update object animation"
-            struct ManipulateMapObject : Packet<ManipulateMapObject> { 
+            struct ManipulateMapObject : Packet<ManipulateMapObject> {
                 uint32_t object_id; // Door ID
                 uint32_t animation_type; // (3 = door closing, 9 = ???, 16 = door opening)
                 uint32_t animation_stage; // (2 = start, 3 = stop)
@@ -495,7 +523,7 @@ namespace GW {
             const uint32_t Packet<ManipulateMapObject>::STATIC_HEADER = 0x111;
 
             // e.g. map doors stop opening or closing. "update object state"
-            struct ManipulateMapObject2 : Packet<ManipulateMapObject2> { 
+            struct ManipulateMapObject2 : Packet<ManipulateMapObject2> {
                 uint32_t object_id; // Door ID
                 uint32_t unk1; // 
                 uint32_t state; // Open = 1, Closed = 0
@@ -519,30 +547,30 @@ namespace GW {
             };
             const uint32_t Packet<TownAllianceObject>::STATIC_HEADER = 0x11D;
 
-			// Info about any guilds applicable to current outpost.
-			// NOTE: When entering a guild hall, that guild will always be the first added (local_id = 1).
-			struct GuildGeneral : Packet<GuildGeneral> {
-				uint32_t local_id;
-				uint32_t ghkey[4]; // blob[16]
-				wchar_t name[32];
-				wchar_t tag[5];
-				uint32_t cape_bg_color;
-				uint32_t cape_detail_color;
-				uint32_t cape_emblem_color;
-				uint32_t cape_shape;
-				uint32_t cape_detail;
-				uint32_t cape_emblem;
-				uint32_t cape_trim;
-				uint32_t unk1; // Word
-				uint32_t unk2; // byte
-				uint32_t unk3; // byte
-				uint32_t faction;
-				uint32_t unk4; // dword
-				uint32_t rank;
-				uint32_t allegiance;
-				uint32_t unk5; // byte
-			};
-			const uint32_t Packet<GuildGeneral>::STATIC_HEADER = 0x124;
+            // Info about any guilds applicable to current outpost.
+            // NOTE: When entering a guild hall, that guild will always be the first added (local_id = 1).
+            struct GuildGeneral : Packet<GuildGeneral> {
+                uint32_t local_id;
+                uint32_t ghkey[4]; // blob[16]
+                wchar_t name[32];
+                wchar_t tag[5];
+                uint32_t cape_bg_color;
+                uint32_t cape_detail_color;
+                uint32_t cape_emblem_color;
+                uint32_t cape_shape;
+                uint32_t cape_detail;
+                uint32_t cape_emblem;
+                uint32_t cape_trim;
+                uint32_t unk1; // Word
+                uint32_t unk2; // byte
+                uint32_t unk3; // byte
+                uint32_t faction;
+                uint32_t unk4; // dword
+                uint32_t rank;
+                uint32_t allegiance;
+                uint32_t unk5; // byte
+            };
+            const uint32_t Packet<GuildGeneral>::STATIC_HEADER = 0x124;
 
             // Gold added to inventory
             struct CharacterAddGold : Packet<CharacterAddGold> {
@@ -598,7 +626,7 @@ namespace GW {
             };
             const uint32_t Packet<ErrorMessage>::STATIC_HEADER = 0x1C1;
 
-			/* Party Invites */
+            /* Party Invites */
             struct PartyHenchmanAdd : Packet<PartyHenchmanAdd> {
                 uint32_t party_id;
                 uint32_t agent_id;
@@ -614,93 +642,93 @@ namespace GW {
             };
             const uint32_t Packet<PartyHenchmanRemove>::STATIC_HEADER = 0x1C5;
 
-			struct PartyHeroAdd : Packet<PartyHeroAdd> {
-				uint32_t party_id;
-				uint32_t owner_player_number;
-				uint32_t agent_id;
-				uint32_t hero_id;
-				uint32_t level;
-			};
-			const uint32_t Packet<PartyHeroAdd>::STATIC_HEADER = 0x1C7;
+            struct PartyHeroAdd : Packet<PartyHeroAdd> {
+                uint32_t party_id;
+                uint32_t owner_player_number;
+                uint32_t agent_id;
+                uint32_t hero_id;
+                uint32_t level;
+            };
+            const uint32_t Packet<PartyHeroAdd>::STATIC_HEADER = 0x1C7;
 
-			struct PartyHeroRemove : Packet<PartyHeroRemove> {
-				uint32_t party_id;
-				uint32_t owner_player_number;
-				uint32_t agent_id;
-			};
-			const uint32_t Packet<PartyHeroRemove>::STATIC_HEADER = 0x1C8;
+            struct PartyHeroRemove : Packet<PartyHeroRemove> {
+                uint32_t party_id;
+                uint32_t owner_player_number;
+                uint32_t agent_id;
+            };
+            const uint32_t Packet<PartyHeroRemove>::STATIC_HEADER = 0x1C8;
 
-			
-			// Invite sent to another party
-			struct PartyInviteSent_Create : Packet<PartyInviteSent_Create> {
-				uint32_t target_party_id;
-			};
-			const uint32_t Packet<PartyInviteSent_Create>::STATIC_HEADER = 0x1C9;
-			// Invite received from another party
-			struct PartyInviteReceived_Create : Packet<PartyInviteReceived_Create> {
-				uint32_t target_party_id; // word
-			};
-			const uint32_t Packet<PartyInviteReceived_Create>::STATIC_HEADER = 0x1CA;
 
-			// Remove a sent party invite. Invitation has been cancelled.
-			struct PartyInviteSent_Cancel : Packet<PartyInviteSent_Cancel> {
-				uint32_t target_party_id; // word
-			};
-			const uint32_t Packet<PartyInviteSent_Cancel>::STATIC_HEADER = 0x1CB;
+            // Invite sent to another party
+            struct PartyInviteSent_Create : Packet<PartyInviteSent_Create> {
+                uint32_t target_party_id;
+            };
+            const uint32_t Packet<PartyInviteSent_Create>::STATIC_HEADER = 0x1C9;
+            // Invite received from another party
+            struct PartyInviteReceived_Create : Packet<PartyInviteReceived_Create> {
+                uint32_t target_party_id; // word
+            };
+            const uint32_t Packet<PartyInviteReceived_Create>::STATIC_HEADER = 0x1CA;
 
-			// Remove a received party invite. Invitation has been cancelled.
-			struct PartyInviteReceived_Cancel : Packet<PartyInviteReceived_Cancel> {
-				uint32_t target_party_id; // word
-			};
-			const uint32_t Packet<PartyInviteReceived_Cancel>::STATIC_HEADER = 0x1CC;
+            // Remove a sent party invite. Invitation has been cancelled.
+            struct PartyInviteSent_Cancel : Packet<PartyInviteSent_Cancel> {
+                uint32_t target_party_id; // word
+            };
+            const uint32_t Packet<PartyInviteSent_Cancel>::STATIC_HEADER = 0x1CB;
 
-			// Remove a received party invite. Invitation has been either accepted or rejected (we dont know atm)
-			struct PartyInviteSent_Response : Packet<PartyInviteSent_Response> {
-				uint32_t target_party_id; // word
-			};
-			const uint32_t Packet<PartyInviteSent_Response>::STATIC_HEADER = 0x1CD;
+            // Remove a received party invite. Invitation has been cancelled.
+            struct PartyInviteReceived_Cancel : Packet<PartyInviteReceived_Cancel> {
+                uint32_t target_party_id; // word
+            };
+            const uint32_t Packet<PartyInviteReceived_Cancel>::STATIC_HEADER = 0x1CC;
 
-			// Remove a sent party invite. Invitation has been either accepted or rejected (we dont know atm)
-			struct PartyInviteReceived_Response : Packet<PartyInviteReceived_Response> {
-				uint32_t target_party_id; // word
-			};
-			const uint32_t Packet<PartyInviteReceived_Response>::STATIC_HEADER = 0x1CE;
+            // Remove a received party invite. Invitation has been either accepted or rejected (we dont know atm)
+            struct PartyInviteSent_Response : Packet<PartyInviteSent_Response> {
+                uint32_t target_party_id; // word
+            };
+            const uint32_t Packet<PartyInviteSent_Response>::STATIC_HEADER = 0x1CD;
 
-			// A player in a party has been updated or added. Not necessarily yours.
+            // Remove a sent party invite. Invitation has been either accepted or rejected (we dont know atm)
+            struct PartyInviteReceived_Response : Packet<PartyInviteReceived_Response> {
+                uint32_t target_party_id; // word
+            };
+            const uint32_t Packet<PartyInviteReceived_Response>::STATIC_HEADER = 0x1CE;
+
+            // A player in a party has been updated or added. Not necessarily yours.
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
                 uint32_t party_id;
                 uint32_t player_id;
                 uint32_t state; // 3 = Invited
             };
             const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D0;
-			// Player has left party. Not necessarily yours.
+            // Player has left party. Not necessarily yours.
             struct PartyPlayerRemove : Packet<PartyPlayerRemove> {
                 uint32_t party_id;
                 uint32_t player_id;
             };
             const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D5;
-			// Player in party has toggled ready. Not necessarily yours.
-			struct PartyPlayerReady : Packet<PartyPlayerReady> {
-				uint32_t party_id;
-				uint32_t player_id;
-				uint32_t is_ready;
-			};
-			const uint32_t Packet<PartyPlayerReady>::STATIC_HEADER = 0x1D6;
+            // Player in party has toggled ready. Not necessarily yours.
+            struct PartyPlayerReady : Packet<PartyPlayerReady> {
+                uint32_t party_id;
+                uint32_t player_id;
+                uint32_t is_ready;
+            };
+            const uint32_t Packet<PartyPlayerReady>::STATIC_HEADER = 0x1D6;
 
-			// When a new party is created:
-			// 1.	PartyPlayerStreamStart packet is sent
-			// 2.	PartyPlayerAdd packet per member
-			//		PartyHeroAdd packet per hero
-			//		PartyHenchmanAdd packer per henchman
-			// 3. PartyPlayerStreamEnd packet is sent
-			struct PartyPlayerStreamStart : Packet<PartyPlayerStreamStart> {
-				uint32_t party_id; // word
-			};
-			const uint32_t Packet<PartyPlayerStreamStart>::STATIC_HEADER = 0x1D7;
-			struct PartyPlayerStreamEnd : Packet<PartyPlayerStreamEnd> {
-				uint32_t party_id; // word
-			};
-			const uint32_t Packet<PartyPlayerStreamEnd>::STATIC_HEADER = 0x1D8;
+            // When a new party is created:
+            // 1.	PartyPlayerStreamStart packet is sent
+            // 2.	PartyPlayerAdd packet per member
+            //		PartyHeroAdd packet per hero
+            //		PartyHenchmanAdd packer per henchman
+            // 3. PartyPlayerStreamEnd packet is sent
+            struct PartyPlayerStreamStart : Packet<PartyPlayerStreamStart> {
+                uint32_t party_id; // word
+            };
+            const uint32_t Packet<PartyPlayerStreamStart>::STATIC_HEADER = 0x1D7;
+            struct PartyPlayerStreamEnd : Packet<PartyPlayerStreamEnd> {
+                uint32_t party_id; // word
+            };
+            const uint32_t Packet<PartyPlayerStreamEnd>::STATIC_HEADER = 0x1D8;
 
             struct PartyDefeated : Packet<PartyDefeated> {
             };

@@ -33,11 +33,12 @@ namespace GW {
     static_assert(sizeof(Bag) == 40, "struct Bag has incorect size");
 
     struct ItemModifier {
-        uint32_t mod;
-
-        uint32_t identifier() { return (mod & 0xFFFF0000) >> 16; }
+        uint32_t mod = 0;
+                          
+        uint32_t identifier() { return mod >> 16; }
         uint32_t arg1() { return (mod & 0x0000FF00) >> 8; }
         uint32_t arg2() { return (mod & 0x000000FF); }
+        operator bool() { return mod != 0; }
     };
 
     struct Item { // total: 0x54/84

@@ -266,10 +266,10 @@ namespace GW {
             };
             const uint32_t Packet<WindowItemsEnd>::STATIC_HEADER = 0x85;
 
-            struct WindowPricesEnd : Packet<WindowPricesEnd> {
+            struct ItemStreamEnd : Packet<ItemStreamEnd> { // AKA ItemPricesEnd
                 uint32_t unk1;
             };
-            const uint32_t Packet<WindowPricesEnd>::STATIC_HEADER = 0x86;
+            const uint32_t Packet<ItemStreamEnd>::STATIC_HEADER = 0x86;
 
             // Pings and drawing in compass
             struct CompassEvent : Packet<CompassEvent> {

@@ -24,7 +24,6 @@ namespace GW {
 
     namespace StoC {
         typedef HookCallback<Packet::StoC::PacketBase *> PacketCallback;
-		typedef HookCallback<Packet::StoC::PacketBase *> PostPacketCallback;
         GWCA_API void RegisterPacketCallback(
             HookEntry *entry,
             uint32_t header,
@@ -32,7 +31,7 @@ namespace GW {
 		GWCA_API void RegisterPostPacketCallback(
 			HookEntry* entry,
 			uint32_t header,
-			PostPacketCallback callback);
+            PacketCallback callback);
         
         /* Use this to add handlers to the stocmgr, primary function. */
         template <typename T>

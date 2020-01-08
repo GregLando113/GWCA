@@ -579,12 +579,34 @@ namespace GW {
             };
             const uint32_t Packet<CharacterAddGold>::STATIC_HEADER = 0x143;
 
+            struct SalvageConsumeItem : Packet<SalvageConsumeItem> {
+                uint32_t salvage_session_id;
+                uint32_t item_id;
+            };
+            const uint32_t Packet<SalvageConsumeItem>::STATIC_HEADER = 0x150;
+
             // Gold removed from inventory
             struct CharacterRemoveGold : Packet<CharacterRemoveGold> {
                 uint32_t unk; // some kind of id? but neither agentid nor playerid
                 uint32_t gold;
             };
             const uint32_t Packet<CharacterRemoveGold>::STATIC_HEADER = 0x152;
+
+            struct SalvageSession : Packet<SalvageSession> {
+                uint32_t salvage_session_id;
+                uint32_t salvage_item_id;
+                uint32_t salvagable_count;
+                uint32_t salvagable_item_ids[3];
+            };
+            const uint32_t Packet<SalvageSession>::STATIC_HEADER = 0x167;
+
+            struct SalvageSessionEnd : Packet<SalvageSessionEnd> {
+            };
+            const uint32_t Packet<SalvageSessionEnd>::STATIC_HEADER = 0x168;
+
+            struct SalvageSessionEnd2 : Packet<SalvageSessionEnd2> {
+            };
+            const uint32_t Packet<SalvageSessionEnd2>::STATIC_HEADER = 0x169;
 
             struct InstanceLoadFile : Packet<InstanceLoadFile> {
                 uint32_t map_fileID;

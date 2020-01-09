@@ -259,56 +259,13 @@ namespace GW {
         CtoS::SendPacket(0x10, CtoGS_MSGMoveItem, from->item_id, to->bag->bag_id, to->slot);
     }
 
-    bool Item::GetIsStackable() {
-        switch (type) {
-        case 0:  return false; // Salvage
-        case 1:  return false; // LeadHand
-        case 2:  return false; // Axe
-        case 3:  return false; // Bag
-        case 4:  return false; // Feet
-        case 5:  return false; // Bow
-        case 6:  return false; // Bundle
-        case 7:  return false; // Chest
-        case 8:  return false; // Rune
-        case 9:  return true;  // Consumable
-        case 10: return true;  // Dye
-        case 11: return true;  // Material
-        case 12: return false; // Focus
-        case 13: return false; // Arms
-        case 14: return true;  // Sigil
-        case 15: return false; // Hammer
-        case 16: return false; // Head
-        case 17: return false; // SalvageItem
-        case 18: return true;  // Key
-        case 19: return false; // Legs
-        case 20: return true;  // Coins
-        case 21: return false; // QuestItem
-        case 22: return false; // Wand
-        case 24: return false; // Shield
-        case 26: return false; // Staff
-        case 27: return false; // Sword
-        case 29: return false; // Kit
-        case 30: return true;  // Trophy
-        case 31: return true;  // Scroll
-        case 32: return false; // Daggers
-        case 33: return true;  // Present
-        case 34: return false; // Minipet
-        case 35: return false; // Scythe
-        case 36: return false; // Spear
-        case 43: return false; // Handbook
-        case 44: return false; // CostumeBody
-        case 45: return false; // CostumeHead
-        };
-        return false;
-    }
-
     bool Item::GetIsZcoin() {
         if (model_file_id == 31202) return true; // Copper
         if (model_file_id == 31203) return true; // Gold
         if (model_file_id == 31204) return true; // Silver
         return false;
     }
-
+     
     bool Item::GetIsMaterial() {
         if (type == (uint32_t)Constants::ItemType::Materials_Zcoins
             && !GetIsZcoin()) {

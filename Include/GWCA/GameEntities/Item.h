@@ -69,7 +69,10 @@ namespace GW {
         /* +h004F */ uint8_t        profession;
         /* +h0050 */ uint8_t        slot;
 
-        bool GetIsStackable();
+        inline bool Item::GetIsStackable() {
+            return interaction & 0x0008;
+        }
+
         bool GetIsMaterial();
         bool GetIsZcoin();
     };

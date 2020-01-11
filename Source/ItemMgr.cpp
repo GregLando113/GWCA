@@ -265,7 +265,7 @@ namespace GW {
         if (model_file_id == 31204) return true; // Silver
         return false;
     }
-     
+
     bool Item::GetIsMaterial() {
         if (type == (uint32_t)Constants::ItemType::Materials_Zcoins
             && !GetIsZcoin()) {

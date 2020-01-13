@@ -20,7 +20,7 @@ Miracle444,TheArkanaProject - Work done in the GWA2 Project.
 Start up a project in visual studio and init a git repo inside for it. Then use:
 
 ```
-git submodule add git@bitbucket.org:0x4D1/gwca.git
+git submodule add https://github.com/GregLando113/GWCA
 ```
 
 To clone the repo. From here, include the project (.vcxproj) in your solution using Add->Existing project, add a dependency to your main project, And add the project as a reference in your main project. Now when your main project compiles, GWCA++ will compile into it. From here just include "APIMain.h" into your main file.

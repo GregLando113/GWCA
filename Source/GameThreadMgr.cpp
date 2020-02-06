@@ -47,7 +47,11 @@ namespace {
     }
 
     void __cdecl gameLoopHook(void* unk) {
-        CallFunctions();
+        __try {
+            CallFunctions();
+        }
+        __except (EXCEPT_EXPRESSION_LOOP) {
+        }
         g__thingyret(unk);
     }
 

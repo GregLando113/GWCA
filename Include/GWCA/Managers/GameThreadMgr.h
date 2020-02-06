@@ -2,6 +2,9 @@
 
 #include <GWCA/Utilities/Export.h>
 
+#ifndef EXCEPT_EXPRESSION_LOOP
+    #define EXCEPT_EXPRESSION_LOOP EXCEPTION_CONTINUE_SEARCH
+#endif
 namespace GW {
 
     struct Module;

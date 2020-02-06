@@ -592,6 +592,24 @@ namespace GW {
             };
             const uint32_t Packet<CharacterRemoveGold>::STATIC_HEADER = 0x152;
 
+            struct ItemGeneral : Packet<ItemGeneral> {
+                uint32_t item_id;
+                uint32_t model_file_id;
+                uint32_t type;
+                uint32_t unk1;
+                uint32_t extra_id; // Dye color
+                uint32_t materials;
+                uint32_t unk2;
+                uint32_t interaction; // Flags
+                uint32_t price;
+                uint32_t model_id;
+                uint32_t quantity;
+                wchar_t* enc_name;
+                uint32_t mod_struct_size;
+                uint32_t* mod_struct;
+            };
+            const uint32_t Packet<ItemGeneral>::STATIC_HEADER = 0x165;
+
             struct SalvageSession : Packet<SalvageSession> {
                 uint32_t salvage_session_id;
                 uint32_t salvage_item_id;

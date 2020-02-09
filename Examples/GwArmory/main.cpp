@@ -633,18 +633,20 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
 
     HMODULE hModule = static_cast<HMODULE>(lpModule);
 
-    AllocConsole();
     FILE* stdout_proxy = nullptr;
     FILE* stderr_proxy = nullptr;
+#ifdef _DEBUG
+    AllocConsole();
+    SetConsoleTitle("GwArmory Console");
+    freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
+    freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
+#else
 #if 0
     // If you replace the above "#if 0" by "#if 1", you will log
     // the stdout in "log.txt" which will be in your "Gw.exe" folder.
     freopen_s(&stdout_proxy, "log.txt", "w", stdout);
-#else
-    freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
 #endif
-    freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
-    SetConsoleTitle("GwArmory Console");
+#endif
 
     GW::Initialize();
 

@@ -116,6 +116,7 @@ static ImVec4 ImVec4FromDyeColor(DyeColor color)
 struct PlayerArmorPiece
 {
     uint32_t model_file_id;
+    uint32_t unknow1;
     DyeColor color1;
     DyeColor color2;
     DyeColor color3;
@@ -202,64 +203,120 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM l
     if (Message == WM_RBUTTONUP) right_mouse_down = false;
 
     ImGuiIO& io = ImGui::GetIO();
+
+    //
+    // The first switch case is used to update the state of imgui with respect of the inputs.
+    //
+
     switch (Message) {
-        case WM_LBUTTONDOWN:
-        case WM_LBUTTONDBLCLK:
-            if (!right_mouse_down) io.MouseDown[0] = true;
-            break;
-        case WM_LBUTTONUP:
-            io.MouseDown[0] = false; 
-            break;
-        case WM_MBUTTONDOWN:
-        case WM_MBUTTONDBLCLK:
-            if (!right_mouse_down) {
-                io.KeysDown[VK_MBUTTON] = true;
-                io.MouseDown[2] = true;
-            }
-            break;
-        case WM_MBUTTONUP:
-            io.KeysDown[VK_MBUTTON] = false;
-            io.MouseDown[2] = false;
-            break;
-        case WM_MOUSEWHEEL: 
-            if (!right_mouse_down) io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? +1.0f : -1.0f; 
-            break;
-        case WM_MOUSEMOVE:
-            if (!right_mouse_down) {
-                io.MousePos.x = (float)GET_X_LPARAM(lParam);
-                io.MousePos.y = (float)GET_Y_LPARAM(lParam);
-            }
-            break;
-        case WM_XBUTTONDOWN:
-            if (!right_mouse_down) {
-                if (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) io.KeysDown[VK_XBUTTON1] = true;
-                if (GET_XBUTTON_WPARAM(wParam) == XBUTTON2) io.KeysDown[VK_XBUTTON2] = true;
-            }
-            break;
-        case WM_XBUTTONUP:
-            if (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) io.KeysDown[VK_XBUTTON1] = false;
-            if (GET_XBUTTON_WPARAM(wParam) == XBUTTON2) io.KeysDown[VK_XBUTTON2] = false;
-            break;
-        case WM_SYSKEYDOWN:
-        case WM_KEYDOWN:
-            if (wParam < 256)
-                io.KeysDown[wParam] = true;
-            break;
-        case WM_SYSKEYUP:
-        case WM_KEYUP:
-            if (wParam < 256)
-                io.KeysDown[wParam] = false;
-            break;
-        case WM_CHAR: // You can also use ToAscii()+GetKeyboardState() to retrieve characters.
-            if (wParam > 0 && wParam < 0x10000)
-                io.AddInputCharacter((unsigned short)wParam);
-            break;
-        default:
-            break;
+    case WM_LBUTTONDOWN:
+    case WM_LBUTTONDBLCLK:
+        if (!right_mouse_down) io.MouseDown[0] = true;
+        break;
+    case WM_LBUTTONUP:
+        io.MouseDown[0] = false; 
+        break;
+    case WM_MBUTTONDOWN:
+    case WM_MBUTTONDBLCLK:
+        if (!right_mouse_down) {
+            io.KeysDown[VK_MBUTTON] = true;
+            io.MouseDown[2] = true;
+        }
+        break;
+    case WM_MBUTTONUP:
+        io.KeysDown[VK_MBUTTON] = false;
+        io.MouseDown[2] = false;
+        break;
+    case WM_MOUSEWHEEL: 
+        if (!right_mouse_down) io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? +1.0f : -1.0f; 
+        break;
+    case WM_MOUSEMOVE:
+        if (!right_mouse_down) {
+            io.MousePos.x = (float)GET_X_LPARAM(lParam);
+            io.MousePos.y = (float)GET_Y_LPARAM(lParam);
+        }
+        break;
+    case WM_XBUTTONDOWN:
+        if (!right_mouse_down) {
+            if (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) io.KeysDown[VK_XBUTTON1] = true;
+            if (GET_XBUTTON_WPARAM(wParam) == XBUTTON2) io.KeysDown[VK_XBUTTON2] = true;
+        }
+        break;
+    case WM_XBUTTONUP:
+        if (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) io.KeysDown[VK_XBUTTON1] = false;
+        if (GET_XBUTTON_WPARAM(wParam) == XBUTTON2) io.KeysDown[VK_XBUTTON2] = false;
+        break;
+    case WM_SYSKEYDOWN:
+    case WM_KEYDOWN:
+        if (wParam < 256)
+            io.KeysDown[wParam] = true;
+        break;
+    case WM_SYSKEYUP:
+    case WM_KEYUP:
+        if (wParam < 256)
+            io.KeysDown[wParam] = false;
+        break;
+    case WM_CHAR: // You can also use ToAscii()+GetKeyboardState() to retrieve characters.
+        if (wParam > 0 && wParam < 0x10000)
+            io.AddInputCharacter((unsigned short)wParam);
+        break;
+    default:
+        break;
     }
 
-    if (io.WantTextInput || io.WantCaptureMouse)
-        return true;
+    //
+    // This second switch is used to determine whether we need to forward the input to Guild Wars.
+    //
+
+    switch (Message) {
+    // Send button up mouse events to everything, to avoid being stuck on mouse-down
+    case WM_LBUTTONUP:
+        break;
+        
+    // Other mouse events:
+    // - If right mouse down, leave it to gw
+    // - ImGui first (above), if WantCaptureMouse that's it
+    // - Toolbox module second (e.g.: minimap), if captured, that's it
+    // - otherwise pass to gw
+    case WM_LBUTTONDOWN:
+    case WM_LBUTTONDBLCLK:
+    case WM_MOUSEMOVE:
+    case WM_MOUSEWHEEL:
+        if (!right_mouse_down && io.WantCaptureMouse)
+            return true;
+        break;
+
+    // keyboard messages
+    case WM_KEYUP:
+    case WM_SYSKEYUP:
+        if (io.WantTextInput) break; // if imgui wants them, send to imgui (above) and to gw
+        // else fallthrough
+    case WM_KEYDOWN:
+    case WM_SYSKEYDOWN:
+    case WM_CHAR:
+    case WM_SYSCHAR:
+    case WM_IME_CHAR:
+    case WM_XBUTTONDOWN:
+    case WM_XBUTTONDBLCLK:
+    case WM_XBUTTONUP:
+    case WM_MBUTTONDOWN:
+    case WM_MBUTTONDBLCLK:
+    case WM_MBUTTONUP:
+        if (io.WantTextInput) return true; // if imgui wants them, send just to imgui (above)
+
+        // note: capturing those events would prevent typing if you have a hotkey assigned to normal letters. 
+        // We may want to not send events to toolbox if the player is typing in-game
+        // Otherwise, we may want to capture events. 
+        // For that, we may want to only capture *successfull* hotkey activations.
+        break;
+
+    case WM_SIZE:
+        // ImGui doesn't need this, it reads the viewport size directly
+        break;
+
+    default:
+        break;
+    }
 
     return CallWindowProc((WNDPROC)OldWndProc, hWnd, Message, wParam, lParam);
 }
@@ -353,6 +410,7 @@ static void UpdateArmorsFilter(GW::Constants::Profession prof, Campaign campaign
 static void InitItemPiece(PlayerArmorPiece *piece, GW::Agent::Equipment::ItemData *item_data)
 {
     piece->model_file_id = item_data->model_file_id;
+    piece->unknow1 = item_data->dye.dye_id;
     piece->color1 = DyeColorFromInt(item_data->dye.dye1);
     piece->color2 = DyeColorFromInt(item_data->dye.dye2);
     piece->color3 = DyeColorFromInt(item_data->dye.dye3);
@@ -362,6 +420,8 @@ static void InitItemPiece(PlayerArmorPiece *piece, GW::Agent::Equipment::ItemDat
 static uint32_t CreateColor(DyeColor col1, DyeColor col2 = DyeColor::None,
     DyeColor col3 = DyeColor::None, DyeColor col4 = DyeColor::None)
 {
+    if (col1 == DyeColor::None && col2 == DyeColor::None && col3 == DyeColor::None && col4 == DyeColor::None)
+        col1 = DyeColor::Gray;
     uint32_t c1 = static_cast<uint32_t>(col1);
     uint32_t c2 = static_cast<uint32_t>(col2);
     uint32_t c3 = static_cast<uint32_t>(col3);
@@ -370,7 +430,7 @@ static uint32_t CreateColor(DyeColor col1, DyeColor col2 = DyeColor::None,
     return composite;
 }
 
-static void SetArmorItem(PlayerArmorPiece *piece, uint32_t dye_id)
+static void SetArmorItem(PlayerArmorPiece *piece)
 {
     assert(SetItem_Func != nullptr);
     GW::Agent *player = GW::Agents::GetPlayer();
@@ -379,7 +439,7 @@ static void SetArmorItem(PlayerArmorPiece *piece, uint32_t dye_id)
     GW::Agent::Equipment *equip = *player->equip;
     uint32_t color = CreateColor(piece->color1, piece->color2, piece->color3, piece->color4);
     // 0x60111109
-    SetItem_Func(*player->equip, nullptr, piece->model_file_id, color, 0x20110007, dye_id);
+    SetItem_Func(*player->equip, nullptr, piece->model_file_id, color, 0x20110007, piece->unknow1);
 }
 
 static bool DyePicker(const char *label, DyeColor *color)
@@ -431,6 +491,7 @@ static bool DrawArmorPiece(const char* label,
         if (0 <= state->current_piece_index && (size_t)state->current_piece_index < state->pieces.size()) {
             state->current_piece = state->pieces[state->current_piece_index];
             player_piece->model_file_id = state->current_piece->model_file_id;
+            player_piece->unknow1 = state->current_piece->unknow1;
         }
         value_changed = true;
     }
@@ -462,27 +523,40 @@ static void DrawGwArmory(IDirect3DDevice9* device)
     bool show_window = true;
     static int filter_index = Campaign_All;
 
-    ImVec2 window_size(350.f, 208.f);
+    ImVec2 window_size(330.f, 208.f);
     ImGui::SetNextWindowSize(window_size);
     if (ImGui::Begin("GwArmory", &show_window, ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::Text("Profession: %s", GetProfessionName(prof));
+        ImGui::SameLine(ImGui::GetWindowWidth() - 65.f);
+
+        if (ImGui::Button("Refresh")) {
+            if (player_agent->equip && player_agent->equip[0]) {
+                GW::Agent::Equipment *equip = player_agent->equip[0];
+                InitItemPiece(&player_armor.head, &equip->head);
+                InitItemPiece(&player_armor.chest, &equip->chest);
+                InitItemPiece(&player_armor.hands, &equip->hands);
+                InitItemPiece(&player_armor.legs, &equip->legs);
+                InitItemPiece(&player_armor.feets, &equip->feet);
+            }
+
+            update_data = true;
+        }
+
         if (ImGui::MyCombo("##filter", "All", &filter_index, armor_filter_array_getter, nullptr, 5))
             update_data = true;
         if (update_data)
             UpdateArmorsFilter(prof, static_cast<Campaign>(filter_index));
 
-        GW::Agent::Equipment *equipment = *player_agent->equip;
-
         if (DrawArmorPiece("##head", &player_armor.head, &head))
-            SetArmorItem(&player_armor.head, equipment->head.dye.dye_id);
+            SetArmorItem(&player_armor.head);
         if (DrawArmorPiece("##chest", &player_armor.chest, &chest))
-            SetArmorItem(&player_armor.chest, equipment->chest.dye.dye_id);
+            SetArmorItem(&player_armor.chest);
         if (DrawArmorPiece("##hands", &player_armor.hands, &hands))
-            SetArmorItem(&player_armor.hands, equipment->hands.dye.dye_id);
+            SetArmorItem(&player_armor.hands);
         if (DrawArmorPiece("##legs", &player_armor.legs, &legs))
-            SetArmorItem(&player_armor.legs, equipment->legs.dye.dye_id);
+            SetArmorItem(&player_armor.legs);
         if (DrawArmorPiece("##feets", &player_armor.feets, &feets))
-            SetArmorItem(&player_armor.feets, equipment->feet.dye.dye_id);
+            SetArmorItem(&player_armor.feets);
     }
     ImGui::End();
     shutdown = !show_window;
@@ -508,8 +582,8 @@ static void Draw(IDirect3DDevice9* device)
             GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "GwArmory: Failed to find the SetItem function");
         } else {
             GW::Agent* player_agent = GW::Agents::GetPlayer();
-            if (player_agent && player_agent->equip && *player_agent->equip) {
-                GW::Agent::Equipment *equip = *player_agent->equip;
+            if (player_agent && player_agent->equip && player_agent->equip[0]) {
+                GW::Agent::Equipment *equip = player_agent->equip[0];
                 InitItemPiece(&player_armor.head, &equip->head);
                 InitItemPiece(&player_armor.chest, &equip->chest);
                 InitItemPiece(&player_armor.hands, &equip->hands);
@@ -533,7 +607,12 @@ static void Draw(IDirect3DDevice9* device)
     ImDrawData* draw_data = ImGui::GetDrawData();
     ImGui_ImplDX9_RenderDrawData(draw_data);
 
-    if ((GetAsyncKeyState(VK_END) & 1) || shutdown) {
+#ifdef _DEBUG
+    if (GetAsyncKeyState(VK_END) & 1)
+        shutdown = true;
+#endif
+
+    if (shutdown) {
         HWND hWnd = GW::MemoryMgr::GetGWWindowHandle();
 
         ImGui_ImplDX9_Shutdown();
@@ -553,21 +632,19 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
     // on the game from within the game thread.
 
     HMODULE hModule = static_cast<HMODULE>(lpModule);
+
+    AllocConsole();
     FILE* stdout_proxy = nullptr;
     FILE* stderr_proxy = nullptr;
-#ifdef _DEBUG
-    AllocConsole();
-    SetConsoleTitle("GwArmory Console");
-    freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
-    freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
+#if 0
+    // If you replace the above "#if 0" by "#if 1", you will log
+    // the stdout in "log.txt" which will be in your "Gw.exe" folder.
+    freopen_s(&stdout_proxy, "log.txt", "w", stdout);
 #else
-    #if 0
-        // If you replace the above "#if 0" by "#if 1", you will log
-        // the stdout in "log.txt" which will be in your "Gw.exe" folder.
-        freopen_s(&stdout_proxy, "log.txt", "w", stdout);
-    #endif
+    freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
 #endif
-    
+    freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
+    SetConsoleTitle("GwArmory Console");
 
     GW::Initialize();
 
@@ -594,9 +671,7 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
         fclose(stdout_proxy);
     if (stderr_proxy)
         fclose(stderr_proxy);
-#ifdef _DEBUG
     FreeConsole();
-#endif
 
     FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
 }

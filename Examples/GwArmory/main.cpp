@@ -483,10 +483,8 @@ static void DrawGwArmory(IDirect3DDevice9* device)
             SetArmorItem(&player_armor.legs, equipment->legs.dye.dye_id);
         if (DrawArmorPiece("##feets", &player_armor.feets, &feets))
             SetArmorItem(&player_armor.feets, equipment->feet.dye.dye_id);
-
-        ImGui::End();
     }
-
+    ImGui::End();
     shutdown = !show_window;
 }
 
@@ -555,19 +553,21 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
     // on the game from within the game thread.
 
     HMODULE hModule = static_cast<HMODULE>(lpModule);
-
-    AllocConsole();
     FILE* stdout_proxy = nullptr;
     FILE* stderr_proxy = nullptr;
-#if 0
-    // If you replace the above "#if 0" by "#if 1", you will log
-    // the stdout in "log.txt" which will be in your "Gw.exe" folder.
-    freopen_s(&stdout_proxy, "log.txt", "w", stdout);
-#else
-    freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
-#endif
-    freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
+#ifdef _DEBUG
+    AllocConsole();
     SetConsoleTitle("GwArmory Console");
+    freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
+    freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
+#else
+    #if 0
+        // If you replace the above "#if 0" by "#if 1", you will log
+        // the stdout in "log.txt" which will be in your "Gw.exe" folder.
+        freopen_s(&stdout_proxy, "log.txt", "w", stdout);
+    #endif
+#endif
+    
 
     GW::Initialize();
 
@@ -594,7 +594,9 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
         fclose(stdout_proxy);
     if (stderr_proxy)
         fclose(stderr_proxy);
+#ifdef _DEBUG
     FreeConsole();
+#endif
 
     FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
 }

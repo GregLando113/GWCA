@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
@@ -136,7 +136,7 @@ namespace GW {
         return last_dialog_id;
     }
     void Agents::SendDialog(uint32_t dialog_id) {
-        CtoS::SendPacket(0x8, CtoGS_MSGDialog, dialog_id);
+        CtoS::SendPacket(0x8, GAME_CMSG_SEND_DIALOG, dialog_id);
     }
 
     AgentArray Agents::GetAgentArray() {
@@ -190,19 +190,19 @@ namespace GW {
     }
 
     void Agents::GoNPC(Agent *agent, uint32_t call_target) {
-        CtoS::SendPacket(0xC, CtoGS_MSGGoNPC, agent->agent_id, call_target);
+        CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_LIVING, agent->agent_id, call_target);
     }
 
     void Agents::GoPlayer(Agent *agent) {
-        CtoS::SendPacket(0x8, CtoGS_MSGGoPlayer, agent->agent_id);
+        CtoS::SendPacket(0x8, GAME_CMSG_INTERACT_PLAYER, agent->agent_id);
     }
 
     void Agents::GoSignpost(Agent *agent, uint32_t call_target) {
-        CtoS::SendPacket(0xC, CtoGS_MSGGoGadget, agent->agent_id, call_target);
+        CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_GADGET, agent->agent_id, call_target);
     }
 
     void Agents::CallTarget(Agent *agent) {
-        CtoS::SendPacket(0xC, CtoGS_MSGCallTarget, 0xA, agent->agent_id);
+        CtoS::SendPacket(0xC, GAME_CMSG_TARGET_CALL, 0xA, agent->agent_id);
     }
 
     uint32_t Agents::GetAmountOfPlayersInInstance() {

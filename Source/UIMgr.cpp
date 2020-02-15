@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
@@ -179,7 +179,7 @@ namespace GW {
     void UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
     {
         struct P037 {                   // Used to send pings and drawings in the minimap. Related to StoC::P133
-            const unsigned header = CtoGS_MSGDrawMap;
+            const unsigned header = GAME_CMSG_DRAW_MAP;
             unsigned session_id = 0;     // unique for every player and shape. changes for every ping or shape.
             unsigned pt_count;           // number of points in the following array
             CompassPoint pts[8]; // in world coordinates divided by 100

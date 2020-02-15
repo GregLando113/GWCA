@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Hooker.h>
@@ -81,7 +81,7 @@ namespace GW {
     };
     
     void PartyMgr::Tick(bool flag) {
-        CtoS::SendPacket(0x8, CtoGS_MSGTick, flag);
+        CtoS::SendPacket(0x8, GAME_CMSG_PARTY_READY_STATUS, flag);
     }
 
     PartyInfo* PartyMgr::GetPartyInfo() {
@@ -121,7 +121,7 @@ namespace GW {
     }
 
     void PartyMgr::SetHardMode(bool flag) {
-        CtoS::SendPacket(0x8, CtoGS_MSGSwitchMode, flag);
+        CtoS::SendPacket(0x8, GAME_CMSG_PARTY_SET_DIFFICULTY, flag);
     }
     bool PartyMgr::GetIsPartyInHardMode() {
         return GameContext::instance()->party->InHardMode();
@@ -179,15 +179,15 @@ namespace GW {
     }
 
     void PartyMgr::RespondToPartyRequest(bool accept) {
-        CtoS::SendPacket(0x8, accept ? CtoGS_MSGAcceptPartyRequest : CtoGS_MSGDenyPartyRequest, 1);
+        CtoS::SendPacket(0x8, accept ? GAME_CMSG_PARTY_ACCEPT_INVITE : GAME_CMSG_PARTY_ACCEPT_CANCEL, 1);
     }
 
     void PartyMgr::AddHero(uint32_t heroid) {
-        CtoS::SendPacket(0x8, CtoGS_MSGAddHero, heroid);
+        CtoS::SendPacket(0x8, GAME_CMSG_HERO_ADD, heroid);
     }
 
     void PartyMgr::KickHero(uint32_t heroid) {
-        CtoS::SendPacket(0x8, CtoGS_MSGKickHero, heroid);
+        CtoS::SendPacket(0x8, GAME_CMSG_HERO_KICK, heroid);
     }
 
     void PartyMgr::KickAllHeroes() {
@@ -195,7 +195,7 @@ namespace GW {
     }
 
     void PartyMgr::LeaveParty() {
-        CtoS::SendPacket(0x4, CtoGS_MSGLeaveParty);
+        CtoS::SendPacket(0x4, GAME_CMSG_PARTY_LEAVE_GROUP);
     }
 
     void PartyMgr::FlagHero(uint32_t hero_index, GamePos pos) {
@@ -205,7 +205,7 @@ namespace GW {
 
     void PartyMgr::FlagHeroAgent(AgentID agent_id, GamePos pos) {
         struct FlagHero { // Flag Hero
-            const uint32_t header = CtoGS_MSGCommandHero;
+            const uint32_t header = GAME_CMSG_HERO_FLAG_SINGLE;
             uint32_t id;
             GamePos pos;
         };
@@ -219,7 +219,7 @@ namespace GW {
 
     void PartyMgr::FlagAll(GamePos pos) {
         struct FlagAll { // Flag All
-            const uint32_t header = CtoGS_MSGCommandAll;
+            const uint32_t header = GAME_CMSG_HERO_FLAG_ALL;
             GamePos pos;
         };
         static FlagAll pak;

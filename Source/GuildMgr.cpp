@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Scanner.h>
 
@@ -46,15 +46,15 @@ namespace GW {
 
     void GuildMgr::TravelGH() {
         GHKey guild_uuid = GameContext::instance()->guild->player_gh_key;
-        CtoS::SendPacket(0x18, CtoGS_MSGTravelGH,
+        CtoS::SendPacket(0x18, GAME_CMSG_PARTY_ENTER_GUILD_HALL,
             guild_uuid.k[0], guild_uuid.k[1], guild_uuid.k[2], guild_uuid.k[3]);
     }
 
     void GuildMgr::TravelGH(GHKey key) {
-        CtoS::SendPacket(0x18, CtoGS_MSGTravelGH, key.k[0], key.k[1], key.k[2], key.k[3]);
+        CtoS::SendPacket(0x18, GAME_CMSG_PARTY_ENTER_GUILD_HALL, key.k[0], key.k[1], key.k[2], key.k[3]);
     }
 
     void GuildMgr::LeaveGH() {
-        CtoS::SendPacket(0x8, CtoGS_MSGLeaveGH, 0x1);
+        CtoS::SendPacket(0x8, GAME_CMSG_PARTY_LEAVE_GUILD_HALL, 0x1);
     }
 } // namespace GW

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
@@ -124,19 +124,19 @@ namespace GW {
     }
 
     void Items::PickUpItem(Item *item, uint32_t CallTarget /*= 0*/) {
-        CtoS::SendPacket(0xC, CtoGS_MSGPickUpItem, item->agent_id, CallTarget);
+        CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_ITEM, item->agent_id, CallTarget);
     }
 
     void Items::DropItem(Item *item, uint32_t quantity) {
-        CtoS::SendPacket(0xC, CtoGS_MSGDropItem, item->item_id, quantity);
+        CtoS::SendPacket(0xC, GAME_CMSG_DROP_ITEM, item->item_id, quantity);
     }
 
     void Items::EquipItem(Item *item) {
-        CtoS::SendPacket(0x8, CtoGS_MSGEquipItem, item->item_id);
+        CtoS::SendPacket(0x8, GAME_CMSG_EQUIP_ITEM, item->item_id);
     }
 
     void Items::UseItem(Item *item) {
-        CtoS::SendPacket(0x8, CtoGS_MSGUseItem, item->item_id);
+        CtoS::SendPacket(0x8, GAME_CMSG_ITEM_USE, item->item_id);
     }
 
     Bag **Items::GetBagArray() {
@@ -179,7 +179,7 @@ namespace GW {
     }
 
     void Items::DropGold(uint32_t Amount /*= 1*/) {
-        CtoS::SendPacket(0x8, CtoGS_MSGDropGold, Amount);
+        CtoS::SendPacket(0x8, GAME_CMSG_INTERACT_ITEM, Amount);
     }
 
     uint32_t Items::GetGoldAmountOnCharacter() {
@@ -191,7 +191,7 @@ namespace GW {
     }
 
     static void ChangeGold(uint32_t character_gold, uint32_t storage_gold) {
-        CtoS::SendPacket(0xC, CtoGS_MSGChangeGold, character_gold, storage_gold);
+        CtoS::SendPacket(0xC, GAME_CMSG_ITEM_CHANGE_GOLD, character_gold, storage_gold);
     }
 
     uint32_t Items::DepositGold(uint32_t amount) {
@@ -233,7 +233,7 @@ namespace GW {
     }
 
     void Items::OpenLockedChest() {
-        CtoS::SendPacket(0x8, CtoGS_MSGOpenChest, 0x2);
+        CtoS::SendPacket(0x8, GAME_CMSG_OPEN_CHEST, 0x2);
     }
 
     void Items::MoveItem(Item *item, Bag *bag, int slot, int quantity) {
@@ -241,7 +241,7 @@ namespace GW {
         if (!item || !bag) return;
         if (bag->items.size() < (unsigned)slot) return;
         // @Robustness: Check if there is enough space at the destination.
-        CtoS::SendPacket(0x10, CtoGS_MSGMoveItem, item->item_id, bag->bag_id, slot);
+        CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, item->item_id, bag->bag_id, slot);
     }
 
     void Items::MoveItem(Item *item, Constants::Bag bag_id, int slot, int quantity)
@@ -256,7 +256,7 @@ namespace GW {
         if (!from->bag || !to->bag) return;
         if (quantity <= 0) quantity = from->quantity;
         if (quantity + to->quantity > 250) return;
-        CtoS::SendPacket(0x10, CtoGS_MSGMoveItem, from->item_id, to->bag->bag_id, to->slot);
+        CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, from->item_id, to->bag->bag_id, to->slot);
     }
 
     bool Item::GetIsZcoin() {

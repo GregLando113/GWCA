@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
@@ -83,7 +83,7 @@ namespace GW {
         int district, int region, int language) {
 
         struct ZoneMap {
-            uint32_t header = CtoGS_MSGTravelTo;
+            uint32_t header = GAME_CMSG_PARTY_TRAVEL;
             uint32_t mapid;
             int region;
             int district;
@@ -206,10 +206,10 @@ namespace GW {
     }
 
     void Map::SkipCinematic(void) {
-        CtoS::SendPacket(4, CtoGS_MSGSkipCinematic);
+        CtoS::SendPacket(4, GAME_CMSG_SKIP_CINEMATIC);
     }
 
     void Map::EnterChallenge() {
-        CtoS::SendPacket(8, CtoGS_MSGEnterChallenge, 0);
+        CtoS::SendPacket(8, GAME_CMSG_PARTY_ENTER_CHALLENGE, 0);
     }
 } // namespace GW

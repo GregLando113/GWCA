@@ -383,7 +383,7 @@ namespace GW {
                 uint8_t unk2;
                 uint8_t unk3[8];
             };
-            const uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = 0x19A;
+            const uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = 0x19B;
 
             struct InstanceLoadInfo : Packet<InstanceLoadInfo> {
                 uint32_t agent_id;
@@ -393,7 +393,7 @@ namespace GW {
                 uint32_t language;
                 uint32_t is_observer;
             };
-            const uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = 0x19E;
+            const uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = 0x19F;
 
             struct GameSrvTransfer : Packet<GameSrvTransfer> {
                 uint8_t host[24]; // ip of the game server
@@ -403,26 +403,26 @@ namespace GW {
                 uint32_t is_explorable; // uint8_t
                 uint32_t token2; // player id
             };
-            const uint32_t Packet<GameSrvTransfer>::STATIC_HEADER = 0x1AA;
+            const uint32_t Packet<GameSrvTransfer>::STATIC_HEADER = 0x1B0;
 
             struct DoACompleteZone : Packet<DoACompleteZone> {
                 wchar_t message[122];
             };
-            const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 0x1B4;
+            const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 0x1B5;
 
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
                 // uint16_t
                 // uint16_t
                 // uint8_t
             };
-            const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D0;
+            const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D1;
 
             struct PartyPlayerRemove : Packet<PartyPlayerRemove> {};
-            const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D5;
+            const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D6;
 
             struct PartyDefeated : Packet<PartyDefeated> {
             };
-            const uint32_t Packet<PartyDefeated>::STATIC_HEADER = 0x1DD;
+            const uint32_t Packet<PartyDefeated>::STATIC_HEADER = 0x1DE;
         }
     }
 }

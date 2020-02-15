@@ -634,7 +634,7 @@ namespace GW {
                 uint8_t unk2;
                 uint8_t unk3[8];
             };
-            const uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = 0x19A;
+            const uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = 0x19B;
 
             struct InstanceLoadInfo : Packet<InstanceLoadInfo> {
                 uint32_t agent_id;
@@ -644,7 +644,7 @@ namespace GW {
                 uint32_t language;
                 uint32_t is_observer;
             };
-            const uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = 0x19E;
+            const uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = 0x19F;
 
             struct GameSrvTransfer : Packet<GameSrvTransfer> {
                 uint8_t host[24]; // ip of the game server
@@ -654,17 +654,17 @@ namespace GW {
                 uint32_t is_explorable; // uint8_t
                 uint32_t token2; // player id
             };
-            const uint32_t Packet<GameSrvTransfer>::STATIC_HEADER = 0x1AA;
+            const uint32_t Packet<GameSrvTransfer>::STATIC_HEADER = 0x1B0;
 
             struct DoACompleteZone : Packet<DoACompleteZone> {
                 wchar_t message[122];
             };
-            const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 0x1B4;
+            const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = 0x1B5;
 
             struct ErrorMessage : Packet<ErrorMessage> {
                 uint32_t message_id;
             };
-            const uint32_t Packet<ErrorMessage>::STATIC_HEADER = 0x1C1;
+            const uint32_t Packet<ErrorMessage>::STATIC_HEADER = 0x1C2;
 
             /* Party Invites */
             struct PartyHenchmanAdd : Packet<PartyHenchmanAdd> {
@@ -674,13 +674,13 @@ namespace GW {
                 uint32_t profession;
                 uint32_t level;
             };
-            const uint32_t Packet<PartyHenchmanAdd>::STATIC_HEADER = 0x1C4;
+            const uint32_t Packet<PartyHenchmanAdd>::STATIC_HEADER = 0x1C5;
 
             struct PartyHenchmanRemove : Packet<PartyHenchmanRemove> {
                 uint32_t party_id;
                 uint32_t agent_id;
             };
-            const uint32_t Packet<PartyHenchmanRemove>::STATIC_HEADER = 0x1C5;
+            const uint32_t Packet<PartyHenchmanRemove>::STATIC_HEADER = 0x1C6;
 
             struct PartyHeroAdd : Packet<PartyHeroAdd> {
                 uint32_t party_id;
@@ -689,50 +689,50 @@ namespace GW {
                 uint32_t hero_id;
                 uint32_t level;
             };
-            const uint32_t Packet<PartyHeroAdd>::STATIC_HEADER = 0x1C7;
+            const uint32_t Packet<PartyHeroAdd>::STATIC_HEADER = 0x1C8;
 
             struct PartyHeroRemove : Packet<PartyHeroRemove> {
                 uint32_t party_id;
                 uint32_t owner_player_number;
                 uint32_t agent_id;
             };
-            const uint32_t Packet<PartyHeroRemove>::STATIC_HEADER = 0x1C8;
+            const uint32_t Packet<PartyHeroRemove>::STATIC_HEADER = 0x1C9;
 
 
             // Invite sent to another party
             struct PartyInviteSent_Create : Packet<PartyInviteSent_Create> {
                 uint32_t target_party_id;
             };
-            const uint32_t Packet<PartyInviteSent_Create>::STATIC_HEADER = 0x1C9;
+            const uint32_t Packet<PartyInviteSent_Create>::STATIC_HEADER = 0x1D0;
             // Invite received from another party
             struct PartyInviteReceived_Create : Packet<PartyInviteReceived_Create> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteReceived_Create>::STATIC_HEADER = 0x1CA;
+            const uint32_t Packet<PartyInviteReceived_Create>::STATIC_HEADER = 0x1CB;
 
             // Remove a sent party invite. Invitation has been cancelled.
             struct PartyInviteSent_Cancel : Packet<PartyInviteSent_Cancel> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteSent_Cancel>::STATIC_HEADER = 0x1CB;
+            const uint32_t Packet<PartyInviteSent_Cancel>::STATIC_HEADER = 0x1CC;
 
             // Remove a received party invite. Invitation has been cancelled.
             struct PartyInviteReceived_Cancel : Packet<PartyInviteReceived_Cancel> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteReceived_Cancel>::STATIC_HEADER = 0x1CC;
+            const uint32_t Packet<PartyInviteReceived_Cancel>::STATIC_HEADER = 0x1CD;
 
             // Remove a received party invite. Invitation has been either accepted or rejected (we dont know atm)
             struct PartyInviteSent_Response : Packet<PartyInviteSent_Response> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteSent_Response>::STATIC_HEADER = 0x1CD;
+            const uint32_t Packet<PartyInviteSent_Response>::STATIC_HEADER = 0x1CE;
 
             // Remove a sent party invite. Invitation has been either accepted or rejected (we dont know atm)
             struct PartyInviteReceived_Response : Packet<PartyInviteReceived_Response> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteReceived_Response>::STATIC_HEADER = 0x1CE;
+            const uint32_t Packet<PartyInviteReceived_Response>::STATIC_HEADER = 0x1CF;
 
             // A player in a party has been updated or added. Not necessarily yours.
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
@@ -740,20 +740,20 @@ namespace GW {
                 uint32_t player_id;
                 uint32_t state; // 3 = Invited
             };
-            const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D0;
+            const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = 0x1D1;
             // Player has left party. Not necessarily yours.
             struct PartyPlayerRemove : Packet<PartyPlayerRemove> {
                 uint32_t party_id;
                 uint32_t player_id;
             };
-            const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D5;
+            const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = 0x1D6;
             // Player in party has toggled ready. Not necessarily yours.
             struct PartyPlayerReady : Packet<PartyPlayerReady> {
                 uint32_t party_id;
                 uint32_t player_id;
                 uint32_t is_ready;
             };
-            const uint32_t Packet<PartyPlayerReady>::STATIC_HEADER = 0x1D6;
+            const uint32_t Packet<PartyPlayerReady>::STATIC_HEADER = 0x1D7;
 
             // When a new party is created:
             // 1.	PartyPlayerStreamStart packet is sent
@@ -764,22 +764,22 @@ namespace GW {
             struct PartyPlayerStreamStart : Packet<PartyPlayerStreamStart> {
                 uint32_t party_id; // word
             };
-            const uint32_t Packet<PartyPlayerStreamStart>::STATIC_HEADER = 0x1D7;
+            const uint32_t Packet<PartyPlayerStreamStart>::STATIC_HEADER = 0x1D8;
             struct PartyPlayerStreamEnd : Packet<PartyPlayerStreamEnd> {
                 uint32_t party_id; // word
             };
-            const uint32_t Packet<PartyPlayerStreamEnd>::STATIC_HEADER = 0x1D8;
+            const uint32_t Packet<PartyPlayerStreamEnd>::STATIC_HEADER = 0x1D9;
 
             struct PartyDefeated : Packet<PartyDefeated> {
             };
-            const uint32_t Packet<PartyDefeated>::STATIC_HEADER = 0x1DD;
+            const uint32_t Packet<PartyDefeated>::STATIC_HEADER = 0x1DE;
 
             struct PartyLock : Packet<PartyLock> { // Sent when party window is locked/unlocked e.g. pending mission entry
                 uint32_t unk1; // 2 = locked?
                 uint32_t unk2; // 1 = locked?
                 wchar_t unk3[8];
             };
-            const uint32_t Packet<PartyLock>::STATIC_HEADER = 0x1DE;
+            const uint32_t Packet<PartyLock>::STATIC_HEADER = 0x1DF;
         }
     }
 }

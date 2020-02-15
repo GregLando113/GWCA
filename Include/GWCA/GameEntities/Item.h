@@ -69,7 +69,7 @@ namespace GW {
         /* +h004F */ uint8_t        profession;
         /* +h0050 */ uint8_t        slot;
 
-        inline bool Item::GetIsStackable() {
+        inline bool GetIsStackable() {
             return interaction & 0x80000;
         }
 

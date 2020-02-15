@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
@@ -31,11 +31,11 @@ namespace GW {
     };
 
     void PlayerMgr::SetActiveTitle(Constants::TitleID title_id) {
-        CtoS::SendPacket(0x8, CtoGS_MSGSetDisplayedTitle, (uint32_t)title_id);
+        CtoS::SendPacket(0x8, GAME_CMSG_TITLE_DISPLAY, (uint32_t)title_id);
     }
 
     void PlayerMgr::RemoveActiveTitle() {
-        CtoS::SendPacket(0x4, CtoGS_MSGRemoveDisplayedTitle);
+        CtoS::SendPacket(0x4, GAME_CMSG_TITLE_HIDE);
     }
 
     PlayerArray& PlayerMgr::GetPlayerArray() {
@@ -65,7 +65,7 @@ namespace GW {
     }
 
     void PlayerMgr::ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index) {
-        CtoS::SendPacket(12, CtoGS_MSGChangeSecondary, Agents::GetHeroAgentID(hero_index), prof);
+        CtoS::SendPacket(12, GAME_CMSG_CHANGE_SECOND_PROFESSION, Agents::GetHeroAgentID(hero_index), prof);
     }
 
     static int wcsncasecmp(const wchar_t *s1, const wchar_t *s2, size_t n)

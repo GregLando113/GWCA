@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
@@ -91,14 +91,14 @@ namespace GW {
 
     void SkillbarMgr::ChangeSecondary(uint32_t profession, int hero_index) {
         AgentID agent_id = Agents::GetHeroAgentID(hero_index);
-        CtoS::SendPacket(0xC, CtoGS_MSGChangeSecondary, agent_id, profession);
+        CtoS::SendPacket(0xC, GAME_CMSG_CHANGE_SECOND_PROFESSION, agent_id, profession);
     }
 
     void SkillbarMgr::LoadSkillbar(uint32_t *skills, size_t n_skills, int hero_index) {
         uint32_t skill_ids[8] = {0};
         memcpy(skill_ids, skills, n_skills * sizeof(uint32_t));
         AgentID agent_id = Agents::GetHeroAgentID(hero_index);
-        CtoS::SendPacket(0x2C, CtoGS_MSGLoadSkillbar, agent_id, 0x8,
+        CtoS::SendPacket(0x2C, GAME_CMSG_SKILLBAR_LOAD, agent_id, 0x8,
             skill_ids[0], skill_ids[1], skill_ids[2], skill_ids[3], skill_ids[4],
             skill_ids[5], skill_ids[6], skill_ids[7]);
     }
@@ -272,7 +272,7 @@ namespace GW {
         uint32_t *attribute_ids, uint32_t *attribute_values, int hero_index) {
 
         struct tSetAttributes {
-            uint32_t header = CtoGS_MSGSetAttributes;
+            uint32_t header = GAME_CMSG_ATTRIBUTE_LOAD;
             AgentID  agent_id;
             uint32_t attribute_count1;
             uint32_t attribute_ids[16];
@@ -318,7 +318,7 @@ namespace GW {
     }
 
     void SkillbarMgr::UseSkillByID(uint32_t skill_id, uint32_t target, uint32_t call_target) {
-        CtoS::SendPacket(0x14, CtoGS_MSGUseSkill, skill_id, 0, target, call_target);
+        CtoS::SendPacket(0x14, GAME_CMSG_USE_SKILL, skill_id, 0, target, call_target);
     }
 
     int SkillbarMgr::GetSkillSlot(Constants::SkillID skill_id) {

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/CtoSHeaders.h>
+#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Skills.h>
 
 #include <GWCA/Utilities/Export.h>
@@ -135,6 +135,6 @@ namespace GW {
     }
 
     void Effects::DropBuff(uint32_t buff_id) {
-        CtoS::SendPacket(0x8, CtoGS_MSGDropBuff, buff_id);
+        CtoS::SendPacket(0x8, GAME_CMSG_DROP_BUFF, buff_id);
     }
 } // namespace GW

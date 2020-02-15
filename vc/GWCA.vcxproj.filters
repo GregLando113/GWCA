@@ -198,9 +198,6 @@
     <ClInclude Include="..\Include\GWCA\Managers\UIMgr.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\GWCA\Packets\CtoSHeaders.h">
-      <Filter>Packets</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\GWCA\Packets\StoC.h">
       <Filter>Packets</Filter>
     </ClInclude>
@@ -225,6 +222,9 @@
     </ClInclude>
     <ClInclude Include="..\Include\GWCA\Utilities\Hook.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\GWCA\Packets\Opcodes.h">
+      <Filter>Packets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

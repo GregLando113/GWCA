@@ -25,6 +25,7 @@
 #define GAME_CMSG_HERO_ADD                          (0x0021) // 33
 #define GAME_CMSG_HERO_KICK                         (0x0022) // 34
 #define GAME_CMSG_TARGET_CALL                       (0x0026) // 38
+#define GAME_CMSG_PING_WEAPON_SET                   (0x002C) // 44
 #define GAME_CMSG_ATTACK_AGENT                      (0x002D) // 45
 #define GAME_CMSG_CANCEL_MOVEMENT                   (0x002F) // 47
 #define GAME_CMSG_DROP_BUFF                         (0x0030) // 48

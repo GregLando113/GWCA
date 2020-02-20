@@ -82,7 +82,7 @@ namespace GW {
         /* +h0008 */ Region region;
         /* +h000C */ RegionType type;
         /* +h0010 */ uint32_t flags;
-        /* +h0014 */ uint32_t thumbmail_id;
+        /* +h0014 */ uint32_t thumbnail_id;
         /* +h0018 */ uint32_t min_party_size;
         /* +h001C */ uint32_t max_party_size;
         /* +h0020 */ uint32_t min_player_size;

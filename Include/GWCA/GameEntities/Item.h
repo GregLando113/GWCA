@@ -43,7 +43,7 @@ namespace GW {
     struct Item { // total: 0x54/84
         /* +h0000 */ uint32_t       item_id;
         /* +h0004 */ uint32_t       agent_id;
-        /* +h0008 */ Bag           *bag_equiped; // Only valid if Item is a equipped Bag
+        /* +h0008 */ Bag           *bag_equipped; // Only valid if Item is a equipped Bag
         /* +h000C */ Bag           *bag;
         /* +h0010 */ ItemModifier  *mod_struct; // Pointer to an array of mods.
         /* +h0014 */ uint32_t       mod_struct_size; // Size of this array.

@@ -6,9 +6,7 @@
 namespace GW {
     typedef uint32_t ItemID;
 
-    struct Bag;
     struct Item;
-
     typedef Array<Item *> ItemArray;
 
     struct Bag { // total: 0x28/40
@@ -60,7 +58,7 @@ namespace GW {
         /* +h0034 */ wchar_t       *name_enc;
         /* +h0038 */ wchar_t       *complete_name_enc; // with color, quantity, etc.
         /* +h003C */ wchar_t       *single_item_name; // with color, w/o quantity, named as single item
-        /* +h0040 */ uint8_t        h003C[10];
+        /* +h0040 */ uint8_t        h0040[10];
         /* +h004A */ uint8_t        is_material_salvageable; // Only valid for type 11 (Materials)
         /* +h004B */ uint8_t        h004B; // probably used for quantity extension for new material storage
         /* +h004C */ uint16_t       quantity;
@@ -113,7 +111,7 @@ namespace GW {
             };
         };
         /* +h005C */ Item *bundle;
-        /* +h0060 */ uint32_t h004C;
+        /* +h0060 */ uint32_t h0060;
         union {
         /* +h0064 */ WeapondSet weapon_sets[4];
             struct {
@@ -128,7 +126,7 @@ namespace GW {
             };
         };
         /* +h0084 */ uint32_t active_weapon_set;
-        /* +h0088 */ uint32_t h0074[2];
+        /* +h0088 */ uint32_t h0088[2];
         /* +h0090 */ uint32_t gold_character;
         /* +h0094 */ uint32_t gold_storage;
     };

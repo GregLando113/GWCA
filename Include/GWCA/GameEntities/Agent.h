@@ -118,13 +118,13 @@ namespace GW {
         /* +h0092 */ uint16_t h0092;
         /* +h0094 */ uint32_t h0094[2];
         /* +h009C */ uint32_t type; // Livings = 0xDB, Gadgets = 0x200, Items = 0x400.
-		union {
-			struct {
-				/* +h00A0 */ float move_x; //If moving, how much on the X axis per second
-				/* +h00A4 */ float move_y; //If moving, how much on the Y axis per second
-			};
-			Vec2f velocity;
-		};
+        union {
+            struct {
+        /* +h00A0 */ float move_x; //If moving, how much on the X axis per second
+        /* +h00A4 */ float move_y; //If moving, how much on the Y axis per second
+            };
+        /* +h00A0 */ Vec2f velocity;
+        };
         /* +h00A8 */ uint32_t h00A8; // always 0?
         /* +h00AC */ float rotation_cos2; // same as cosine above
         /* +h00B0 */ float rotation_sin2; // same as sine above

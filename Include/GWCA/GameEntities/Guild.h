@@ -10,7 +10,7 @@ namespace GW {
         /* +h0004 */ wchar_t *name_ptr; // ptr to invitedname, why? dunno
         /* +h0008 */ wchar_t invited_name[20]; // name of character that was invited in
         /* +h0030 */ wchar_t current_name[20]; // name of character currently being played
-        /* +h0058 */ wchar_t ivitor_name[20]; // name of character that invited player
+        /* +h0058 */ wchar_t inviter_name[20]; // name of character that invited player
         /* +h0080 */ uint32_t invite_time; // time in ms from game creation ??
         /* +h0084 */ wchar_t promoter_name[20]; // name of player that last modified rank
         /* +h00AC */ uint32_t h00AC[12];
@@ -34,7 +34,7 @@ namespace GW {
 
     struct Guild { // total: 0xAC/172
         /* +h0000 */ GHKey key;
-        /* +h0010 */ uint32_t h0004[5];
+        /* +h0010 */ uint32_t h0010[5];
         /* +h0024 */ uint32_t index; // Same as PlayerGuildIndex
         /* +h0028 */ uint32_t rank;
         /* +h002C */ uint32_t features;

@@ -12,51 +12,48 @@
 namespace {
     using namespace GW;
 
-    CRITICAL_SECTION criticalsection;
+    CRITICAL_SECTION mutex;
 
     uint32_t last_identifier = 0;
     bool render_state = false;
-	bool in_game_thread = false;
 
     typedef void(__cdecl *Render_t)(void*);
     uintptr_t *g__thingy;
     Render_t g__thingyret;
 
-    std::vector<std::function<void(void)> > calls;
-    std::map<uint32_t, std::function<void(void)>> calls_permanent;
+    std::vector<std::function<void(void)>> singleshot_callbacks;
+    std::unordered_map<HookEntry *, GameThread::GameThreadCallback> GameThread_callbacks;
 
-    void CallFunctions() {
-        if (TryEnterCriticalSection(&criticalsection)) {
-			in_game_thread = true;
-            if (!calls.empty()) {
-                for (const auto& Call : calls) {
-                    Call();
-                }
+    void CallFunctions()
+    {
+        EnterCriticalSection(&mutex);
 
-                calls.clear();
+        if (!singleshot_callbacks.empty()) {
+            for (const auto& Call : singleshot_callbacks) {
+                Call();
             }
 
-            if (!calls_permanent.empty()) {
-                for (const auto& Call : calls_permanent) {
-                    Call.second();
-                }
-            }
-			in_game_thread = false;
-            LeaveCriticalSection(&criticalsection);
+            singleshot_callbacks.clear();
         }
+
+        HookStatus status;
+        for (auto& it : GameThread_callbacks) {
+            it.second(&status);
+            ++status.altitude;
+        }
+
+        LeaveCriticalSection(&mutex);
     }
 
-    void __cdecl gameLoopHook(void* unk) {
-        __try {
-            CallFunctions();
-        }
-        __except (EXCEPT_EXPRESSION_LOOP) {
-        }
+    void __cdecl gameLoopHook(void* unk)
+    {
+        CallFunctions();
         g__thingyret(unk);
     }
 
-    void Init() {
-        InitializeCriticalSection(&criticalsection);
+    void Init()
+    {
+        InitializeCriticalSection(&mutex);
 
         uintptr_t address = Scanner::Find(
             "\x2B\xCE\x8B\x15\x00\x00\x00\x00\xF7\xD9\x1B\xC9", "xxxx????xxxx", +4);
@@ -72,16 +69,19 @@ namespace {
         }
     }
 
-    void Exit() {
+    void Exit()
+    {
         GameThread::ClearCalls();
-        DeleteCriticalSection(&criticalsection);
+        DeleteCriticalSection(&mutex);
     }
 
-    void EnableHooks() {
+    void EnableHooks()
+    {
         *g__thingy = (uintptr_t)gameLoopHook;
     }
 
-    void DisableHooks() {
+    void DisableHooks()
+    {
         *g__thingy = (uintptr_t)g__thingyret;
     }
 }
@@ -96,31 +96,33 @@ namespace GW {
         ::DisableHooks,     // disable_hooks
     };
 
-    void GameThread::ClearCalls() {
-        EnterCriticalSection(&criticalsection);
-        calls.clear();
-        calls_permanent.clear();
-        LeaveCriticalSection(&criticalsection);
+    void GameThread::ClearCalls()
+    {
+        EnterCriticalSection(&mutex);
+        singleshot_callbacks.clear();
+        GameThread_callbacks.clear();
+        LeaveCriticalSection(&mutex);
     }
 
-    void GameThread::Enqueue(std::function<void()> f) {
-        EnterCriticalSection(&criticalsection);
-        calls.emplace_back(f);
-        LeaveCriticalSection(&criticalsection);
+    void GameThread::Enqueue(std::function<void()> f)
+    {
+        EnterCriticalSection(&mutex);
+        singleshot_callbacks.emplace_back(f);
+        LeaveCriticalSection(&mutex);
     }
 
-    uint32_t GameThread::AddPermanentCall(std::function<void()> f) {
-        EnterCriticalSection(&criticalsection);
-        last_identifier++;
-        calls_permanent[last_identifier] = f;
-        LeaveCriticalSection(&criticalsection);
-
-        return last_identifier;
+    void GameThread::RegisterGameThreadCallback(
+        HookEntry *entry,
+        GameThreadCallback callback)
+    {
+        GameThread_callbacks.insert({entry, callback});
     }
 
-    void GameThread::RemovePermanentCall(uint32_t identifier) {
-        EnterCriticalSection(&criticalsection);
-        calls_permanent.erase(identifier);
-        LeaveCriticalSection(&criticalsection);
+    void GameThread::RemoveGameThreadCallback(
+        HookEntry *entry)
+    {
+        auto it = GameThread_callbacks.find(entry);
+        if (it != GameThread_callbacks.end())
+            GameThread_callbacks.erase(it);
     }
 } // namespace GW

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
 #ifndef EXCEPT_EXPRESSION_LOOP
@@ -15,8 +16,12 @@ namespace GW {
 
         GWCA_API void Enqueue(std::function<void ()> f);
 
-        GWCA_API uint32_t AddPermanentCall(std::function<void ()> f);
+        typedef HookCallback<> GameThreadCallback;
+        GWCA_API void RegisterGameThreadCallback(
+            HookEntry *entry,
+            GameThreadCallback callback);
 
-        GWCA_API void RemovePermanentCall(uint32_t identifier);
+        GWCA_API void RemoveGameThreadCallback(
+            HookEntry *entry);
     };
 }

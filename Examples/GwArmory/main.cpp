@@ -36,7 +36,7 @@
 //  - Costume = 0x20000006
 //  - Armor =   0x20110007 (3)
 //  - Chaos glove = 0x20110407 (38)
-typedef void (__fastcall *SetItem_pt)(GW::Agent::Equipment *equip, void *edx, uint32_t model_file_id, uint32_t color, uint32_t arg3, uint32_t agent_id);
+typedef void (__fastcall *SetItem_pt)(GW::Equipment *equip, void *edx, uint32_t model_file_id, uint32_t color, uint32_t arg3, uint32_t agent_id);
 
 enum class DyeColor {
     None = 0,
@@ -171,7 +171,7 @@ static const char* GetProfessionName(GW::Constants::Profession prof)
     }
 }
 
-static GW::Constants::Profession GetAgentProfession(GW::Agent *agent)
+static GW::Constants::Profession GetAgentProfession(GW::AgentLiving *agent)
 {
     if (!agent)
         return GW::Constants::Profession::None;
@@ -407,7 +407,7 @@ static void UpdateArmorsFilter(GW::Constants::Profession prof, Campaign campaign
     current_profession = prof;
 }
 
-static void InitItemPiece(PlayerArmorPiece *piece, GW::Agent::Equipment::ItemData *item_data)
+static void InitItemPiece(PlayerArmorPiece *piece, GW::Equipment::ItemData *item_data)
 {
     piece->model_file_id = item_data->model_file_id;
     piece->unknow1 = item_data->dye.dye_id;
@@ -433,10 +433,10 @@ static uint32_t CreateColor(DyeColor col1, DyeColor col2 = DyeColor::None,
 static void SetArmorItem(PlayerArmorPiece *piece)
 {
     assert(SetItem_Func != nullptr);
-    GW::Agent *player = GW::Agents::GetPlayer();
+    GW::AgentLiving *player = GW::Agents::GetPlayerAsAgentLiving();
     if (!(player && player->equip && *player->equip))
         return;
-    GW::Agent::Equipment *equip = *player->equip;
+    GW::Equipment *equip = *player->equip;
     uint32_t color = CreateColor(piece->color1, piece->color2, piece->color3, piece->color4);
     // 0x60111109
     SetItem_Func(*player->equip, nullptr, piece->model_file_id, color, 0x20110007, piece->unknow1);
@@ -511,7 +511,7 @@ static bool DrawArmorPiece(const char* label,
 
 static void DrawGwArmory(IDirect3DDevice9* device)
 {
-    GW::Agent* player_agent = GW::Agents::GetPlayer();
+    GW::AgentLiving* player_agent = GW::Agents::GetPlayerAsAgentLiving();
     if (!player_agent)
         return;
 
@@ -531,7 +531,7 @@ static void DrawGwArmory(IDirect3DDevice9* device)
 
         if (ImGui::Button("Refresh")) {
             if (player_agent->equip && player_agent->equip[0]) {
-                GW::Agent::Equipment *equip = player_agent->equip[0];
+                GW::Equipment *equip = player_agent->equip[0];
                 InitItemPiece(&player_armor.head, &equip->head);
                 InitItemPiece(&player_armor.chest, &equip->chest);
                 InitItemPiece(&player_armor.hands, &equip->hands);
@@ -581,9 +581,9 @@ static void Draw(IDirect3DDevice9* device)
         if (!SetItem_Func) {
             GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "GwArmory: Failed to find the SetItem function");
         } else {
-            GW::Agent* player_agent = GW::Agents::GetPlayer();
+            GW::AgentLiving* player_agent = GW::Agents::GetPlayerAsAgentLiving();
             if (player_agent && player_agent->equip && player_agent->equip[0]) {
-                GW::Agent::Equipment *equip = player_agent->equip[0];
+                GW::Equipment *equip = player_agent->equip[0];
                 InitItemPiece(&player_armor.head, &equip->head);
                 InitItemPiece(&player_armor.chest, &equip->chest);
                 InitItemPiece(&player_armor.hands, &equip->hands);

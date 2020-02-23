@@ -159,7 +159,7 @@ namespace GW {
         PartyInfo* info = GetPartyInfo();
         if (info == nullptr) return false;
         if (!info->players.valid()) return false;
-        Agent* me = Agents::GetPlayer();
+        AgentLiving *me = Agents::GetPlayerAsAgentLiving();
         if (me == nullptr) return false;
         for (uint32_t i = 0; i < info->players.size(); i++) {
             if (info->players[i].login_number == me->login_number) {
@@ -172,10 +172,10 @@ namespace GW {
     bool PartyMgr::GetPlayerIsLeader() {
         PartyInfo *party = GetPartyInfo();
         if (!party) return false;
-        Agent *player_agent = Agents::GetPlayer();
-        if (!player_agent) return false;
+        AgentLiving *me = Agents::GetPlayerAsAgentLiving();
+        if (!me) return false;
         if (!party->players.size()) return false;
-        return (party->players[0].login_number == player_agent->login_number);
+        return (party->players[0].login_number == me->login_number);
     }
 
     void PartyMgr::RespondToPartyRequest(bool accept) {

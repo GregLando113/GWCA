@@ -10,72 +10,76 @@ namespace GW {
     struct Vec3f;
     struct GamePos;
 
+    // Courtesy of DerMonech14
+    struct Equipment {
+
+        virtual void Unk1() = 0;
+        virtual void Unk2() = 0;
+        virtual void Update(unsigned index) = 0;
+
+        struct DyeInfo {
+            uint8_t h0000;
+            uint8_t dye_id; // Not clean, but check GwArmory to understand
+            uint8_t dye1 : 4;
+            uint8_t dye2 : 4;
+            uint8_t dye3 : 4;
+            uint8_t dye4 : 4;
+        };
+        struct ItemData {
+            uint32_t model_file_id;
+            DyeInfo dye;
+            uint32_t value;
+            uint8_t h000C[4];
+        };
+
+        /* +h0004 */ uint32_t h0004;            // always 2 ?
+        /* +h0008 */ uint32_t h0008;            // Ptr PlayerModelFile?
+        /* +h000C */ uint32_t h000C;            // 
+        /* +h0010 */ uint32_t *reft_hand_ptr;   // Ptr Bow, Hammer, Focus, Daggers, Scythe
+        /* +h0014 */ uint32_t *right_hand_ptr;  // Ptr Sword, Spear, Staff, Daggers, Axe, Zepter, Bundle
+        /* +h0018 */ uint32_t h0018;            // 
+        /* +h001C */ uint32_t *shield_ptr;      // Ptr Shield
+        /* +h0020 */ uint8_t left_hand_map;     // Weapon1     None = 9, Bow = 0, Hammer = 0, Focus = 1, Daggers = 0, Scythe = 0
+        /* +h0021 */ uint8_t right_hand_map;    // Weapon2     None = 9, Sword = 0, Spear = 0, Staff = 0, Daggers = 0, Axe = 0, Zepter = 0, Bundle
+        /* +h0022 */ uint8_t head_map;          // Head        None = 9, Headpiece Ele = 4
+        /* +h0023 */ uint8_t shield_map;        // Shield      None = 9, Shield = 1
+        union {
+        /* +h0024 */ ItemData items[9];
+            struct {
+        /* +h0024 */ ItemData weapon;
+        /* +h0034 */ ItemData offhand;
+        /* +h0044 */ ItemData chest;
+        /* +h0054 */ ItemData legs;
+        /* +h0064 */ ItemData head;
+        /* +h0074 */ ItemData feet;
+        /* +h0084 */ ItemData hands;
+        /* +h0094 */ ItemData costume_body;
+        /* +h00A4 */ ItemData costume_head;
+            };
+        };
+        /* +h00B4 */ uint32_t item_id_weapon;
+        /* +h00B8 */ uint32_t item_id_offhand;
+        /* +h00BC */ uint32_t item_id_chest;
+        /* +h00C0 */ uint32_t item_id_legs;
+        /* +h00C4 */ uint32_t item_id_head;
+        /* +h00C8 */ uint32_t item_id_feet;
+        /* +h00CC */ uint32_t item_id_hands;
+        /* +h00D0 */ uint32_t item_id_costume_body;
+        /* +h00D4 */ uint32_t item_id_costume_head;
+    };
+
+    struct TagInfo {
+        /* +h0000 */ uint16_t guild_id;
+        /* +h0002 */ uint8_t primary;
+        /* +h0003 */ uint8_t secondary;
+        // ...
+    };
+
+    struct AgentItem;
+    struct AgentGadget;
+    struct AgentLiving;
+
     struct Agent {
-        // Courtesy of DerMonech14
-        struct Equipment {
-
-            virtual void Unk1() = 0;
-            virtual void Unk2() = 0;
-            virtual void Update(unsigned index) = 0;
-
-            struct DyeInfo {
-                uint8_t h0000;
-                uint8_t dye_id; // Not clean, but check GwArmory to understand
-                uint8_t dye1 : 4;
-                uint8_t dye2 : 4;
-                uint8_t dye3 : 4;
-                uint8_t dye4 : 4;
-            };
-            struct ItemData {
-                uint32_t model_file_id;
-                DyeInfo dye;
-                uint32_t value;
-                uint8_t h000C[4];
-            };
-
-            /* +h0004 */ uint32_t h0004;            // always 2 ?
-            /* +h0008 */ uint32_t h0008;            // Ptr PlayerModelFile?
-            /* +h000C */ uint32_t h000C;            // 
-            /* +h0010 */ uint32_t *reft_hand_ptr;   // Ptr Bow, Hammer, Focus, Daggers, Scythe
-            /* +h0014 */ uint32_t *right_hand_ptr;  // Ptr Sword, Spear, Staff, Daggers, Axe, Zepter, Bundle
-            /* +h0018 */ uint32_t h0018;            // 
-            /* +h001C */ uint32_t *shield_ptr;      // Ptr Shield
-            /* +h0020 */ uint8_t left_hand_map;     // Weapon1     None = 9, Bow = 0, Hammer = 0, Focus = 1, Daggers = 0, Scythe = 0
-            /* +h0021 */ uint8_t right_hand_map;    // Weapon2     None = 9, Sword = 0, Spear = 0, Staff = 0, Daggers = 0, Axe = 0, Zepter = 0, Bundle
-            /* +h0022 */ uint8_t head_map;          // Head        None = 9, Headpiece Ele = 4
-            /* +h0023 */ uint8_t shield_map;        // Shield      None = 9, Shield = 1
-            union {
-            /* +h0024 */ ItemData items[9];
-                struct {
-            /* +h0024 */ ItemData weapon;
-            /* +h0034 */ ItemData offhand;
-            /* +h0044 */ ItemData chest;
-            /* +h0054 */ ItemData legs;
-            /* +h0064 */ ItemData head;
-            /* +h0074 */ ItemData feet;
-            /* +h0084 */ ItemData hands;
-            /* +h0094 */ ItemData costume_body;
-            /* +h00A4 */ ItemData costume_head;
-                };
-            };
-            /* +h00B4 */ uint32_t item_id_weapon;
-            /* +h00B8 */ uint32_t item_id_offhand;
-            /* +h00BC */ uint32_t item_id_chest;
-            /* +h00C0 */ uint32_t item_id_legs;
-            /* +h00C4 */ uint32_t item_id_head;
-            /* +h00C8 */ uint32_t item_id_feet;
-            /* +h00CC */ uint32_t item_id_hands;
-            /* +h00D0 */ uint32_t item_id_costume_body;
-            /* +h00D4 */ uint32_t item_id_costume_head;
-        };
-
-        struct TagInfo {
-            /* +h0000 */ uint16_t guild_id;
-            /* +h0002 */ uint8_t primary;
-            /* +h0003 */ uint8_t secondary;
-            // ...
-        };
-
         /* +h0000 */ uint32_t* vtable;
         /* +h0004 */ uint32_t h0004;
         /* +h0008 */ uint32_t h0008;
@@ -129,10 +133,45 @@ namespace GW {
         /* +h00AC */ float rotation_cos2; // same as cosine above
         /* +h00B0 */ float rotation_sin2; // same as sine above
         /* +h00B4 */ uint32_t h00B4[4];
+
+        // Agent Type Bitmasks.
+        inline bool GetIsItemType()        const { return (type & 0x400) != 0; }
+        inline bool GetIsGadgetType()      const { return (type & 0x200) != 0; }
+        inline bool GetIsLivingType()      const { return (type & 0xDB)  != 0; }
+
+        inline AgentItem*   GetAsAgentItem();
+        inline AgentGadget* GetAsAgentGadget();
+        inline AgentLiving* GetAsAgentLiving();
+
+        inline const AgentItem*   GetAsAgentItem() const;
+        inline const AgentGadget* GetAsAgentGadget() const;
+        inline const AgentLiving* GetAsAgentLiving() const;
+    };
+
+    struct AgentItem : public Agent { // total: 0xD4/212
         /* +h00C4 */ uint32_t owner;
-        /* +h00C8 */ uint32_t item_id; // Only valid if agent is type 0x400 (item)
+        /* +h00C8 */ uint32_t item_id;
         /* +h00CC */ uint32_t h00CC;
-        /* +h00D0 */ uint32_t extra_type; // same as GadgetId. Could be used as such.
+        /* +h00D0 */ uint32_t extra_type;
+    };
+    static_assert(sizeof(AgentItem) == 212, "struct AgentItem has incorect size");
+    static_assert(offsetof(AgentItem, owner) == 0xC4, "struct AgentItem offsets are incorect");
+
+    struct AgentGadget : public Agent { // total: 0xE4/228
+        /* +h00C4 */ uint32_t h00C4;
+        /* +h00C8 */ uint32_t h00C8;
+        /* +h00CC */ uint32_t extra_type;
+        /* +h00D0 */ uint32_t gadget_id;
+        /* +h00D4 */ uint32_t h00D4[4];
+    };
+    static_assert(sizeof(AgentGadget) == 228, "struct AgentGadget has incorect size");
+    static_assert(offsetof(AgentGadget, h00C4) == 0xC4, "struct AgentGadget offsets are incorect");
+
+    struct AgentLiving : public Agent { // total: 0x1C0/448
+        /* +h00C4 */ uint32_t owner;
+        /* +h00C8 */ uint32_t h00C8;
+        /* +h00CC */ uint32_t h00CC;
+        /* +h00D0 */ uint32_t h00D0;
         /* +h00D4 */ uint32_t h00D4[3];
         /* +h00E0 */ float animation_type;
         /* +h00E4 */ uint32_t h00E4[2];
@@ -195,11 +234,6 @@ namespace GW {
         inline bool GetIsHexed()           const { return (effects & 0x0800) != 0; }
         inline bool GetIsWeaponSpelled()   const { return (effects & 0x8000) != 0; }
 
-        // Agent Type Bitmasks.
-        inline bool GetIsCharacterType()   const { return (type & 0xDB)  != 0; }
-        inline bool GetIsGadgetType()      const { return (type & 0x200) != 0; }
-        inline bool GetIsItemType()        const { return (type & 0x400) != 0; }
-
         // Agent TypeMap Bitmasks.
         inline bool GetInCombatStance()    const { return (type_map & 0x000001) != 0; }
         inline bool GetHasQuest()          const { return (type_map & 0x000002) != 0; } // if agent has quest marker
@@ -221,6 +255,50 @@ namespace GW {
         inline bool IsPlayer()             const { return login_number != 0; }
         inline bool IsNPC()                const { return login_number == 0; }
     };
+    static_assert(sizeof(AgentLiving) == 448, "struct AgentLiving has incorect size");
+    static_assert(offsetof(AgentLiving, owner) == 0xC4, "struct AgentLiving offsets are incorect");
+
+    AgentItem* Agent::GetAsAgentItem() {
+        if (GetIsItemType())
+            return static_cast<AgentItem*>(this);
+        else
+            return nullptr;
+    }
+
+    AgentGadget* Agent::GetAsAgentGadget() {
+        if (GetIsGadgetType())
+            return static_cast<AgentGadget*>(this);
+        else
+            return nullptr;
+    }
+
+    AgentLiving* Agent::GetAsAgentLiving() {
+        if (GetIsLivingType())
+            return static_cast<AgentLiving*>(this);
+        else
+            return nullptr;
+    }
+
+    const AgentItem* Agent::GetAsAgentItem() const {
+        if (GetIsItemType())
+            return static_cast<const AgentItem*>(this);
+        else
+            return nullptr;
+    }
+
+    const AgentGadget* Agent::GetAsAgentGadget() const {
+        if (GetIsGadgetType())
+            return static_cast<const AgentGadget*>(this);
+        else
+            return nullptr;
+    }
+
+    const AgentLiving* Agent::GetAsAgentLiving() const {
+        if (GetIsLivingType())
+            return static_cast<const AgentLiving*>(this);
+        else
+            return nullptr;
+    }
 
     struct MapAgent {
         /* +h0000 */ float cur_energy;

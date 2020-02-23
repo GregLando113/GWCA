@@ -11,6 +11,7 @@ namespace GW {
     struct Agent;
     struct Player;
     struct MapAgent;
+    struct AgentLiving;
 
     typedef Array<NPC> NPCArray;
     typedef Array<Agent *> AgentArray;
@@ -41,6 +42,9 @@ namespace GW {
         GWCA_API Agent *GetAgentByID(uint32_t id);
         inline Agent   *GetPlayer() { return GetAgentByID(GetPlayerId()); }
         inline Agent   *GetTarget() { return GetAgentByID(GetTargetId()); }
+
+        AgentLiving    *GetPlayerAsAgentLiving();
+        AgentLiving    *GetTargetAsAgentLiving();
 
         // Returns array of alternate agent array that can be read beyond compass range.
         // Holds limited info and needs to be explored more.

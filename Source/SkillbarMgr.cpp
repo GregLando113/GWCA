@@ -204,7 +204,7 @@ namespace GW {
             return false;
         }
 
-        Agent *me = Agents::GetPlayer();
+        AgentLiving *me = Agents::GetPlayerAsAgentLiving();
         if (!me) return false;
 
         if (me->primary != (BYTE)skill_template.primary)
@@ -241,7 +241,7 @@ namespace GW {
         PlayerArray players = Agents::GetPlayerArray();
         if (!players.valid()) return false;
 
-        Agent *me = Agents::GetPlayer();
+        AgentLiving *me = Agents::GetPlayerAsAgentLiving();
         if (!me) return false;
         HeroPartyMemberArray &heroes = info->heroes;
 

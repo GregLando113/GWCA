@@ -101,7 +101,7 @@ namespace {
 
     void Init() {
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
-            "\x8B\x45\x08\x83\xF8\x46\x73\x16", "xxxxxxxx", -3);
+            "\xE8\x00\x00\x00\x00\x5D\xC3\x89\x45\x08\x5D\xE9", "x????xxxxxxx", -0x1A);
         printf("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
 
         LoadSettings_Func = (LoadSettings_pt)Scanner::Find(

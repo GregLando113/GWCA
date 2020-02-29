@@ -179,7 +179,7 @@ namespace GW {
     }
 
     void Items::DropGold(uint32_t Amount /*= 1*/) {
-        CtoS::SendPacket(0x8, GAME_CMSG_INTERACT_ITEM, Amount);
+        CtoS::SendPacket(0x8, GAME_CMSG_DROP_GOLD, Amount);
     }
 
     uint32_t Items::GetGoldAmountOnCharacter() {

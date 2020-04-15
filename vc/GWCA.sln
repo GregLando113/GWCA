@@ -3,14 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29020.237
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA_example", "Example\GWCA_example.vcxproj", "{D60712B8-DA82-45D7-9D57-3E89C13DDE35}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38} = {B3359F05-68CF-4E7F-B9D6-D106F6D48A38}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA", "GWCA.vcxproj", "{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MinHook", "MinHook\MinHook.vcxproj", "{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWCA", "GWCA\GWCA.vcxproj", "{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MinHook", "MinHook.vcxproj", "{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,18 +13,14 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D60712B8-DA82-45D7-9D57-3E89C13DDE35}.Debug|x86.ActiveCfg = Debug|Win32
-		{D60712B8-DA82-45D7-9D57-3E89C13DDE35}.Debug|x86.Build.0 = Debug|Win32
-		{D60712B8-DA82-45D7-9D57-3E89C13DDE35}.Release|x86.ActiveCfg = Release|Win32
-		{D60712B8-DA82-45D7-9D57-3E89C13DDE35}.Release|x86.Build.0 = Release|Win32
-		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Debug|x86.ActiveCfg = Debug|Win32
-		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Debug|x86.Build.0 = Debug|Win32
-		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Release|x86.ActiveCfg = Release|Win32
-		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Release|x86.Build.0 = Release|Win32
 		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x86.ActiveCfg = Debug|Win32
 		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Debug|x86.Build.0 = Debug|Win32
 		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x86.ActiveCfg = Release|Win32
 		{B3359F05-68CF-4E7F-B9D6-D106F6D48A38}.Release|x86.Build.0 = Release|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Debug|x86.ActiveCfg = Debug|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Debug|x86.Build.0 = Debug|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Release|x86.ActiveCfg = Release|Win32
+		{AC820BBA-BB5B-4D8C-96FF-EA8138CEED52}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

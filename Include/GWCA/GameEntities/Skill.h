@@ -44,7 +44,7 @@ namespace GW {
         /* +h0098 */ uint32_t h0098;
         /* +h009C */ uint32_t description; // String id
 
-        uint8_t GetEnergyCost() {
+        uint8_t GetEnergyCost() const {
             switch (energy_cost) {
             case 11: return 15;
             case 12: return 25;
@@ -75,7 +75,7 @@ namespace GW {
 
         bool IsValid() const { return agent_id > 0; }
 
-        SkillbarSkill *GetSkillById(Constants::SkillID skill_id);
+        const SkillbarSkill *GetSkillById(Constants::SkillID skill_id) const;
     };
     static_assert(sizeof(Skillbar) == 188, "struct Skillbar has incorect size");
 

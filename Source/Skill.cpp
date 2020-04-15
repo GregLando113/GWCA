@@ -20,7 +20,7 @@ namespace GW {
         return recharge - MemoryMgr::GetSkillTimer();
     }
 
-    SkillbarSkill *Skillbar::GetSkillById(Constants::SkillID skill_id) {
+    const SkillbarSkill *Skillbar::GetSkillById(Constants::SkillID skill_id) const {
         for (size_t i = 0; i < _countof(skills); i++) {
             if (skills[i].skill_id == static_cast<uint32_t>(skill_id))
                 return &skills[i];

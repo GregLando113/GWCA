@@ -30,6 +30,11 @@ namespace GW {
             return m_buffer[index];
         }
 
+        const T& at(uint32_t index) const {
+            assert(m_buffer && index < m_size);
+            return m_buffer[index];
+        }
+
         T& operator[](uint32_t index) {
             return at(index);
         }

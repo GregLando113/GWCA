@@ -259,14 +259,14 @@ namespace GW {
         CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, from->item_id, to->bag->bag_id, to->slot);
     }
 
-    bool Item::GetIsZcoin() {
+    bool Item::GetIsZcoin() const {
         if (model_file_id == 31202) return true; // Copper
         if (model_file_id == 31203) return true; // Gold
         if (model_file_id == 31204) return true; // Silver
         return false;
     }
 
-    bool Item::GetIsMaterial() {
+    bool Item::GetIsMaterial() const {
         if (type == (uint32_t)Constants::ItemType::Materials_Zcoins
             && !GetIsZcoin()) {
             return true;

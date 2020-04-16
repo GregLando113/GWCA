@@ -2,6 +2,10 @@
 
 #include <GWCA/Utilities/Export.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
 
     struct Buff;

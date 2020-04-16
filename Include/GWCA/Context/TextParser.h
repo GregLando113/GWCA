@@ -1,5 +1,11 @@
 #pragma once
 
+#include "GWCA/GameContainers/Array.h"
+
+#include <cstdint>
+
+
+
 namespace GW {
     struct TextCache {
         /* +h0000 */ uint32_t h0000;

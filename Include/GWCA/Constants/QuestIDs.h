@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+
+
+
 namespace GW {
     namespace Constants {
         namespace QuestID {

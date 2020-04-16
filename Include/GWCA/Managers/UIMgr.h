@@ -1,8 +1,12 @@
 #pragma once
 
-#include <GWCA/Utilities/Hook.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Hook.h>
+
+#include <cstdint>
+
+
 
 namespace GW {
 

@@ -1,7 +1,14 @@
 #pragma once
 
+#include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameContainers/GamePos.h>
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
+
+#include <cstdint>
+#include <string>
+
+
 
 namespace GW {
     typedef uint32_t AgentID;

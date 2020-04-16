@@ -1,7 +1,11 @@
 #pragma once
 
 #include <GWCA/Packets/Opcodes.h>
-#include <GWCA/GameContainers/GamePos.h>
+#include <GWCA/GameContainers/GamePos.h> 
+
+#include <cstdint>
+
+
 
 /*
 Server to client packets, sorted by header

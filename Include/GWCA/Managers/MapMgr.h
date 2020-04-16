@@ -3,6 +3,10 @@
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
 
     struct AreaInfo;

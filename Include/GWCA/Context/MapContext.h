@@ -2,6 +2,10 @@
 
 #include <GWCA/GameContainers/Array.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
     struct PathingMap;
 

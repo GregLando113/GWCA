@@ -3,6 +3,10 @@
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
     
     /*

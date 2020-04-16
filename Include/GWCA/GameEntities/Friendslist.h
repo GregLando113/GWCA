@@ -2,6 +2,10 @@
 
 #include <GWCA/GameContainers/Array.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
     enum FriendType : uint32_t {
         FriendType_Unknow = 0,

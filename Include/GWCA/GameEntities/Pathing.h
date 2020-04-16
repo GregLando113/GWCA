@@ -2,6 +2,10 @@
 
 #include <GWCA/GameContainers/Array.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
     struct PathingTrapezoid { // total: 0x30/48
         /* +h0000 */ uint32_t id;

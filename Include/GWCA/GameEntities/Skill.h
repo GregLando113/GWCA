@@ -2,6 +2,10 @@
 
 #include <GWCA/GameContainers/Array.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
     struct Skill { // total : 0xA0/160
         /* +h0000 */ uint32_t skill_id;

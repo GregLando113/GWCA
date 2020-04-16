@@ -1,9 +1,10 @@
 #pragma once
 
-#include <stdint.h>
-
 #include <GWCA/GameContainers/Array.h>
 #include <GWCA/GameEntities/Item.h>
+
+#include <cstdint>
+
 
 
 namespace GW {

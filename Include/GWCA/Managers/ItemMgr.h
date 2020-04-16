@@ -3,6 +3,11 @@
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
+#include <cstdint>
+#include <string>
+
+
+
 namespace GW {
 
     struct Bag;

@@ -2,6 +2,10 @@
 
 #include <GWCA/GameContainers/Array.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
     struct Attribute { // total: 0x14/20
         /* +h0000 */ uint32_t id; // ID of attribute

@@ -1,8 +1,10 @@
 #pragma once
 
-#include <stdint.h>
-
 #include <GWCA/GameContainers/Array.h>
+
+#include <cstdint>
+
+
 
 namespace GW {
     struct Title { // total: 0x28/40

@@ -1,6 +1,11 @@
 #pragma once
 
+#include <GWCA/GameContainers/Array.h>
 #include <GWCA/Utilities/Export.h>
+
+#include <cstdint>
+
+
 
 namespace GW {
     struct Guild;

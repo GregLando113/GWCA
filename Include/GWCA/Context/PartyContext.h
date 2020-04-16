@@ -2,6 +2,10 @@
 
 #include <GWCA/GameContainers/List.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
     struct PartyInfo;
 

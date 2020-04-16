@@ -1,9 +1,9 @@
 #pragma once
 
+#include <GWCA/GameContainers/GamePos.h>
 #include <GWCA/Utilities/Export.h>
 
 namespace GW {
-    struct Vec3f;
     struct Camera;
     struct Module;
 

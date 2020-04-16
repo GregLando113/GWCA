@@ -3,6 +3,11 @@
 #include <GWCA/GameContainers/Array.h>
 #include <GWCA/Constants/ItemIDs.h>
 
+#include <cstddef>
+#include <cstdint>
+
+
+
 namespace GW {
     typedef uint32_t ItemID;
 

@@ -2,6 +2,10 @@
 
 #include <GWCA/GameContainers/Array.h>
 
+#include <cstdint>
+
+
+
 namespace GW {
     struct MissionMapIcon { // total: 0x28/40
         /* +h0000 */ uint32_t index;

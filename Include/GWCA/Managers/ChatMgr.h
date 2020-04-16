@@ -1,11 +1,15 @@
 #pragma once
 
-#include <string>
-#include <functional>
 
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
+
+#include <cstdint>
+#include <functional>
+#include <string>
+
+
 
 namespace GW {
     struct Module;

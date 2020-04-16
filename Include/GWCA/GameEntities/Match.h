@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+
+
+
 namespace GW {
     struct ObserverMatch { // total: 0x4C/76
         /* +h0000 */ uint32_t match_id;

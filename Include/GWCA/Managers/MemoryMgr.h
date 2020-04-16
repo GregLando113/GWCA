@@ -2,6 +2,11 @@
 
 #include <GWCA/Utilities/Export.h>
 
+#include <cstdint>
+#include <Windows.h>
+
+
+
 namespace GW {
 
     struct MemoryMgr {

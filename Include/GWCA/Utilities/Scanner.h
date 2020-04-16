@@ -1,5 +1,10 @@
 #pragma once
 
+#include <cstdint>
+#include <cstddef>
+
+
+
 namespace GW {
 
     // class PatternScanner

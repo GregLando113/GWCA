@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+
+
+
 namespace GW {
     struct Cinematic {
         /* +h0000 */ uint32_t h0000;

@@ -174,10 +174,10 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__cdecl *SendChat_pt)(wchar_t *message);
+    typedef void(__cdecl *SendChat_pt)(wchar_t *message, uint32_t agent_id);
     SendChat_pt SendChat_Func;
     SendChat_pt RetSendChat;
-    void __cdecl OnSendChat(wchar_t *message) {
+    void __cdecl OnSendChat(wchar_t *message, uint32_t agent_id) {
         HookBase::EnterHook();
         if (*message == '/') {
             int argc;
@@ -203,7 +203,7 @@ namespace {
             ++status.altitude;
         }
         if (!status.blocked)
-            RetSendChat(message);
+            RetSendChat(message, agent_id);
         HookBase::LeaveHook();
     }
 
@@ -589,7 +589,7 @@ namespace GW {
         for (size_t i = 0; i < len; i++)
             buffer[i + 1] = msg[i];
 
-        SendChat_Func(buffer);
+        SendChat_Func(buffer, 0);
     }
 
     void Chat::SendChat(char channel, const char *msg) {
@@ -603,7 +603,8 @@ namespace GW {
         buffer[len + 1] = 0;
         for (size_t i = 0; i < len; i++)
             buffer[i + 1] = msg[i];
-        SendChat_Func(buffer);
+
+        SendChat_Func(buffer, 0);
     }
 
     void Chat::SendChat(const wchar_t *from, const wchar_t *msg) {
@@ -612,7 +613,7 @@ namespace GW {
 
         if (swprintf(buffer, 140, L"\"%s,%s", from, msg) < 140) {
             buffer[139] = 0;
-            SendChat_Func(buffer);
+            SendChat_Func(buffer, 0);
         }
     }
 
@@ -622,7 +623,7 @@ namespace GW {
 
         if (swprintf(buffer, 140, L"\"%S,%S", from, msg) < 140) {
             buffer[139] = 0;
-            SendChat_Func(buffer);
+            SendChat_Func(buffer, 0);
         }
     }
 

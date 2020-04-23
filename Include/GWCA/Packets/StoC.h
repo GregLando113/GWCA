@@ -579,6 +579,14 @@ namespace GW {
             };
             const uint32_t Packet<SalvageSessionDone>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_DONE;
 
+            struct SalvageSessionItemKept : Packet<SalvageSessionItemKept> {
+            };
+            const uint32_t Packet<SalvageSessionItemKept>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_ITEM_KEPT;
+
+            struct SalvageSessionSuccess : Packet<SalvageSessionSuccess> {
+            };
+            const uint32_t Packet<SalvageSessionSuccess>::STATIC_HEADER = GAME_CMSG_ITEM_SALVAGE_SESSION_SUCCESS;
+
             struct InstanceLoadFile : Packet<InstanceLoadFile> {
                 uint32_t map_fileID;
                 Vec2f spawn_point;

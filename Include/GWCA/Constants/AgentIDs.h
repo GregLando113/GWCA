@@ -20,7 +20,9 @@ namespace GW {
                 EoE, 
                 FrozenSoil = EoE + 6,
                 QZ = FrozenSoil + 4,
-                Lacerate = 4232,
+                Disenchantment = 4225,
+                Restoration,
+                Lacerate = Restoration + 6,
                 Equinox = Lacerate + 4,
                 Famine = Equinox + 2,
                 InfuriatingHeat = 5715,
@@ -355,7 +357,7 @@ namespace GW {
             
             namespace Deep {
                 enum {
-                    Kanaxai = 4055,
+                    Kanaxai = 4059,
                     KanaxaiAspect
                 };
             }

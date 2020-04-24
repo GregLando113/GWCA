@@ -413,6 +413,17 @@ namespace GW {
                 constexpr int CaptainSunpu = 7149;
                 constexpr int MinisterWona = 7150;
             }
+            namespace PolymockSummon {
+                enum {
+                    // Polymocks
+                    MursaatElementalist = 5847,
+                    FlameDjinn,
+                    IceImp,
+                    NagaShaman
+                };
+            }
+
+            constexpr int EbonVanguardAssassin = PolymockSummon::NagaShaman + 2;
         }
     }
 }

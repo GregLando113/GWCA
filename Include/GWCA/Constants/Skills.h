@@ -2990,6 +2990,16 @@ namespace GW {
             Gift_of_Battle,
             Rolling_Start,
             Disguised_when_using_Everlasting_Legionnaire_Tonic,
+            Time_Ward = 3422,
+            Soul_Taker,
+            Over_the_Limit,
+            Judgement_Strike,
+            Seven_Weapon_Stance,
+            Together_as_one,
+            Shadow_Theft ,
+            Weapons_of_Three_Forges,
+            Vow_of_Revolution,
+            Heroic_Refrain,
         };
 
         enum class SkillType {

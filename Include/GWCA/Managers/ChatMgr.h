@@ -14,7 +14,7 @@ namespace GW {
     namespace Chat {
         typedef uint32_t Color;
 
-        enum Channel {
+        enum Channel : int {
             CHANNEL_ALLIANCE    = 0,
             CHANNEL_ALLIES      = 1, // coop with two groups for instance.
             CHANNEL_GWCA1       = 2,

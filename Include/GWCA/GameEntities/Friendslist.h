@@ -19,8 +19,8 @@ namespace GW {
     };
 
     struct Friend {
-        /* +h0000 */ uint32_t type; // 0 = Friend, 1 = Ignore, 2 = Played, 3 = Trade
-        /* +h0004 */ uint32_t status; // 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
+        /* +h0000 */ FriendType type; // 0 = Friend, 1 = Ignore, 2 = Played, 3 = Trade
+        /* +h0004 */ FriendStatus status; // 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
         /* +h0008 */ uint8_t uuid[16];
         /* +h0018 */ wchar_t alias[20];
         /* +h002C */ wchar_t charname[20];
@@ -38,6 +38,6 @@ namespace GW {
         /* +h002C */ uint32_t number_of_partner;
         /* +h0030 */ uint32_t number_of_trade;
         /* +h0034 */ uint8_t  h0034[108];
-        /* +h00A0 */ uint32_t player_status;
+        /* +h00A0 */ FriendStatus player_status;
     };
 }

@@ -33,6 +33,8 @@ namespace GW {
         GWCA_API Item *GetItemBySlot(Constants::Bag bag, uint32_t slot);
         GWCA_API Item *GetItemBySlot(uint32_t bag, uint32_t slot);
 
+        GWCA_API Item* GetItemById(uint32_t item_id);
+
         // Use given item if usable.
         GWCA_API void UseItem(Item *item);
 

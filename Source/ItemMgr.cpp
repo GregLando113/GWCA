@@ -174,6 +174,14 @@ namespace GW {
         return GetItemBySlot((Constants::Bag)bag, slot);
     }
 
+    Item* Items::GetItemById(uint32_t item_id) {
+        if (!item_id) return nullptr;
+        GW::ItemArray items = GW::Items::GetItemArray();
+        if (!items.valid()) return nullptr;
+        if (item_id >= items.size()) return nullptr;
+        return items[item_id];
+    }
+
     ItemArray Items::GetItemArray() {
         return GameContext::instance()->items->item_array;
     }

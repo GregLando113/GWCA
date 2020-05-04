@@ -113,7 +113,7 @@ namespace GW {
 
     bool SkillbarMgr::DecodeSkillTemplate(SkillTemplate *result, const char *temp)
     {
-        const int SKILL_MAX = 3410; // @Cleanup: This should go somewhere else (it could be readed from the client)
+        const int SKILL_MAX = 3431; // @Cleanup: This should go somewhere else (it could be readed from the client)
         const int ATTRIBUTE_MAX = 44; // @Cleanup: This should go somewhere else (it could be readed from the client)
 
         int skill_count = 0;

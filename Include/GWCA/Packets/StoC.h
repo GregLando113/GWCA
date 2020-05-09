@@ -211,7 +211,7 @@ namespace GW {
 
             struct DialogButton : Packet<DialogButton> {
                 uint32_t button_icon; // byte
-                wchar_t message[8];
+                wchar_t message[128];
                 uint32_t dialog_id;
                 uint32_t skill_id; // Default 0xFFFFFFF
             };

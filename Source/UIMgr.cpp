@@ -23,6 +23,10 @@ namespace {
     SendUIMessage_pt SendUIMessage_Func;
     SendUIMessage_pt RetSendUIMessage;
 
+    typedef void(__cdecl* SetTickboxPref_pt)(uint32_t preference_index, uint32_t value, uint32_t unk0);
+    SetTickboxPref_pt SetTickboxPref_Func;
+    SetTickboxPref_pt RetSetTickboxPref;
+
     typedef void (__cdecl *LoadSettings_pt)(uint32_t size, uint8_t *data);
     LoadSettings_pt LoadSettings_Func;
 
@@ -34,6 +38,7 @@ namespace {
     uintptr_t shift_screen_addr;
     uintptr_t AsyncDecodeStringPtr;
     uint32_t *preferences_array;
+    uint32_t* preferences_array2;
 
     static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
     {
@@ -59,6 +64,12 @@ namespace {
         }
         if (!status.blocked)
             RetSendUIMessage(msgid, wParam, lParam);
+        HookBase::LeaveHook();
+    }
+
+    static void __cdecl OnSetTickboxPreference(uint32_t preference_index, uint32_t value, uint32_t unk0) {
+        HookBase::EnterHook();
+        RetSetTickboxPref(preference_index, value, unk0);
         HookBase::LeaveHook();
     }
 
@@ -136,6 +147,19 @@ namespace {
                 address = *(uintptr_t *)address;
                 preferences_array = reinterpret_cast<uint32_t *>(address);
             }
+        }
+
+        SetTickboxPref_Func = (SetTickboxPref_pt)Scanner::Find(
+            "\x8B\x75\x0C\x33\xC9\x39\x0C\xBD\x00\x00\x00\x00\x0F\x95\xC1\x33", "xxxxxxxx????xxxx", -0x6F);
+        printf("[SCAN] SetTickboxPref = %p\n", SetTickboxPref_Func);
+
+        if (Verify(SetTickboxPref_Func)) {
+            uintptr_t address = (uintptr_t)SetTickboxPref_Func + 0x77;
+            printf("[SCAN] preferences_array2 = %p\n", (void*)address);
+            address = *(uintptr_t*)address;
+            preferences_array2 = reinterpret_cast<uint32_t*>(address);
+
+            HookBase::CreateHook(SetTickboxPref_Func, OnSetTickboxPreference, (void**)&RetSetTickboxPref);
         }
 
         AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
@@ -274,6 +298,16 @@ namespace GW {
     void UI::SetOpenLinks(bool toggle)
     {
         open_links = toggle;
+    }
+
+    uint32_t UI::GetCheckboxPreference(CheckboxPreference pref) {
+        return preferences_array2[pref];
+    }
+    void UI::SetCheckboxPreference(CheckboxPreference pref, uint32_t value) {
+        if ((value != 1 && value != 0) || preferences_array2[pref] == value)
+            return; // Invalid checkbox value
+        if(Verify(SetTickboxPref_Func))
+            RetSetTickboxPref(pref, value, 0);
     }
 
     uint32_t UI::GetPreference(Preference pref)

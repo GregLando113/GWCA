@@ -25,6 +25,7 @@ namespace GW {
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B,
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
+            kCheckboxPreference     = 0x10000000 | 0x13F,
             kTravel                 = 0x10000000 | 0x17A,
             kOpenTemplate           = 0x10000000 | 0x1B9,
         };
@@ -34,6 +35,23 @@ namespace GW {
 
             Preference_Count = 8
         };
+        enum CheckboxPreference : uint32_t {
+            CheckboxPreference_ChannelAlliance = 0x4,
+            CheckboxPreference_ChannelEmotes = 0x6,
+            CheckboxPreference_ChannelGuild = 0x7,
+            CheckboxPreference_ChannelLocal = 0x8,
+            CheckboxPreference_ChannelGroup = 0x9,
+            CheckboxPreference_ChannelTrade = 0xA,
+
+            CheckboxPreference_InvertMouseControlOfCamera = 0x16,
+            CheckboxPreference_DisableMouseWalking = 0x17,
+
+            CheckboxPreference_WaitForVSync = 0x54,
+            CheckboxPreference_ShowChatTimestamps = 0x56,
+            CheckboxPreference_LockCompassRotation = 0x5c,
+            CheckboxPreference_Count = 0x5D
+        };
+
 
         struct CompassPoint {
             CompassPoint() : x(0), y(0) {}
@@ -66,6 +84,9 @@ namespace GW {
 
         GWCA_API uint32_t GetPreference(Preference pref);
         GWCA_API void SetPreference(Preference pref, uint32_t value);
+
+        GWCA_API uint32_t GetCheckboxPreference(CheckboxPreference pref);
+        GWCA_API void SetCheckboxPreference(CheckboxPreference pref, uint32_t value);
 
         typedef HookCallback<uint32_t, void *, void *> UIMessageCallback;
         GWCA_API void RegisterUIMessageCallback(

@@ -2497,7 +2497,7 @@ namespace GW {
             Ride_the_Lightning_PvP,
             Enraged_Smash_PvP,
             Obsidian_Flame_PvP,
-            Meek_Shall_Inherit = 2810,
+            Meek_Shall_Inherit,
             Inverse_Ninja_Law = 2813,
             Abyssal_Form = 2839,
             Asura_Form,

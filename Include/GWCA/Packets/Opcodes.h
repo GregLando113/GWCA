@@ -130,6 +130,7 @@
 #define GAME_SMSG_EFFECT_APPLIED                    (0x0042) // 66
 #define GAME_SMSG_EFFECT_RENEWED                    (0x0043) // 67
 #define GAME_SMSG_EFFECT_REMOVED                    (0x0044) // 68
+#define GAME_SMSG_SCREEN_SHAKE						(0x0046) // 70
 #define GAME_SMSG_AGENT_DISPLAY_CAPE                (0x0048) // 72
 #define GAME_SMSG_QUEST_GENERAL_INFO                (0x0049) // 73
 #define GAME_SMSG_QUEST_DESCRIPTION                 (0x004C) // 76

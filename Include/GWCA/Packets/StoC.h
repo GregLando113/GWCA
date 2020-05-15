@@ -202,6 +202,13 @@ namespace GW {
             };
             const uint32_t Packet<DungeonReward>::STATIC_HEADER = GAME_SMSG_DUNGEON_REWARD;
 
+            struct ScreenShake : Packet<ScreenShake> {
+                uint32_t unk1;
+                uint32_t unk2;
+                uint32_t agent_id;
+            };
+            const uint32_t Packet<ScreenShake>::STATIC_HEADER = GAME_SMSG_SCREEN_SHAKE;
+
             struct AgentUnk2 : Packet<AgentUnk2> {
                 uint32_t agent_id;
                 uint32_t unk1; // 1 = minipet, 2 = Ally?, 3 = summon

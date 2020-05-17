@@ -12,13 +12,30 @@ fields is given as comments
 feel free to fill packets, and you can also add a suffix to
 the packet name, e.g. P391 -> P391_InstanceLoadMap
 */
-
 namespace GW {
     namespace Packet {
         namespace StoC {
             struct PacketBase {
                 uint32_t header;
             };
+            // Used for GenericModifier etc.
+            namespace GenericValueID {
+                const uint32_t add_effect = 6;
+                const uint32_t remove_effect = 7;
+                const uint32_t apply_marker = 11; // exclamation mark / arrow above NPC head
+                const uint32_t remove_marker = 12; // exclamation mark / arrow above NPC head
+                const uint32_t damage = 16; // non-armor-ignoring attack, spells
+                const uint32_t critical = 17; // critical hit on autoattack
+                const uint32_t effect_on_target = 20; // e.g. casting a skill on someone
+                const uint32_t effect_on_agent = 21; // e.g. casting a skill on myself/location
+                const uint32_t animation = 22;
+                const uint32_t animation_special = 23; // When received before dance, makes it fancy e.g. CE dance, glowing hands
+                const uint32_t animation_loop = 28; // e.g. dance
+                const uint32_t energygain = 52; // for example from Critical Strikes or energy tap
+                const uint32_t armorignoring = 55; // all armor ignoring damage and heals
+                const uint32_t casttime = 61; // non-standard cast time, value in seconds
+            }
+            namespace P156_Type = GenericValueID;
 
             template <class Specific>
             struct Packet : PacketBase {
@@ -332,13 +349,6 @@ namespace GW {
             // in all types the value is in percentage, unless otherwise specified.
             // the value can be negative (e.g. damage, sacrifice) 
             // or positive (e.g. heal, lifesteal).
-            namespace P156_Type {
-                const uint32_t damage = 16; // non-armor-ignoring attack, spells
-                const uint32_t critical = 17; // critical hit on autoattack
-                const uint32_t energygain = 52; // for example from Critical Strikes or energy tap
-                const uint32_t armorignoring = 55; // all armor ignoring damage and heals
-                const uint32_t casttime = 61; // non-standard cast time, value in seconds
-            }
             struct GenericModifier : Packet<GenericModifier> {
                 uint32_t type;         // type as specified above in P156_Type
                 uint32_t target_id;    // agent id of who is affected by the change

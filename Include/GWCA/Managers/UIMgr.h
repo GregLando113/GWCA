@@ -23,6 +23,7 @@ namespace GW {
             kShowAgentNameTag       = 0x10000000 | 0x19,
             kHideAgentNameTag       = 0x10000000 | 0x1A,
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B,
+            kAutoTargetAgent        = 0x10000000 | 0x20,
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
             kCheckboxPreference     = 0x10000000 | 0x13F,

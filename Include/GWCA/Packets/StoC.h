@@ -31,6 +31,7 @@ namespace GW {
                 const uint32_t animation = 22;
                 const uint32_t animation_special = 23; // When received before dance, makes it fancy e.g. CE dance, glowing hands
                 const uint32_t animation_loop = 28; // e.g. dance
+                const uint32_t health = 34;
                 const uint32_t energygain = 52; // for example from Critical Strikes or energy tap
                 const uint32_t armorignoring = 55; // all armor ignoring damage and heals
                 const uint32_t casttime = 61; // non-standard cast time, value in seconds
@@ -66,7 +67,7 @@ namespace GW {
             struct AgentAdd : Packet<AgentAdd> {
                 uint32_t agent_id;
                 uint32_t agent_type; // Bitwise field. 0x20000000 = NPC | PlayerNumber, 0x30000000 = Player | PlayerNumber, 0x00000000 = Signpost
-                uint32_t unk2; // byte, agent_type > 0 ? 1 : 4
+                uint32_t type; // byte, agent_type > 0 ? 1 : 4
                 uint32_t unk3; // byte
                 Vec2f position;
                 uint32_t unk4; // word
@@ -336,12 +337,12 @@ namespace GW {
             const uint32_t Packet<PlayEffect>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_PLAY_EFFECT;
 
             // Update Target Generic Value
-            struct GenericValue2 : Packet<GenericValue2> {
-                uint32_t unk1;
+            struct GenericFloat : Packet<GenericFloat> {
+                uint32_t type;
                 uint32_t agent_id;
-                uint32_t unk2;
+                float value;
             };
-            const uint32_t Packet<GenericValue2>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_FLOAT;
+            const uint32_t Packet<GenericFloat>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_FLOAT;
 
             // damage or healing done packet, but also has other purposes.
             // to be investigated further.

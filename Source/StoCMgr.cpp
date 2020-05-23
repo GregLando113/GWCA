@@ -78,12 +78,12 @@ namespace {
             uintptr_t address = Scanner::Find(
                 "\x75\x04\x33\xC0\x5D\xC3\x8B\x41\x08\xA8\x01\x75", "xxxxxxxxxxxx", -6);
             printf("[SCAN] StoCHandler pattern = %p\n", (void *)address);
-            if (Verify(address))
-                StoCHandler_Addr = *(uintptr_t *)address;
+            if (Verify(address)) {
+                StoCHandler_Addr = *(uintptr_t*)address;
+                GameServer** addr = reinterpret_cast<GameServer**>(StoCHandler_Addr);
+                game_server_handlers = (*addr)->gs_codec->handlers;
+            }
         }
-
-        GameServer **addr = reinterpret_cast<GameServer **>(StoCHandler_Addr);
-        game_server_handlers = (*addr)->gs_codec->handlers;
 
         original_functions = new StoCHandler[game_server_handlers.size()];
         packets_callbacks.resize(game_server_handlers.size());

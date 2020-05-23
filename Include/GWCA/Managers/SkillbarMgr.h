@@ -45,7 +45,7 @@ namespace GW {
         // Get skill structure of said id, houses pretty much everything you would want to know about the skill.
         GWCA_API Skill& GetSkillConstantData(uint32_t skill_id);
 
-        GWCA_API void ChangeSecondary(uint32_t profession, int hero_index = 0);
+        GWCA_API void ChangeSecondary(uint32_t profession, uint32_t hero_index = 0);
 
         // Get array of skillbars, [0] = player [1-7] = heroes.
         GWCA_API SkillbarArray GetSkillbarArray();
@@ -55,14 +55,14 @@ namespace GW {
 
         // @Remark:
         // `skill_ids` must contains at least 8 elements
-        GWCA_API void LoadSkillbar(uint32_t *skills, size_t n_skills, int hero_index = 0);
-        GWCA_API void LoadSkillbar(Constants::SkillID *skills, size_t n_skills, int hero_index = 0);
+        GWCA_API void LoadSkillbar(uint32_t *skills, size_t n_skills, uint32_t hero_index = 0);
+        GWCA_API void LoadSkillbar(Constants::SkillID *skills, size_t n_skills, uint32_t hero_index = 0);
 
         GWCA_API bool LoadSkillTemplate(const char *temp);
-        GWCA_API bool LoadSkillTemplate(const char *temp, int hero_index);
+        GWCA_API bool LoadSkillTemplate(const char *temp, uint32_t hero_index);
 
         GWCA_API void SetAttributes(uint32_t attribute_count,
-            uint32_t *attribute_ids, uint32_t *attribute_values, int hero_index = 0);
-        GWCA_API void SetAttributes(Attribute *attributes, size_t n_attributes, int hero_index = 0);
+            uint32_t *attribute_ids, uint32_t *attribute_values, uint32_t hero_index = 0);
+        GWCA_API void SetAttributes(Attribute *attributes, size_t n_attributes, uint32_t hero_index = 0);
     };
 }

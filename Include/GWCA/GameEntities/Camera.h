@@ -42,13 +42,13 @@ namespace GW {
         float GetPitch()        { return pitch; }
         float GetFieldOfView()  { return field_of_view; }
 
-        void SetYaw(float yaw) {
-            this->yaw_to_go = yaw;
-            this->yaw = yaw;
+        void SetYaw(float _yaw) {
+            yaw_to_go = _yaw;
+            yaw = _yaw;
         }
 
-        void SetPitch(float pitch) {
-            this->pitch_to_go = pitch;
+        void SetPitch(float _pitch) {
+            pitch_to_go = _pitch;
         }
 
         float GetCameraZoom()     { return distance; }

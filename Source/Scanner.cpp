@@ -10,18 +10,18 @@ namespace {
 }
 
 uintptr_t GW::Scanner::Find(const char* pattern, const char* mask, int offset) {
-    uint8_t first = pattern[0];
-    int patternLength = strlen(mask);
+    char first = pattern[0];
+    size_t patternLength = strlen(mask);
     bool found = false;
 
     //For each byte from start to end
     for (DWORD i = g_base; i < g_base + g_size - patternLength; i++) {
-        if (*(uint8_t *)i != first) {
+        if (*(char *)i != first) {
             continue;
         }
         found = true;
         //For each byte in the pattern
-        for (int idx = 0; idx < patternLength; idx++) {
+        for (size_t idx = 0; idx < patternLength; idx++) {
 
             if (mask[idx] == 'x' && pattern[idx] != *(char*)(i + idx)) {
                 found = false;

@@ -89,12 +89,12 @@ namespace GW {
         return skill_constants[skill_id];
     }
 
-    void SkillbarMgr::ChangeSecondary(uint32_t profession, int hero_index) {
+    void SkillbarMgr::ChangeSecondary(uint32_t profession, uint32_t hero_index) {
         AgentID agent_id = Agents::GetHeroAgentID(hero_index);
         CtoS::SendPacket(0xC, GAME_CMSG_CHANGE_SECOND_PROFESSION, agent_id, profession);
     }
 
-    void SkillbarMgr::LoadSkillbar(uint32_t *skills, size_t n_skills, int hero_index) {
+    void SkillbarMgr::LoadSkillbar(uint32_t *skills, size_t n_skills, uint32_t hero_index) {
         uint32_t skill_ids[8] = {0};
         memcpy(skill_ids, skills, n_skills * sizeof(uint32_t));
         AgentID agent_id = Agents::GetHeroAgentID(hero_index);
@@ -103,7 +103,7 @@ namespace GW {
             skill_ids[5], skill_ids[6], skill_ids[7]);
     }
 
-    void SkillbarMgr::LoadSkillbar(Constants::SkillID *skills, size_t n_skills, int hero_index) {
+    void SkillbarMgr::LoadSkillbar(Constants::SkillID *skills, size_t n_skills, uint32_t hero_index) {
         uint32_t skill_ids[8];
         assert(n_skills <= _countof(skill_ids));
         for (size_t i = 0; i < n_skills; i++)
@@ -166,7 +166,7 @@ namespace GW {
                 return false;
             }
             result->attributes[i].attribute = static_cast<Constants::Attribute>(attrib_id);
-            result->attributes[i].points = attrib_val;
+            result->attributes[i].points = static_cast<uint32_t>(attrib_val);
         }
         for (int i = attrib_count; i < _countof(result->attributes); i++) {
             result->attributes[i].attribute = Constants::Attribute::None;
@@ -218,7 +218,7 @@ namespace GW {
         return true;
     }
 
-    bool SkillbarMgr::LoadSkillTemplate(const char *temp, int hero_index) {
+    bool SkillbarMgr::LoadSkillTemplate(const char *temp, uint32_t hero_index) {
         using Constants::Profession;
 
         if (Map::GetInstanceType() != Constants::InstanceType::Outpost)
@@ -269,10 +269,10 @@ namespace GW {
     }
 
     void SkillbarMgr::SetAttributes(uint32_t attribute_count,
-        uint32_t *attribute_ids, uint32_t *attribute_values, int hero_index) {
+        uint32_t *attribute_ids, uint32_t *attribute_values, uint32_t hero_index) {
 
         struct tSetAttributes {
-            uint32_t header = GAME_CMSG_ATTRIBUTE_LOAD;
+            uint32_t header;
             AgentID  agent_id;
             uint32_t attribute_count1;
             uint32_t attribute_ids[16];
@@ -280,10 +280,11 @@ namespace GW {
             uint32_t attribute_values[16];
         };
 
-        tSetAttributes set_attributes_buffer;
+        tSetAttributes set_attributes_buffer = {0};
 
         AgentID agent_id = Agents::GetHeroAgentID(hero_index);
 
+        set_attributes_buffer.header = GAME_CMSG_ATTRIBUTE_LOAD;
         set_attributes_buffer.agent_id = agent_id;
         set_attributes_buffer.attribute_count1 = attribute_count;
         set_attributes_buffer.attribute_count2 = attribute_count;
@@ -296,12 +297,12 @@ namespace GW {
         CtoS::SendPacket<tSetAttributes>(&set_attributes_buffer);
     }
 
-    void SkillbarMgr::SetAttributes(Attribute *attributes, size_t n_attributes, int hero_index) {
+    void SkillbarMgr::SetAttributes(Attribute *attributes, size_t n_attributes, uint32_t hero_index) {
         uint32_t count;
         uint32_t attribute_ids[16];
         uint32_t attribute_values[16];
 
-        for (count = 0; count < _countof(attribute_ids); count++) {
+        for (count = 0; count < n_attributes; count++) {
             if (attributes[count].attribute == Constants::Attribute::None)
                 break;
             attribute_ids[count] = static_cast<uint32_t>(attributes[count].attribute);

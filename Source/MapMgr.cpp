@@ -167,7 +167,7 @@ namespace GW {
     int Map::GetDistrict() {
         CharContext *ctx = GameContext::instance()->character;
         if (!ctx) return 0;
-        return ctx->district_number;
+        return static_cast<int>(ctx->district_number);
     }
 
     Constants::InstanceType Map::GetInstanceType() {

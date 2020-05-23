@@ -306,19 +306,19 @@ namespace {
     }
 
     void Init() {
-        ChatEvent_pt ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x2A);
+        ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x2A);
         printf("[SCAN] Chat Event = %p\n", ChatEvent_Func);
 
-        GetChannelColor_pt GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find(
+        GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find(
             "\xC7\x00\x60\xC0\xFF\xFF\x5D\xC3", "xxxxxxxx", -0x1C);
         printf("[SCAN] GetSenderColor = %p\n", GetSenderColor_Func);
 
-        GetChannelColor_pt GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find(
+        GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find(
             "\xC7\x00\xB0\xB0\xB0\xFF\x5D\xC3", "xxxxxxxx", -0x27);
         printf("[SCAN] GetMessageColor = %p\n", GetMessageColor_Func);
 
         // The last 4 bytes of the patterns are the "SendUIMessage" message id (i.e. 0x1000007E)
-        LocalMessage_pt LocalMessage_Func = (LocalMessage_pt)Scanner::Find(
+        LocalMessage_Func = (LocalMessage_pt)Scanner::Find(
             "\x8D\x45\xF8\x6A\x00\x50\x68\x7E\x00\x00\x10", "xxxxxxxxxxx", -0x3D);
         printf("[SCAN] LocalMessage = %p\n", LocalMessage_Func);
 
@@ -566,6 +566,9 @@ namespace GW {
             *sender  = COLOR_RGB(0x80, 0xC0, 0xFF);
             *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
             break;
+        default:
+            *sender = COLOR_RGB(0xFF, 0xFF, 0x80);
+            *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
         }
     }
 
@@ -584,10 +587,10 @@ namespace GW {
         size_t len = wcslen(msg);
         len = len > 120 ? 120 : len;
 
-        buffer[0] = channel;
+        buffer[0] = static_cast<wchar_t>(channel);
         buffer[len + 1] = 0;
         for (size_t i = 0; i < len; i++)
-            buffer[i + 1] = msg[i];
+            buffer[i + 1] = static_cast<wchar_t>(msg[i]);
 
         SendChat_Func(buffer, 0);
     }
@@ -599,10 +602,10 @@ namespace GW {
         size_t len = strlen(msg);
         len = len > 120 ? 120 : len;
 
-        buffer[0] = channel;
+        buffer[0] = static_cast<wchar_t>(channel);
         buffer[len + 1] = 0;
         for (size_t i = 0; i < len; i++)
-            buffer[i + 1] = msg[i];
+            buffer[i + 1] = static_cast<wchar_t>(msg[i]);
 
         SendChat_Func(buffer, 0);
     }
@@ -708,7 +711,7 @@ namespace GW {
         buffer[0] = 0x108;
         buffer[1] = 0x107;
         for (size_t i = 0; i < len; i++)
-            buffer[i + 2] = msg[i];
+            buffer[i + 2] = static_cast<wchar_t>(msg[i]);
 
         buffer[len + 2] = 1;
         buffer[len + 3] = 0;

@@ -130,13 +130,15 @@ namespace GW {
         return 0;
     }
 
-    int Render::GetViewportWidth() {
-        if (gwdx_ptr == nullptr) return -1;
+    uint32_t Render::GetViewportWidth() {
+        // @Cleanup: What to really do here?
+        assert(gwdx_ptr != nullptr);
         return gwdx_ptr->viewport_width;
     }
 
-    int Render::GetViewportHeight() {
-        if (gwdx_ptr == nullptr) return -1;
+    uint32_t Render::GetViewportHeight() {
+        // @Cleanup: What to really do here?
+        assert(gwdx_ptr != nullptr);
         return gwdx_ptr->viewport_height;
     }
 

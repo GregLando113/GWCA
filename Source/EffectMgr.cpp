@@ -45,7 +45,7 @@ namespace {
     }
 
     void Init() {
-        PostProcessEffect_pt PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find(
+        PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find(
             "\xD9\x5D\x0C\xD9\x45\x0C\x8D\x45\xF8", "xxxxxxxxx", -0x1C);
         printf("[SCAN] PostProcessEffect = %p\n", PostProcessEffect_Func);
 

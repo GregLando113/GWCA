@@ -42,6 +42,8 @@ namespace {
 
     static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
     {
+        UNREFERENCED_PARAMETER(lParam);
+
         if (msgid != UI::kOpenTemplate)
             return;
         UI::ChatTemplate *info = static_cast<UI::ChatTemplate *>(wParam);
@@ -163,7 +165,7 @@ namespace {
         }
 
         AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
-        printf("[SCAN] AsyncDecodeStringPtr = %08lX\n", AsyncDecodeStringPtr);
+        printf("[SCAN] AsyncDecodeStringPtr = %08X\n", AsyncDecodeStringPtr);
 
         if (Verify(SendUIMessage_Func))
             HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
@@ -203,18 +205,19 @@ namespace GW {
     void UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
     {
         struct P037 {                   // Used to send pings and drawings in the minimap. Related to StoC::P133
-            const unsigned header = GAME_CMSG_DRAW_MAP;
-            unsigned session_id = 0;     // unique for every player and shape. changes for every ping or shape.
-            unsigned pt_count;           // number of points in the following array
+            uint32_t header;
+            uint32_t session_id = 0;     // unique for every player and shape. changes for every ping or shape.
+            uint32_t pt_count;           // number of points in the following array
             CompassPoint pts[8]; // in world coordinates divided by 100
-            unsigned unk[8];
+            uint32_t unk[8];
         };
-        static P037 p;
-        p.session_id = session_id;
-        p.pt_count = pt_count;
+        P037 pack = {0};
+        pack.header = GAME_CMSG_DRAW_MAP;
+        pack.session_id = session_id;
+        pack.pt_count = pt_count;
         for (unsigned i = 0; i < pt_count; ++i)
-            p.pts[i] = pts[i];
-        CtoS::SendPacket(&p);
+            pack.pts[i] = pts[i];
+        CtoS::SendPacket(&pack);
     }
 
     void UI::LoadSettings(size_t size, uint8_t *data) {
@@ -317,7 +320,7 @@ namespace GW {
 
     void UI::SetPreference(Preference pref, uint32_t value)
     {
-        preferences_array[value];
+        preferences_array[pref] = value;
     }
 
     void UI::RegisterUIMessageCallback(

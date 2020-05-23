@@ -27,7 +27,7 @@ namespace GW {
         // Note: returns -1 if it doesn't know yet
         GWCA_API int GetIsFullscreen();
 
-        GWCA_API int GetViewportWidth();
-        GWCA_API int GetViewportHeight();
+        GWCA_API uint32_t GetViewportWidth();
+        GWCA_API uint32_t GetViewportHeight();
     }
 }

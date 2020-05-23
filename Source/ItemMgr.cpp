@@ -170,7 +170,7 @@ namespace GW {
     }
 
     Item *Items::GetItemBySlot(uint32_t bag, uint32_t slot) {
-        if (bag < 0 || Constants::BagMax <= bag) return nullptr;
+        if (Constants::BagMax <= bag) return nullptr;
         return GetItemBySlot((Constants::Bag)bag, slot);
     }
 
@@ -245,6 +245,10 @@ namespace GW {
     }
 
     void Items::MoveItem(Item *item, Bag *bag, int slot, int quantity) {
+        UNREFERENCED_PARAMETER(quantity);
+        // @Cleanup:
+        // Whis is quantity never referenced?
+
         if (slot < 0) return;
         if (!item || !bag) return;
         if (bag->items.size() < (unsigned)slot) return;
@@ -405,7 +409,7 @@ namespace GW {
         if (Verify(storage_pannel_addr)) {
             // @Cleanup: 20 being the position for the storage, but this
             // array hold way more, for instance the current chat channel
-            return ((uint32_t *)storage_pannel_addr)[20];
+            return ((int *)storage_pannel_addr)[20];
         } else {
             return 0;
         }

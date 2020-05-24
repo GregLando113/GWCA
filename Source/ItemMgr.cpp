@@ -244,26 +244,25 @@ namespace GW {
         CtoS::SendPacket(0x8, GAME_CMSG_OPEN_CHEST, 0x2);
     }
 
-    void Items::MoveItem(Item *item, Bag *bag, int slot, int quantity) {
+    void Items::MoveItem(Item *item, Bag *bag, uint32_t slot, uint32_t quantity) {
         UNREFERENCED_PARAMETER(quantity);
         // @Cleanup:
         // Whis is quantity never referenced?
 
-        if (slot < 0) return;
         if (!item || !bag) return;
         if (bag->items.size() < (unsigned)slot) return;
         // @Robustness: Check if there is enough space at the destination.
         CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, item->item_id, bag->bag_id, slot);
     }
 
-    void Items::MoveItem(Item *item, Constants::Bag bag_id, int slot, int quantity)
+    void Items::MoveItem(Item *item, Constants::Bag bag_id, uint32_t slot, uint32_t quantity)
     {
         Bag *bag = GetBag(bag_id);
         if (!bag) return;
         MoveItem(item, bag, slot, quantity);
     }
 
-    void Items::MoveItem(Item *from, Item *to, int quantity) {
+    void Items::MoveItem(Item *from, Item *to, uint32_t quantity) {
         if (!from || !to) return;
         if (!from->bag || !to->bag) return;
         if (quantity <= 0) quantity = from->quantity;
@@ -405,11 +404,11 @@ namespace GW {
         return NULL;
     }
 
-    int Items::GetStoragePage(void) {
+    uint32_t Items::GetStoragePage(void) {
         if (Verify(storage_pannel_addr)) {
             // @Cleanup: 20 being the position for the storage, but this
             // array hold way more, for instance the current chat channel
-            return ((int *)storage_pannel_addr)[20];
+            return ((uint32_t *)storage_pannel_addr)[20];
         } else {
             return 0;
         }

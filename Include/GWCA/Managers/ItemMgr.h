@@ -71,9 +71,9 @@ namespace GW {
         
         // Move item to a new position (bag, slot). Used to merge stacks
         // slot start at 0
-        GWCA_API void MoveItem(Item *from, Constants::Bag bag_id, int slot, int quantity = 0);
-        GWCA_API void MoveItem(Item *item, Bag *bag, int slot, int quantity = 0);
-        GWCA_API void MoveItem(Item *from, Item *to, int quantity = 0);
+        GWCA_API void MoveItem(Item *from, Constants::Bag bag_id, uint32_t slot, uint32_t quantity = 0);
+        GWCA_API void MoveItem(Item *item, Bag *bag, uint32_t slot, uint32_t quantity = 0);
+        GWCA_API void MoveItem(Item *from, Item *to, uint32_t quantity = 0);
 
         // Split a given amount into a new position (bag, slot).
         // GWCA_API void SplitStack(Item *item, Bag *bag, int slot, int quantity);
@@ -90,7 +90,7 @@ namespace GW {
         GWCA_API Item *GetItemByModelId(uint32_t model_id, int bag_start = 1, int bag_end = 4);
 
         // Returns the current storage pannel (0 based). Note that if material storage is on focus, 0 is returned.
-        GWCA_API int GetStoragePage(void);
+        GWCA_API uint32_t GetStoragePage(void);
 
         GWCA_API bool GetIsStorageOpen(void);
 

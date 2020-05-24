@@ -12,11 +12,6 @@ namespace GW {
 
     // Courtesy of DerMonech14
     struct Equipment {
-
-        virtual void Unk1() = 0;
-        virtual void Unk2() = 0;
-        virtual void Update(unsigned index) = 0;
-
         struct DyeInfo {
             uint8_t h0000;
             uint8_t dye_id; // Not clean, but check GwArmory to understand
@@ -32,6 +27,7 @@ namespace GW {
             uint8_t h000C[4];
         };
 
+        /* +h0000 */ void     *vtable;
         /* +h0004 */ uint32_t h0004;            // always 2 ?
         /* +h0008 */ uint32_t h0008;            // Ptr PlayerModelFile?
         /* +h000C */ uint32_t h000C;            // 

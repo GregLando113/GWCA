@@ -219,7 +219,7 @@ namespace GW {
                 constexpr uint32_t Diviners_Ascent = 1212;
                 constexpr uint32_t Dalada_Uplands = 1213;
                 constexpr uint32_t Drazach_Thicket = 1214;
-                constexpr uint32_t Fahranur, _the_First_City = 1215;
+                constexpr uint32_t Fahranur_the_First_City = 1215;
                 constexpr uint32_t Dragons_Gullet = 1216;
                 constexpr uint32_t Ferndale = 1217;
                 constexpr uint32_t Forum_Highlands = 1218;
@@ -229,7 +229,7 @@ namespace GW {
                 constexpr uint32_t Tears_of_the_Fallen = 1222;
                 constexpr uint32_t Gyala_Hatchery = 1223;
                 constexpr uint32_t Ettins_Back = 1224;
-                constexpr uint32_t Gandara, _the_Moon_Fortress = 1225;
+                constexpr uint32_t Gandara_the_Moon_Fortress = 1225;
                 constexpr uint32_t Grothmar_Wardowns = 1226;
                 constexpr uint32_t Flame_Temple_Corridor = 1227;
                 constexpr uint32_t Haiju_Lagoon = 1228;

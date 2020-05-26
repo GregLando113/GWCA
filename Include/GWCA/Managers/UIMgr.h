@@ -24,10 +24,13 @@ namespace GW {
             kHideAgentNameTag       = 0x10000000 | 0x1A,
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B,
             kAutoTargetAgent        = 0x10000000 | 0x20,
+            kShowXunlaiChest        = 0x10000000 | 0x40,
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
             kCheckboxPreference     = 0x10000000 | 0x13F,
             kTravel                 = 0x10000000 | 0x17A,
+            kHideHeroPanel          = 0x10000000 | 0x197, // wparam = hero_id
+            kShowHeroPanel          = 0x10000000 | 0x198, // wparam = hero_id
             kOpenTemplate           = 0x10000000 | 0x1B9,
         };
 

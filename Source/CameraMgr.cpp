@@ -30,11 +30,11 @@ namespace {
         patch_fog_addr = Scanner::Find(
             "\x83\xE0\x01\x8B\x09\x50\x6A\x1C", "xxxxxxxx", +2);
         printf("[SCAN] patch_fog_addr = %p\n", (void *)patch_fog_addr);
-
+#if 0
         patch_max_dist_addr = Scanner::Find(
             "\xD8\xD9\xDF\xE0\xF6\xC4\x41\x75\x26\xD9\x46", "xxxxxxxxxxx", +0x9B);
         printf("[SCAN] patch_max_dist_addr = %p\n", (void *)patch_max_dist_addr);
-
+#endif
         patch_cam_update_addr = Scanner::Find(
             "\x89\x0E\xDD\xD9\x89\x56\x04\xDD", "xxxxxxxx", 0);
         printf("[SCAN] patch_cam_update_addr = %p\n", (void *)patch_cam_update_addr);

@@ -34,6 +34,9 @@ namespace GW {
         // Get current language you are in.
         GWCA_API int GetLanguage();
 
+        // Get whether current character is observing a match
+        GWCA_API bool GetIsObserving();
+
         // Get the district number you are in.
         GWCA_API int GetDistrict();
 

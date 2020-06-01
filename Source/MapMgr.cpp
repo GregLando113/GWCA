@@ -164,6 +164,12 @@ namespace GW {
         return *(int32_t *)(map_info_addr + 0xC);
     }
 
+    bool Map::GetIsObserving() {
+        CharContext *ctx = GameContext::instance()->character;
+        if (!ctx) return false;
+        return ctx->current_map_id != ctx->observe_map_id;
+    }
+
     int Map::GetDistrict() {
         CharContext *ctx = GameContext::instance()->character;
         if (!ctx) return 0;

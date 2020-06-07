@@ -182,7 +182,7 @@ namespace GW {
 
         enum class InterfaceSize { SMALL = 0, NORMAL, LARGE, LARGER };
         namespace HealthbarHeight {
-            constexpr size_t Small = 25;
+            constexpr size_t Small = 24;
             constexpr size_t Normal = 22;
             constexpr size_t Large = 28;
             constexpr size_t Larger = 31;

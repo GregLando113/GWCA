@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include <GWCA/Packets/Opcodes.h>
+
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Hooker.h>
@@ -54,7 +56,7 @@ namespace {
         // This actually doesn't work, but the pattern is the right place
         Tick_pt Tick_Func = (Tick_pt)Scanner::Find(
             "\x83\xC4\x04\xE9\x00\x00\x00\x00\x68\x8D\x01\x01", "xxxx????xxx", +8);
-        printf("[SCAN] addr_tick = %p\n", Tick_Func);
+        GWCA_INFO("[SCAN] addr_tick = %p\n", Tick_Func);
 
         if (Verify(Tick_Func))
             HookBase::CreateHook(Tick_Func, OnTick, (void **)&RetTick);

@@ -3,6 +3,7 @@
 #include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
@@ -35,7 +36,7 @@ namespace {
     void Init() {
         {
             uintptr_t address = GW::Scanner::Find("\x8B\xF0\xEB\x03\x8B\x75\x0C\x3B", "xxxxxxxx", +0xA);
-            printf("[SCAN] map_info_addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] map_info_addr = %p\n", (void *)address);
             if (Verify(address))
                 map_info_addr = *(uintptr_t *)(address);
         }
@@ -43,13 +44,13 @@ namespace {
         {
             uintptr_t address = Scanner::Find(
                 "\x6B\xC6\x7C\x5E\x05", "xxxxx", 5);
-            printf("[SCAN] area_info_addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] area_info_addr = %p\n", (void *)address);
             area_info_addr = *(uintptr_t *)address;
         }
 
         {
             uintptr_t address = Scanner::Find("\xE8\x00\x00\x00\x00\x6A\x3D\x57\xE8", "x????xxxx", -4);
-            printf("[SCAN] map_id_addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] map_id_addr = %p\n", (void *)address);
             if (Verify(address))
                 map_id_addr = *(uintptr_t *)address;
         }
@@ -57,7 +58,7 @@ namespace {
         {
             uintptr_t address = Scanner::Find(
                 "\x6A\x2C\x50\xE8\x00\x00\x00\x00\x83\xC4\x08\xC7", "xxxx????xxxx", +0x17);
-            printf("[SCAN] instance_type_addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] instance_type_addr = %p\n", (void *)address);
             if (Verify(address))
                 instance_type_addr = *(uintptr_t *)address;
         }

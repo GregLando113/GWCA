@@ -3,6 +3,7 @@
 #include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Skills.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
@@ -47,7 +48,7 @@ namespace {
     void Init() {
         PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find(
             "\xD9\x5D\x0C\xD9\x45\x0C\x8D\x45\xF8", "xxxxxxxxx", -0x1C);
-        printf("[SCAN] PostProcessEffect = %p\n", PostProcessEffect_Func);
+        GWCA_INFO("[SCAN] PostProcessEffect = %p\n", PostProcessEffect_Func);
 
         if (Verify(PostProcessEffect_Func))
             HookBase::CreateHook(PostProcessEffect_Func, OnPostProcessEffect, (void **)&RetPostProcessEffect);

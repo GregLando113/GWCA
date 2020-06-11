@@ -2,6 +2,7 @@
 
 #include <GWCA/Packets/Opcodes.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
@@ -81,7 +82,7 @@ namespace {
     };
 
     void __cdecl __callback_copy_char(void *param, const wchar_t *s) {
-        assert(param && s);
+        GWCA_ASSERT(param && s);
         AsyncBuffer *abuf = (AsyncBuffer *)param;
         char *outstr = (char *)abuf->buffer;
         for (size_t i = 0; i < abuf->size; i++) {
@@ -92,14 +93,14 @@ namespace {
     }
 
     void __cdecl __callback_copy_wchar(void *param, const wchar_t *s) {
-        assert(param && s);
+        GWCA_ASSERT(param && s);
         AsyncBuffer *abuf = (AsyncBuffer *)param;
         wcsncpy((wchar_t *)abuf->buffer, s, abuf->size);
         delete abuf;
     }
 
     void __cdecl __calback_copy_wstring(void *param, const wchar_t *s) {
-        assert(param && s);
+        GWCA_ASSERT(param && s);
         std::wstring *str = (std::wstring *)param;
         *str = s;
     }
@@ -108,29 +109,29 @@ namespace {
     void AsyncDecodeStr(const wchar_t *enc_str, DecodeStr_Callback callback, void *param) {
         typedef void(__cdecl *AsyncDecodeStr_pt)(const wchar_t *s, DecodeStr_Callback cb, void *param);
         AsyncDecodeStr_pt Gw_AsyncDecodeStr = (AsyncDecodeStr_pt)AsyncDecodeStringPtr;
-        assert(enc_str && Gw_AsyncDecodeStr && callback);
+        GWCA_ASSERT(enc_str && Gw_AsyncDecodeStr && callback);
         Gw_AsyncDecodeStr(enc_str, callback, param);
     }
 
     void Init() {
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\x5D\xC3\x89\x45\x08\x5D\xE9", "x????xxxxxxx", -0x1A);
-        printf("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
+        GWCA_INFO("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
 
         LoadSettings_Func = (LoadSettings_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\xFF\x75\x0C\xFF\x75\x08\x6A\x00", "x????xxxxxxxx", -0x1E);
-        printf("[SCAN] LoadSettings = %p\n", LoadSettings_Func);
+        GWCA_INFO("[SCAN] LoadSettings = %p\n", LoadSettings_Func);
 
         {
             uintptr_t address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
-            printf("[SCAN] GameSettings = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] GameSettings = %p\n", (void *)address);
             if (Verify(address))
                 GameSettings_Addr = *(uintptr_t *)address;
         }
 
         {
             uintptr_t address = Scanner::Find("\x83\xF8\x01\x75\x40\xD9\xEE\x8D\x45", "xxxxxxxxx", +0x6C);
-            printf("[SCAN] ui_drawn_addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] ui_drawn_addr = %p\n", (void *)address);
             if (Verify(address))
                 ui_drawn_addr = *(uintptr_t *)address;
         }
@@ -138,13 +139,13 @@ namespace {
         {
             uintptr_t address = Scanner::Find(
                 "\x75\x19\x6A\x00\xC7\x05\x00\x00\x00\x00\x01\x00", "xxxxxx????xx", +6);
-            printf("[SCAN] shift_screen_addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] shift_screen_addr = %p\n", (void *)address);
             shift_screen_addr = *(uintptr_t *)address;
         }
 
         {
             uintptr_t address = GW::Scanner::Find("\x75\xF6\x33\xF6\x39\x34\x9D", "xxxxxxx", +7);
-            printf("[SCAN] preferences_array = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] preferences_array = %p\n", (void *)address);
             if (Verify(address)) {
                 address = *(uintptr_t *)address;
                 preferences_array = reinterpret_cast<uint32_t *>(address);
@@ -153,11 +154,11 @@ namespace {
 
         SetTickboxPref_Func = (SetTickboxPref_pt)Scanner::Find(
             "\x8B\x75\x0C\x33\xC9\x39\x0C\xBD\x00\x00\x00\x00\x0F\x95\xC1\x33", "xxxxxxxx????xxxx", -0x6F);
-        printf("[SCAN] SetTickboxPref = %p\n", SetTickboxPref_Func);
+        GWCA_INFO("[SCAN] SetTickboxPref = %p\n", SetTickboxPref_Func);
 
         if (Verify(SetTickboxPref_Func)) {
             uintptr_t address = (uintptr_t)SetTickboxPref_Func + 0x77;
-            printf("[SCAN] preferences_array2 = %p\n", (void*)address);
+            GWCA_INFO("[SCAN] preferences_array2 = %p\n", (void*)address);
             address = *(uintptr_t*)address;
             preferences_array2 = reinterpret_cast<uint32_t*>(address);
 
@@ -165,7 +166,7 @@ namespace {
         }
 
         AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
-        printf("[SCAN] AsyncDecodeStringPtr = %08X\n", AsyncDecodeStringPtr);
+        GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %08X\n", AsyncDecodeStringPtr);
 
         if (Verify(SendUIMessage_Func))
             HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
@@ -291,7 +292,7 @@ namespace GW {
     uint32_t UI::EncStrToUInt32(const wchar_t *enc_str) {
         uint32_t val = 0;
         do {
-            assert(*enc_str >= WORD_VALUE_BASE);
+            GWCA_ASSERT(*enc_str >= WORD_VALUE_BASE);
             val *= WORD_VALUE_RANGE;
             val += (*enc_str & ~WORD_BIT_MORE) - WORD_VALUE_BASE;
         } while (*enc_str++ & WORD_BIT_MORE);

@@ -71,6 +71,7 @@
     <ClInclude Include="..\Include\GWCA\Managers\UIMgr.h" />
     <ClInclude Include="..\Include\GWCA\Packets\Opcodes.h" />
     <ClInclude Include="..\Include\GWCA\Packets\StoC.h" />
+    <ClInclude Include="..\Include\GWCA\Utilities\Debug.h" />
     <ClInclude Include="..\Include\GWCA\Utilities\Export.h" />
     <ClInclude Include="..\Include\GWCA\Utilities\Hook.h" />
     <ClInclude Include="..\Include\GWCA\Utilities\Hooker.h" />
@@ -84,6 +85,7 @@
     <ClCompile Include="..\Source\CameraMgr.cpp" />
     <ClCompile Include="..\Source\ChatMgr.cpp" />
     <ClCompile Include="..\Source\CtoSMgr.cpp" />
+    <ClCompile Include="..\Source\Debug.cpp" />
     <ClCompile Include="..\Source\EffectMgr.cpp" />
     <ClCompile Include="..\Source\FriendListMgr.cpp" />
     <ClCompile Include="..\Source\GamePos.cpp" />

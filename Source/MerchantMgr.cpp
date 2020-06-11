@@ -2,6 +2,7 @@
 
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
@@ -39,11 +40,11 @@ namespace {
     void Init() {
         TransactItem_Func = (TransactItem_pt )Scanner::Find(
             "\x85\xFF\x74\x1D\x8B\x4D\x14\xEB\x08", "xxxxxxxxx", -0x7F);
-        printf("[SCAN] TransactItem = %p\n", TransactItem_Func);
+        GWCA_INFO("[SCAN] TransactItem = %p\n", TransactItem_Func);
 
         RequestQuote_func = (RequestQuote_pt )Scanner::Find(
             "\x8B\x75\x20\x83\xFE\x10\x76\x14", "xxxxxxxx", -0x35);
-        printf("[SCAN] RequestQuote = %p\n", RequestQuote_func);
+        GWCA_INFO("[SCAN] RequestQuote = %p\n", RequestQuote_func);
     }
 }
 

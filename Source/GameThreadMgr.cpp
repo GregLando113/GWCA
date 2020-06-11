@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
@@ -57,7 +58,7 @@ namespace {
 
         uintptr_t address = Scanner::Find(
             "\x2B\xCE\x8B\x15\x00\x00\x00\x00\xF7\xD9\x1B\xC9", "xxxx????xxxx", +4);
-        printf("[SCAN] BasePointerLocation = %p\n", (void *)address);
+        GWCA_INFO("[SCAN] BasePointerLocation = %p\n", (void *)address);
 
         if (Verify(address)) {
             address = *(uintptr_t *)(address);

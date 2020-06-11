@@ -3,6 +3,7 @@
 #include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
@@ -64,7 +65,7 @@ static void Init() {
     {
         uintptr_t address = GW::Scanner::Find(
             "\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
-        printf("[SCAN] SkillArray = %p\n", (void *)address);
+        GWCA_INFO("[SCAN] SkillArray = %p\n", (void *)address);
         if (Verify(address))
             skill_array_addr = *(uintptr_t *)address;
     }
@@ -105,7 +106,7 @@ namespace GW {
 
     void SkillbarMgr::LoadSkillbar(Constants::SkillID *skills, size_t n_skills, uint32_t hero_index) {
         uint32_t skill_ids[8];
-        assert(n_skills <= _countof(skill_ids));
+        GWCA_ASSERT(n_skills <= _countof(skill_ids));
         for (size_t i = 0; i < n_skills; i++)
             skill_ids[i] = static_cast<uint32_t>(skills[i]);
         return LoadSkillbar(skill_ids, n_skills, hero_index);
@@ -123,13 +124,13 @@ namespace GW {
         // char *bitStr = new char[len * 6]; // @Enhancement: this doesn't need to be a heap alloc.
 
         const int bufSize = 1024;
-        assert((len * 6) < bufSize);
+        GWCA_ASSERT((len * 6) < bufSize);
         char bitStr[bufSize]; // @Cleanup: Confirm that the buffer is alway big enough.
 
         for (size_t i = 0; i < len; i++) {
             int numeric_value = _Base64ToValue[temp[i]];
             if (numeric_value == -1) {
-                fprintf_s(stderr, "Unvalid base64 character '%c' in string '%s'\n", temp[i], temp);
+                GWCA_ERR("Unvalid base64 character '%c' in string '%s'\n", temp[i], temp);
                 return false;
             }
             _WriteBits(numeric_value, bitStr + (6 * i));
@@ -141,7 +142,7 @@ namespace GW {
         // HEADER
         int header = _ReadBits(&it, 4);
         if (header != 0 && header != 14) {
-            fprintf_s(stderr, "Template header '%d' not valid.", header);
+            GWCA_ERR("Template header '%d' not valid.", header);
             return false;
         }
         if (header == 14) _ReadBits(&it, 4);
@@ -162,7 +163,7 @@ namespace GW {
             int attrib_id = _ReadBits(&it, bits_per_attr);
             int attrib_val = _ReadBits(&it, 4);
             if (attrib_id > ATTRIBUTE_MAX) {
-                fprintf_s(stderr, "Attribute id %d is out of range. (max = %d)\n", attrib_id, ATTRIBUTE_MAX);
+                GWCA_ERR("Attribute id %d is out of range. (max = %d)\n", attrib_id, ATTRIBUTE_MAX);
                 return false;
             }
             result->attributes[i].attribute = static_cast<Constants::Attribute>(attrib_id);
@@ -179,7 +180,7 @@ namespace GW {
             if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
             int skill_id = _ReadBits(&it, bits_per_skill);
             if (skill_id > SKILL_MAX) {
-                fprintf_s(stderr, "Skill id %d is out of range. (max = %d)\n", skill_id, SKILL_MAX);
+                GWCA_ERR("Skill id %d is out of range. (max = %d)\n", skill_id, SKILL_MAX);
                 return false;
             }
             result->skills[skill_count] = static_cast<Constants::SkillID>(skill_id);

@@ -226,6 +226,9 @@
     <ClInclude Include="..\Include\GWCA\Packets\Opcodes.h">
       <Filter>Packets</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\GWCA\Utilities\Debug.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\AgentMgr.cpp">
@@ -304,6 +307,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\UIMgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Debug.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

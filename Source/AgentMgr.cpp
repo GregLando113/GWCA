@@ -3,6 +3,7 @@
 #include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
@@ -77,7 +78,7 @@ namespace {
     void Init() {
         ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
             "\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
-        printf("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
+        GWCA_INFO("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
 
         if (ChangeTarget_Func) {
             uintptr_t address = Scanner::Find(
@@ -91,25 +92,25 @@ namespace {
         PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
         if (PlayerAgentIdPtr) {
             PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
-            printf("[SCAN] PlayerAgentIdPtr = %p\n", (void *)PlayerAgentIdPtr);
+            GWCA_INFO("[SCAN] PlayerAgentIdPtr = %p\n", (void *)PlayerAgentIdPtr);
         }
 
         AgentListPtr = (AgentList * )Scanner::Find("\x8D\x0C\x88\xE8\x00\x00\x00\x00\x8B\xC3", "xxxx????xx", 0x3C);
         if (AgentListPtr) {
             AgentListPtr = *(AgentList * *)AgentListPtr;
-            printf("[SCAN] AgentListPtr = %p\n", AgentListPtr);
+            GWCA_INFO("[SCAN] AgentListPtr = %p\n", AgentListPtr);
         }
 
         Move_Func = (Move_pt)Scanner::Find(
                 "\xDF\xE0\xF6\xC4\x41\x7B\x64\x56\xE8", "xxxxxxxxx", -0x48);
-        printf("[SCAN] MoveFunction = %p\n", Move_Func);
+        GWCA_INFO("[SCAN] MoveFunction = %p\n", Move_Func);
 
         SendDialog_Func = (SendDialog_pt)Scanner::Find(
             "\x83\xC8\x01\x89\x46\x24\x8B\x46\x28\x83\xE8\x00\x74\x0D", "xxxxxxxxxxxxxx", 0x15);
         if (SendDialog_Func) {
             SendDialog_Func = (SendDialog_pt)((uintptr_t)SendDialog_Func + *(uintptr_t*)SendDialog_Func + 4);
         }
-        printf("[SCAN] DialogFunc = %p\n", SendDialog_Func);
+        GWCA_INFO("[SCAN] DialogFunc = %p\n", SendDialog_Func);
 
         if (Verify(SendDialog_Func))
             HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void **)&RetSendDialog);

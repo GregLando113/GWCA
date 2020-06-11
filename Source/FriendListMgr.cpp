@@ -2,6 +2,7 @@
 
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
@@ -58,7 +59,7 @@ namespace {
             // @Remplaced
             uintptr_t address = Scanner::Find(
                 "\x74\x30\x8D\x47\xFF\x83\xF8\x01", "xxxxxxxx", -0xB);
-            printf("[SCAN] FriendList_Addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] FriendList_Addr = %p\n", (void *)address);
             if (Verify(address)) {
                 FriendList_Addr = *(uintptr_t *)address;
             }
@@ -67,7 +68,7 @@ namespace {
         // @Remplaced
         FriendStatusHandler_Func = (FriendStatusHandler_pt)Scanner::Find(
             "\x8B\x75\x14\x8B\x01\x89\x45\x98", "xxxxxxxx", -0x17);
-        printf("[SCAN] FriendStatusHandler = %p\n", FriendStatusHandler_Func);
+        GWCA_INFO("[SCAN] FriendStatusHandler = %p\n", FriendStatusHandler_Func);
         if (Verify(FriendStatusHandler_Func)) {
             HookBase::CreateHook(FriendStatusHandler_Func,
                 OnFriendStatusHandler, (void **)&RetFriendStatusHandler);
@@ -76,17 +77,17 @@ namespace {
         // @Remplaced
         SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find(
             "\x83\xFE\x03\x77\x40\xFF\x24\xB5\x00\x00\x00\x00\x33\xC0", "xxxxxxxx????xx", -0x26);
-        printf("[SCAN] SetOnlineStatus = %p\n", SetOnlineStatus_Func);
+        GWCA_INFO("[SCAN] SetOnlineStatus = %p\n", SetOnlineStatus_Func);
 
         // @Remplaced
         AddFriend_Func = (AddFriend_pt)Scanner::Find(
             "\x8B\x75\x10\x83\xFE\x03\x74\x65", "xxxxxxxx", -0x48);
-        printf("[SCAN] AddFriend_Func = %p\n", AddFriend_Func);
+        GWCA_INFO("[SCAN] AddFriend_Func = %p\n", AddFriend_Func);
 
         // @Remplaced
         RemoveFriend_Func = (RemoveFriend_pt)Scanner::Find(
             "\x8B\x4D\x10\x89\x4E\x28\x8B\x4D\x08\xC7\x06", "xxxxxxxxxxx", -0x2D);
-        printf("[SCAN] RemoveFriend_Func = %p\n", RemoveFriend_Func);
+        GWCA_INFO("[SCAN] RemoveFriend_Func = %p\n", RemoveFriend_Func);
     }
 
     void Exit() {

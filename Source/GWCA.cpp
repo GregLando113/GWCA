@@ -8,6 +8,7 @@
 #include <GWCA/GameContainers/GamePos.h>
 #include <GWCA/Packets/StoC.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
@@ -36,11 +37,13 @@
 #include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/FriendListMgr.h>
 
-namespace GW {
+namespace GW
+{
     static std::vector<Module *> modules;
     static uintptr_t base_ptr;
 
-    bool Initialize() {
+    bool Initialize()
+    {
         modules.push_back(&UIModule);
         modules.push_back(&MapModule);
         modules.push_back(&ChatModule);
@@ -64,14 +67,14 @@ namespace GW {
 
             // We could get it from thread ctx
             uintptr_t address = Scanner::Find("\x50\x6A\x0F\x6A\x00\xFF\x35", "xxxxxxx", +7);
-            printf("[SCAN] base_ptr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] base_ptr = %p\n", (void *)address);
             if (Verify(address))
                 base_ptr = *(uintptr_t *)address;
 
             HookBase::Initialize();
 
             for (Module *module : modules) {
-                printf("Initializing module '%s'\n", module->name);
+                GWCA_INFO("Initializing module '%s'\n", module->name);
                 if (module->init_module)
                     module->init_module();
             }
@@ -88,7 +91,8 @@ namespace GW {
         }
     }
 
-    void DisableHooks() {
+    void DisableHooks()
+    {
         HookBase::DisableHooks();
         for (Module *module : modules) {
             if (module->disable_hooks)
@@ -96,7 +100,8 @@ namespace GW {
         }
     }
 
-    void Terminate() {
+    void Terminate()
+    {
         for (Module *module : modules) {
             if (module->exit_module)
                 module->exit_module();
@@ -105,7 +110,8 @@ namespace GW {
         HookBase::Deinitialize();
     }
 
-    GameContext* GameContext::instance() {
+    GameContext* GameContext::instance()
+    {
         return *(GameContext**)((*(uint8_t **)base_ptr) + 0x18);
     }
 } // namespace GW

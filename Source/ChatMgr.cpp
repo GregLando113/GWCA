@@ -2,6 +2,7 @@
 
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
@@ -245,7 +246,7 @@ namespace {
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint)
     {
         HookBase::EnterHook();
-        assert(ChatBuffer_Addr && 0 <= channel && channel < Chat::Channel::CHANNEL_COUNT);
+        GWCA_ASSERT(ChatBuffer_Addr && 0 <= channel && channel < Chat::Channel::CHANNEL_COUNT);
 
 		HookStatus status;
 		for (auto& it : PrintChat_callbacks) {
@@ -307,41 +308,41 @@ namespace {
 
     void Init() {
         ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x2A);
-        printf("[SCAN] Chat Event = %p\n", ChatEvent_Func);
+        GWCA_INFO("[SCAN] Chat Event = %p\n", ChatEvent_Func);
 
         GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find(
             "\xC7\x00\x60\xC0\xFF\xFF\x5D\xC3", "xxxxxxxx", -0x1C);
-        printf("[SCAN] GetSenderColor = %p\n", GetSenderColor_Func);
+        GWCA_INFO("[SCAN] GetSenderColor = %p\n", GetSenderColor_Func);
 
         GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find(
             "\xC7\x00\xB0\xB0\xB0\xFF\x5D\xC3", "xxxxxxxx", -0x27);
-        printf("[SCAN] GetMessageColor = %p\n", GetMessageColor_Func);
+        GWCA_INFO("[SCAN] GetMessageColor = %p\n", GetMessageColor_Func);
 
         // The last 4 bytes of the patterns are the "SendUIMessage" message id (i.e. 0x1000007E)
         LocalMessage_Func = (LocalMessage_pt)Scanner::Find(
             "\x8D\x45\xF8\x6A\x00\x50\x68\x7E\x00\x00\x10", "xxxxxxxxxxx", -0x3D);
-        printf("[SCAN] LocalMessage = %p\n", LocalMessage_Func);
+        GWCA_INFO("[SCAN] LocalMessage = %p\n", LocalMessage_Func);
 
         SendChat_Func = (SendChat_pt)Scanner::Find(
             "\x8D\x85\xE0\xFE\xFF\xFF\x50\x68\x1C\x01", "xxxxxxxxx", -0x3E);
-        printf("[SCAN] SendChat = %p\n", SendChat_Func);
+        GWCA_INFO("[SCAN] SendChat = %p\n", SendChat_Func);
 
         StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
             "\xFC\x53\x56\x8B\xF1\x57\x6A\x05\xFF\x36\xE8", "xxxxxxxxxxx", -0xF);
-        printf("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
+        GWCA_INFO("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
 
         WriteWhisper_Func = (WriteWhisper_pt)Scanner::Find(
             "\x83\xC4\x04\x8D\x58\x2E", "xxxxxx", -0x18);
-        printf("[SCAN] WriteWhisper = %p\n", WriteWhisper_Func);
+        GWCA_INFO("[SCAN] WriteWhisper = %p\n", WriteWhisper_Func);
 
         PrintChat_Func = (PrintChat_pt)Scanner::Find(
             "\x3D\x00\x00\x00\x00\x73\x2B\x6A", "x??xxxxx", -0x46);
-        printf("[SCAN] PrintChat = %p\n", PrintChat_Func);
+        GWCA_INFO("[SCAN] PrintChat = %p\n", PrintChat_Func);
 
         {
             uintptr_t address = Scanner::Find(
                 "\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
-            printf("[SCAN] ChatBuffer_Addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] ChatBuffer_Addr = %p\n", (void *)address);
             if (Verify(address))
                 ChatBuffer_Addr = *(uintptr_t *)address;
         }
@@ -349,7 +350,7 @@ namespace {
         {
             uintptr_t address = Scanner::Find(
                 "\xFF\xD0\xC7\x05\x00\x00\x00\x00\x01", "xxxx????x", +4);
-            printf("[SCAN] IsTyping_Addr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] IsTyping_Addr = %p\n", (void *)address);
             if (Verify(address))
                 IsTyping_Addr = *(uintptr_t *)address;
         }
@@ -580,7 +581,7 @@ namespace GW {
     }
 
     void Chat::SendChat(char channel, const wchar_t *msg) {
-        assert(SendChat_Func);
+        GWCA_ASSERT(SendChat_Func);
         wchar_t buffer[140];
 
         // We could take 140 char long, but the chat only allow 120 ig.
@@ -596,7 +597,7 @@ namespace GW {
     }
 
     void Chat::SendChat(char channel, const char *msg) {
-        assert(SendChat_Func);
+        GWCA_ASSERT(SendChat_Func);
         wchar_t buffer[140];
 
         size_t len = strlen(msg);
@@ -611,7 +612,7 @@ namespace GW {
     }
 
     void Chat::SendChat(const wchar_t *from, const wchar_t *msg) {
-        assert(SendChat_Func);
+        GWCA_ASSERT(SendChat_Func);
         wchar_t buffer[140];
 
         if (swprintf(buffer, 140, L"\"%s,%s", from, msg) < 140) {
@@ -621,7 +622,7 @@ namespace GW {
     }
 
     void Chat::SendChat(const char *from, const char *msg) {
-        assert(SendChat_Func);
+        GWCA_ASSERT(SendChat_Func);
         wchar_t buffer[140];
 
         if (swprintf(buffer, 140, L"\"%S,%S", from, msg) < 140) {

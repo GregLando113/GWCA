@@ -3,6 +3,7 @@
 #include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
@@ -77,7 +78,7 @@ namespace {
         {
             uintptr_t address = Scanner::Find(
                 "\x0F\x84\x5D\x01\x00\x00\x83\x7B\x14", "xxxxxxxxx", -4);
-            printf("[SCAN] StoragePannel = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] StoragePannel = %p\n", (void *)address);
             if (Verify(address))
                 storage_pannel_addr = *(uintptr_t *)address;
         }
@@ -85,14 +86,14 @@ namespace {
         {
             uintptr_t address = Scanner::Find(
                 "\xC7\x00\x0F\x00\x00\x00\x89\x48\x14", "xxxxxxxxx", -0x28);
-            printf("[SCAN] StorageOpen = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] StorageOpen = %p\n", (void *)address);
             if (Verify(address))
                 storage_open_addr = *(uintptr_t *)address;
         }
 
         ItemClick_Func = (ItemClick_pt)Scanner::Find(
             "\x8B\x48\x08\x83\xEA\x00\x0F\x84", "xxxxxxxx", -0x1C);
-        printf("[SCAN] ItemClick = %p\n", ItemClick_Func);
+        GWCA_INFO("[SCAN] ItemClick = %p\n", ItemClick_Func);
 
         if (Verify(ItemClick_Func))
             HookBase::CreateHook(ItemClick_Func, OnItemClick, (void **)&RetItemClick);

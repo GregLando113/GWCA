@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/MemoryPatcher.h>
 
 namespace GW {
@@ -26,7 +27,7 @@ namespace GW {
     }
 
     void MemoryPatcher::SetPatch(uintptr_t addr, void *patch, size_t size) {
-        assert(m_addr == nullptr);
+        GWCA_ASSERT(m_addr == nullptr);
 
         m_addr = reinterpret_cast<void *>(addr);
         m_size = size;
@@ -43,7 +44,7 @@ namespace GW {
     }
 
     bool MemoryPatcher::TogglePatch(bool flag) {
-        assert(m_addr != nullptr);
+        GWCA_ASSERT(m_addr != nullptr);
 
         if (m_enable == flag)
             return flag;

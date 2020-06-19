@@ -226,10 +226,10 @@ namespace GW {
 
         namespace Range {
             constexpr float Adjacent = 166.0f;
-            constexpr float Nearby = 238.0f;
+            constexpr float Nearby = 252.0f;
             constexpr float Area = 322.0f;
-            constexpr float Earshot = 1010.0f;
-            constexpr float Spellcast = 1246.0f;
+            constexpr float Earshot = 1012.0f;
+            constexpr float Spellcast = 1248.0f;
             constexpr float Spirit = 2500.0f;
             constexpr float Compass = 5000.0f;
         };

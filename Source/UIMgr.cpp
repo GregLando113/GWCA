@@ -207,7 +207,7 @@ namespace GW {
     {
         struct P037 {                   // Used to send pings and drawings in the minimap. Related to StoC::P133
             uint32_t header;
-            uint32_t session_id = 0;     // unique for every player and shape. changes for every ping or shape.
+            uint32_t session_id;     // unique for every player and shape. changes for every ping or shape.
             uint32_t pt_count;           // number of points in the following array
             CompassPoint pts[8]; // in world coordinates divided by 100
             uint32_t unk[8];

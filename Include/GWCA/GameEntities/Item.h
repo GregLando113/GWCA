@@ -68,7 +68,7 @@ namespace GW {
         /* +h0050 */ uint8_t        slot;
 
         inline bool GetIsStackable() {
-            return interaction & 0x80000;
+            return (interaction & 0x80000) != 0;
         }
 
         bool GetIsMaterial();

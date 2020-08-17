@@ -80,6 +80,7 @@
 #define GAME_CMSG_PARTY_INVITE_PLAYER               (0x00A8) // 168
 #define GAME_CMSG_PARTY_INVITE_PLAYER_NAME          (0x00A9) // 169
 #define GAME_CMSG_PARTY_LEAVE_GROUP                 (0x00AA) // 170
+#define GAME_CMSG_PARTY_CANCEL_ENTER_CHALLENGE      (0x00AB) // 171
 #define GAME_CMSG_PARTY_ENTER_CHALLENGE             (0x00AD) // 173
 #define GAME_CMSG_PARTY_RETURN_TO_OUTPOST           (0x00AF) // 175
 #define GAME_CMSG_PARTY_KICK_NPC                    (0x00B0) // 176

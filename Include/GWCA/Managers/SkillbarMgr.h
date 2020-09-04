@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
 namespace GW {
@@ -64,5 +65,13 @@ namespace GW {
         GWCA_API void SetAttributes(uint32_t attribute_count,
             uint32_t *attribute_ids, uint32_t *attribute_values, uint32_t hero_index = 0);
         GWCA_API void SetAttributes(Attribute *attributes, size_t n_attributes, uint32_t hero_index = 0);
-    };
+
+        typedef HookCallback<uint32_t, uint32_t, uint32_t, uint32_t> UseSkillCallback;
+        GWCA_API void RegisterUseSkillCallback(
+            HookEntry* entry,
+            UseSkillCallback callback);
+
+        GWCA_API void RemoveUseSkillCallback(
+            HookEntry* entry);
+    }
 }

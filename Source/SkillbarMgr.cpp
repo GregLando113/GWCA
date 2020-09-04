@@ -5,6 +5,7 @@
 
 #include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
@@ -27,53 +28,76 @@
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/SkillbarMgr.h>
 
-static const char _Base64ToValue[128] = {
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [16,  32)
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63, // [32,  48)
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1, // [48,  64)
-    -1, 0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, // [64,  80)
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1, // [80,  96)
-    -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, // [96,  112)
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, // [112, 128)
-};
+namespace {
+    using namespace GW;
 
-static void _WriteBits(int val, char *buff) {
-    buff[0] = ((val >> 0) & 1);
-    buff[1] = ((val >> 1) & 1);
-    buff[2] = ((val >> 2) & 1);
-    buff[3] = ((val >> 3) & 1);
-    buff[4] = ((val >> 4) & 1);
-    buff[5] = ((val >> 5) & 1);
-}
+    typedef void(__cdecl* UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
+    UseSkill_pt UseSkill_Func;
+    UseSkill_pt RetUseSkill;
 
-static int _ReadBits(char **str, int n) {
-    int val = 0;
-    char *s = *str;
-    for (int i = 0; i < n; i++)
-        val |= (*s++ << i);
-    *str = s;
-    return val;
-}
+    uintptr_t skill_array_addr;
 
-typedef void(__cdecl *UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
-static UseSkill_pt UseSkill_Func;
+    static const char _Base64ToValue[128] = {
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [16,  32)
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63, // [32,  48)
+        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1, // [48,  64)
+        -1, 0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, // [64,  80)
+        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1, // [80,  96)
+        -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, // [96,  112)
+        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, // [112, 128)
+    };
 
-static uintptr_t skill_array_addr;
-
-static void Init() {
-    {
-        uintptr_t address = GW::Scanner::Find(
-            "\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
-        GWCA_INFO("[SCAN] SkillArray = %p\n", (void *)address);
-        if (Verify(address))
-            skill_array_addr = *(uintptr_t *)address;
+    static void _WriteBits(int val, char* buff) {
+        buff[0] = ((val >> 0) & 1);
+        buff[1] = ((val >> 1) & 1);
+        buff[2] = ((val >> 2) & 1);
+        buff[3] = ((val >> 3) & 1);
+        buff[4] = ((val >> 4) & 1);
+        buff[5] = ((val >> 5) & 1);
     }
 
-    UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
-        "\x85\xF6\x74\x5B\x83\xFE\x11\x74", "xxxxxxxx", -0x126);
-}
+    static int _ReadBits(char** str, int n) {
+        int val = 0;
+        char* s = *str;
+        for (int i = 0; i < n; i++)
+            val |= (*s++ << i);
+        *str = s;
+        return val;
+    }
 
+    std::unordered_map<HookEntry*, SkillbarMgr::UseSkillCallback> OnUseSkill_Callbacks;
+    static void __cdecl OnUseSkill(uint32_t agent_id, uint32_t slot, uint32_t target, uint32_t call_target)
+    {
+        HookBase::EnterHook();
+        HookStatus status;
+        for (auto& it : OnUseSkill_Callbacks) {
+            it.second(&status, agent_id, slot, target, call_target);
+            ++status.altitude;
+        }
+        if (!status.blocked)
+            RetUseSkill(agent_id, slot, target, call_target);
+        HookBase::LeaveHook();
+    }
+
+    static void Init() {
+        {
+            uintptr_t address = GW::Scanner::Find(
+                "\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
+            GWCA_INFO("[SCAN] SkillArray = %p\n", (void*)address);
+            if (Verify(address))
+                skill_array_addr = *(uintptr_t*)address;
+        }
+
+        UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
+            "\x85\xF6\x74\x5B\x83\xFE\x11\x74", "xxxxxxxx", -0x126);
+
+        if (Verify(UseSkill_Func))
+            HookBase::CreateHook(UseSkill_Func, OnUseSkill, (void**)&RetUseSkill);
+    }
+
+
+}
 namespace GW {
 
     Module SkillbarModule = {
@@ -346,5 +370,19 @@ namespace GW {
         } else {
             return NULL;
         }
+    }
+    void SkillbarMgr::RegisterUseSkillCallback(
+        HookEntry* entry,
+        UseSkillCallback callback)
+    {
+        OnUseSkill_Callbacks.insert({ entry, callback });
+    }
+
+    void SkillbarMgr::RemoveUseSkillCallback(
+        HookEntry* entry)
+    {
+        auto it = OnUseSkill_Callbacks.find(entry);
+        if (it != OnUseSkill_Callbacks.end())
+            OnUseSkill_Callbacks.erase(it);
     }
 } // namespace GW

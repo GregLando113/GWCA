@@ -682,7 +682,7 @@ namespace GW {
     void Chat::WriteChatEnc(Channel channel, const wchar_t* msg) {
 
         size_t len = wcslen(msg);
-        wchar_t* buffer = new wchar_t[len + 2];
+        wchar_t* buffer = new wchar_t[len + 1];
 
         UIChatMessage param;
         param.channel = channel;
@@ -692,8 +692,7 @@ namespace GW {
         for (size_t i = 0; i < len; i++)
             buffer[i] = msg[i];
 
-        buffer[len] = 1;
-        buffer[len + 1] = 0;
+        buffer[len] = 0;
 
         UI::SendUIMessage(UI::kWriteToChatLog, &param);
         delete[] buffer;

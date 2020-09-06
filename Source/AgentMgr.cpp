@@ -65,6 +65,9 @@ namespace {
     typedef void(*ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
     ChangeTarget_pt ChangeTarget_Func;
 
+    typedef void(*MovementChange_pt)(uint32_t type);
+    MovementChange_pt MovementChange_Func;
+
     typedef void(*Move_pt)(GamePos *pos);
     Move_pt Move_Func;
 
@@ -72,10 +75,18 @@ namespace {
     uintptr_t PlayerAgentIdPtr = 0;
     uintptr_t TargetAgentIdPtr = 0;
     uintptr_t MouseOverAgentIdPtr = 0;
+    uintptr_t IsAutoRunningPtr = 0;
 
     AgentList *AgentListPtr = nullptr;
 
     void Init() {
+        MovementChange_Func = (MovementChange_pt)Scanner::Find(
+            "\x0C\x05\x6F\xFF\xFF\xFF", "xxxxxx", -0x9);
+        GWCA_INFO("[SCAN] MovementChangeFunction = %p\n", MovementChange_Func);
+        if (MovementChange_Func)
+            IsAutoRunningPtr = *reinterpret_cast<uintptr_t*>((uintptr_t)MovementChange_Func + 0x4C);
+        GWCA_INFO("[SCAN] IsAutoRunningPtr = %p\n", IsAutoRunningPtr);
+
         ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
             "\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
         GWCA_INFO("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
@@ -101,6 +112,10 @@ namespace {
             GWCA_INFO("[SCAN] AgentListPtr = %p\n", AgentListPtr);
         }
 
+        uintptr_t address = Scanner::Find(
+            "\xFF\x50\x10\x47\x83\xC6\x04\x3B\xFB\x75\xE1", "xxxxxxxxxxx", +0xD);
+        AgentArrayPtr = *reinterpret_cast<uintptr_t*>(address);
+
         Move_Func = (Move_pt)Scanner::Find(
                 "\xDF\xE0\xF6\xC4\x41\x7B\x64\x56\xE8", "xxxxxxxxx", -0x48);
         GWCA_INFO("[SCAN] MoveFunction = %p\n", Move_Func);
@@ -119,6 +134,10 @@ namespace {
     void Exit() {
         if (SendDialog_Func)
             HookBase::RemoveHook(SendDialog_Func);
+    }
+
+    bool IsAutoRunning() {
+        return *(uint32_t*)IsAutoRunningPtr == 1;
     }
 }
 
@@ -173,8 +192,15 @@ namespace GW {
     }
 
     void Agents::Move(GamePos pos) {
-        if (Verify(Move_Func))
+        if (Verify(MovementChange_Func) && IsAutoRunning()) {
+            // Kill autorun, queue movement for next frame.
+            MovementChange_Func(0xB7);
+            GameThread::Enqueue([pos]() {
+                Move_Func((GamePos*)&pos);
+                });
+        } else {
             Move_Func(&pos);
+        }
     }
 
     MapAgentArray Agents::GetMapAgentArray() {

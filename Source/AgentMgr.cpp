@@ -32,6 +32,7 @@
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
+#include <GWCA/Managers/PlayerMgr.h>
 
 namespace {
     using namespace GW;
@@ -100,8 +101,7 @@ namespace {
             MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;
         }
 
-        //PlayingAsPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
-        PlayerAgentIdPtr = Scanner::Find("\xF7\xD8\x6A\x08\x1B\xC0\x21\x05", "xxxxxxxx", +0x8);
+        PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
         if (PlayerAgentIdPtr) {
             PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
             GWCA_INFO("[SCAN] PlayerAgentIdPtr = %p\n", (void *)PlayerAgentIdPtr);
@@ -215,6 +215,19 @@ namespace GW {
         } else {
             return nullptr;
         }
+    }
+
+
+
+    Agent* Agents::GetPlayerByID(uint32_t player_id)
+    {
+        Player* p = PlayerMgr::GetPlayerByID(player_id);
+        return p ? GetAgentByID(p->agent_id) : nullptr;
+    }
+
+    AgentLiving* Agents::GetCharacter() {
+        Agent* a = GetPlayerByID(PlayerMgr::GetPlayerNumber());
+        return a ? a->GetAsAgentLiving() : nullptr;
     }
 
     AgentLiving *Agents::GetPlayerAsAgentLiving()

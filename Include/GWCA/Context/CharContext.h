@@ -5,7 +5,7 @@
 namespace GW {
     struct ObserverMatch;
 
-    struct CharContext { // total: 0x400
+    struct CharContext { // total: 0x42C
         /* +h0000 */ Array<void *> h0000;
         /* +h0010 */ uint8_t h0010[4];
         /* +h0014 */ Array<void *> h0014;
@@ -13,7 +13,7 @@ namespace GW {
         /* +h0034 */ Array<void *> h0034;
         /* +h0044 */ Array<void *> h0044;
         /* +h0054 */ uint8_t h0054[0x20];
-        /* +h0074 */ wchar_t player_name[20];
+        /* +h0074 */ wchar_t player_name[0x14];
         /* +h009C */ uint8_t h009C[0x50];
         /* +h00EC */ Array<void *> h00EC;
         /* +h00FC */ uint8_t h00FC[0x94]; // 40
@@ -30,9 +30,12 @@ namespace GW {
         /* +h022C */ uint32_t current_map_id;
         /* +h0230 */ uint8_t h0230[8];
         /* +h0238 */ Array<ObserverMatch *> observer_matchs;
-        /* +h0248 */ uint8_t h0248[0xF0];
+        /* +h0248 */ uint8_t h0248[0x45];
+        /* +h028D */ uint32_t player_number;
+        /* +h0291 */ uint8_t h0291[0xA7];
         /* +h0338 */ uint32_t *progress_bar;
         /* +h033C */ uint8_t h033C[0x6C];
         /* +h03A8 */ wchar_t player_email[0x40];
     };
+    static_assert(sizeof(CharContext) == 0x42C, "struct CharContext has incorect size");
 }

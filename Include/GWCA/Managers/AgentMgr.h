@@ -30,9 +30,12 @@ namespace GW {
         GWCA_API uint32_t GetLastDialogId();
 
         // === Agent Array ===
-        // Get Current AgentID's of player or target.
+
+        // Get Agent ID of currently observed player
         GWCA_API uint32_t GetPlayerId();
+        // Get Agent ID of current target
         GWCA_API uint32_t GetTargetId();
+        // Get Agent ID of current hover
         GWCA_API uint32_t GetMouseoverId();
 
         // Returns Agentstruct Array of agents in compass range, full structs.
@@ -40,10 +43,21 @@ namespace GW {
 
         // Get AgentArray Structures of player or target.
         GWCA_API Agent *GetAgentByID(uint32_t id);
+        // Get Agent of currently observed player
         inline Agent   *GetPlayer() { return GetAgentByID(GetPlayerId()); }
+        // Get Agent of current target
         inline Agent   *GetTarget() { return GetAgentByID(GetTargetId()); }
+        
 
+        GWCA_API Agent *GetPlayerByID(uint32_t player_id);
+
+        // Get Agent of current logged in character
+        GWCA_API AgentLiving* GetCharacter();
+
+        // Get AgentLiving of currently observed player
         AgentLiving    *GetPlayerAsAgentLiving();
+
+        // Get AgentLiving of current target
         AgentLiving    *GetTargetAsAgentLiving();
 
         // Returns array of alternate agent array that can be read beyond compass range.

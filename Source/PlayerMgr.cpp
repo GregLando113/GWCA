@@ -12,6 +12,7 @@
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
+#include <GWCA/Context/CharContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -40,6 +41,12 @@ namespace GW {
 
     PlayerArray& PlayerMgr::GetPlayerArray() {
         return GameContext::instance()->world->players;
+    }
+    uint32_t PlayerMgr::GetPlayerNumber() {
+        GameContext* g = GameContext::instance();
+        if (!g || !g->character)
+            return 0;
+        return g->character->player_number;
     }
 
     Player *PlayerMgr::GetPlayerByID(uint32_t player_id) {

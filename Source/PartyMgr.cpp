@@ -174,7 +174,7 @@ namespace GW {
     bool PartyMgr::GetPlayerIsLeader() {
         PartyInfo *party = GetPartyInfo();
         if (!party) return false;
-        AgentLiving *me = Agents::GetPlayerAsAgentLiving();
+        AgentLiving *me = Agents::GetCharacter();
         if (!me) return false;
         if (!party->players.size()) return false;
         return (party->players[0].login_number == me->login_number);

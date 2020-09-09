@@ -23,6 +23,9 @@ namespace GW {
 
         GWCA_API PlayerArray& GetPlayerArray();
 
+        // Get the player number of the currently logged in character
+        GWCA_API uint32_t GetPlayerNumber();
+
         GWCA_API Player *GetPlayerByID(uint32_t player_id);
 
         GWCA_API wchar_t *GetPlayerName(uint32_t player_id);

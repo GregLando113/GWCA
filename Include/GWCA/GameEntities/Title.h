@@ -14,7 +14,8 @@ namespace GW {
         /* +h0014 */ uint32_t points_needed_next_rank;
         /* +h0018 */ uint32_t max_title_rank;
         /* +h001C */ uint32_t h001C;
-        /* +h0020 */ uint32_t h0020[2]; // Pretty sure these are ptrs to title hash strings
+        /* +h0020 */ wchar_t* h0020; // Pretty sure these are ptrs to title hash strings
+        /* +h0024 */ wchar_t* h0024; // Pretty sure these are ptrs to title hash strings
     };
     static_assert(sizeof(Title) == 40, "struct Title has incorect size");
 

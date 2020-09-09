@@ -100,7 +100,8 @@ namespace {
             MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;
         }
 
-        PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
+        //PlayingAsPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
+        PlayerAgentIdPtr = Scanner::Find("\xF7\xD8\x6A\x08\x1B\xC0\x21\x05", "xxxxxxxx", +0x8);
         if (PlayerAgentIdPtr) {
             PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
             GWCA_INFO("[SCAN] PlayerAgentIdPtr = %p\n", (void *)PlayerAgentIdPtr);

@@ -89,6 +89,7 @@ namespace GW {
             constexpr int GRC = 31152;
             constexpr int RRC = 31153;
             constexpr int KrytalLokum = 35125;
+            constexpr int MinistreatOfPurity = 30208;
 
             // level-1 alcohol
             constexpr int Eggnog = 6375;

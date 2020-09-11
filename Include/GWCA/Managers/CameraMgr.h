@@ -29,6 +29,7 @@ namespace GW {
 
         GWCA_API float GetFieldOfView();
         GWCA_API float GetYaw();
+        GWCA_API float GetCurrentYaw();
 
         // ==== Camera patches ====
         // Unlock camera & return the new state of it

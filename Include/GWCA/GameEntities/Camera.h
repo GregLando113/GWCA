@@ -46,6 +46,20 @@ namespace GW {
             yaw_to_go = _yaw;
             yaw = _yaw;
         }
+        float GetCurrentYaw()
+        {
+            const Vec3f dir = position - look_at_target;
+            const float curtan = atan2(dir.y, dir.x);
+            const float pi = static_cast<float>(M_PI);
+            float curyaw;
+            if (curtan >= 0) {
+                curyaw = curtan - pi;
+            }
+            else {
+                curyaw = curtan + pi;
+            }
+            return curyaw;
+        }
 
         void SetPitch(float _pitch) {
             pitch_to_go = _pitch;

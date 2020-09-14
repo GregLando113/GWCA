@@ -50,7 +50,7 @@ namespace GW {
         {
             const Vec3f dir = position - look_at_target;
             const float curtan = atan2(dir.y, dir.x);
-            const float pi = static_cast<float>(M_PI);
+            const float pi = 3.141592741f;   // pi;
             float curyaw;
             if (curtan >= 0) {
                 curyaw = curtan - pi;

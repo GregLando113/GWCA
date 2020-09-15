@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GWCA\GameContainers\List.h>
-#include <GWCA\GameContainers\Array.h>
-#include <GWCA\GameContainers\GamePos.h>
+#include <GWCA/GameContainers/List.h>
+#include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 namespace GW {
     typedef uint32_t AgentID;
@@ -312,15 +312,15 @@ namespace GW {
         /* +h0030 */ uint32_t effects;
 
         // Health Bar Effect Bitmasks.
-        inline bool GetIsBleeding()         { return (effects & 0x0001) != 0; }
-        inline bool GetIsConditioned()      { return (effects & 0x0002) != 0; }
-        inline bool GetIsDead()             { return (effects & 0x0010) != 0; }
-        inline bool GetIsDeepWounded()      { return (effects & 0x0020) != 0; }
-        inline bool GetIsPoisoned()         { return (effects & 0x0040) != 0; }
-        inline bool GetIsEnchanted()        { return (effects & 0x0080) != 0; }
-        inline bool GetIsDegenHexed()       { return (effects & 0x0400) != 0; }
-        inline bool GetIsHexed()            { return (effects & 0x0800) != 0; }
-        inline bool GetIsWeaponSpelled()    { return (effects & 0x8000) != 0; }
+        inline bool GetIsBleeding()         const { return (effects & 0x0001) != 0; }
+        inline bool GetIsConditioned()      const { return (effects & 0x0002) != 0; }
+        inline bool GetIsDead()             const { return (effects & 0x0010) != 0; }
+        inline bool GetIsDeepWounded()      const { return (effects & 0x0020) != 0; }
+        inline bool GetIsPoisoned()         const { return (effects & 0x0040) != 0; }
+        inline bool GetIsEnchanted()        const { return (effects & 0x0080) != 0; }
+        inline bool GetIsDegenHexed()       const { return (effects & 0x0400) != 0; }
+        inline bool GetIsHexed()            const { return (effects & 0x0800) != 0; }
+        inline bool GetIsWeaponSpelled()    const { return (effects & 0x8000) != 0; }
     };
 
     struct AgentMovement {

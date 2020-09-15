@@ -20,7 +20,7 @@ namespace GW {
         /* +h0050 */ uint32_t h0050;
         /* +h0054 */ PartyInfo *player_party; // Players party
         
-        bool InHardMode() { return (flag & 0x10) > 0; }
-        bool IsDefeated() { return (flag & 0x20) > 0; }
+        bool InHardMode() const { return (flag & 0x10) > 0; }
+        bool IsDefeated() const { return (flag & 0x20) > 0; }
     };
 }

@@ -179,7 +179,7 @@ namespace GW {
             ChangeTarget_Func(agent_id, 0);
     }
 
-    void Agents::ChangeTarget(Agent *agent) {
+    void Agents::ChangeTarget(const Agent *agent) {
         if (agent)
             ChangeTarget(agent->agent_id);
     }
@@ -248,19 +248,19 @@ namespace GW {
             return nullptr;
     }
 
-    void Agents::GoNPC(Agent *agent, uint32_t call_target) {
+    void Agents::GoNPC(const Agent *agent, uint32_t call_target) {
         CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_LIVING, agent->agent_id, call_target);
     }
 
-    void Agents::GoPlayer(Agent *agent) {
+    void Agents::GoPlayer(const Agent *agent) {
         CtoS::SendPacket(0x8, GAME_CMSG_INTERACT_PLAYER, agent->agent_id);
     }
 
-    void Agents::GoSignpost(Agent *agent, uint32_t call_target) {
+    void Agents::GoSignpost(const Agent *agent, uint32_t call_target) {
         CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_GADGET, agent->agent_id, call_target);
     }
 
-    void Agents::CallTarget(Agent *agent) {
+    void Agents::CallTarget(const Agent *agent) {
         CtoS::SendPacket(0xC, GAME_CMSG_TARGET_CALL, 0xA, agent->agent_id);
     }
 
@@ -312,7 +312,7 @@ namespace GW {
             return &npcs[npc_id];
     }
 
-    std::wstring Agents::GetAgentName(Agent *agent) {
+    std::wstring Agents::GetAgentName(const Agent *agent) {
         // @Remark: I'm not conviced that the name is decoded synchronously so that could avoid crashes
         // if it is not the cases. We should still avoid to call this function.
         static std::wstring buffer;
@@ -323,11 +323,11 @@ namespace GW {
         return L"";
     }
 
-    wchar_t* Agents::GetAgentEncName(Agent* agent) {
+    wchar_t* Agents::GetAgentEncName(const Agent* agent) {
         if (!agent) 
             return nullptr;
         if (agent->GetIsLivingType()) {
-            AgentLiving *ag = agent->GetAsAgentLiving();
+            const AgentLiving *ag = agent->GetAsAgentLiving();
             if (ag->login_number) {
                 PlayerArray players = GameContext::instance()->world->players;
                 if (!players.valid()) 
@@ -367,7 +367,7 @@ namespace GW {
             return nullptr;
         }
         if (agent->GetIsItemType()) {
-            AgentItem *ag = agent->GetAsAgentItem();
+            const AgentItem *ag = agent->GetAsAgentItem();
             ItemArray items = Items::GetItemArray();
             if (!items.valid()) return nullptr;
             Item* item = items[ag->item_id];
@@ -377,7 +377,7 @@ namespace GW {
         return nullptr;
     }
 
-    void Agents::AsyncGetAgentName(Agent *agent, std::wstring& res) {
+    void Agents::AsyncGetAgentName(const Agent *agent, std::wstring& res) {
         wchar_t* str = GetAgentEncName(agent);
         if (!str) return;
         UI::AsyncDecodeStr(str, &res);

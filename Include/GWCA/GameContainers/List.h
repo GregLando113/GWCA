@@ -38,7 +38,7 @@ namespace GW {
         TLink<T> *prev_link; // +h0000
         T        *next_node; // +h0004
 
-        void RemoveFromList () {
+        void RemoveFromList() {
             NextLink()->prev_link = prev_link;
 			prev_link->next_node = next_node;
         }

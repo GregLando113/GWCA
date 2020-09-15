@@ -124,19 +124,19 @@ namespace GW {
         StoC::EmulatePacket(&pack);
     }
 
-    void Items::PickUpItem(Item *item, uint32_t CallTarget /*= 0*/) {
+    void Items::PickUpItem(const Item *item, uint32_t CallTarget /*= 0*/) {
         CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_ITEM, item->agent_id, CallTarget);
     }
 
-    void Items::DropItem(Item *item, uint32_t quantity) {
+    void Items::DropItem(const Item *item, uint32_t quantity) {
         CtoS::SendPacket(0xC, GAME_CMSG_DROP_ITEM, item->item_id, quantity);
     }
 
-    void Items::EquipItem(Item *item) {
+    void Items::EquipItem(const Item *item) {
         CtoS::SendPacket(0x8, GAME_CMSG_EQUIP_ITEM, item->item_id);
     }
 
-    void Items::UseItem(Item *item) {
+    void Items::UseItem(const Item *item) {
         CtoS::SendPacket(0x8, GAME_CMSG_ITEM_USE, item->item_id);
     }
 
@@ -158,7 +158,7 @@ namespace GW {
         return bags[bag_id];
     }
 
-    Item *Items::GetItemBySlot(Bag *bag, uint32_t slot) {
+    Item *Items::GetItemBySlot(const Bag *bag, uint32_t slot) {
         if (!bag || slot == 0) return nullptr;
         if (!bag->items.valid()) return nullptr;
         if (slot > bag->items.size()) return nullptr;
@@ -245,7 +245,7 @@ namespace GW {
         CtoS::SendPacket(0x8, GAME_CMSG_OPEN_CHEST, 0x2);
     }
 
-    void Items::MoveItem(Item *item, Bag *bag, uint32_t slot, uint32_t quantity) {
+    void Items::MoveItem(const Item *item, const Bag *bag, uint32_t slot, uint32_t quantity) {
         UNREFERENCED_PARAMETER(quantity);
         // @Cleanup:
         // Whis is quantity never referenced?
@@ -256,14 +256,14 @@ namespace GW {
         CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, item->item_id, bag->bag_id, slot);
     }
 
-    void Items::MoveItem(Item *item, Constants::Bag bag_id, uint32_t slot, uint32_t quantity)
+    void Items::MoveItem(const Item *item, Constants::Bag bag_id, uint32_t slot, uint32_t quantity)
     {
         Bag *bag = GetBag(bag_id);
         if (!bag) return;
         MoveItem(item, bag, slot, quantity);
     }
 
-    void Items::MoveItem(Item *from, Item *to, uint32_t quantity) {
+    void Items::MoveItem(const Item *from, const Item *to, uint32_t quantity) {
         if (!from || !to) return;
         if (!from->bag || !to->bag) return;
         if (quantity <= 0) quantity = from->quantity;
@@ -271,14 +271,14 @@ namespace GW {
         CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, from->item_id, to->bag->bag_id, to->slot);
     }
 
-    bool Item::GetIsZcoin() {
+    bool Item::GetIsZcoin() const {
         if (model_file_id == 31202) return true; // Copper
         if (model_file_id == 31203) return true; // Gold
         if (model_file_id == 31204) return true; // Silver
         return false;
     }
 
-    bool Item::GetIsMaterial() {
+    bool Item::GetIsMaterial() const {
         if (type == (uint32_t)Constants::ItemType::Materials_Zcoins
             && !GetIsZcoin()) {
             return true;
@@ -329,7 +329,7 @@ namespace GW {
         return -1;
     }
 
-    int Items::GetMaterialSlot(Item *item) {
+    int Items::GetMaterialSlot(const Item *item) {
         if (!item) return -1;
         if (!item->GetIsMaterial()) return -1;
         return GetMaterialSlot(item->model_id);
@@ -437,7 +437,7 @@ namespace GW {
             ItemClick_callbacks.erase(it);
     }
 
-    void Items::AsyncGetItemByName(Item *item, std::wstring& res) {
+    void Items::AsyncGetItemByName(const Item *item, std::wstring& res) {
         if (!item) return;
         if (!item || !item->complete_name_enc) return;
         wchar_t *str = item->complete_name_enc;

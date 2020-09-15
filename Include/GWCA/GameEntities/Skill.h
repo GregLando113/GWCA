@@ -46,7 +46,7 @@ namespace GW {
         /* +h0098 */ uint32_t h0098;
         /* +h009C */ uint32_t description; // String id
 
-        uint8_t GetEnergyCost() {
+        uint8_t GetEnergyCost() const {
             switch (energy_cost) {
             case 11: return 15;
             case 12: return 25;

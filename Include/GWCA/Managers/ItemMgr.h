@@ -29,23 +29,23 @@ namespace GW {
         GWCA_API Bag  *GetBag(uint32_t bag_id);
 
         // bag & slot are 1 based
-        GWCA_API Item *GetItemBySlot(Bag *bag, uint32_t slot);
+        GWCA_API Item *GetItemBySlot(const Bag *bag, uint32_t slot);
         GWCA_API Item *GetItemBySlot(Constants::Bag bag, uint32_t slot);
         GWCA_API Item *GetItemBySlot(uint32_t bag, uint32_t slot);
 
         GWCA_API Item* GetItemById(uint32_t item_id);
 
         // Use given item if usable.
-        GWCA_API void UseItem(Item *item);
+        GWCA_API void UseItem(const Item *item);
 
         // Equip item if equippable.
-        GWCA_API void EquipItem(Item *item);
+        GWCA_API void EquipItem(const Item *item);
 
         // Drop item if droppable.
-        GWCA_API void DropItem(Item *item, uint32_t quantity);
+        GWCA_API void DropItem(const Item *item, uint32_t quantity);
 
         // Pick up selected item off the ground.
-        GWCA_API void PickUpItem(Item *item, uint32_t call_target = 0);
+        GWCA_API void PickUpItem(const Item *item, uint32_t call_target = 0);
 
         // Opens the storage window from anywhere.
         // Can only interact with the storage in an outpost with a xunlai chest inside, sorry no exploiting.
@@ -71,9 +71,9 @@ namespace GW {
         
         // Move item to a new position (bag, slot). Used to merge stacks
         // slot start at 0
-        GWCA_API void MoveItem(Item *from, Constants::Bag bag_id, uint32_t slot, uint32_t quantity = 0);
-        GWCA_API void MoveItem(Item *item, Bag *bag, uint32_t slot, uint32_t quantity = 0);
-        GWCA_API void MoveItem(Item *from, Item *to, uint32_t quantity = 0);
+        GWCA_API void MoveItem(const Item *from, Constants::Bag bag_id, uint32_t slot, uint32_t quantity = 0);
+        GWCA_API void MoveItem(const Item *item, const Bag *bag, uint32_t slot, uint32_t quantity = 0);
+        GWCA_API void MoveItem(const Item *from, const Item *to, uint32_t quantity = 0);
 
         // Split a given amount into a new position (bag, slot).
         // GWCA_API void SplitStack(Item *item, Bag *bag, int slot, int quantity);
@@ -105,8 +105,8 @@ namespace GW {
 
         // Returns the slot of the materials in the storage page. (-1 if not found)
         GWCA_API int GetMaterialSlot(uint32_t model_id);
-        GWCA_API int GetMaterialSlot(Item *item);
+        GWCA_API int GetMaterialSlot(const Item *item);
 
-        GWCA_API void AsyncGetItemByName(Item *item, std::wstring& name);
+        GWCA_API void AsyncGetItemByName(const Item *item, std::wstring& name);
     };
 }

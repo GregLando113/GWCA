@@ -18,25 +18,25 @@ namespace GW {
         /* +h0014 */ Bag  *bag_array;
         /* +h0018 */ ItemArray items;
 
-        inline bool IsInventoryBag() { return (bag_type == 1); }
-        inline bool IsStorageBag()   { return (bag_type == 4); }
+        inline bool IsInventoryBag() const { return (bag_type == 1); }
+        inline bool IsStorageBag()   const { return (bag_type == 4); }
 
         static const size_t npos = (size_t)-1;
 
-        size_t find_dye(uint32_t model_id, uint32_t ExtraId, size_t pos = 0);
+        size_t find_dye(uint32_t model_id, uint32_t ExtraId, size_t pos = 0) const;
 
-        size_t find1(uint32_t model_id, size_t pos = 0);
-        size_t find2(Item *item, size_t pos = 0);
+        size_t find1(uint32_t model_id, size_t pos = 0) const;
+        size_t find2(const Item *item, size_t pos = 0) const;
     };
     static_assert(sizeof(Bag) == 40, "struct Bag has incorect size");
 
     struct ItemModifier {
         uint32_t mod = 0;
                           
-        uint32_t identifier() { return mod >> 16; }
-        uint32_t arg1() { return (mod & 0x0000FF00) >> 8; }
-        uint32_t arg2() { return (mod & 0x000000FF); }
-        operator bool() { return mod != 0; }
+        uint32_t identifier() const { return mod >> 16; }
+        uint32_t arg1() const { return (mod & 0x0000FF00) >> 8; }
+        uint32_t arg2() const { return (mod & 0x000000FF); }
+        operator bool() const { return mod != 0; }
     };
 
     struct Item { // total: 0x54/84
@@ -67,12 +67,12 @@ namespace GW {
         /* +h004F */ uint8_t        profession;
         /* +h0050 */ uint8_t        slot;
 
-        inline bool GetIsStackable() {
+        inline bool GetIsStackable() const {
             return (interaction & 0x80000) != 0;
         }
 
-        bool GetIsMaterial();
-        bool GetIsZcoin();
+        bool GetIsMaterial() const;
+        bool GetIsZcoin() const;
     };
     static_assert(sizeof(Item) == 84, "struct Item has incorect size");
 
@@ -135,7 +135,7 @@ namespace GW {
 
     typedef Array<ItemID> MerchItemArray;
 
-    inline size_t Bag::find1(uint32_t model_id, size_t pos) {
+    inline size_t Bag::find1(uint32_t model_id, size_t pos) const {
         for (size_t i = pos; i < items.size(); i++) {
             Item *item = items[i];
             if (!item && model_id == 0) return i;
@@ -146,7 +146,7 @@ namespace GW {
         return npos;
     }
 
-    inline size_t Bag::find_dye(uint32_t model_id, uint32_t extra_id, size_t pos) {
+    inline size_t Bag::find_dye(uint32_t model_id, uint32_t extra_id, size_t pos) const {
         for (size_t i = pos; i < items.size(); i++) {
             Item *item = items[i];
             if (!item && model_id == 0) return i;
@@ -158,7 +158,7 @@ namespace GW {
     }
 
     // Find a similar item
-    inline size_t Bag::find2(Item *item, size_t pos) {
+    inline size_t Bag::find2(const Item *item, size_t pos) const {
         if (item->model_id == Constants::ItemID::Dye)
             return find_dye(item->model_id, item->extra_id, pos);
         else

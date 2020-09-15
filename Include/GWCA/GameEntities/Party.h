@@ -11,8 +11,8 @@ namespace GW {
         /* +h0004 */ uint32_t h0004;
         /* +h0008 */ uint32_t state;
         
-        inline bool connected() { return (state & 1) > 0; }
-        inline bool ticked()    { return (state & 2) > 0; }
+        inline bool connected() const { return (state & 1) > 0; }
+        inline bool ticked()    const { return (state & 2) > 0; }
     };
     static_assert(sizeof(PlayerPartyMember) == 12, "struct PlayerPartyMember has incorect size");
     

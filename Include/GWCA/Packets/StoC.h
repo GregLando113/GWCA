@@ -126,6 +126,15 @@ namespace GW {
             };
             const uint32_t Packet<AddExternalBond>::STATIC_HEADER = GAME_SMSG_EFFECT_UPKEEP_APPLIED;
 
+            struct AddEffect : Packet<AddEffect> {
+                uint32_t agent_id;
+                uint32_t skill_id;
+                uint32_t attribute_level;
+                uint32_t effect_id;
+                uint32_t timestamp;
+            };
+            const uint32_t Packet<AddEffect>::STATIC_HEADER = GAME_SMSG_EFFECT_APPLIED;
+
             // Display Cape (?)
             struct DisplayCape : Packet<DisplayCape> {
                 uint32_t agent_id;

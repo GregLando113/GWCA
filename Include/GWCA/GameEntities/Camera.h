@@ -38,15 +38,15 @@ namespace GW {
         /* +h00C4 */ float field_of_view2;
         // ...
 
-        float GetYaw()          { return yaw; }
-        float GetPitch()        { return pitch; }
-        float GetFieldOfView()  { return field_of_view; }
+        float GetYaw()          const { return yaw; }
+        float GetPitch()        const { return pitch; }
+        float GetFieldOfView()  const { return field_of_view; }
 
         void SetYaw(float _yaw) {
             yaw_to_go = _yaw;
             yaw = _yaw;
         }
-        float GetCurrentYaw()
+        float GetCurrentYaw() const
         {
             const Vec3f dir = position - look_at_target;
             const float curtan = atan2(dir.y, dir.x);
@@ -65,9 +65,9 @@ namespace GW {
             pitch_to_go = _pitch;
         }
 
-        float GetCameraZoom()     { return distance; }
-        Vec3f GetLookAtTarget()   { return look_at_target; }
-        Vec3f GetCameraPosition() { return position; }
+        float GetCameraZoom()     const { return distance; }
+        Vec3f GetLookAtTarget()   const { return look_at_target; }
+        Vec3f GetCameraPosition() const { return position; }
 
         void SetCameraPos(Vec3f newPos) {
             this->position.x = newPos.x;

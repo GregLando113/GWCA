@@ -71,7 +71,7 @@ namespace GW {
         GWCA_API NPC *GetNPCByID(uint32_t npc_id);
 
         // Change targeted agent to (Agent)
-        GWCA_API void ChangeTarget(Agent *agent);
+        GWCA_API void ChangeTarget(const Agent *agent);
         GWCA_API void ChangeTarget(AgentID agent_id);
 
         // Move to specified coordinates.
@@ -80,17 +80,17 @@ namespace GW {
         GWCA_API void Move(GamePos pos);
 
         // Go to an NPC and begin interaction.
-        GWCA_API void GoNPC(Agent *agent, uint32_t call_target = 0);
+        GWCA_API void GoNPC(const Agent *agent, uint32_t call_target = 0);
 
         // Walk to a player.
-        GWCA_API void GoPlayer(Agent *agent);
+        GWCA_API void GoPlayer(const Agent *agent);
 
         // Go to a chest/signpost (yellow nametag) specified by (Agent).
         // Also sets agent as your open chest target.
-        GWCA_API void GoSignpost(Agent *agent, uint32_t call_target = 0);
+        GWCA_API void GoSignpost(const Agent *agent, uint32_t call_target = 0);
 
         // Call target of specified agent without interacting with the agent.
-        GWCA_API void CallTarget(Agent *agent);
+        GWCA_API void CallTarget(const Agent *agent);
 
         // Uses size of player array. Needs testing.
         GWCA_API uint32_t GetAmountOfPlayersInInstance();
@@ -104,10 +104,10 @@ namespace GW {
         GWCA_API AgentID GetHeroAgentID(uint32_t hero_index);
 
         // Might be bugged, avoid to use.
-        GWCA_API std::wstring GetAgentName(Agent *agent);
-        GWCA_API wchar_t* GetAgentEncName(Agent* agent);
+        GWCA_API std::wstring GetAgentName(const Agent *agent);
+        GWCA_API wchar_t* GetAgentEncName(const Agent* agent);
 
-        GWCA_API void AsyncGetAgentName(Agent *agent, std::wstring& name);
+        GWCA_API void AsyncGetAgentName(const Agent *agent, std::wstring& name);
 
         typedef HookCallback<uint32_t> DialogCallback;
         GWCA_API void RegisterDialogCallback(

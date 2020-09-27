@@ -30,12 +30,12 @@ namespace GW {
         /* +h022C */ uint32_t current_map_id;
         /* +h0230 */ uint8_t h0230[8];
         /* +h0238 */ Array<ObserverMatch *> observer_matchs;
-        /* +h0248 */ uint8_t h0248[0x45];
-        /* +h028D */ uint32_t player_number;
-        /* +h0291 */ uint8_t h0291[0xA7];
+        /* +h0248 */ uint8_t h0248[0x48];
+        /* +h0290 */ uint32_t player_number;
+        /* +h0294 */ uint8_t h0294[0xA4];
         /* +h0338 */ uint32_t *progress_bar;
         /* +h033C */ uint8_t h033C[0x6C];
         /* +h03A8 */ wchar_t player_email[0x40];
     };
-    static_assert(sizeof(CharContext) == 0x42C, "struct CharContext has incorect size");
+    static_assert(sizeof(CharContext) == 0x428, "struct CharContext has incorrect size");
 }

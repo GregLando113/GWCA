@@ -349,7 +349,7 @@ namespace {
 
         {
             uintptr_t address = Scanner::Find(
-                "\xFF\xD0\xC7\x05\x00\x00\x00\x00\x01", "xxxx????x", +4);
+                "\x08\xFF\xD0\xC7\x05\x00\x00\x00\x00\x01", "xxxxx????x", +5);
             GWCA_INFO("[SCAN] IsTyping_Addr = %p\n", (void *)address);
             if (Verify(address))
                 IsTyping_Addr = *(uintptr_t *)address;

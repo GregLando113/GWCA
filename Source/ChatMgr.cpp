@@ -658,44 +658,48 @@ namespace GW {
         uint32_t channel2;
     };
 
-    void Chat::WriteChat(Channel channel, const wchar_t *msg) {
+    void Chat::WriteChat(Channel channel, const wchar_t *msg, const wchar_t *sender) {
 
         size_t len = wcslen(msg);
         wchar_t *buffer = new wchar_t[len + 4];
-
-        UIChatMessage param;
-        param.channel = channel;
-        param.channel2 = channel;
-        param.message = buffer;
-
-        buffer[0] = 0x108;
-        buffer[1] = 0x107;
+        size_t written = 0;
+        buffer[written++] = 0x108;
+        buffer[written++] = 0x107;
         for (size_t i = 0; i < len; i++)
-            buffer[i + 2] = msg[i];
-
-        buffer[len + 2] = 1;
-        buffer[len + 3] = 0;
-
-        UI::SendUIMessage(UI::kWriteToChatLog, &param);
+            buffer[written++] = msg[i];
+        buffer[written++] = 1;
+        buffer[written++] = 0;
+        WriteChatEnc(channel, buffer, sender);
         delete[] buffer;
     }
-    void Chat::WriteChatEnc(Channel channel, const wchar_t* msg) {
-
-        size_t len = wcslen(msg);
-        wchar_t* buffer = new wchar_t[len + 1];
+    void Chat::WriteChatEnc(Channel channel, const wchar_t* msg, const wchar_t* sender) {
 
         UIChatMessage param;
         param.channel = channel;
         param.channel2 = channel;
-        param.message = buffer;
-
-        for (size_t i = 0; i < len; i++)
-            buffer[i] = msg[i];
-
-        buffer[len] = 0;
-
+        param.message = (wchar_t*)msg;
+        if (sender) {
+            size_t msg_len = wcslen(msg);
+            size_t sender_len = wcslen(sender);
+            size_t written = 0;
+            param.message = new wchar_t[msg_len + sender_len + 9];
+            param.message[written++] = 0x76b;
+            param.message[written++] = 0x10a;
+            param.message[written++] = 0x108;
+            param.message[written++] = 0x107;
+            for (size_t i = 0; i < sender_len; i++)
+                param.message[written++] = sender[i];
+            param.message[written++] = 0x1;
+            param.message[written++] = 0x1;
+            param.message[written++] = 0x10b;
+            for (size_t i = 0; i < msg_len; i++)
+                param.message[written++] = msg[i];
+            param.message[written++] = 0x1;
+            param.message[written++] = 0;
+        }
         UI::SendUIMessage(UI::kWriteToChatLog, &param);
-        delete[] buffer;
+        if (sender) 
+            delete[] param.message;
     }
 
     void Chat::WriteChat(Channel channel, const char *msg) {

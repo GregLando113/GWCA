@@ -85,7 +85,7 @@ namespace {
             "\x0C\x05\x6F\xFF\xFF\xFF", "xxxxxx", -0x9);
         GWCA_INFO("[SCAN] MovementChangeFunction = %p\n", MovementChange_Func);
         if (MovementChange_Func)
-            IsAutoRunningPtr = *reinterpret_cast<uintptr_t*>((uintptr_t)MovementChange_Func + 0x4C);
+            IsAutoRunningPtr = *reinterpret_cast<uintptr_t*>((uintptr_t)MovementChange_Func + 0x40);
         GWCA_INFO("[SCAN] IsAutoRunningPtr = %p\n", IsAutoRunningPtr);
 
         ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(

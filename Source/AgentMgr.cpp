@@ -66,7 +66,7 @@ namespace {
     typedef void(*ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
     ChangeTarget_pt ChangeTarget_Func;
 
-    typedef void(*MovementChange_pt)(uint32_t type);
+    typedef void(*MovementChange_pt)(uint32_t type, void* unk1, void* type_ptr);
     MovementChange_pt MovementChange_Func;
 
     typedef void(*Move_pt)(GamePos *pos);
@@ -195,7 +195,9 @@ namespace GW {
     void Agents::Move(GamePos pos) {
         if (Verify(MovementChange_Func) && IsAutoRunning()) {
             // Kill autorun, queue movement for next frame.
-            MovementChange_Func(0xB7);
+            uint32_t movement_type = 0xB7; // Autorun
+            uint32_t unk1 = 0;
+            MovementChange_Func(movement_type, &unk1,&movement_type);
             GameThread::Enqueue([pos]() {
                 Move_Func((GamePos*)&pos);
                 });

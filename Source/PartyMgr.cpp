@@ -25,49 +25,65 @@
 namespace {
     using namespace GW;
 
-#if 0
-    typedef uint32_t (__stdcall *Tick_pt)(uint32_t unk1);
-    Tick_pt RetTick;
-    Tick_pt Tick_Func;
+    typedef void(__cdecl* UpdatePartyWindow_pt)(void* unk0, void* unk1, void* unk2, void* unk3, void* unk4);
+    UpdatePartyWindow_pt RetUpdatePartyWindow;
+    UpdatePartyWindow_pt UpdatePartyWindow_Func;
 
     bool tick_work_as_toggle = false;
 
-    // Parameter is always 1 or 2 creating "Ready" or "Not ready"
-    uint32_t __stdcall OnTick(uint32_t unk1) {
+    void __cdecl OnUpdatePartyWindow(void* unk0, void* unk1, void* unk2, void* unk3, void* unk4) {
         HookBase::EnterHook();
-        // this func is always called twice so use this hack to tick only once
-        static bool toggle = true;
-        toggle = !toggle;
-
-        uint32_t retval = 4;
         if (!tick_work_as_toggle) {
-            retval = RetTick(unk1);
-        } else if (!toggle) {
-            PartyMgr::Tick(!PartyMgr::GetIsPlayerTicked());
+            RetUpdatePartyWindow(unk0, unk1, unk2, unk3, unk4);
+            HookBase::LeaveHook();
+            return;
         }
+        uint32_t action = (uint32_t)unk4;
+        bool blocked = action < 0x100; // Don't block pointers
+        switch (action) {
+        case 0x0:
+        case 0x1:   // Updating icon
+        case 0x8:   // Updating icon
+        case 0xA:   // Show ready state icon (map load)
+        case 0x13:  // Adding heroes
+        case 0x14:  // Mouse move
+        case 0x15:  // Mouse move
+        case 0x23:  // Hover tooltip
+        case 0x29:  // Hover tooltip
+        case 0x33:  // Show ready state icon (map load)
+        case 0x30:  // Show ready state icon (map load)
+        case 0x34:  // Adding heroes
+        case 0x2a:  // Ready state icon hover
+            blocked = false;
+            break;
+        case 0x22:  // Ready state icon clicked
+            PartyMgr::Tick(!PartyMgr::GetIsPlayerTicked());
+            blocked = true;
+            break;
+        case 0x2c:  // Show ready state dropdown
+            blocked = true;
+        }
+        if (!blocked)
+            RetUpdatePartyWindow(unk0, unk1, unk2, unk3, unk4);
         HookBase::LeaveHook();
-        return retval;
     }
-#endif
 
     void Init() {
-    #if 0
-        // @Replace:
-        // This actually doesn't work, but the pattern is the right place
-        Tick_pt Tick_Func = (Tick_pt)Scanner::Find(
-            "\x83\xC4\x04\xE9\x00\x00\x00\x00\x68\x8D\x01\x01", "xxxx????xxx", +8);
-        GWCA_INFO("[SCAN] addr_tick = %p\n", Tick_Func);
+        // This function runs every time an update is made to the party window
+        UpdatePartyWindow_Func = (UpdatePartyWindow_pt)Scanner::Find(
+            "\x4D\x08\x83\xEC\x10\x8B\x41\x04\x56\x83\xF8\x04", "xxxxxxxxxxxx", -0x4);
+        GWCA_INFO("[SCAN] PartyWindowUpdate_Func = %p\n", UpdatePartyWindow_Func);
+        if (UpdatePartyWindow_Func) {
+            HookBase::CreateHook(UpdatePartyWindow_Func, OnUpdatePartyWindow, (void**)&RetUpdatePartyWindow);
+        }
 
-        if (Verify(Tick_Func))
-            HookBase::CreateHook(Tick_Func, OnTick, (void **)&RetTick);
-    #endif
+
     }
 
     void Exit() {
-    #if 0
-        if (Tick_Func)
-            HookBase::RemoveHook(Tick_Func);
-    #endif
+        if (UpdatePartyWindow_Func)
+            HookBase::RemoveHook(UpdatePartyWindow_Func);
+
     }
 }
 

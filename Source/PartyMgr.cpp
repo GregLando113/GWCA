@@ -253,10 +253,8 @@ namespace GW {
         FlagAll(GamePos(HUGE_VALF, HUGE_VALF, 0)); 
     }
 
-#if 0
     void PartyMgr::SetTickToggle(bool enable) {
         tick_work_as_toggle = enable;
     }
-#endif
 
 } // namespace GW

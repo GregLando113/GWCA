@@ -96,6 +96,11 @@ namespace {
             HookBase::CreateHook(UseSkill_Func, OnUseSkill, (void**)&RetUseSkill);
     }
 
+    static void Exit() {
+        if(UseSkill_Func)
+            HookBase::RemoveHook(UseSkill_Func);
+    }
+
 
 }
 namespace GW {
@@ -104,7 +109,7 @@ namespace GW {
         "SkillbarModule",   // name
         NULL,               // param
         ::Init,             // init_module
-        NULL,               // exit_module
+        ::Exit,               // exit_module
         NULL,               // enable_hooks
         NULL,               // disable_hooks
     };

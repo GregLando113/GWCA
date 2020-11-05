@@ -21,19 +21,37 @@ namespace {
     using namespace GW;
 
     typedef void (__cdecl *SendUIMessage_pt)(uint32_t msgid, void *wParam, void *lParam);
-    SendUIMessage_pt SendUIMessage_Func;
-    SendUIMessage_pt RetSendUIMessage;
+    SendUIMessage_pt SendUIMessage_Func = 0;
+    SendUIMessage_pt RetSendUIMessage = 0;
 
     typedef void(__cdecl* SetTickboxPref_pt)(uint32_t preference_index, uint32_t value, uint32_t unk0);
-    SetTickboxPref_pt SetTickboxPref_Func;
-    SetTickboxPref_pt RetSetTickboxPref;
+    SetTickboxPref_pt SetTickboxPref_Func = 0;
+    SetTickboxPref_pt RetSetTickboxPref = 0;
+
+    typedef void(__fastcall* DoAction_pt)(void* ecx, void* edx, uint32_t msgid, void* arg1, void* arg2);
+    DoAction_pt DoAction_Func = 0;
+    DoAction_pt RetDoAction = 0;
+
+    struct KeypressPacket {
+        uint32_t key = 0;
+        uint32_t unk1 = 0;
+        uint32_t unk2 = 0;
+    };
+    GW::Array<uintptr_t>* s_FrameCache = nullptr;
+    static uintptr_t GetActionContext()
+    {
+        if (!(s_FrameCache && s_FrameCache->size() > 1))
+            return 0;
+        return (*s_FrameCache)[1] + 0xA0;
+    }
 
     typedef void (__cdecl *LoadSettings_pt)(uint32_t size, uint8_t *data);
-    LoadSettings_pt LoadSettings_Func;
+    LoadSettings_pt LoadSettings_Func = 0;
 
     bool open_links = false;
     HookEntry open_template_hook;
 
+    uintptr_t CommandAction_Addr = 0;
     uintptr_t GameSettings_Addr;
     uintptr_t ui_drawn_addr;
     uintptr_t shift_screen_addr;
@@ -75,6 +93,31 @@ namespace {
         RetSetTickboxPref(preference_index, value, unk0);
         HookBase::LeaveHook();
     }
+    std::unordered_map<HookEntry*, UI::KeyCallback> OnKeydown_callbacks;
+    std::unordered_map<HookEntry*, UI::KeyCallback> OnKeyup_callbacks;
+    static void __fastcall OnDoAction(void* ecx, void* edx, uint32_t action_type, void* arg1, void* arg2) {
+        HookBase::EnterHook();
+        switch (action_type) {
+        case 0x1E: // Keydown
+        case 0x20: // Keyup
+        {
+            GW::HookStatus status;
+            uint32_t key_pressed = *(uint32_t*)arg1;
+            auto* callbacks = action_type == 0x1e ? &OnKeydown_callbacks : &OnKeyup_callbacks;
+            for (auto& it : *callbacks) {
+                it.second(&status, key_pressed);
+                ++status.altitude;
+            }
+            if (!status.blocked)
+                RetDoAction(ecx, edx, action_type, arg1, arg2);
+        }
+            break;
+        default:
+            RetDoAction(ecx, edx, action_type, arg1, arg2);
+            break;
+        }
+        HookBase::LeaveHook();
+    }
 
     struct AsyncBuffer {
         void *buffer;
@@ -114,6 +157,17 @@ namespace {
     }
 
     void Init() {
+        uintptr_t FrameCache_addr = Scanner::Find("\x68\x00\x10\x00\x00\x8B\x1C\x98\x8D", "xxxxxxxxx", -4);
+        if (Verify(FrameCache_addr))
+            s_FrameCache = *(GW::Array<uintptr_t>**)FrameCache_addr;
+        GWCA_INFO("[SCAN] FrameCache_addr = %p\n", FrameCache_addr);
+
+        DoAction_Func = (DoAction_pt)Scanner::Find("\x8B\x75\x08\x57\x8B\xF9\x83\xFE\x09\x75", "xxxxxxxxxx", -0x4);
+        GWCA_INFO("[SCAN] DoAction = %p\n", DoAction_Func);
+
+        if (Verify(DoAction_Func))
+            HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
+
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\x5D\xC3\x89\x45\x08\x5D\xE9", "x????xxxxxxx", -0x1A);
         GWCA_INFO("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
@@ -177,6 +231,10 @@ namespace {
     void Exit()
     {
         UI::RemoveUIMessageCallback(&open_template_hook);
+        if(SetTickboxPref_Func) 
+            HookBase::RemoveHook(SetTickboxPref_Func);
+        if (DoAction_Func) 
+            HookBase::RemoveHook(DoAction_Func);
     }
 }
 
@@ -202,7 +260,27 @@ namespace GW {
         if (Verify(SendUIMessage_Func))
             SendUIMessage_Func(message, (void *)wParam, (void *)lParam);
     }
-
+    bool UI::Keydown(ControlAction key) {
+        uintptr_t ecx = GetActionContext();
+        if (!(ecx && DoAction_Func))
+            return false;
+        KeypressPacket action;
+        action.key = key;
+        OnDoAction((void*)ecx, 0, 0x1E, &action, 0);
+        return true;
+    }
+    bool UI::Keyup(ControlAction key) {
+        uintptr_t ecx = GetActionContext();
+        if (!(ecx && DoAction_Func))
+            return false;
+        KeypressPacket action;
+        action.key = key;
+        OnDoAction((void*)ecx, 0, 0x20, &action, 0);
+        return true;
+    }
+    bool UI::Keypress(ControlAction key) {
+        return Keydown(key) && Keyup(key);
+    }
     void UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
     {
         struct P037 {                   // Used to send pings and drawings in the minimap. Related to StoC::P133
@@ -322,6 +400,24 @@ namespace GW {
     void UI::SetPreference(Preference pref, uint32_t value)
     {
         preferences_array[pref] = value;
+    }
+
+    void UI::RegisterKeyupCallback(HookEntry* entry, KeyCallback callback) {
+        OnKeyup_callbacks.insert({ entry, callback });
+    }
+    void UI::RemoveKeyupCallback(HookEntry* entry) {
+        auto it = OnKeyup_callbacks.find(entry);
+        if (it != OnKeyup_callbacks.end())
+            OnKeyup_callbacks.erase(it);
+    }
+
+    void UI::RegisterKeydownCallback(HookEntry* entry, KeyCallback callback) {
+        OnKeydown_callbacks.insert({ entry, callback });
+    }
+    void UI::RemoveKeydownCallback(HookEntry* entry) {
+        auto it = OnKeydown_callbacks.find(entry);
+        if (it != OnKeydown_callbacks.end())
+            OnKeydown_callbacks.erase(it);
     }
 
     void UI::RegisterUIMessageCallback(

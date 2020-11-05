@@ -56,6 +56,29 @@ namespace GW {
             CheckboxPreference_Count = 0x5D
         };
 
+        enum ControlAction : uint32_t {
+            ControlAction_None = 0,
+            ControlAction_StrafeLeft = 0x91,
+            ControlAction_StrafeRight = 0x92,
+            ControlAction_TurnLeft = 0xA2,
+            ControlAction_TurnRight = 0xA3,
+            ControlAction_MoveBackward = 0xAC,
+            ControlAction_MoveForward = 0xAD,
+            ControlAction_ReverseDirection = 0xB1,
+            ControlAction_Autorun = 0xB7,
+            ControlAction_CloseAllPanels = 0x85,
+            ControlAction_ReverseCamera = 0x90,
+
+            ControlAction_CommandParty = 0xD6,
+            ControlAction_CommandHero1 = 0xD7,
+            ControlAction_CommandHero2 = 0xD8,
+            ControlAction_CommandHero3 = 0xD9,
+            ControlAction_CommandHero4 = 0x102,
+            ControlAction_CommandHero5 = 0x103,
+            ControlAction_CommandHero6 = 0x104,
+            ControlAction_CommandHero7 = 0x105
+            
+        };
 
         struct CompassPoint {
             CompassPoint() : x(0), y(0) {}
@@ -67,6 +90,10 @@ namespace GW {
         // SendMessage for Guild Wars UI messages, most UI interactions will use this.
         GWCA_API void SendUIMessage(unsigned message, unsigned int wParam = 0, int lParam = 0);
         GWCA_API void SendUIMessage(unsigned message, void* wParam = nullptr, void* lParam = nullptr);
+
+        GWCA_API bool Keydown(ControlAction key);
+        GWCA_API bool Keyup(ControlAction key);
+        GWCA_API bool Keypress(ControlAction key);
 
         GWCA_API void DrawOnCompass(unsigned sessionid, unsigned ptcount, CompassPoint pts[8]);
 
@@ -91,6 +118,18 @@ namespace GW {
 
         GWCA_API uint32_t GetCheckboxPreference(CheckboxPreference pref);
         GWCA_API void SetCheckboxPreference(CheckboxPreference pref, uint32_t value);
+
+        typedef HookCallback<uint32_t> KeyCallback;
+        GWCA_API void RegisterKeydownCallback(
+            HookEntry* entry,
+            KeyCallback callback);
+        GWCA_API void RemoveKeydownCallback(
+            HookEntry* entry);
+        GWCA_API void RegisterKeyupCallback(
+            HookEntry* entry,
+            KeyCallback callback);
+        GWCA_API void RemoveKeyupCallback(
+            HookEntry* entry);
 
         typedef HookCallback<uint32_t, void *, void *> UIMessageCallback;
         GWCA_API void RegisterUIMessageCallback(

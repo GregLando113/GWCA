@@ -7,7 +7,9 @@ namespace GW {
 
     struct Player { // total: 0x4C/76
         /* +h0000 */ uint32_t agent_id;
-        /* +h0004 */ uint32_t h0004[5];
+        /* +h0004 */ uint32_t h0004[3];
+        /* +h0010 */ uint32_t appearance_bitmap;
+        /* +h0014 */ uint32_t h0014;
         /* +h0018 */ uint32_t primary;
         /* +h001C */ uint32_t secondary;
         /* +h0020 */ uint32_t h0020;

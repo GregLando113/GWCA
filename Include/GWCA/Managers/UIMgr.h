@@ -19,11 +19,19 @@ namespace GW {
             wchar_t        *name;
         };
 
+        struct ChangeTargetUIMsg {
+            uint32_t        manual_target_id;
+            uint32_t        unk1;
+            uint32_t        auto_target_id;
+            uint32_t        unk2;
+            // ...
+        };
+
         enum UIMessage : uint32_t {
             kShowAgentNameTag       = 0x10000000 | 0x19,
             kHideAgentNameTag       = 0x10000000 | 0x1A,
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B,
-            kAutoTargetAgent        = 0x10000000 | 0x20,
+            kChangeTarget           = 0x10000000 | 0x20,
             kShowXunlaiChest        = 0x10000000 | 0x40,
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
@@ -58,6 +66,8 @@ namespace GW {
 
         enum ControlAction : uint32_t {
             ControlAction_None = 0,
+            ControlAction_CloseAllPanels = 0x85,
+            ControlAction_ReverseCamera = 0x90,
             ControlAction_StrafeLeft = 0x91,
             ControlAction_StrafeRight = 0x92,
             ControlAction_TurnLeft = 0xA2,
@@ -66,8 +76,8 @@ namespace GW {
             ControlAction_MoveForward = 0xAD,
             ControlAction_ReverseDirection = 0xB1,
             ControlAction_Autorun = 0xB7,
-            ControlAction_CloseAllPanels = 0x85,
-            ControlAction_ReverseCamera = 0x90,
+            ControlAction_TargetNearestItem = 0xC3,
+            
 
             ControlAction_CommandParty = 0xD6,
             ControlAction_CommandHero1 = 0xD7,

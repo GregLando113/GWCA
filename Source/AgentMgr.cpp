@@ -174,8 +174,10 @@ namespace GW {
     }
 
     void Agents::ChangeTarget(AgentID agent_id) {
+        if (!Verify(ChangeTarget_Func))
+            return;
         AgentArray agents = GetAgentArray();
-        if (Verify(ChangeTarget_Func) && agents.valid() && agents[agent_id] != nullptr)
+        if (agent_id == 0 || (agents.valid() && agents[agent_id] != nullptr))
             ChangeTarget_Func(agent_id, 0);
     }
 

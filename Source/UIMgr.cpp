@@ -235,6 +235,8 @@ namespace {
             HookBase::RemoveHook(SetTickboxPref_Func);
         if (DoAction_Func) 
             HookBase::RemoveHook(DoAction_Func);
+        if(SendUIMessage_Func)
+            HookBase::RemoveHook(SendUIMessage_Func);
     }
 }
 

@@ -48,4 +48,24 @@ namespace GW {
         /* +h007C */ TLink<PartyInfo> invite_link;
     };
     static_assert(sizeof(PartyInfo) == 132, "struct PartyInfo has incorect size");
+
+    enum PartySearchType {
+        PartySearchType_Hunting  = 0,
+        PartySearchType_Mission  = 1,
+        PartySearchType_Quest    = 2,
+        PartySearchType_Trade    = 3,
+        PartySearchType_Guild    = 4,
+    };
+
+    struct PartySearch {
+        /* +h0000 */ uint32_t party_search_id;
+        /* +h0004 */ uint32_t party_search_type;
+        /* +h0008 */ uint32_t hardmode;
+        /* +h000C */ uint32_t district;
+        /* +h0010 */ uint32_t h0010;
+        /* +h0014 */ uint32_t party_size;
+        /* +h0018 */ uint32_t hero_count;
+        /* +h001C */ wchar_t message[32];
+        /* +h005C */ wchar_t party_leader[20];
+    };
 }

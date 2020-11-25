@@ -374,10 +374,8 @@ namespace {
     }
 
     void Exit() {
-    #if 0
         if(StartWhisper_Func)
             HookBase::RemoveHook(StartWhisper_Func);
-    #endif
         if (ChatEvent_Func)
             HookBase::RemoveHook(ChatEvent_Func);
         if (GetSenderColor_Func)

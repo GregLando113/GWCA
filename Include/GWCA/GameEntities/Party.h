@@ -62,10 +62,14 @@ namespace GW {
         /* +h0004 */ uint32_t party_search_type;
         /* +h0008 */ uint32_t hardmode;
         /* +h000C */ uint32_t district;
-        /* +h0010 */ uint32_t h0010;
+        /* +h0010 */ uint32_t language;
         /* +h0014 */ uint32_t party_size;
         /* +h0018 */ uint32_t hero_count;
         /* +h001C */ wchar_t message[32];
         /* +h005C */ wchar_t party_leader[20];
+        /* +h0084 */ uint32_t primary;
+        /* +h0088 */ uint32_t secondary;
+        /* +h008C */ uint32_t level;
+        /* +h0090 */ uint32_t timestamp;
     };
 }

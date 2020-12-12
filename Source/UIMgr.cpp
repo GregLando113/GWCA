@@ -24,6 +24,9 @@ namespace {
     SendUIMessage_pt SendUIMessage_Func = 0;
     SendUIMessage_pt RetSendUIMessage = 0;
 
+    typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
+    SetWindowVisible_pt SetWindowVisible_Func = 0;
+
     typedef void(__cdecl* SetTickboxPref_pt)(uint32_t preference_index, uint32_t value, uint32_t unk0);
     SetTickboxPref_pt SetTickboxPref_Func = 0;
     SetTickboxPref_pt RetSetTickboxPref = 0;
@@ -34,7 +37,7 @@ namespace {
 
     struct KeypressPacket {
         uint32_t key = 0;
-        uint32_t unk1 = 0;
+        uint32_t unk1 = 0x4000;
         uint32_t unk2 = 0;
     };
     GW::Array<uintptr_t>* s_FrameCache = nullptr;
@@ -58,6 +61,7 @@ namespace {
     uintptr_t AsyncDecodeStringPtr;
     uint32_t *preferences_array;
     uint32_t* preferences_array2;
+    UI::WindowPosition* window_positions_array = 0;
 
     static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
     {
@@ -219,6 +223,17 @@ namespace {
             HookBase::CreateHook(SetTickboxPref_Func, OnSetTickboxPreference, (void**)&RetSetTickboxPref);
         }
 
+        SetWindowVisible_Func = (SetWindowVisible_pt)Scanner::Find("\x8B\x75\x08\x83\xFE\x66\x7C\x19\x68", "xxxxxxxxx", -0x7);
+        GWCA_INFO("[SCAN] SetWindowVisible_Func = %08X\n", SetWindowVisible_Func);
+        if (SetWindowVisible_Func) {
+            uintptr_t address = (uintptr_t)SetWindowVisible_Func + 0x49;
+            if (Verify(address)) {
+                address = *(uintptr_t*)address;
+                window_positions_array = reinterpret_cast<UI::WindowPosition*>(address);
+            }
+        }
+        GWCA_INFO("[SCAN] window_positions_array = %p\n", (void*)window_positions_array);
+
         AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
         GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %08X\n", AsyncDecodeStringPtr);
 
@@ -280,8 +295,26 @@ namespace GW {
         OnDoAction((void*)ecx, 0, 0x20, &action, 0);
         return true;
     }
+
+    bool UI::SetWindowVisible(UI::WindowID window_id,bool is_visible) {
+        if (!SetWindowVisible_Func || window_id >= UI::WindowID::WindowID_Count)
+            return false;
+        SetWindowVisible_Func(window_id, is_visible ? 1 : 0, 0, 0);
+        return true;
+    }
+    UI::WindowPosition* UI::GetWindowPosition(UI::WindowID window_id) {
+        if (!window_positions_array || window_id >= UI::WindowID::WindowID_Count)
+            return nullptr;
+        return &window_positions_array[window_id];
+    }
+
     bool UI::Keypress(ControlAction key) {
-        return Keydown(key) && Keyup(key);
+        if (!Keydown(key))
+            return false;
+        GW::GameThread::Enqueue([key]() {
+            Keyup(key);
+            });
+        return true;
     }
     void UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
     {

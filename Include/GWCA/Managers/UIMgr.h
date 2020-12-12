@@ -26,6 +26,16 @@ namespace GW {
             uint32_t        unk2;
             // ...
         };
+        struct WindowPosition {
+            const uint32_t state; // & 0x1 == visible
+            const float start_x;
+            const float start_y;
+            const float end_x;
+            const float end_y;
+            inline const bool visible() { return (state & 0x1) != 0; }
+            inline const float width() { return end_x - start_x; }
+            inline const float height() { return end_y - start_y; }
+        };
 
         enum UIMessage : uint32_t {
             kShowAgentNameTag       = 0x10000000 | 0x19,
@@ -46,6 +56,49 @@ namespace GW {
             Preference_InterfaceSize = 6,
 
             Preference_Count = 8
+        };
+        // Used with GetWindowPosition
+        enum WindowID : uint32_t {
+            WindowID_Dialogue1 = 0x0,
+            WindowID_Dialogue2 = 0x1,
+            WindowID_MissionGoals = 0x2,
+            WindowID_Chat = 0x4,
+            WindowID_InGameClock = 0x6,
+            WindowID_Compass = 0x7,
+            WindowID_DamageMonitor = 0x8,
+            WindowID_PerformanceMonitor = 0xB,
+            WindowID_EffectsMonitor = 0xC,
+            WindowID_Hints = 0xD,
+            WindowID_Notifications = 0x11,
+            WindowID_Skillbar = 0x14,
+            WindowID_SkillMonitor = 0x15,
+            WindowID_UpkeepMonitor = 0x17,
+            WindowID_SkillWarmup = 0x18,
+            WindowID_EnergyBar = 0x1C,
+            WindowID_ExperienceBar = 0x1D,
+            WindowID_HealthBar = 0x1E,
+            WindowID_TargetDisplay = 0x1F,
+            WindowID_MissionProgress = 0xE,
+            WindowID_TradeButton = 0x21,
+            WindowID_WeaponBar = 0x22,
+            WindowID_Hero1 = 0x33,
+            WindowID_Hero2 = 0x34,
+            WindowID_Hero3 = 0x35,
+            WindowID_Hero = 0x36,
+            WindowID_SkillsAndAttributes = 0x38,
+            WindowID_Friends = 0x3A,
+            WindowID_Guild = 0x3B,
+            WindowID_Help = 0x3D,
+            WindowID_Inventory = 0x3E,
+            WindowID_InventoryBags = 0x40,
+            WindowID_MissionMap = 0x42,
+            WindowID_PartyWindow = 0x48, // NB: state flag is ignored for party window, but position is still good
+            WindowID_QuestLog = 0x4F,
+            WindowID_Hero4 = 0x5E,
+            WindowID_Hero5 = 0x5F,
+            WindowID_Hero6 = 0x60,
+            WindowID_Hero7 = 0x61,
+            WindowID_Count = 0x66
         };
         enum CheckboxPreference : uint32_t {
             CheckboxPreference_ChannelAlliance = 0x4,
@@ -104,6 +157,10 @@ namespace GW {
         GWCA_API bool Keydown(ControlAction key);
         GWCA_API bool Keyup(ControlAction key);
         GWCA_API bool Keypress(ControlAction key);
+
+        GWCA_API UI::WindowPosition* GetWindowPosition(UI::WindowID window_id);
+        GWCA_API bool SetWindowVisible(UI::WindowID window_id, bool is_visible);
+        
 
         GWCA_API void DrawOnCompass(unsigned sessionid, unsigned ptcount, CompassPoint pts[8]);
 

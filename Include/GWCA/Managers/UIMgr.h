@@ -3,6 +3,7 @@
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 namespace GW {
 
@@ -26,15 +27,22 @@ namespace GW {
             uint32_t        unk2;
             // ...
         };
+        // Note: some windows are affected by UI scale (e.g. party members), others are not (e.g. compass)
         struct WindowPosition {
             const uint32_t state; // & 0x1 == visible
-            const float start_x;
-            const float start_y;
-            const float end_x;
-            const float end_y;
+            Vec2f p1;
+            Vec2f p2;
             inline const bool visible() { return (state & 0x1) != 0; }
-            inline const float width() { return end_x - start_x; }
-            inline const float height() { return end_y - start_y; }
+            // Returns vector of from X coord, to X coord.
+            Vec2f UI::WindowPosition::xAxis();
+            // Returns vector of from Y coord, to Y coord.
+            Vec2f UI::WindowPosition::yAxis();
+            float left();
+            float right();
+            float top();
+            float bottom();
+            inline const float width() { return right() - left(); }
+            inline const float height() { return bottom() - top(); }
         };
 
         enum UIMessage : uint32_t {
@@ -62,6 +70,7 @@ namespace GW {
             WindowID_Dialogue1 = 0x0,
             WindowID_Dialogue2 = 0x1,
             WindowID_MissionGoals = 0x2,
+            WindowID_DropBundle = 0x3,
             WindowID_Chat = 0x4,
             WindowID_InGameClock = 0x6,
             WindowID_Compass = 0x7,
@@ -69,11 +78,13 @@ namespace GW {
             WindowID_PerformanceMonitor = 0xB,
             WindowID_EffectsMonitor = 0xC,
             WindowID_Hints = 0xD,
+            WindowID_MissionStatusAndScoreDisplay = 0xF,
             WindowID_Notifications = 0x11,
             WindowID_Skillbar = 0x14,
             WindowID_SkillMonitor = 0x15,
             WindowID_UpkeepMonitor = 0x17,
             WindowID_SkillWarmup = 0x18,
+            WindowID_Menu = 0x1A,
             WindowID_EnergyBar = 0x1C,
             WindowID_ExperienceBar = 0x1D,
             WindowID_HealthBar = 0x1E,
@@ -92,7 +103,10 @@ namespace GW {
             WindowID_Inventory = 0x3E,
             WindowID_InventoryBags = 0x40,
             WindowID_MissionMap = 0x42,
+            WindowID_Observe = 0x44,
+            WindowID_Options = 0x45,
             WindowID_PartyWindow = 0x48, // NB: state flag is ignored for party window, but position is still good
+            WindowID_PartySearch = 0x49,
             WindowID_QuestLog = 0x4F,
             WindowID_Hero4 = 0x5E,
             WindowID_Hero5 = 0x5F,
@@ -160,7 +174,7 @@ namespace GW {
 
         GWCA_API UI::WindowPosition* GetWindowPosition(UI::WindowID window_id);
         GWCA_API bool SetWindowVisible(UI::WindowID window_id, bool is_visible);
-        
+        GWCA_API bool SetWindowPosition(UI::WindowID window_id, UI::WindowPosition* info);
 
         GWCA_API void DrawOnCompass(unsigned sessionid, unsigned ptcount, CompassPoint pts[8]);
 

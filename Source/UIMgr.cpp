@@ -16,6 +16,7 @@
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
+#include <GWCA/Managers/RenderMgr.h>
 
 namespace {
     using namespace GW;
@@ -26,6 +27,9 @@ namespace {
 
     typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
     SetWindowVisible_pt SetWindowVisible_Func = 0;
+
+    typedef void(__cdecl* SetWindowPosition_pt)(uint32_t window_id, UI::WindowPosition* info, void* wParam, void* lParam);
+    SetWindowPosition_pt SetWindowPosition_Func = 0;
 
     typedef void(__cdecl* SetTickboxPref_pt)(uint32_t preference_index, uint32_t value, uint32_t unk0);
     SetTickboxPref_pt SetTickboxPref_Func = 0;
@@ -223,15 +227,21 @@ namespace {
             HookBase::CreateHook(SetTickboxPref_Func, OnSetTickboxPreference, (void**)&RetSetTickboxPref);
         }
 
+        // NB: 0x66 is the size of the window info array
+       
+        
         SetWindowVisible_Func = (SetWindowVisible_pt)Scanner::Find("\x8B\x75\x08\x83\xFE\x66\x7C\x19\x68", "xxxxxxxxx", -0x7);
         GWCA_INFO("[SCAN] SetWindowVisible_Func = %08X\n", SetWindowVisible_Func);
+
         if (SetWindowVisible_Func) {
+            SetWindowPosition_Func = reinterpret_cast<SetWindowPosition_pt>((uintptr_t)SetWindowVisible_Func - 0xE0);
             uintptr_t address = (uintptr_t)SetWindowVisible_Func + 0x49;
             if (Verify(address)) {
                 address = *(uintptr_t*)address;
                 window_positions_array = reinterpret_cast<UI::WindowPosition*>(address);
             }
         }
+        GWCA_INFO("[SCAN] SetWindowPosition_Func = %08X\n", SetWindowPosition_Func);
         GWCA_INFO("[SCAN] window_positions_array = %p\n", (void*)window_positions_array);
 
         AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
@@ -265,7 +275,63 @@ namespace GW {
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
+    Vec2f UI::WindowPosition::yAxis() {
+        float h = Render::GetViewportHeight();
+        Vec2f y;
+        float correct;
+        switch (state ^ 0x1) {
+        case 0x10:
+        case 0x18:
+        case 0x30:
+            y = { h - p1.y, h - p2.y };
+            break;
+        case 0x8:
+        case 0x20:
+        case 0x0:
+            correct = (h / 2.f);
+            y = { correct - p1.y, correct + p2.y };
+            break;
+        default:
+            y = { p1.y, p2.y };
+            break;
+        }
+        return y;
+    }
+    Vec2f UI::WindowPosition::xAxis() {
+        float w = Render::GetViewportWidth();
+        Vec2f x;
+        float correct;
+        switch (state ^ 0x1) {
+        case 0x10:
+        case 0x18:
+        case 0x30:
+            x = { w - p1.x, w - p2.x };
+            break;
+        case 0x8:
+        case 0x20:
+        case 0x0:
+            correct = (w / 2.f);
+            x = { correct - p1.x, correct + p2.x };
+            break;
+        default:
+            x = { p1.x, p2.x };
+            break;
+        }
 
+        return x;
+    }
+    float UI::WindowPosition::top() {
+        return yAxis().x;
+    }
+    float UI::WindowPosition::left() {
+        return xAxis().x;
+    }
+    float UI::WindowPosition::bottom() {
+        return yAxis().y;
+    }
+    float UI::WindowPosition::right() {
+        return xAxis().y;
+    }
     void UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)
     {
         if (Verify(SendUIMessage_Func))
@@ -300,6 +366,12 @@ namespace GW {
         if (!SetWindowVisible_Func || window_id >= UI::WindowID::WindowID_Count)
             return false;
         SetWindowVisible_Func(window_id, is_visible ? 1 : 0, 0, 0);
+        return true;
+    }
+    bool UI::SetWindowPosition(UI::WindowID window_id, UI::WindowPosition* info) {
+        if (!SetWindowPosition_Func || window_id >= UI::WindowID::WindowID_Count)
+            return false;
+        SetWindowPosition_Func(window_id, info, 0, 0);
         return true;
     }
     UI::WindowPosition* UI::GetWindowPosition(UI::WindowID window_id) {

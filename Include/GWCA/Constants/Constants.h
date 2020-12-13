@@ -184,8 +184,8 @@ namespace GW {
         namespace HealthbarHeight {
             constexpr size_t Small = 24;
             constexpr size_t Normal = 22;
-            constexpr size_t Large = 28;
-            constexpr size_t Larger = 31;
+            constexpr size_t Large = 26;
+            constexpr size_t Larger = 30;
         }
 
         // travel, region, districts

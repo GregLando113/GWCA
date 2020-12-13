@@ -29,7 +29,7 @@ namespace GW {
         };
         // Note: some windows are affected by UI scale (e.g. party members), others are not (e.g. compass)
         struct WindowPosition {
-            const uint32_t state; // & 0x1 == visible
+            uint32_t state; // & 0x1 == visible
             Vec2f p1;
             Vec2f p2;
             inline const bool visible() { return (state & 0x1) != 0; }

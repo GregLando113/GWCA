@@ -275,29 +275,29 @@ namespace GW {
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
-    Vec2f UI::WindowPosition::yAxis() {
+    Vec2f UI::WindowPosition::yAxis(float multiplier) {
         float h = Render::GetViewportHeight();
         Vec2f y;
         float correct;
         switch (state ^ 0x1) {
-        case 0x10:
-        case 0x18:
-        case 0x30:
-            y = { h - p1.y, h - p2.y };
-            break;
-        case 0x8:
         case 0x20:
+        case 0x24:
+        case 0x30:
+            y = { h - p1.y * multiplier, h - p2.y * multiplier };
+            break;
+        case 0x4:
+        case 0x10:
         case 0x0:
             correct = (h / 2.f);
-            y = { correct - p1.y, correct + p2.y };
+            y = { correct - p1.y * multiplier, correct + p2.y * multiplier };
             break;
         default:
-            y = { p1.y, p2.y };
+            y = { p1.y * multiplier, p2.y * multiplier };
             break;
         }
         return y;
     }
-    Vec2f UI::WindowPosition::xAxis() {
+    Vec2f UI::WindowPosition::xAxis(float multiplier) {
         float w = Render::GetViewportWidth();
         Vec2f x;
         float correct;
@@ -305,32 +305,32 @@ namespace GW {
         case 0x10:
         case 0x18:
         case 0x30:
-            x = { w - p1.x, w - p2.x };
+            x = { w - p1.x * multiplier, w - p2.x * multiplier };
             break;
         case 0x8:
         case 0x20:
         case 0x0:
             correct = (w / 2.f);
-            x = { correct - p1.x, correct + p2.x };
+            x = { correct - p1.x * multiplier, correct + p2.x * multiplier };
             break;
         default:
-            x = { p1.x, p2.x };
+            x = { p1.x * multiplier, p2.x * multiplier };
             break;
         }
 
         return x;
     }
-    float UI::WindowPosition::top() {
-        return yAxis().x;
+    float UI::WindowPosition::top(float multiplier) {
+        return yAxis(multiplier).x;
     }
-    float UI::WindowPosition::left() {
-        return xAxis().x;
+    float UI::WindowPosition::left(float multiplier) {
+        return xAxis(multiplier).x;
     }
-    float UI::WindowPosition::bottom() {
-        return yAxis().y;
+    float UI::WindowPosition::bottom(float multiplier) {
+        return yAxis(multiplier).y;
     }
-    float UI::WindowPosition::right() {
-        return xAxis().y;
+    float UI::WindowPosition::right(float multiplier) {
+        return xAxis(multiplier).y;
     }
     void UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)
     {

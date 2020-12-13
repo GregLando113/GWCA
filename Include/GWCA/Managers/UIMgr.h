@@ -34,13 +34,13 @@ namespace GW {
             Vec2f p2;
             inline const bool visible() { return (state & 0x1) != 0; }
             // Returns vector of from X coord, to X coord.
-            Vec2f UI::WindowPosition::xAxis();
+            Vec2f UI::WindowPosition::xAxis(float multiplier = 1.f);
             // Returns vector of from Y coord, to Y coord.
-            Vec2f UI::WindowPosition::yAxis();
-            float left();
-            float right();
-            float top();
-            float bottom();
+            Vec2f UI::WindowPosition::yAxis(float multiplier = 1.f);
+            float left(float multiplier = 1.f);
+            float right(float multiplier = 1.f);
+            float top(float multiplier = 1.f);
+            float bottom(float multiplier = 1.f);
             inline const float width() { return right() - left(); }
             inline const float height() { return bottom() - top(); }
         };

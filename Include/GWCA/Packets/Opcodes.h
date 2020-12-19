@@ -84,6 +84,7 @@
 #define GAME_CMSG_PARTY_ENTER_CHALLENGE             (0x00A4) // 164
 #define GAME_CMSG_PARTY_RETURN_TO_OUTPOST           (0x00A6) // 166
 #define GAME_CMSG_PARTY_KICK_NPC                    (0x00A7) // 167
+#define GAME_CMSG_PARTY_KICK_PLAYER                 (0x00A8) // 168
 #define GAME_CMSG_PARTY_SEARCH_SEEK                 (0x00A9) // 169
 #define GAME_CMSG_PARTY_SEARCH_CANCEL               (0x00AA) // 170
 #define GAME_CMSG_PARTY_SEARCH_REQUEST_JOIN         (0x00AB) // 171

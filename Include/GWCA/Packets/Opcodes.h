@@ -93,7 +93,6 @@
 #define GAME_CMSG_PARTY_ENTER_GUILD_HALL            (0x00AF) // 175
 #define GAME_CMSG_PARTY_TRAVEL                      (0x00B0) // 176
 #define GAME_CMSG_PARTY_LEAVE_GUILD_HALL            (0x00B1) // 177
-#define GAME_CMSG_ITEM_SALVAGE_SESSION_SUCCESS      (0x0161) // 353
 
 #define GAME_SMSG_TRADE_REQUEST                     (0x0000) // 0
 #define GAME_SMSG_TRADE_TERMINATE                   (0x0001) // 1

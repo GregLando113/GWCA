@@ -340,12 +340,12 @@ namespace GW {
 
     void UI::SendUIMessage(unsigned message, void *wParam, void *lParam)
     {
-        if (Verify(SendUIMessage_Func))
-            SendUIMessage_Func(message, (void *)wParam, (void *)lParam);
+        if (Verify(RetSendUIMessage))
+            OnSendUIMessage(message, (void *)wParam, (void *)lParam);
     }
     bool UI::Keydown(ControlAction key) {
         uintptr_t ecx = GetActionContext();
-        if (!(ecx && DoAction_Func))
+        if (!(ecx && RetDoAction))
             return false;
         KeypressPacket action;
         action.key = key;
@@ -354,7 +354,7 @@ namespace GW {
     }
     bool UI::Keyup(ControlAction key) {
         uintptr_t ecx = GetActionContext();
-        if (!(ecx && DoAction_Func))
+        if (!(ecx && RetDoAction))
             return false;
         KeypressPacket action;
         action.key = key;
@@ -496,7 +496,7 @@ namespace GW {
         if ((value != 1 && value != 0) || preferences_array2[pref] == value)
             return; // Invalid checkbox value
         if(Verify(SetTickboxPref_Func))
-            RetSetTickboxPref(pref, value, 0);
+            OnSetTickboxPreference(pref, value, 0);
     }
 
     uint32_t UI::GetPreference(Preference pref)

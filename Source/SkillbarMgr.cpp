@@ -369,12 +369,15 @@ namespace GW {
     }
 
     Skillbar *SkillbarMgr::GetPlayerSkillbar() {
-        SkillbarArray sb = SkillbarMgr::GetSkillbarArray();
-        if (sb.valid()) {
-            return &sb[0];
-        } else {
-            return NULL;
+        SkillbarArray sba = SkillbarMgr::GetSkillbarArray();
+        if (!sba.valid())
+            return nullptr;
+        uint32_t player_id = GW::Agents::GetPlayerId();
+        for (auto& sb : sba) {
+            if (sb.agent_id == player_id)
+                return &sb;
         }
+        return nullptr;
     }
     void SkillbarMgr::RegisterUseSkillCallback(
         HookEntry* entry,

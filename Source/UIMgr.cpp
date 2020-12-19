@@ -275,7 +275,7 @@ namespace GW {
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
-    Vec2f UI::WindowPosition::yAxis(float multiplier) {
+    Vec2f UI::WindowPosition::yAxis(float multiplier) const {
         float h = Render::GetViewportHeight();
         Vec2f y;
         float correct;
@@ -297,7 +297,7 @@ namespace GW {
         }
         return y;
     }
-    Vec2f UI::WindowPosition::xAxis(float multiplier) {
+    Vec2f UI::WindowPosition::xAxis(float multiplier) const {
         float w = Render::GetViewportWidth();
         Vec2f x;
         float correct;
@@ -320,16 +320,16 @@ namespace GW {
 
         return x;
     }
-    float UI::WindowPosition::top(float multiplier) {
+    float UI::WindowPosition::top(float multiplier) const {
         return yAxis(multiplier).x;
     }
-    float UI::WindowPosition::left(float multiplier) {
+    float UI::WindowPosition::left(float multiplier) const {
         return xAxis(multiplier).x;
     }
-    float UI::WindowPosition::bottom(float multiplier) {
+    float UI::WindowPosition::bottom(float multiplier) const {
         return yAxis(multiplier).y;
     }
-    float UI::WindowPosition::right(float multiplier) {
+    float UI::WindowPosition::right(float multiplier) const {
         return xAxis(multiplier).y;
     }
     void UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)

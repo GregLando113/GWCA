@@ -32,17 +32,17 @@ namespace GW {
             uint32_t state; // & 0x1 == visible
             Vec2f p1;
             Vec2f p2;
-            inline const bool visible() { return (state & 0x1) != 0; }
+            bool visible() const { return (state & 0x1) != 0; }
             // Returns vector of from X coord, to X coord.
-            Vec2f UI::WindowPosition::xAxis(float multiplier = 1.f);
+            Vec2f xAxis(float multiplier = 1.f) const;
             // Returns vector of from Y coord, to Y coord.
-            Vec2f UI::WindowPosition::yAxis(float multiplier = 1.f);
-            float left(float multiplier = 1.f);
-            float right(float multiplier = 1.f);
-            float top(float multiplier = 1.f);
-            float bottom(float multiplier = 1.f);
-            inline const float width() { return right() - left(); }
-            inline const float height() { return bottom() - top(); }
+            Vec2f yAxis(float multiplier = 1.f) const;
+            float left(float multiplier = 1.f) const;
+            float right(float multiplier = 1.f) const;
+            float top(float multiplier = 1.f) const;
+            float bottom(float multiplier = 1.f) const;
+            float width() const { return right() - left(); }
+            float height() const { return bottom() - top(); }
         };
 
         enum UIMessage : uint32_t {

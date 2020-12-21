@@ -1,6 +1,6 @@
 include_guard()
 
-set(MINHOOK_FOLDER "${CMAKE_CURRENT_LIST_DIR}/Dependencies/minhook/")
+set(MINHOOK_FOLDER "${GWCA_FOLDER}/Dependencies/minhook/")
 
 add_library(minhook)
 

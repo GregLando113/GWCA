@@ -1,10 +1,6 @@
 include_guard()
 
-set(GWCA_FOLDER "${CMAKE_CURRENT_LIST_DIR}/../")
-
 add_library(gwca)
-
-message(INFO "${GWCA_FOLDER}")
 
 file(GLOB SOURCES
     "${GWCA_FOLDER}/source/stdafx.h"

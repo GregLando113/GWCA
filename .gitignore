@@ -35,3 +35,4 @@ dox/
 *.sublime-project*
 *.sublime-workspace*
 *.vcxproj.user
+build/

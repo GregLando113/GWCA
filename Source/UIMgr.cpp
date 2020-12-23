@@ -276,7 +276,7 @@ namespace GW {
         NULL,           // disable_hooks
     };
     Vec2f UI::WindowPosition::yAxis(float multiplier) const {
-        float h = Render::GetViewportHeight();
+        const float h = static_cast<float>(Render::GetViewportHeight());
         Vec2f y;
         float correct;
         switch (state ^ 0x1) {
@@ -298,7 +298,7 @@ namespace GW {
         return y;
     }
     Vec2f UI::WindowPosition::xAxis(float multiplier) const {
-        float w = Render::GetViewportWidth();
+        const float w = static_cast<float>(Render::GetViewportWidth());
         Vec2f x;
         float correct;
         switch (state ^ 0x1) {
@@ -365,7 +365,7 @@ namespace GW {
     bool UI::SetWindowVisible(UI::WindowID window_id,bool is_visible) {
         if (!SetWindowVisible_Func || window_id >= UI::WindowID::WindowID_Count)
             return false;
-        SetWindowVisible_Func(window_id, is_visible ? 1 : 0, 0, 0);
+        SetWindowVisible_Func(window_id, is_visible ? 1u : 0u, 0, 0);
         return true;
     }
     bool UI::SetWindowPosition(UI::WindowID window_id, UI::WindowPosition* info) {

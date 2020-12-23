@@ -44,6 +44,7 @@
 #define GAME_CMSG_USE_SKILL                         (0x0045) // 69
 #define GAME_CMSG_TRADE_INITIATE                    (0x0048) // 72
 #define GAME_CMSG_BUY_MATERIALS                     (0x0049) // 73
+#define GAME_CMSG_CANCEL_QUOTE                      (0x004A) // 74
 #define GAME_CMSG_REQUEST_QUOTE                     (0x004B) // 75
 #define GAME_CMSG_TRANSACT_ITEMS                    (0x004C) // 76
 #define GAME_CMSG_UNEQUIP_ITEM                      (0x004E) // 78
@@ -185,6 +186,7 @@
 #define GAME_SMSG_MISSION_OBJECTIVE_UPDATE_STRING   (0x00BE) // 190
 #define GAME_SMSG_WINDOW_MERCHANT                   (0x00C4) // 196
 #define GAME_SMSG_WINDOW_OWNER                      (0x00C5) // 197
+#define GAME_SMSG_TRANSACTION_REJECT                (0x00C7) // 199
 #define GAME_SMSG_TRANSACTION_DONE                  (0x00CD) // 205
 #define GAME_SMSG_SKILLBAR_UPDATE_SKILL             (0x00DA) // 218
 #define GAME_SMSG_SKILLBAR_UPDATE                   (0x00DB) // 219

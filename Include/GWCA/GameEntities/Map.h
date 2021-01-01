@@ -109,8 +109,10 @@ namespace GW {
         /* +h0074 */ uint32_t name_id;
         /* +h0078 */ uint32_t description_id;
 
-        inline bool GetHasEnterButton() const { return (flags & 0x1000000) == 0; }
-        inline bool GetIsOnWorldMap()   const { return (flags & 0x0000020) == 0; }
+        inline bool GetHasEnterButton() const { return (flags & 0x100) != 0 || (flags & 0x40000) != 0; }
+        inline bool GetIsOnWorldMap()   const { return (flags & 0x20) == 0; }
+        inline bool GetIsPvP()          const { return (flags & 0x1) != 0; }
+        inline bool GetIsGuildHall()    const { return (flags & 0x800000) != 0; }
     };
     static_assert(sizeof(AreaInfo) == 124, "struct AreaInfo has incorect size");
 }

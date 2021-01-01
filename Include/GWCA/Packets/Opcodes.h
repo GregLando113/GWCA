@@ -205,6 +205,7 @@
 #define GAME_SMSG_PLAYER_ATTR_MAX_BALTHAZAR         (0x00ED) // 237
 #define GAME_SMSG_PLAYER_ATTR_MAX_IMPERIAL          (0x00EE) // 238
 #define GAME_SMSG_PLAYER_ATTR_UPDATE                (0x00EF) // 239
+#define GAME_SMSG_AGENT_INITIAL_EFFECTS             (0x00F1) // 241
 #define GAME_SMSG_AGENT_UPDATE_EFFECTS              (0x00F2) // 242
 #define GAME_SMSG_INSTANCE_LOADED                   (0x00F3) // 243
 #define GAME_SMSG_TITLE_RANK_DATA                   (0x00F4) // 244

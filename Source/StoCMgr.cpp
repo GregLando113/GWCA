@@ -47,24 +47,37 @@ namespace {
     StoCHandlerArray game_server_handlers;
     StoCHandler *original_functions = nullptr;
 
-    std::vector<std::unordered_map<HookEntry *, StoC::PacketCallback>> packets_callbacks;
-	std::vector<std::unordered_map<HookEntry*, StoC::PacketCallback>> post_packets_callbacks;
+    // Callbacks are triggered by weighting
+    struct CallbackEntry {
+        int altitude;
+        HookEntry* entry;
+        GW::StoC::PacketCallback callback;
+    };
+    std::vector<std::vector<CallbackEntry>> packet_entries;
 
     bool __cdecl StoCHandler_Func(Packet::StoC::PacketBase *pak) {
         GW::HookBase::EnterHook();
         HookStatus status;
-
-        for (auto& it : packets_callbacks[pak->header]) {
-            it.second(&status, pak);
+        auto& it = packet_entries[pak->header].begin();
+        // Pre callbacks
+        while (it != packet_entries[pak->header].end()) {
+            if (it->altitude > 0)
+                break;
+            it->callback(&status, pak);
             ++status.altitude;
+            it++;
         }
 
         if (!status.blocked)
             original_functions[pak->header].handler_func(pak);
 
-		for (auto& it : post_packets_callbacks[pak->header]) {
-			it.second(&status, pak);
-		}
+        // Post callbacks
+        while (it != packet_entries[pak->header].end()) {
+            it->callback(&status, pak);
+            ++status.altitude;
+            it++;
+        }
+
         GW::HookBase::LeaveHook();
         return true;
     }
@@ -87,8 +100,7 @@ namespace {
         }
 
         original_functions = new StoCHandler[game_server_handlers.size()];
-        packets_callbacks.resize(game_server_handlers.size());
-		post_packets_callbacks.resize(game_server_handlers.size());
+        packet_entries.resize(game_server_handlers.size());
     }
 
     void EnableHooks() {
@@ -102,6 +114,8 @@ namespace {
             game_server_handlers[i].handler_func = original_functions[i].handler_func;
         delete[] original_functions;
     }
+
+
 }
 
 namespace GW {
@@ -118,36 +132,40 @@ namespace GW {
     void StoC::RegisterPacketCallback(
         HookEntry *entry,
         uint32_t header,
-        PacketCallback callback)
+        PacketCallback callback,
+        int altitude)
     {
-        packets_callbacks[header].insert({entry, callback});
+        RemoveCallback(header, entry);
+        auto& it = packet_entries[header].begin();
+        while (it != packet_entries[header].end()) {
+            if (it->altitude > altitude)
+                break;
+            it++;
+        }
+        packet_entries[header].insert(it, { altitude,entry,callback });
         game_server_handlers[header].handler_func = StoCHandler_Func;
     }
 
-	void StoC::RegisterPostPacketCallback(
-		HookEntry* entry,
-		uint32_t header,
-		PacketCallback callback)
-	{
-		post_packets_callbacks[header].insert({ entry, callback });
-		game_server_handlers[header].handler_func = StoCHandler_Func;
-	}
-
-    void StoC::RemoveCallback(uint32_t header, HookEntry *entry) {
-        auto& callbacks = packets_callbacks[header];
-        auto it = callbacks.find(entry);
-        if (it != callbacks.end())
-            callbacks.erase(it);
+    GWCA_API void StoC::RegisterPostPacketCallback(HookEntry* entry, uint32_t header, PacketCallback callback)
+    {
+        return RegisterPacketCallback(entry, header, callback, 0x8000);
     }
 
-	void StoC::RemovePostCallback(uint32_t header, HookEntry* entry) {
-		auto& callbacks = post_packets_callbacks[header];
-		auto it = callbacks.find(entry);
-		if (it != callbacks.end())
-			callbacks.erase(it);
-	}
+    void StoC::RemoveCallback(uint32_t header, HookEntry *entry) {
+        auto& it = packet_entries[header].begin();
+        while (it != packet_entries[header].end()) {
+            if (it->entry == entry) {
+                packet_entries[header].erase(it);
+                break;
+            }
+            it++;
+        }
+    }
 
-	
+    GWCA_API void StoC::RemovePostCallback(uint32_t header, HookEntry* entry)
+    {
+        RemoveCallback(header, entry);
+    }
 
     void StoC::EmulatePacket(Packet::StoC::PacketBase *packet) {
         if (!Verify(original_functions))

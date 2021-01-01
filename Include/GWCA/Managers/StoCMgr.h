@@ -27,23 +27,28 @@ namespace GW {
         GWCA_API void RegisterPacketCallback(
             HookEntry *entry,
             uint32_t header,
-            PacketCallback callback);
-		GWCA_API void RegisterPostPacketCallback(
-			HookEntry* entry,
-			uint32_t header,
+            PacketCallback callback,
+            int altitude = 0);
+
+        // @Deprecated: use RegisterPacketCallback with a positive altitude instead.
+        GWCA_API void RegisterPostPacketCallback(
+            HookEntry* entry,
+            uint32_t header,
             PacketCallback callback);
         
         /* Use this to add handlers to the stocmgr, primary function. */
         template <typename T>
-        void RegisterPacketCallback(HookEntry *entry, HookCallback<T *> handler) {
+        void RegisterPacketCallback(HookEntry *entry, HookCallback<T *> handler, int altitude = 0) {
             uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
             return RegisterPacketCallback(entry, header,
                 [handler](HookStatus *status, Packet::StoC::PacketBase *pak) -> void {
                 return handler(status, static_cast<T *>(pak));
-            });
+            }, altitude);
         }
 
-		template <typename T>
+		
+        // @Deprecated: use RegisterPacketCallback with a positive altitude instead.
+        template <typename T>
 		void RegisterPostPacketCallback(HookEntry* entry, HookCallback<T*> handler) {
 			uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
 			return RegisterPostPacketCallback(entry, header,
@@ -54,19 +59,20 @@ namespace GW {
         
         GWCA_API void RemoveCallback(uint32_t header, HookEntry *entry);
 
-		GWCA_API void RemovePostCallback(uint32_t header, HookEntry* entry);
-
         template <typename T>
         void RemoveCallback(HookEntry *entry) {
             uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
             RemoveCallback(header, entry);
         }
 
-		template <typename T>
-		void RemovePostCallback(HookEntry* entry) {
-			uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
-			RemovePostCallback(header, entry);
-		}
+        // @Deprecated: use RegisterPacketCallback with a positive altitude instead.
+        GWCA_API void RemovePostCallback(uint32_t header, HookEntry* entry);
+
+        template <typename T>
+        void RemovePostCallback(HookEntry* entry) {
+            uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
+            RemovePostCallback(header, entry);
+        }
 
         GWCA_API void EmulatePacket(Packet::StoC::PacketBase *packet);
 

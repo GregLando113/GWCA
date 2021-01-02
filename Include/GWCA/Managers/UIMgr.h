@@ -184,6 +184,7 @@ namespace GW {
 
         GWCA_API bool GetIsUIDrawn();
         GWCA_API bool GetIsShiftScreenShot();
+        GWCA_API bool GetIsWorldMapShowing();
 
         GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, wchar_t *buffer, size_t size);
         GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, char    *buffer, size_t size);

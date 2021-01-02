@@ -62,6 +62,7 @@ namespace {
     uintptr_t GameSettings_Addr;
     uintptr_t ui_drawn_addr;
     uintptr_t shift_screen_addr;
+    uintptr_t WorldMapState_Addr;
     uintptr_t AsyncDecodeStringPtr;
     uint32_t *preferences_array;
     uint32_t* preferences_array2;
@@ -165,10 +166,17 @@ namespace {
     }
 
     void Init() {
+        uintptr_t address;
+
         uintptr_t FrameCache_addr = Scanner::Find("\x68\x00\x10\x00\x00\x8B\x1C\x98\x8D", "xxxxxxxxx", -4);
         if (Verify(FrameCache_addr))
             s_FrameCache = *(GW::Array<uintptr_t>**)FrameCache_addr;
         GWCA_INFO("[SCAN] FrameCache_addr = %p\n", FrameCache_addr);
+
+        address = Scanner::Find("\x81\x0D\xFF\xFF\xFF\xFF\x00\x00\x08\x00", "xx????xxxx", 2);
+        if (Verify(address))
+            WorldMapState_Addr = *(uintptr_t*)address;
+        GWCA_INFO("[SCAN] WorldMapState_Addr = %p\n", WorldMapState_Addr);
 
         DoAction_Func = (DoAction_pt)Scanner::Find("\x8B\x75\x08\x57\x8B\xF9\x83\xFE\x09\x75", "xxxxxxxxxx", -0x4);
         GWCA_INFO("[SCAN] DoAction = %p\n", DoAction_Func);
@@ -425,6 +433,13 @@ namespace GW {
             return (*ui_drawn == 0);
         else
             return true;
+    }
+    bool UI::GetIsWorldMapShowing() {
+        uint32_t* WorldMapState = (uint32_t*)WorldMapState_Addr;
+        if (Verify(WorldMapState))
+            return (*WorldMapState & 0x80000) != 0;
+        else
+            return false;
     }
 
     bool UI::GetIsShiftScreenShot() {

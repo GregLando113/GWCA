@@ -31,6 +31,9 @@ namespace {
     uintptr_t storage_pannel_addr;
     uintptr_t storage_open_addr;
 
+    uint32_t hovered_item_id = 0;
+    uint32_t item_tooltip_ptr = 0;
+
     enum ItemClickType : uint32_t {
         ItemClickType_Add           = 2, // (when you load / open chest)
         ItemClickType_Click         = 5,
@@ -47,9 +50,16 @@ namespace {
         uint32_t type;
     };
 
+    uintptr_t* CurrentTooltipPtr = 0;
+
     typedef void (__fastcall *ItemClick_pt)(uint32_t *bag_id, void *edx, ItemClickParam *param);
     ItemClick_pt RetItemClick;
     ItemClick_pt ItemClick_Func;
+
+    typedef void(__cdecl * ItemTooltip_pt)(uint32_t item_id, void* unk1, void* unk2, void* unk3, void* unk4, void* unk5, void* unk6, void* unk7, void* unk8, void* unk9, void* unk10);
+    ItemTooltip_pt RetItemTooltip;
+    ItemTooltip_pt ItemTooltip_Func;
+
 
     std::unordered_map<HookEntry *, Items::ItemClickCallback> ItemClick_callbacks;
     void __fastcall OnItemClick(uint32_t* bag_id, void *edx, ItemClickParam *param) {
@@ -73,6 +83,15 @@ namespace {
             RetItemClick(bag_id, edx, param);
         HookBase::LeaveHook();
     }
+    // @Cleanup: This function call has a silly number of arguments; is there some shorthand way of writing/implementing this?
+    void __cdecl OnItemTooltip(uint32_t item_id, void* unk1, void* unk2, void* unk3, void* unk4, void* unk5, void* unk6, void* unk7, void* unk8, void* unk9, void* unk10) {
+        HookBase::EnterHook();
+        hovered_item_id = item_id;
+        if (CurrentTooltipPtr)
+            item_tooltip_ptr = *CurrentTooltipPtr;
+        RetItemTooltip(item_id, unk1, unk2, unk3, unk4, unk5, unk6, unk7, unk8, unk9, unk10);
+        HookBase::LeaveHook();
+    }
 
     void Init() {
         {
@@ -91,6 +110,21 @@ namespace {
                 storage_open_addr = *(uintptr_t *)address;
         }
 
+        ItemTooltip_Func = (ItemTooltip_pt)Scanner::Find(
+            "\x8B\x40\x40\x89\x45\xFC", "xxxxxx", -0xF);
+        GWCA_INFO("[SCAN] ItemTooltip = %p\n", ItemTooltip_Func);
+
+        if (Verify(ItemTooltip_Func))
+            HookBase::CreateHook(ItemTooltip_Func, OnItemTooltip, (void**)&RetItemTooltip);
+
+        {
+            uintptr_t address = Scanner::Find("\x8B\x00\x83\xC8\x20\x6A\xFF", "xxxxxxx", -0x22);
+            if (Verify(address)) {
+                CurrentTooltipPtr = *(uintptr_t**)address;
+            }
+        }
+        GWCA_INFO("[SCAN] CurrentTooltipPtr = %p\n", CurrentTooltipPtr);
+
         ItemClick_Func = (ItemClick_pt)Scanner::Find(
             "\x8B\x48\x08\x83\xEA\x00\x0F\x84", "xxxxxxxx", -0x1C);
         GWCA_INFO("[SCAN] ItemClick = %p\n", ItemClick_Func);
@@ -102,6 +136,8 @@ namespace {
     void Exit() {
         if (ItemClick_Func)
             HookBase::RemoveHook(ItemClick_Func);
+        if (ItemTooltip_Func)
+            HookBase::RemoveHook(ItemTooltip_Func);
     }
 }
 
@@ -168,6 +204,14 @@ namespace GW {
     Item *Items::GetItemBySlot(Constants::Bag bag, uint32_t slot) {
         Bag *bag_ptr = GetBag(bag);
         return GetItemBySlot(bag_ptr, slot);
+    }
+
+    Item* Items::GetHoveredItem() {
+        if (!hovered_item_id || !CurrentTooltipPtr || item_tooltip_ptr != *CurrentTooltipPtr) {
+            hovered_item_id = 0;
+            return nullptr;
+        }
+        return GetItemById(hovered_item_id);
     }
 
     Item *Items::GetItemBySlot(uint32_t bag, uint32_t slot) {

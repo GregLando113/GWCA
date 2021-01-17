@@ -20,6 +20,7 @@ namespace GW {
 
         inline bool IsInventoryBag() const { return (bag_type == 1); }
         inline bool IsStorageBag()   const { return (bag_type == 4); }
+        inline bool IsMaterialStorage()   const { return (bag_type == 5); }
 
         static const size_t npos = (size_t)-1;
 

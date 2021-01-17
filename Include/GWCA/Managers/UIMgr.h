@@ -101,6 +101,7 @@ namespace GW {
             WindowID_Guild = 0x3B,
             WindowID_Help = 0x3D,
             WindowID_Inventory = 0x3E,
+            WindowID_VaultBox = 0x3F,
             WindowID_InventoryBags = 0x40,
             WindowID_MissionMap = 0x42,
             WindowID_Observe = 0x44,
@@ -127,6 +128,7 @@ namespace GW {
 
             CheckboxPreference_WaitForVSync = 0x54,
             CheckboxPreference_ShowChatTimestamps = 0x56,
+            CheckboxPreference_ShowCollapsedBags = 0x57,
             CheckboxPreference_LockCompassRotation = 0x5c,
             CheckboxPreference_Count = 0x5D
         };
@@ -156,6 +158,18 @@ namespace GW {
             ControlAction_CommandHero7 = 0x105
             
         };
+        struct FloatingWindow {
+            void* unk1; // Some kind of function call
+            wchar_t* name;
+            uint32_t unk2;
+            uint32_t unk3;
+            uint32_t save_preference; // 1 or 0; if 1, will save to UI layout preferences.
+            uint32_t unk4;
+            uint32_t unk5;
+            uint32_t unk6;
+            uint32_t window_id; // Maps to window array
+        };
+        static_assert(sizeof(FloatingWindow) == 0x24);
 
         struct CompassPoint {
             CompassPoint() : x(0), y(0) {}

@@ -7,6 +7,7 @@
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
+#include <GWCA/Utilities/MemoryPatcher.h>
 
 #include <GWCA/GameContainers/Array.h>
 
@@ -27,6 +28,10 @@ namespace {
 
     typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
     SetWindowVisible_pt SetWindowVisible_Func = 0;
+
+    typedef void(__cdecl* SetFloatingWindowVisible_pt)(uint32_t unk, uint32_t window_id, uint32_t visible, void* unk1, void* unk2, void* unk3);
+    SetFloatingWindowVisible_pt SetFloatingWindowVisible_Func = 0;
+    SetFloatingWindowVisible_pt RetSetFloatingWindowVisible = 0;
 
     typedef void(__cdecl* SetWindowPosition_pt)(uint32_t window_id, UI::WindowPosition* info, void* wParam, void* lParam);
     SetWindowPosition_pt SetWindowPosition_Func = 0;
@@ -64,9 +69,13 @@ namespace {
     uintptr_t shift_screen_addr;
     uintptr_t WorldMapState_Addr;
     uintptr_t AsyncDecodeStringPtr;
+
+    uintptr_t CurrentTooltipPtr = 0;
+
     uint32_t *preferences_array;
     uint32_t* preferences_array2;
     UI::WindowPosition* window_positions_array = 0;
+    UI::FloatingWindow* floating_windows_array = 0;
 
     static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
     {
@@ -96,7 +105,22 @@ namespace {
             RetSendUIMessage(msgid, wParam, lParam);
         HookBase::LeaveHook();
     }
-
+    // Add in visibility to the window array to allow GWCA to provide this into when querying
+    static void __cdecl OnToggleFloatingWindow(uint32_t unk, uint32_t floating_window_id, uint32_t visible, void* unk1, void* unk2, void* unk3) {
+        HookBase::EnterHook();
+        
+        UI::FloatingWindow& window = floating_windows_array[floating_window_id];
+        // Patch to trigger window visibility for floating windows that aren't normally logged.
+        // NB: Some floating windows don't have a mapping to s_window array, so we catch that by checking the index
+        if (!window.save_preference && window.window_id < UI::WindowID::WindowID_Count && window_positions_array) {
+            if (visible == 1)
+                window_positions_array[window.window_id].state |= 0x1;
+            else
+                window_positions_array[window.window_id].state ^= 0x1;
+        }
+        RetSetFloatingWindowVisible(unk, floating_window_id, visible, unk1, unk2, unk3);
+        HookBase::LeaveHook();
+    }
     static void __cdecl OnSetTickboxPreference(uint32_t preference_index, uint32_t value, uint32_t unk0) {
         HookBase::EnterHook();
         RetSetTickboxPref(preference_index, value, unk0);
@@ -235,9 +259,22 @@ namespace {
             HookBase::CreateHook(SetTickboxPref_Func, OnSetTickboxPreference, (void**)&RetSetTickboxPref);
         }
 
-        // NB: 0x66 is the size of the window info array
-       
         
+        // NB: 0x39 is the size of the floating window array
+        SetFloatingWindowVisible_Func = (SetFloatingWindowVisible_pt)Scanner::Find("\x8B\x75\x0C\x57\x83\xFE\x39", "xxxxxxx", -0x5);
+        GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %08X\n", SetFloatingWindowVisible_Func);
+        if (Verify(SetFloatingWindowVisible_Func)) {
+            HookBase::CreateHook(SetFloatingWindowVisible_Func, OnToggleFloatingWindow, (void**)&RetSetFloatingWindowVisible);
+            uintptr_t address = (uintptr_t)SetFloatingWindowVisible_Func + 0x41;
+            if (Verify(address)) {
+                address = *(uintptr_t*)address;
+                floating_windows_array = reinterpret_cast<UI::FloatingWindow*>(address - 0x10);
+            }
+            
+        }
+        GWCA_INFO("[SCAN] floating_windows_array = %08X\n", floating_windows_array);
+
+        // NB: 0x66 is the size of the window info array
         SetWindowVisible_Func = (SetWindowVisible_pt)Scanner::Find("\x8B\x75\x08\x83\xFE\x66\x7C\x19\x68", "xxxxxxxxx", -0x7);
         GWCA_INFO("[SCAN] SetWindowVisible_Func = %08X\n", SetWindowVisible_Func);
 

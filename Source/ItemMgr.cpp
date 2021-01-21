@@ -56,7 +56,7 @@ namespace {
     ItemClick_pt RetItemClick;
     ItemClick_pt ItemClick_Func;
 
-    typedef void(__cdecl * ItemTooltip_pt)(uint32_t item_id, void* unk1, void* unk2, void* unk3, void* unk4, void* unk5, void* unk6, void* unk7, void* unk8, void* unk9, void* unk10);
+    typedef void(__cdecl * ItemTooltip_pt)(uint32_t item_id, void* unk1, void* unk2, void* unk3, void* unk4, void* unk5);
     ItemTooltip_pt RetItemTooltip;
     ItemTooltip_pt ItemTooltip_Func;
 
@@ -83,13 +83,12 @@ namespace {
             RetItemClick(bag_id, edx, param);
         HookBase::LeaveHook();
     }
-    // @Cleanup: This function call has a silly number of arguments; is there some shorthand way of writing/implementing this?
-    void __cdecl OnItemTooltip(uint32_t item_id, void* unk1, void* unk2, void* unk3, void* unk4, void* unk5, void* unk6, void* unk7, void* unk8, void* unk9, void* unk10) {
+    void __cdecl OnItemTooltip(uint32_t item_id, void* unk1, void* unk2, void* unk3, void* unk4, void* unk5) {
         HookBase::EnterHook();
         hovered_item_id = item_id;
         if (CurrentTooltipPtr)
             item_tooltip_ptr = *CurrentTooltipPtr;
-        RetItemTooltip(item_id, unk1, unk2, unk3, unk4, unk5, unk6, unk7, unk8, unk9, unk10);
+        RetItemTooltip(item_id, unk1, unk2, unk3, unk4, unk5);
         HookBase::LeaveHook();
     }
 

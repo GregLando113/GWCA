@@ -264,7 +264,7 @@ namespace {
         SetFloatingWindowVisible_Func = (SetFloatingWindowVisible_pt)Scanner::Find("\x8B\x75\x0C\x57\x83\xFE\x39", "xxxxxxx", -0x5);
         GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %08X\n", SetFloatingWindowVisible_Func);
         if (Verify(SetFloatingWindowVisible_Func)) {
-            HookBase::CreateHook(SetFloatingWindowVisible_Func, OnToggleFloatingWindow, (void**)&RetSetFloatingWindowVisible);
+            //HookBase::CreateHook(SetFloatingWindowVisible_Func, OnToggleFloatingWindow, (void**)&RetSetFloatingWindowVisible);
             uintptr_t address = (uintptr_t)SetFloatingWindowVisible_Func + 0x41;
             if (Verify(address)) {
                 address = *(uintptr_t*)address;

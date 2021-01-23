@@ -87,6 +87,7 @@ namespace {
             GWCA_INFO("[SCAN] SkillArray = %p\n", (void*)address);
             if (Verify(address))
                 skill_array_addr = *(uintptr_t*)address;
+            // NB: Skill count is *(uint32_t*)(address - 0x20), but not much point in rewriting GetSkillConstantData to accommodate.         
         }
 
         UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
@@ -115,6 +116,7 @@ namespace GW {
     };
 
     Skill& SkillbarMgr::GetSkillConstantData(uint32_t skill_id) {
+        // @Cleanup: This should really return a pointer instead of a struct reference (skill_id could be invalid)
         Skill *skill_constants = (Skill *)skill_array_addr;
         return skill_constants[skill_id];
     }

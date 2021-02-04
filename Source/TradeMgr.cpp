@@ -20,9 +20,11 @@ namespace {
 
     struct TradeWindow {
         uint32_t unk1;
-        uint32_t unk2;
-        uint32_t unk3;
-        bool is_disabled;
+        uint32_t items_max;
+        uint32_t frame_id;
+        uint32_t state;
+        uint32_t items_count;
+        inline bool isDisabled() { return state != 0x0;  }
         // ...
     } *trade_window_context = nullptr;
 
@@ -111,7 +113,7 @@ namespace GW {
         CtoS::SendPacket(0x8, GAME_CMSG_TRADE_SEND_OFFER, gold);
     }
     void Trade::OfferItem(uint32_t item_id, uint32_t quantity) {
-        if (OfferTradeItem_Func && trade_window_context && !trade_window_context->is_disabled) {
+        if (OfferTradeItem_Func && trade_window_context && !trade_window_context->isDisabled()) {
             OnOfferTradeItem(trade_window_context, 0, item_id, quantity, 1);
         }
         //CtoS::SendPacket(0xC, GAME_CMSG_TRADE_ADD_ITEM, item_id, quantity);

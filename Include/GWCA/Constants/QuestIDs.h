@@ -81,10 +81,10 @@ namespace GW {
                 constexpr uint32_t Zen_Daijun = 961;
                 constexpr uint32_t Vizunah_Square = 0; //UNKNOWN
                 constexpr uint32_t Nahpui_Quarter = 963;
-                constexpr uint32_t Tahnnakai_Temple = 0; //UNKNOWN
+                constexpr uint32_t Tahnnakai_Temple = 0x3c4; //UNKNOWN
                 constexpr uint32_t Arborstone = 0; //UNKNOWN
                 constexpr uint32_t Boreas_Seabed = 966;
-                constexpr uint32_t Sunjiang_District = 0; //UNKNOWN
+                constexpr uint32_t Sunjiang_District = 967;
                 constexpr uint32_t The_Eternal_Grove = 968;
                 constexpr uint32_t Gyala_Hatchery = 970;
                 constexpr uint32_t Unwaking_Waters = 969;
@@ -128,6 +128,7 @@ namespace GW {
             }
 
             namespace ZaishenBounty {
+                constexpr uint32_t Urgoz = 1025;
                 constexpr uint32_t Ilsundur_Lord_of_Fire = 1026;
                 constexpr uint32_t Rragar_Maneater = 1049;
                 constexpr uint32_t Murakai_Lady_of_the_Night = 1050;
@@ -150,6 +151,12 @@ namespace GW {
                 constexpr uint32_t Duncan_the_Black = 1067;
                 constexpr uint32_t Fronis_Irontoe = 1068;
                 constexpr uint32_t Magmus = 1070;
+                constexpr uint32_t Lord_Khobay = 1086;
+            }
+
+            namespace ZaishenVanquish {
+                constexpr uint32_t Icedome = 1243;
+                constexpr uint32_t Verdant_Cascades = 1258;
             }
         }
     }

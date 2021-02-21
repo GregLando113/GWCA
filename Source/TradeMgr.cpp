@@ -51,7 +51,7 @@ namespace {
         }
         RetUpdateTradeWindow(eax, a1, a2);
     }
-    static void OnActionCallback(GW::HookStatus*, void* ecx, uint32_t action_type, void* lParam, void* wParam) {
+    static void OnActionCallback(GW::HookStatus*, void* ecx, uint32_t action_type, void*, void* wParam) {
         if (action_type == 0x4A && !wParam)
             trade_window_context = static_cast<TradeWindow*>(*(TradeWindow**)ecx + 0x4);
     }

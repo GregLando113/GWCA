@@ -58,7 +58,7 @@ namespace {
     bool __cdecl StoCHandler_Func(Packet::StoC::PacketBase *pak) {
         GW::HookBase::EnterHook();
         HookStatus status;
-        auto& it = packet_entries[pak->header].begin();
+        auto it = packet_entries[pak->header].begin();
         // Pre callbacks
         while (it != packet_entries[pak->header].end()) {
             if (it->altitude > 0)
@@ -136,7 +136,7 @@ namespace GW {
         int altitude)
     {
         RemoveCallback(header, entry);
-        auto& it = packet_entries[header].begin();
+        auto it = packet_entries[header].begin();
         while (it != packet_entries[header].end()) {
             if (it->altitude > altitude)
                 break;
@@ -152,7 +152,7 @@ namespace GW {
     }
 
     void StoC::RemoveCallback(uint32_t header, HookEntry *entry) {
-        auto& it = packet_entries[header].begin();
+        auto it = packet_entries[header].begin();
         while (it != packet_entries[header].end()) {
             if (it->entry == entry) {
                 packet_entries[header].erase(it);

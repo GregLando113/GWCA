@@ -217,28 +217,28 @@ namespace {
         GWCA_INFO("[SCAN] LoadSettings = %p\n", LoadSettings_Func);
 
         {
-            uintptr_t address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
+            address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
             GWCA_INFO("[SCAN] GameSettings = %p\n", (void *)address);
             if (Verify(address))
                 GameSettings_Addr = *(uintptr_t *)address;
         }
 
         {
-            uintptr_t address = Scanner::Find("\x83\xF8\x01\x75\x40\xD9\xEE\x8D\x45", "xxxxxxxxx", +0x6C);
+            address = Scanner::Find("\x83\xF8\x01\x75\x40\xD9\xEE\x8D\x45", "xxxxxxxxx", +0x6C);
             GWCA_INFO("[SCAN] ui_drawn_addr = %p\n", (void *)address);
             if (Verify(address))
                 ui_drawn_addr = *(uintptr_t *)address;
         }
 
         {
-            uintptr_t address = Scanner::Find(
+            address = Scanner::Find(
                 "\x75\x19\x6A\x00\xC7\x05\x00\x00\x00\x00\x01\x00", "xxxxxx????xx", +6);
             GWCA_INFO("[SCAN] shift_screen_addr = %p\n", (void *)address);
             shift_screen_addr = *(uintptr_t *)address;
         }
 
         {
-            uintptr_t address = GW::Scanner::Find("\x75\xF6\x33\xF6\x39\x34\x9D", "xxxxxxx", +7);
+            address = GW::Scanner::Find("\x75\xF6\x33\xF6\x39\x34\x9D", "xxxxxxx", +7);
             GWCA_INFO("[SCAN] preferences_array = %p\n", (void *)address);
             if (Verify(address)) {
                 address = *(uintptr_t *)address;
@@ -251,7 +251,7 @@ namespace {
         GWCA_INFO("[SCAN] SetTickboxPref = %p\n", SetTickboxPref_Func);
 
         if (Verify(SetTickboxPref_Func)) {
-            uintptr_t address = (uintptr_t)SetTickboxPref_Func + 0x77;
+            address = (uintptr_t)SetTickboxPref_Func + 0x77;
             GWCA_INFO("[SCAN] preferences_array2 = %p\n", (void*)address);
             address = *(uintptr_t*)address;
             preferences_array2 = reinterpret_cast<uint32_t*>(address);
@@ -265,7 +265,7 @@ namespace {
         GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %08X\n", SetFloatingWindowVisible_Func);
         if (Verify(SetFloatingWindowVisible_Func)) {
             //HookBase::CreateHook(SetFloatingWindowVisible_Func, OnToggleFloatingWindow, (void**)&RetSetFloatingWindowVisible);
-            uintptr_t address = (uintptr_t)SetFloatingWindowVisible_Func + 0x41;
+            address = (uintptr_t)SetFloatingWindowVisible_Func + 0x41;
             if (Verify(address)) {
                 address = *(uintptr_t*)address;
                 floating_windows_array = reinterpret_cast<UI::FloatingWindow*>(address - 0x10);
@@ -280,7 +280,7 @@ namespace {
 
         if (SetWindowVisible_Func) {
             SetWindowPosition_Func = reinterpret_cast<SetWindowPosition_pt>((uintptr_t)SetWindowVisible_Func - 0xE0);
-            uintptr_t address = (uintptr_t)SetWindowVisible_Func + 0x49;
+            address = (uintptr_t)SetWindowVisible_Func + 0x49;
             if (Verify(address)) {
                 address = *(uintptr_t*)address;
                 window_positions_array = reinterpret_cast<UI::WindowPosition*>(address);

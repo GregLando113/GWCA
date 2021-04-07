@@ -88,8 +88,10 @@ namespace {
             IsAutoRunningPtr = *reinterpret_cast<uintptr_t*>((uintptr_t)MovementChange_Func + 0x40) - 0x4;
         GWCA_INFO("[SCAN] IsAutoRunningPtr = %p\n", IsAutoRunningPtr);
 
+        //ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
+        //    "\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
         ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
-            "\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
+            "\x3B\xDF\x0F\x95", "xxxx", -0x0089);
         GWCA_INFO("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
 
         if (ChangeTarget_Func) {
@@ -97,7 +99,7 @@ namespace {
                 "\xFF\x50\x10\x47\x83\xC6\x04\x3B\xFB\x75\xE1","xxxxxxxxxxx", +0xD);
             AgentArrayPtr = *reinterpret_cast<uintptr_t*>(address);
 
-            TargetAgentIdPtr = *(uintptr_t*)((uintptr_t)ChangeTarget_Func + 0x91);
+            TargetAgentIdPtr = *(uintptr_t*)((uintptr_t)ChangeTarget_Func + 0x94);
             MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;
         }
 

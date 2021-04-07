@@ -652,7 +652,7 @@ namespace GW {
             struct ErrorMessage : Packet<ErrorMessage> {
                 uint32_t message_id;
             };
-            const uint32_t Packet<ErrorMessage>::STATIC_HEADER = GAME_SMSG_ERROR_MESSAGE;
+            const uint32_t Packet<ErrorMessage>::STATIC_HEADER = GAME_SMSG_INSTANCE_TRAVEL_TIMER;
 
             /* Party Invites */
             struct PartyHenchmanAdd : Packet<PartyHenchmanAdd> {

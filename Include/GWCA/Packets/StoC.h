@@ -18,23 +18,45 @@ namespace GW {
             struct PacketBase {
                 uint32_t header;
             };
-            // Used for GenericModifier etc.
+            // Used for:
+            //  GenericValue
+            //  GenericValueTarget
+            //  GenericModifier (i.e. GenericFloatTarget)
+            //  GenericFloat
             namespace GenericValueID {
-                const uint32_t add_effect = 6;
-                const uint32_t remove_effect = 7;
-                const uint32_t apply_marker = 11; // exclamation mark / arrow above NPC head
-                const uint32_t remove_marker = 12; // exclamation mark / arrow above NPC head
-                const uint32_t damage = 16; // non-armor-ignoring attack, spells
-                const uint32_t critical = 17; // critical hit on autoattack
-                const uint32_t effect_on_target = 20; // e.g. casting a skill on someone
-                const uint32_t effect_on_agent = 21; // e.g. casting a skill on myself/location
-                const uint32_t animation = 22;
-                const uint32_t animation_special = 23; // When received before dance, makes it fancy e.g. CE dance, glowing hands
-                const uint32_t animation_loop = 28; // e.g. dance
-                const uint32_t health = 34;
-                const uint32_t energygain = 52; // for example from Critical Strikes or energy tap
-                const uint32_t armorignoring = 55; // all armor ignoring damage and heals
-                const uint32_t casttime = 61; // non-standard cast time, value in seconds
+                const uint32_t melee_attack_finished    = 1;  // GenericValue. Last melee attack finished successfully.
+                const uint32_t attack_stopped           = 3;  // GenericValue. Last melee/ranged attack stopped unsuccessfully. May be followed by interrupted (35).
+                const uint32_t attack_started           = 4;  // GenericTargetValue. caster_id is victim. target_id is attacker.
+
+                const uint32_t add_effect               = 6;
+                const uint32_t remove_effect            = 7;
+                const uint32_t disabled                 = 8;  // GenericValue. e.g. aftercast. value = 1: disabled. value = 0: not disabled.
+                const uint32_t skill_damage             = 10; // GenericValue. The skill responsible for the last damage packet received (GenericTargetModifier).
+                const uint32_t apply_marker             = 11; // Exclamation mark / arrow above NPC head
+                const uint32_t remove_marker            = 12; // Exclamation mark / arrow above NPC head
+                const uint32_t damage                   = 16; // GenericTargetModifier. Non-armor-ignoring attack, spells
+                const uint32_t critical                 = 17; // GenericTargetModifier. Critical hit on autoattack
+                const uint32_t effect_on_target         = 20; // e.g. casting a skill on someone
+                const uint32_t effect_on_agent          = 21; // e.g. casting a skill on myself/location
+                const uint32_t animation                = 22;
+                const uint32_t animation_special        = 23; // When received before dance, makes it fancy e.g. CE dance, glowing hands
+                const uint32_t animation_loop           = 28; // e.g. dance
+                const uint32_t max_hp_reached           = 32; // GenericValue. Remove passive regen pips.
+                const uint32_t health                   = 34;
+                const uint32_t interrupted              = 35; // GenericValue. The last action (skill or attack) was interrupted. Follows <action>_stopped.
+                const uint32_t change_health_regen      = 44; // GenericFloat. Passive regen pips (?).
+                const uint32_t attack_skill_finished    = 46; // GenericValue. Last attack skill finished successfully.
+                const uint32_t instant_skill_activated	= 48; // GenericValue|(GenericTargetValue?). Unblocked skills - Stances, shouts, etc, not protectors defence.
+                const uint32_t attack_skill_stopped     = 49; // GenericValue. Last attack skill stopped unsuccessfully. May be followed by interrupted (35).
+                const uint32_t attack_skill_activated	= 50; // GenericValue|GenericValueTarget. caster_id is victim and target_id is caster.
+                const uint32_t energygain               = 52; // For example from Critical Strikes or energy tap
+                const uint32_t armorignoring            = 55; // GenericTargetModifier. All armor ignoring damage and heals
+                const uint32_t skill_finished           = 58; // GenericValue. Last skill finished successfully.
+                const uint32_t skill_stopped            = 59; // GenericValue. Last skill stopped unsuccessfully. May be followed by interrupted(35).
+                const uint32_t skill_activated          = 60; // GenericValue|GenericValueTarget. caster_id is victim and target_id is caster.
+                const uint32_t casttime                 = 61; // Non-standard cast time, value in seconds
+                const uint32_t energy_spent             = 62; // GenericFloat. The energy using your last skill.
+                const uint32_t knocked_down             = 63; // GenericFloat. value: duration.
             }
             namespace P156_Type = GenericValueID;
 
@@ -363,9 +385,23 @@ namespace GW {
                 uint32_t type;         // type as specified above in P156_Type
                 uint32_t target_id;    // agent id of who is affected by the change
                 uint32_t cause_id;     // agent id of who caused the change
-                float value;        // value, often in percentage (e.g. %hp)
+                float value;           // value, often in percentage (e.g. %hp)
             };
             const uint32_t Packet<GenericModifier>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_FLOAT_TARGET;
+
+            // Projectile launched from an agent
+            // Can be from a martial weapon (spear, bow), or projectile-launching skill
+            // also acts as an attack_finished packet for ranged weapons, if `is_attack == 1`
+            struct AgentProjectileLaunched : Packet<AgentProjectileLaunched> {
+                uint32_t agent_id;
+                Vec2f destination;
+                uint32_t unk1;          // word : 0 ?
+                uint32_t unk1;          // dword: changes with projectile animation model
+                uint32_t unk2;          // dword: value (143) for all martial weapons (?), n values for n skills (?)
+                uint32_t unk3;          // dword: 1 ?
+                uint32_t is_attack;     // byte
+            };
+            const uint32_t Packet<AgentProjectileLaunched>::STATIC_HEADER = GAME_SMSG_AGENT_PROJECTILE_LAUNCHED;
 
             // agent text above head
             struct SpeechBubble : Packet<SpeechBubble> {

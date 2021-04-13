@@ -46,9 +46,9 @@ namespace GW {
                 const uint32_t interrupted              = 35; // GenericValue. The last action (skill or attack) was interrupted. Follows <action>_stopped.
                 const uint32_t change_health_regen      = 44; // GenericFloat. Passive regen pips (?).
                 const uint32_t attack_skill_finished    = 46; // GenericValue. Last attack skill finished successfully.
-                const uint32_t instant_skill_activated	= 48; // GenericValue|(GenericTargetValue?). Unblocked skills - Stances, shouts, etc, not protectors defence.
+                const uint32_t instant_skill_activated  = 48; // GenericValue|(GenericTargetValue?). Unblocked skills - Stances, shouts, etc, not protectors defence.
                 const uint32_t attack_skill_stopped     = 49; // GenericValue. Last attack skill stopped unsuccessfully. May be followed by interrupted (35).
-                const uint32_t attack_skill_activated	= 50; // GenericValue|GenericValueTarget. caster_id is victim and target_id is caster.
+                const uint32_t attack_skill_activated   = 50; // GenericValue|GenericValueTarget. caster_id is victim and target_id is caster.
                 const uint32_t energygain               = 52; // For example from Critical Strikes or energy tap
                 const uint32_t armorignoring            = 55; // GenericTargetModifier. All armor ignoring damage and heals
                 const uint32_t skill_finished           = 58; // GenericValue. Last skill finished successfully.
@@ -780,10 +780,10 @@ namespace GW {
             const uint32_t Packet<PartyPlayerReady>::STATIC_HEADER = GAME_SMSG_PARTY_PLAYER_READY;
 
             // When a new party is created:
-            // 1.	PartyPlayerStreamStart packet is sent
-            // 2.	PartyPlayerAdd packet per member
-            //		PartyHeroAdd packet per hero
-            //		PartyHenchmanAdd packer per henchman
+            // 1.   PartyPlayerStreamStart packet is sent
+            // 2.   PartyPlayerAdd packet per member
+            //      PartyHeroAdd packet per hero
+            //      PartyHenchmanAdd packer per henchman
             // 3. PartyPlayerStreamEnd packet is sent
             struct PartyPlayerStreamStart : Packet<PartyPlayerStreamStart> {
                 uint32_t party_id; // word

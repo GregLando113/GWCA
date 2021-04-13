@@ -396,9 +396,9 @@ namespace GW {
                 uint32_t agent_id;
                 Vec2f destination;
                 uint32_t unk1;          // word : 0 ?
-                uint32_t unk1;          // dword: changes with projectile animation model
-                uint32_t unk2;          // dword: value (143) for all martial weapons (?), n values for n skills (?)
-                uint32_t unk3;          // dword: 1 ?
+                uint32_t unk2;          // dword: changes with projectile animation model
+                uint32_t unk3;          // dword: value (143) for all martial weapons (?), n values for n skills (?)
+                uint32_t unk4;          // dword: 1 ?
                 uint32_t is_attack;     // byte
             };
             const uint32_t Packet<AgentProjectileLaunched>::STATIC_HEADER = GAME_SMSG_AGENT_PROJECTILE_LAUNCHED;

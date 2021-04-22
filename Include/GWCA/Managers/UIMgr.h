@@ -136,6 +136,8 @@ namespace GW {
         enum ControlAction : uint32_t {
             ControlAction_None = 0,
             ControlAction_CloseAllPanels = 0x85,
+            ControlAction_ToggleInventoryWindow = 0x8B,
+
             ControlAction_ReverseCamera = 0x90,
             ControlAction_StrafeLeft = 0x91,
             ControlAction_StrafeRight = 0x92,
@@ -145,6 +147,7 @@ namespace GW {
             ControlAction_MoveForward = 0xAD,
             ControlAction_ReverseDirection = 0xB1,
             ControlAction_Autorun = 0xB7,
+            ControlAction_TogglePartyWindow = 0xBF,
             ControlAction_TargetNearestItem = 0xC3,
             
 

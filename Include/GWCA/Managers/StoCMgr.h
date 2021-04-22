@@ -24,11 +24,14 @@ namespace GW {
 
     namespace StoC {
         typedef HookCallback<Packet::StoC::PacketBase *> PacketCallback;
+        // Register a function to be called when a packet is received. 
+        // An altitude of 0 or less will be triggered before the packet is processed. 
+        // An altitude greater than 0 will be triggered after the packet has been processed.
         GWCA_API void RegisterPacketCallback(
             HookEntry *entry,
             uint32_t header,
             PacketCallback callback,
-            int altitude = 0);
+            int altitude = -0x8000);
 
         // @Deprecated: use RegisterPacketCallback with a positive altitude instead.
         GWCA_API void RegisterPostPacketCallback(

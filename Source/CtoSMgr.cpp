@@ -31,14 +31,12 @@ namespace {
     
 
     void Init() {
-        SendPacket_Func = (SendPacket_pt)Scanner::Find(
-            "\xF7\xD9\xC7\x47\x54\x01\x00\x00\x00\x1B\xC9\x81", "xxxxxxxxxxxx", -0xC3);
+        SendPacket_Func = (SendPacket_pt)Scanner::FindAssertion("p:\\code\\net\\msg\\msgconn.cpp","bytes >= sizeof(dword)", -0x67);
         GWCA_INFO("[SCAN] SendPacket = %p\n", SendPacket_Func);
         if (Verify(SendPacket_Func))
             HookBase::CreateHook(SendPacket_Func, CtoSHandler_Func, (void**)&RetSendPacket);
         {
-            uintptr_t address = Scanner::Find(
-                "\xC3\xA1\x00\x00\x00\x00\x85\xC0\x74\xF1", "xx????xxxx", +2);
+            uintptr_t address = Scanner::FindAssertion("p:\\code\\gw\\net\\cli\\gcgamecmd.cpp","No valid case for switch variable 'code'", -0x32);
             GWCA_INFO("[SCAN] CtoGSObjectPtr = %p\n", (void *)address);
             if (Verify(address))
                 game_srv_object_addr = *(uintptr_t *)address;

@@ -107,7 +107,7 @@ namespace GW {
         GWCA_API void RemoveRegisterWhisperCallback(
             HookEntry *entry);
 
-	typedef HookCallback<Channel, wchar_t*, FILETIME, int> PrintChatCallback;
+	typedef HookCallback<Channel, wchar_t**, FILETIME, int> PrintChatCallback;
 	GWCA_API void RegisterPrintChatCallback(
 		HookEntry* entry,
 		PrintChatCallback callback);

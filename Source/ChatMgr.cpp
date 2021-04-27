@@ -122,7 +122,7 @@ namespace {
     std::unordered_map<HookEntry *, Chat::ChatEventCallback>    ChatEvent_callbacks;
     std::unordered_map<HookEntry *, Chat::LocalMessageCallback> LocalMessage_callbacks;
     std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
-    std::unordered_map<HookEntry*, Chat::PrintChatCallback>      PrintChat_callbacks;
+    std::unordered_map<HookEntry*, Chat::PrintChatCallback>     PrintChat_callbacks;
     std::unordered_map<HookEntry *, Chat::StartWhisperCallback> StartWhisper_callbacks;
 
     typedef void(__cdecl *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
@@ -249,18 +249,19 @@ namespace {
         GWCA_ASSERT(ChatBuffer_Addr && 0 <= channel && channel < Chat::Channel::CHANNEL_COUNT);
 
 		HookStatus status;
+        wchar_t** str_p = &str;
 		for (auto& it : PrintChat_callbacks) {
-			it.second(&status, channel, str, timestamp, reprint);
+			it.second(&status, channel, str_p, timestamp, reprint);
 			++status.altitude;
 		}
 		if (status.blocked) {
-			RetPrintChat(ctx, edx, channel, str, timestamp, reprint);
+			//RetPrintChat(ctx, edx, channel, str, timestamp, reprint);
 			HookBase::LeaveHook();
 			return;
 		}
 
         if (!ShowTimestamps) {
-            RetPrintChat(ctx, edx, channel, str, timestamp, reprint);
+            RetPrintChat(ctx, edx, channel, *str_p, timestamp, reprint);
             HookBase::LeaveHook();
             return;
         }
@@ -291,15 +292,15 @@ namespace {
         }
         if (ChannelThatParseColorTag[channel]) {
             if (localtime.wYear == 0) {
-                wsprintfW(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, str);
+                wsprintfW(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, *str_p);
             } else {
-                wsprintfW(buffer, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), t_buffer, str);
+                wsprintfW(buffer, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), t_buffer, *str_p);
             }
         } else {
             if (localtime.wYear == 0) {
-                wsprintfW(buffer, L"\x108\x107[--:--] \x01\x02%s", str);
+                wsprintfW(buffer, L"\x108\x107[--:--] \x01\x02%s", *str_p);
             } else {
-                wsprintfW(buffer, L"\x108\x107%s \x01\x02%s", t_buffer, str);
+                wsprintfW(buffer, L"\x108\x107%s \x01\x02%s", t_buffer, *str_p);
             }
         }
         RetPrintChat(ctx, edx, channel, buffer, timestamp, reprint);
@@ -671,7 +672,7 @@ namespace GW {
         delete[] buffer;
     }
     void Chat::WriteChatEnc(Channel channel, const wchar_t* msg, const wchar_t* sender) {
-
+        static wchar_t* new_message;
         UIChatMessage param;
         param.channel = channel;
         param.channel2 = channel;
@@ -680,7 +681,8 @@ namespace GW {
             size_t msg_len = wcslen(msg);
             size_t sender_len = wcslen(sender);
             size_t written = 0;
-            param.message = new wchar_t[msg_len + sender_len + 9];
+            new_message = new wchar_t[msg_len + sender_len + 9];
+            param.message = new_message;
             param.message[written++] = 0x76b;
             param.message[written++] = 0x10a;
             param.message[written++] = 0x108;
@@ -697,7 +699,7 @@ namespace GW {
         }
         UI::SendUIMessage(UI::kWriteToChatLog, &param);
         if (sender) 
-            delete[] param.message;
+            delete[] new_message;
     }
 
     void Chat::WriteChat(Channel channel, const char *msg) {

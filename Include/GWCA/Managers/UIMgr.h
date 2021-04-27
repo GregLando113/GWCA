@@ -233,7 +233,8 @@ namespace GW {
         typedef HookCallback<uint32_t, void *, void *> UIMessageCallback;
         GWCA_API void RegisterUIMessageCallback(
             HookEntry *entry,
-            UIMessageCallback callback);
+            UIMessageCallback callback,
+            int altitude = -0x8000);
 
         GWCA_API void RemoveUIMessageCallback(
             HookEntry *entry);

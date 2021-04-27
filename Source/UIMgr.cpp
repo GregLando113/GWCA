@@ -91,18 +91,37 @@ namespace {
             ShellExecuteW(NULL, L"open", info->name, NULL, NULL, SW_SHOWNORMAL);
         }
     }
-
-    std::unordered_map<HookEntry *, UI::UIMessageCallback> UIMessage_callbacks;
+    // Callbacks are triggered by weighting
+    struct CallbackEntry {
+        int altitude;
+        HookEntry* entry;
+        UI::UIMessageCallback callback;
+    };
+    std::vector<CallbackEntry> UIMessage_callbacks;
     static void __cdecl OnSendUIMessage(uint32_t msgid, void *wParam, void *lParam)
     {
         HookBase::EnterHook();
         HookStatus status;
-        for (auto& it : UIMessage_callbacks) {
-            it.second(&status, msgid, wParam, lParam);
+        auto it = UIMessage_callbacks.begin();
+
+        // Pre callbacks
+        while (it != UIMessage_callbacks.end()) {
+            if (it->altitude > 0)
+                break;
+            it->callback(&status, msgid, wParam, lParam);
             ++status.altitude;
+            it++;
         }
+
         if (!status.blocked)
             RetSendUIMessage(msgid, wParam, lParam);
+
+        // Post callbacks
+        while (it != UIMessage_callbacks.end()) {
+            it->callback(&status, msgid, wParam, lParam);
+            ++status.altitude;
+            it++;
+        }
         HookBase::LeaveHook();
     }
     // Add in visibility to the window array to allow GWCA to provide this into when querying
@@ -581,16 +600,22 @@ namespace GW {
 
     void UI::RegisterUIMessageCallback(
         HookEntry *entry,
-        UIMessageCallback callback)
+        UIMessageCallback callback,
+        int altitude)
     {
-        UIMessage_callbacks.insert({entry, callback});
+        UIMessage_callbacks.push_back({ altitude, entry, callback});
     }
 
     void UI::RemoveUIMessageCallback(
         HookEntry *entry)
     {
-        auto it = UIMessage_callbacks.find(entry);
-        if (it != UIMessage_callbacks.end())
-            UIMessage_callbacks.erase(it);
+        auto it = UIMessage_callbacks.begin();
+        while (it != UIMessage_callbacks.end()) {
+            if (it->entry == entry) {
+                UIMessage_callbacks.erase(it);
+                break;
+            }
+            it++;
+        }
     }
 } // namespace GW

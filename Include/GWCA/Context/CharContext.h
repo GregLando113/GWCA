@@ -31,11 +31,11 @@ namespace GW {
         /* +h0230 */ uint8_t h0230[8];
         /* +h0238 */ Array<ObserverMatch *> observer_matchs;
         /* +h0248 */ uint8_t h0248[0x5C];
-        /* +h0290 */ uint32_t player_number;
-        /* +h0294 */ uint8_t h0294[0x8C];
-        /* +h0338 */ uint32_t *progress_bar;
-        /* +h033C */ uint8_t h033C[0x80];
-        /* +h03A8 */ wchar_t player_email[0x40];
+        /* +h02A4 */ uint32_t player_number;
+        /* +h02A8 */ uint8_t h02A8[0xA0];
+        /* +h0348 */ uint32_t *progress_bar;
+        /* +h034C */ uint8_t h034C[0x6C];
+        /* +h03B8 */ wchar_t player_email[0x40];
     };
     static_assert(sizeof(CharContext) == 0x438, "struct CharContext has incorrect size");
 }

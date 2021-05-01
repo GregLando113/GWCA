@@ -670,6 +670,28 @@ namespace GW {
             };
             const uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = GAME_SMSG_INSTANCE_LOAD_INFO;
 
+            struct CreateMissionProgress : Packet<CreateMissionProgress> {
+                uint8_t id;
+                wchar_t unk1[122];
+                wchar_t unk2[122];
+                uint8_t unk3;
+                int32_t pips;         // probably only signed char used
+                float   regeneration; // 0 ... 1
+                float   filled;       // 0 ... 1
+                uint8_t color[4];     // RGBA, not including border
+            };
+            const uint32_t Packet<CreateMissionProgress>::STATIC_HEADER = GAME_SMSG_CREATE_MISSION_PROGRESS;
+
+            struct UpdateMissionProgress : Packet<UpdateMissionProgress> {
+                uint8_t id;
+                uint8_t unk1;
+                int32_t pips;         // only signed char used
+                float   regeneration; // 0 ... 1
+                float   filled;       // 0 ... 1
+                uint8_t color[4];     // RGBA, not including border
+            };
+            const uint32_t Packet<UpdateMissionProgress>::STATIC_HEADER = GAME_SMSG_UPDATE_MISSION_PROGRESS;
+
             struct GameSrvTransfer : Packet<GameSrvTransfer> {
                 uint8_t host[24]; // ip of the game server
                 uint32_t token1; // world id

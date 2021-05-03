@@ -251,8 +251,10 @@ namespace {
         HookBase::EnterHook();
         GWCA_ASSERT(ChatBuffer_Addr && 0 <= channel && channel < Chat::Channel::CHANNEL_COUNT);
         PrintChat_Context = ctx;
-        if (channel == Chat::Channel::CHANNEL_GWCA1 && wcscmp(str,PrintChat_Context_Sample_String) == 0)
+        if (channel == Chat::Channel::CHANNEL_GWCA1 && wcscmp(str, PrintChat_Context_Sample_String) == 0) {
+            HookBase::LeaveHook();
             return; // Spoof packet from GetChatWindowContext();
+        }
 		HookStatus status;
         wchar_t** str_p = &str;
 		for (auto& it : PrintChat_callbacks) {

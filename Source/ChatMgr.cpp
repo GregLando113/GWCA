@@ -243,13 +243,15 @@ namespace {
     PrintChat_pt RetPrintChat;
     PrintChat_pt PrintChat_Func;
     void* PrintChat_Context = nullptr;
+    // Used for fetching PrintChat_Context in chat window
+    const wchar_t* PrintChat_Context_Sample_String = L"\x108\x107\x200B\x1";
     void __fastcall OnPrintChat(void *ctx, uint32_t edx,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint)
     {
         HookBase::EnterHook();
         GWCA_ASSERT(ChatBuffer_Addr && 0 <= channel && channel < Chat::Channel::CHANNEL_COUNT);
         PrintChat_Context = ctx;
-        if (str[0] == 0x1)
+        if (channel == Chat::Channel::CHANNEL_GWCA1 && wcscmp(str,PrintChat_Context_Sample_String) == 0)
             return; // Spoof packet from GetChatWindowContext();
 		HookStatus status;
         wchar_t** str_p = &str;
@@ -313,7 +315,7 @@ namespace {
     void* GetChatWindowContext() {
         // This is caught (and blocked) in OnPrintChat above.
         if(!PrintChat_Context)
-            Chat::WriteChatEnc(Chat::Channel::CHANNEL_GWCA1, L"\x1");
+            Chat::WriteChatEnc(Chat::Channel::CHANNEL_GWCA1, PrintChat_Context_Sample_String);
         // @Cleanup: The context is reset on map change; this is not a massive issue because the game re-calls OnPrintChat before we have a chance
         return PrintChat_Context;
     }

@@ -49,16 +49,11 @@ namespace GW {
         GWCA_API void SendChat(const wchar_t *from, const wchar_t *msg);
         GWCA_API void SendChat(const char    *from, const char    *msg);
 
-        // Emulates a message in a given channel.
-        GWCA_API void WriteChat(Channel channel, const wchar_t *message, const wchar_t* sender = nullptr);
-        GWCA_API void WriteChat(Channel channel, const char    *message);
+        // Emulates a message in a given channel. Transient = true to bypass chat log
+        GWCA_API void WriteChat(Channel channel, const wchar_t *message, const wchar_t* sender = nullptr, bool transient = false);
 
-        GWCA_API void WriteChatEnc(Channel channel, const wchar_t* message, const wchar_t* sender = nullptr);
+        GWCA_API void WriteChatEnc(Channel channel, const wchar_t* message, const wchar_t* sender = nullptr, bool transient = false);
 
-        GWCA_API void WriteChat(Channel channel, const wchar_t *sender, const wchar_t *msg);
-        GWCA_API void WriteChat(Channel channel, const char    *sender, const char    *msg);
-
-        GWCA_API void WriteChatF(Channel channel, const wchar_t *sender, const char *fmt, ...);
 
         typedef std::function<void (const wchar_t *, int, wchar_t **)> CmdCB;
         GWCA_API void CreateCommand(std::wstring cmd, CmdCB callback);

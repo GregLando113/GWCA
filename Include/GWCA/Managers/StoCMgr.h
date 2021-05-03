@@ -41,7 +41,7 @@ namespace GW {
         
         /* Use this to add handlers to the stocmgr, primary function. */
         template <typename T>
-        void RegisterPacketCallback(HookEntry *entry, HookCallback<T *> handler, int altitude = 0) {
+        void RegisterPacketCallback(HookEntry *entry, HookCallback<T *> handler, int altitude = -0x8000) {
             uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
             return RegisterPacketCallback(entry, header,
                 [handler](HookStatus *status, Packet::StoC::PacketBase *pak) -> void {

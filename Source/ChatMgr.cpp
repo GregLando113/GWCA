@@ -713,11 +713,14 @@ namespace GW {
             param.message[written++] = 0;
         }
         if (transient) {
-            SYSTEMTIME now;
-            GetSystemTime(&now);
-            FILETIME now_ft;
-            GWCA_ASSERT(SystemTimeToFileTime(&now, &now_ft));
-            OnPrintChat(GetChatWindowContext(), 0, channel, param.message, now_ft, 0);
+            // NB: Due to the noddy way we try to get chat window context, it may not be available even when we try to get it. Silent fail.
+            if (GetChatWindowContext()) {
+                SYSTEMTIME now;
+                GetSystemTime(&now);
+                FILETIME now_ft;
+                GWCA_ASSERT(SystemTimeToFileTime(&now, &now_ft));
+                OnPrintChat(GetChatWindowContext(), 0, channel, param.message, now_ft, 0);
+            }
         }
         else {
             UI::SendUIMessage(UI::kWriteToChatLog, &param);

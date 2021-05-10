@@ -14,6 +14,7 @@
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/Context/GameContext.h>
+#include <GWCA/Context/PreGameContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -41,6 +42,7 @@ namespace GW
 {
     static std::vector<Module *> modules;
     static uintptr_t base_ptr;
+    static uintptr_t PreGameContext_addr;
 
     bool Initialize()
     {
@@ -62,6 +64,7 @@ namespace GW
         modules.push_back(&SkillbarModule);
         modules.push_back(&GameThreadModule);
         modules.push_back(&FriendListModule);
+        modules.push_back(&LStoCModule);
 
         if (MemoryMgr::Scan()) {
 
@@ -72,6 +75,11 @@ namespace GW
                 base_ptr = *(uintptr_t *)address;
 
             HookBase::Initialize();
+
+            address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uipregame.cpp", "!s_scene", 0x34);
+            if (Verify(address))
+                PreGameContext_addr = *(uintptr_t*)address;
+            GWCA_INFO("[SCAN] PreGameContext_addr = %p\n", PreGameContext_addr);
 
             for (Module *module : modules) {
                 GWCA_INFO("Initializing module '%s'\n", module->name);
@@ -113,5 +121,9 @@ namespace GW
     GameContext* GameContext::instance()
     {
         return *(GameContext**)((*(uint8_t **)base_ptr) + 0x18);
+    }
+    PreGameContext* PreGameContext::instance()
+    {
+        return *(PreGameContext**)PreGameContext_addr;
     }
 } // namespace GW

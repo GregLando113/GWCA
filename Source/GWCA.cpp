@@ -64,7 +64,6 @@ namespace GW
         modules.push_back(&SkillbarModule);
         modules.push_back(&GameThreadModule);
         modules.push_back(&FriendListModule);
-        modules.push_back(&LStoCModule);
 
         if (MemoryMgr::Scan()) {
 

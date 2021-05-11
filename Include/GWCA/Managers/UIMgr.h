@@ -61,9 +61,38 @@ namespace GW {
         };
 
         enum Preference : uint32_t {
-            Preference_InterfaceSize = 6,
+            // preferences_array
+            Preference_CharSortOrder = 0x0, // Unused
+            Preference_AntiAliasing = 0x1, // multi sampling
+            Preference_Reflections = 0x2,
+            Preference_ShaderQuality = 0x3,
+            Preference_ShadowQuality = 0x4,
+            Preference_TerrainQuality = 0x5,
+            Preference_InterfaceSize = 0x6,
+            Preference_FrameLimiter = 0x7,
 
-            Preference_Count = 8
+            // more_preferences_array | 0x800
+            Preference_DamageTextSize = 0x807, // 0 to 100
+            Preference_FullscreenGamma = 0x808, // 0 to 100
+            Preference_TextLanguage = 0x80A,
+            Preference_AudioLanguage = 0x80B,
+            Preference_SoundQuality = 0x813, // 0 to 100
+            Preference_TextureQuality = 0x816, // TextureLod
+            Preference_UseBestTextureFiltering = 0x817,
+            Preference_EffectsVolume = 0x818, // 0 to 100
+            Preference_DialogVolume = 0x819, // 0 to 100
+            Preference_BackgroundVolume = 0x81A, // 0 to 100
+            Preference_MusicVolume = 0x81B, // 0 to 100
+            Preference_UIVolume = 0x81C, // 0 to 100
+            Preference_WindowPosX = 0x81E,
+            Preference_WindowPosY = 0x81F,
+            Preference_WindowSizeX = 0x820,
+            Preference_WindowSizeY = 0x821,
+            Preference_FieldOfView = 0x824, // 0 to 100
+            Preference_CameraRotationSpeed = 0x825, // 0 to 100
+            Preference_ScreenBorderless = 0x826, // 0x1 = Windowed Borderless, 0x2 = Windowed Fullscreen
+            Preference_MasterVolume = 0x827, // 0 to 100
+            Preference_ClockMode = 0x828,
         };
         // Used with GetWindowPosition
         enum WindowID : uint32_t {

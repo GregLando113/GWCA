@@ -73,6 +73,7 @@ namespace {
     uintptr_t CurrentTooltipPtr = 0;
 
     uint32_t *preferences_array;
+    uint32_t *more_preferences_array;
     uint32_t* preferences_array2;
     UI::WindowPosition* window_positions_array = 0;
     UI::FloatingWindow* floating_windows_array = 0;
@@ -264,6 +265,16 @@ namespace {
                 preferences_array = reinterpret_cast<uint32_t *>(address);
             }
         }
+        {
+            // NB: There are other assertions that match this pattern, this is the first
+            address = GW::Scanner::FindAssertion("p:\\code\\gw\\pref\\prapi.cpp", "info.getMappingProc", -0x1E);
+            GWCA_INFO("[SCAN] more_preferences_array = %p\n", (void*)address);
+            if (Verify(address)) {
+                address = *(uintptr_t*)address;
+                more_preferences_array = reinterpret_cast<uint32_t*>(address);
+            }
+        }
+    
 
         SetTickboxPref_Func = (SetTickboxPref_pt)Scanner::Find(
             "\x8B\x75\x0C\x33\xC9\x39\x0C\xBD\x00\x00\x00\x00\x0F\x95\xC1\x33", "xxxxxxxx????xxxx", -0x6F);
@@ -289,7 +300,6 @@ namespace {
                 address = *(uintptr_t*)address;
                 floating_windows_array = reinterpret_cast<UI::FloatingWindow*>(address - 0x10);
             }
-            
         }
         GWCA_INFO("[SCAN] floating_windows_array = %08X\n", floating_windows_array);
 
@@ -572,12 +582,17 @@ namespace GW {
 
     uint32_t UI::GetPreference(Preference pref)
     {
+        if (pref & 0x800)
+            return more_preferences_array[pref ^ 0x800];
         return preferences_array[pref];
     }
 
     void UI::SetPreference(Preference pref, uint32_t value)
     {
-        preferences_array[pref] = value;
+        if (pref & 0x800)
+            more_preferences_array[pref ^ 0x800] = value;
+        else
+            preferences_array[pref] = value;
     }
 
     void UI::RegisterKeyupCallback(HookEntry* entry, KeyCallback callback) {

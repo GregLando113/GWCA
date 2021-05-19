@@ -60,6 +60,34 @@ namespace GW {
             }
             namespace P156_Type = GenericValueID;
 
+            namespace JumboMessageType {
+                const uint8_t BASE_UNDER_ATTACK = 0;
+                const uint8_t GUILD_LORD_UNDER_ATTACK = 1;
+                const uint8_t CAPTURED_SHRINE = 3;
+                const uint8_t CAPTURED_TOWER = 5;
+                const uint8_t PARTY_DEFEATED = 6; // received in 3-way Heroes Ascent matches when one party is defeated
+                const uint8_t MORALE_BOOST = 9;
+                const uint8_t VICTORY = 16;
+                const uint8_t FLAWLESS_VICTORY = 17;
+            }
+
+            namespace JumboMessageValue {
+                // The following values represent the first and second parties in an explorable areas
+                // (inc. observer mode) with 2 parties.
+                // if there are 3 parties in the explorable area (like some HA maps) then:
+                //  - party 1 = 6579558
+                //  - party 2 = 1635021873
+                //  - party 3 = 1635021874
+
+                // TODO:
+                // These numbers appear big and random, their origin or relation to other values
+                // is not understood.
+                // In addition, there may be a danger these variables could change with GW updates...
+                // Consider these values as experimental and use with caution
+                const uint32_t PARTY_ONE = 1635021873;
+                const uint32_t PARTY_TWO = 1635021874;
+            }
+
             template <class Specific>
             struct Packet : PacketBase {
             public:
@@ -649,6 +677,14 @@ namespace GW {
             struct SalvageSessionSuccess : Packet<SalvageSessionSuccess> {
             };
             const uint32_t Packet<SalvageSessionSuccess>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_SUCCESS;
+
+            // JumboMessage represents a message strewn across the center of the screen in big red or green characters.
+            // Things like moral boosts, flag captures, victory, defeat...
+            struct JumboMessage : GW::Packet::StoC::Packet<JumboMessage> {
+                uint8_t type;   // JumboMessageType
+                uint32_t value; // JumboMessageValue
+            };
+            const uint32_t GW::Packet::StoC::Packet<JumboMessage>::STATIC_HEADER = GAME_SMSG_JUMBO_MESSAGE;
 
             struct InstanceLoadFile : Packet<InstanceLoadFile> {
                 uint32_t map_fileID;

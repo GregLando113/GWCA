@@ -264,6 +264,7 @@
 #define GAME_SMSG_INSTANCE_COUNTDOWN_STOP           (0x017D) // 381
 #define GAME_SMSG_INSTANCE_COUNTDOWN                (0x017F) // 383
 #define GAME_SMSG_INSTANCE_LOAD_FINISH              (0x018D) // 397
+#define GAME_SMSG_JUMBO_MESSAGE                     (0x018F) // 399
 #define GAME_SMSG_INSTANCE_LOAD_SPAWN_POINT         (0x0194) // 404
 #define GAME_SMSG_INSTANCE_LOAD_INFO                (0x0198) // 408
 #define GAME_SMSG_CREATE_MISSION_PROGRESS           (0x019F) // 415

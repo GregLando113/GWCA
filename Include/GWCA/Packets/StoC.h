@@ -65,8 +65,7 @@ namespace GW {
                 const uint8_t GUILD_LORD_UNDER_ATTACK = 1;
                 const uint8_t CAPTURED_SHRINE = 3;
                 const uint8_t CAPTURED_TOWER = 5;
-                const uint8_t PARTY_DEFEATED = 6;   // received in 3-way Heroes Ascent matches
-                                                    // when one party is defeated
+                const uint8_t PARTY_DEFEATED = 6; // received in 3-way Heroes Ascent matches when one party is defeated
                 const uint8_t MORALE_BOOST = 9;
                 const uint8_t VICTORY = 16;
                 const uint8_t FLAWLESS_VICTORY = 17;

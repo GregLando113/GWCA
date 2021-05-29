@@ -27,6 +27,25 @@ namespace GW {
             uint32_t        unk2;
             // ...
         };
+
+        struct AgentNameTagInfo {
+            /* +h0000 */ uint32_t agent_id;
+            /* +h0004 */ uint32_t h0002;
+            /* +h0008 */ uint32_t h0003;
+            /* +h000C */ wchar_t* name_enc;
+            /* +h0010 */ uint8_t h0010;
+            /* +h0011 */ uint8_t h0012;
+            /* +h0012 */ uint8_t h0013;
+            /* +h0013 */ uint8_t background_alpha; // ARGB, NB: Actual color is ignored, only alpha is used
+            /* +h0014 */ uint32_t text_color; // ARGB
+            /* +h0014 */ uint32_t label_attributes; // bold/size etc
+            /* +h001C */ uint8_t font_style; // Text style (bitmask) / bold | 0x1 / strikthrough | 0x80
+            /* +h001D */ uint8_t underline; // Text underline (bool) = 0x01 - 0xFF
+            /* +h001E */ uint8_t h001E;
+            /* +h001F */ uint8_t h001F;
+            /* +h0020 */ wchar_t* extra_info_enc; // Title etc
+        };
+
         // Note: some windows are affected by UI scale (e.g. party members), others are not (e.g. compass)
         struct WindowPosition {
             uint32_t state; // & 0x1 == visible
@@ -46,10 +65,10 @@ namespace GW {
         };
 
         enum UIMessage : uint32_t {
-            kShowAgentNameTag       = 0x10000000 | 0x19,
+            kShowAgentNameTag       = 0x10000000 | 0x19, // wparam = AgentNameTagInfo*
             kHideAgentNameTag       = 0x10000000 | 0x1A,
-            kSetAgentNameTagAttribs = 0x10000000 | 0x1B,
-            kChangeTarget           = 0x10000000 | 0x20,
+            kSetAgentNameTagAttribs = 0x10000000 | 0x1B, // wparam = AgentNameTagInfo*
+            kChangeTarget           = 0x10000000 | 0x20, // wparam = ChangeTargetUIMsg*
             kShowXunlaiChest        = 0x10000000 | 0x40,
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name

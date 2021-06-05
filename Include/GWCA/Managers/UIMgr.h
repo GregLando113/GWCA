@@ -20,6 +20,12 @@ namespace GW {
             wchar_t        *name;
         };
 
+        struct UIChatMessage {
+            uint32_t channel;
+            wchar_t* message;
+            uint32_t channel2;
+        };
+
         struct ChangeTargetUIMsg {
             uint32_t        manual_target_id;
             uint32_t        unk1;
@@ -64,6 +70,12 @@ namespace GW {
             float height() const { return bottom() - top(); }
         };
 
+        struct DialogBodyInfo {
+            uint32_t type;
+            uint32_t agent_id;
+            wchar_t* message_enc;
+        };
+
         enum UIMessage : uint32_t {
             kShowAgentNameTag       = 0x10000000 | 0x19, // wparam = AgentNameTagInfo*
             kHideAgentNameTag       = 0x10000000 | 0x1A,
@@ -72,6 +84,8 @@ namespace GW {
             kShowXunlaiChest        = 0x10000000 | 0x40,
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
+            kDialogBody             = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
+            kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
             kCheckboxPreference     = 0x10000000 | 0x13F,
             kTravel                 = 0x10000000 | 0x17A,
             kHideHeroPanel          = 0x10000000 | 0x197, // wparam = hero_id

@@ -666,11 +666,7 @@ namespace GW {
     }
     */
 
-    struct UIChatMessage {
-        uint32_t channel;
-        wchar_t *message;
-        uint32_t channel2;
-    };
+
 
     void Chat::WriteChat(Channel channel, const wchar_t *msg, const wchar_t *sender,bool transient) {
 
@@ -688,7 +684,7 @@ namespace GW {
     }
     void Chat::WriteChatEnc(Channel channel, const wchar_t* msg, const wchar_t* sender, bool transient) {
         static wchar_t* new_message;
-        UIChatMessage param;
+        UI::UIChatMessage param;
         param.channel = channel;
         param.channel2 = channel;
         param.message = (wchar_t*)msg;

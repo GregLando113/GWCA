@@ -156,6 +156,7 @@
 #define GAME_SMSG_POST_PROCESS                      (0x006A) // 106
 #define GAME_SMSG_DUNGEON_REWARD                    (0x006B) // 107
 #define GAME_SMSG_NPC_UPDATE_WEAPONS                (0x006C) // 108
+#define GAME_SMSG_MERCENARY_INFO					(0x0073) // 115
 #define GAME_SMSG_DIALOG_BUTTON                     (0x007D) // 125
 #define GAME_SMSG_DIALOG_BODY                       (0x007F) // 127
 #define GAME_SMSG_DIALOG_SENDER                     (0x0080) // 128
@@ -223,6 +224,9 @@
 #define GAME_SMSG_CINEMATIC_DATA_END                (0x0102) // 258
 #define GAME_SMSG_CINEMATIC_DATA                    (0x0103) // 259
 #define GAME_SMSG_CINEMATIC_END                     (0x0104) // 260
+#define GAME_SMSG_SIGNPOST_BUTTON					(0x0109) // 265
+#define GAME_SMSG_SIGNPOST_BODY						(0x010A) // 266
+#define GAME_SMSG_SIGNPOST_SENDER					(0x010B) // 267
 #define GAME_SMSG_MANIPULATE_MAP_OBJECT             (0x010D) // 269
 #define GAME_SMSG_MANIPULATE_MAP_OBJECT2            (0x0110) // 272
 #define GAME_SMSG_GUILD_PLAYER_ROLE                 (0x0117) // 279

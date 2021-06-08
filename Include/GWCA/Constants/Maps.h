@@ -467,7 +467,8 @@ namespace GW {
             Gate_of_Secrets_outpost,
             Domain_of_Anguish,
 
-            Jennurs_Horde = 476,
+            Ooze_Pit_mission = 475,
+            Jennurs_Horde,
             Nundu_Bay,
             Gate_of_Desolation,
             Champions_Dawn_outpost,
@@ -691,6 +692,19 @@ namespace GW {
             The_Battle_of_Jahai,
             The_Flight_North,
             The_Rise_of_the_White_Mantle,
+
+            // "Mission" maps, used for icon status on world map
+            Finding_the_Bloodstone_mission = 759,
+            Genius_Operated_Living_Enchanted_Manifestation_mission,
+            Against_the_Charr_mission,
+            Warband_of_brothers_mission,
+            Assault_on_the_Stronghold_mission,
+            Destructions_Depths_mission,
+            A_Time_for_Heroes_mission,
+            Curse_of_the_Nornbear_mission,
+            Blood_Washes_Blood_mission,
+            A_Gate_Too_Far_mission,
+            The_Elusive_Golemancer_mission,
 
             Secret_Lair_of_the_Snowmen2 = 781,  // ?
             Secret_Lair_of_the_Snowmen3,        // ?

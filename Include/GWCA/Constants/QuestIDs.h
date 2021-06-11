@@ -129,7 +129,9 @@ namespace GW {
 
             namespace ZaishenBounty {
                 constexpr uint32_t Urgoz = 1025;
-                constexpr uint32_t Ilsundur_Lord_of_Fire = 1026;
+                constexpr uint32_t Ilsundur_Lord_of_Fire = 0; //UNKNOWN
+                constexpr uint32_t Chung_The_Attuned = 1026;
+                constexpr uint32_t The_Stygian_Lords = 1046;
                 constexpr uint32_t Rragar_Maneater = 1049;
                 constexpr uint32_t Murakai_Lady_of_the_Night = 1050;
                 constexpr uint32_t Prismatic_Ooze = 0; //UNKNOWN
@@ -152,11 +154,108 @@ namespace GW {
                 constexpr uint32_t Fronis_Irontoe = 1068;
                 constexpr uint32_t Magmus = 1070;
                 constexpr uint32_t Lord_Khobay = 1086;
+                
+                
             }
 
             namespace ZaishenVanquish {
+                constexpr uint32_t Drakkar_Lake = 1220;
+                constexpr uint32_t Dry_Top = 1221;
+                constexpr uint32_t Tears_of_the_Fallen = 1222;
+                constexpr uint32_t Gyala_Hatchery = 1223;
+                constexpr uint32_t Ettins_Back = 1224;
+                constexpr uint32_t Gandara_the_Moon_Fortress = 1225;
+                constexpr uint32_t Grothmar_Wardowns = 1226;
+                constexpr uint32_t Flame_Temple_Corridor = 1227;
+                constexpr uint32_t Haiju_Lagoon = 1228;
+                constexpr uint32_t Frozen_Forest = 1229;
+                constexpr uint32_t Garden_of_Seborhin = 1230;
+                constexpr uint32_t Grenths_Footprint = 1231;
+                constexpr uint32_t Jaya_Bluffs = 1232;
+                constexpr uint32_t Holdings_of_Chokhin = 1233;
+                constexpr uint32_t Ice_Cliff_Chasms = 1234;
+                constexpr uint32_t Griffons_Mouth = 1235;
+                constexpr uint32_t Kinya_Province = 1236;
+                constexpr uint32_t Issnur_Isles = 1237;
+                constexpr uint32_t Jaga_Moraine = 1238;
+                constexpr uint32_t Ice_Floe = 1239;
+                constexpr uint32_t Maishang_Hills = 1240;
+                constexpr uint32_t Jahai_Bluffs = 1241;
+                constexpr uint32_t Riven_Earth = 1242;
                 constexpr uint32_t Icedome = 1243;
+                constexpr uint32_t Minister_Chos_Estate = 1244;
+                constexpr uint32_t Mehtani_Keys = 1245;
+                constexpr uint32_t Sacnoth_Valley = 1246;
+                constexpr uint32_t Iron_Horse_Mine = 1247;
+                constexpr uint32_t Morostav_Trail = 1248;
+                constexpr uint32_t Plains_of_Jarin = 1249;
+                constexpr uint32_t Sparkfly_Swamp = 1250;
+                constexpr uint32_t Kessex_Peak = 1251;
+                constexpr uint32_t Mourning_Veil_Falls = 1252;
+                constexpr uint32_t The_Alkali_Pan = 1253;
+                constexpr uint32_t Varajar_Fells = 1254;
+                constexpr uint32_t Lornars_Pass = 1255;
+                constexpr uint32_t Pongmei_Valley = 1256;
+                constexpr uint32_t The_Floodplain_of_Mahnkelon = 1257;
                 constexpr uint32_t Verdant_Cascades = 1258;
+                constexpr uint32_t Majestys_Rest = 1259;
+                constexpr uint32_t Raisu_Palace = 1260;
+                constexpr uint32_t The_Hidden_City_of_Ahdashim = 1261;
+                constexpr uint32_t Rheas_Crater = 1262;
+                constexpr uint32_t Mamnoon_Lagoon = 1263;
+                constexpr uint32_t Shadows_Passage = 1264;
+                constexpr uint32_t The_Mirror_of_Lyss = 1265;
+                constexpr uint32_t Saoshang_Trail = 1266;
+                constexpr uint32_t Nebo_Terrace = 1267;
+                constexpr uint32_t Shenzun_Tunnels = 1268;
+                constexpr uint32_t The_Ruptured_Heart = 1269;
+                constexpr uint32_t Salt_Flats = 1270;
+                constexpr uint32_t North_Kryta_Province = 1271;
+                constexpr uint32_t Silent_Surf = 1272;
+                constexpr uint32_t The_Shattered_Ravines = 1273;
+                constexpr uint32_t Scoundrels_Rise = 1274;
+                constexpr uint32_t Old_Ascalon = 1275;
+                constexpr uint32_t Sunjiang_District = 1276;
+                constexpr uint32_t The_Sulphurous_Wastes = 1277;
+                constexpr uint32_t Magus_Stones = 1278;
+                constexpr uint32_t Perdition_Rock = 1279;
+                constexpr uint32_t Sunqua_Vale = 1280;
+                constexpr uint32_t Turais_Procession = 1281;
+                constexpr uint32_t Norrhart_Domains = 1282;
+                constexpr uint32_t Pockmark_Flats = 1283;
+                constexpr uint32_t Tahnnakai_Temple = 1284;
+                constexpr uint32_t Vehjin_Mines = 1285;
+                constexpr uint32_t Poisoned_Outcrops = 1286;
+                constexpr uint32_t Prophets_Path = 1287;
+                constexpr uint32_t The_Eternal_Grove = 1288;
+                constexpr uint32_t Tascas_Demise = 1289;
+                constexpr uint32_t Respendent_Makuun = 1290;
+                constexpr uint32_t Reed_Bog = 1291;
+                constexpr uint32_t Unwaking_Waters = 1292;
+                constexpr uint32_t Stingray_Strand = 1293;
+                constexpr uint32_t Sunward_Marches = 1294;
+                constexpr uint32_t Regent_Valley = 1295;
+                constexpr uint32_t Wajjun_Bazaar = 1296;
+                constexpr uint32_t Yatendi_Canyons = 1297;
+                constexpr uint32_t Twin_Serpent_Lakes = 1298;
+                constexpr uint32_t Sage_Lands = 1299;
+                constexpr uint32_t Xaquang_Skyway = 1300;
+                constexpr uint32_t Zehlon_Reach = 1301;
+                constexpr uint32_t Tangle_Root = 1302;
+                constexpr uint32_t Silverwood = 1303;
+                constexpr uint32_t Zen_Daijun = 1304;
+                constexpr uint32_t The_Arid_Sea = 1305;
+                constexpr uint32_t Nahpui_Quarter = 1306;
+                constexpr uint32_t Skyward_Reach = 1307;
+                constexpr uint32_t The_Scar = 1308;
+                constexpr uint32_t The_Black_Curtain = 1309;
+                constexpr uint32_t Panjiang_Peninsula = 1310;
+                constexpr uint32_t Snake_Dance = 1311;
+                constexpr uint32_t Travelers_Vale = 1312;
+                constexpr uint32_t The_Breach = 1313;
+                constexpr uint32_t Lahtenda_Bog = 1314;
+                constexpr uint32_t Spearhead_Peak = 1315;
+                
             }
         }
     }

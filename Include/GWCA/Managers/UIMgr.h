@@ -197,8 +197,26 @@ namespace GW {
 
         enum ControlAction : uint32_t {
             ControlAction_None = 0,
+            // Panels
             ControlAction_CloseAllPanels = 0x85,
             ControlAction_ToggleInventoryWindow = 0x8B,
+            ControlAction_OpenScoreChart = 0xBD,
+            ControlAction_OpenTemplateManager = 0xD3,
+            ControlAction_OpenSaveEquipmentTemplate = 0xD4,
+            ControlAction_OpenSaveSkillTemplate = 0xD5,
+            ControlAction_OpenParty = 0xBF,
+            ControlAction_OpenGuild = 0xBA,
+            ControlAction_OpenFriends = 0xB9,
+            ControlAction_ToggleAllBags = 0xB8,
+            ControlAction_OpenMissionMap = 0xB6,
+            ControlAction_OpenBag2 = 0xB5,
+            ControlAction_OpenBag1 = 0xB4,
+            ControlAction_OpenBelt = 0xB3,
+            ControlAction_OpenBackpack = 0xB2,
+
+            // Chat
+            ControlAction_CharReply = 0xBE,
+            ControlAction_OpenChat = 0xA1,
 
             ControlAction_ReverseCamera = 0x90,
             ControlAction_StrafeLeft = 0x91,
@@ -209,10 +227,21 @@ namespace GW {
             ControlAction_MoveForward = 0xAD,
             ControlAction_ReverseDirection = 0xB1,
             ControlAction_Autorun = 0xB7,
-            ControlAction_TogglePartyWindow = 0xBF,
-            ControlAction_TargetNearestItem = 0xC3,
             
-
+            // Targeting
+            ControlAction_TargetNearestItem = 0xC3,
+            ControlAction_TargetNextItem = 0xC4,
+            ControlAction_TargetPreviousItem = 0xC5,
+            ControlAction_TargetPartyMemberNext = 0xCA,
+            ControlAction_TargetPartyMemberPrevious = 0xCB, 
+            ControlAction_TargetAllyNearest = 0xBC,
+            ControlAction_TargetSelf = 0xA0,
+            ControlAction_TargetPriorityTarget = 0x9F,
+            
+            ControlAction_CameraZoomIn = 0xCE,
+            ControlAction_CameraZoomOut = 0xCF,
+            
+            // Party/Hero commands
             ControlAction_CommandParty = 0xD6,
             ControlAction_CommandHero1 = 0xD7,
             ControlAction_CommandHero2 = 0xD8,
@@ -220,7 +249,17 @@ namespace GW {
             ControlAction_CommandHero4 = 0x102,
             ControlAction_CommandHero5 = 0x103,
             ControlAction_CommandHero6 = 0x104,
-            ControlAction_CommandHero7 = 0x105
+            ControlAction_CommandHero7 = 0x105,
+
+            // Skills
+            ControlAction_UseSkill1 = 0xA4,
+            ControlAction_UseSkill2 = 0xA5,
+            ControlAction_UseSkill3 = 0xA6,
+            ControlAction_UseSkill4 = 0xA7,
+            ControlAction_UseSkill5 = 0xA8,
+            ControlAction_UseSkill6 = 0xA9,
+            ControlAction_UseSkill7 = 0xAA,
+            ControlAction_UseSkill8 = 0xAB
             
         };
         struct FloatingWindow {

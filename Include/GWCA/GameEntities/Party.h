@@ -8,7 +8,7 @@ namespace GW {
     
     struct PlayerPartyMember { // total: 0xC/12
         /* +h0000 */ uint32_t login_number;
-        /* +h0004 */ uint32_t h0004;
+        /* +h0004 */ uint32_t calledTargetId;
         /* +h0008 */ uint32_t state;
         
         inline bool connected() const { return (state & 1) > 0; }

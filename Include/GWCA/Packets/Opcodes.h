@@ -164,7 +164,9 @@
 #define GAME_SMSG_WINDOW_ADD_ITEMS                  (0x0083) // 131
 #define GAME_SMSG_WINDOW_ITEMS_END                  (0x0084) // 132
 #define GAME_SMSG_WINDOW_ITEM_STREAM_END            (0x0085) // 133
+#define GAME_SMSG_CARTOGRAPHY_DATA					(0x0089) // 137
 #define GAME_SMSG_COMPASS_DRAWING                   (0x0090) // 144
+#define GAME_SMSG_MAPS_UNLOCKED						(0x0093) // 147
 #define GAME_SMSG_AGENT_UPDATE_SCALE                (0x0099) // 153
 #define GAME_SMSG_AGENT_UPDATE_NPC_NAME             (0x009A) // 154
 #define GAME_SMSG_AGENT_DISPLAY_DIALOG              (0x009D) // 157

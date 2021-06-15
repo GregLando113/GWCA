@@ -347,6 +347,26 @@ namespace GW {
             };
             const uint32_t Packet<CompassEvent>::STATIC_HEADER = GAME_SMSG_COMPASS_DRAWING;
 
+            struct MapsUnlocked : Packet<MapsUnlocked> {
+                uint32_t missions_bonus_length;
+                uint32_t missions_bonus[32];
+                uint32_t missions_completed_length;
+                uint32_t missions_completed[32];
+                uint32_t missions_bonus_hm_length;
+                uint32_t missions_bonus_hm[32];
+                uint32_t missions_completed_hm_length;
+                uint32_t missions_completed_hm[32];
+                uint32_t unlocked_map_length;
+                uint32_t unlocked_map[32];
+            };
+            const uint32_t Packet<MapsUnlocked>::STATIC_HEADER = GAME_SMSG_MAPS_UNLOCKED;
+
+            struct CartographyData : Packet<CartographyData> {
+                uint32_t data_length;
+                uint32_t data[64];
+            };
+            const uint32_t Packet<CartographyData>::STATIC_HEADER = GAME_SMSG_CARTOGRAPHY_DATA;
+
             struct AgentScale : Packet<AgentScale> {
                 uint32_t agent_id;
                 uint32_t scale;

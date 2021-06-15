@@ -86,6 +86,7 @@ namespace GW {
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
             kDialogBody             = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
             kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
+            kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
             kCheckboxPreference     = 0x10000000 | 0x13F,
             kTravel                 = 0x10000000 | 0x17A,
             kHideHeroPanel          = 0x10000000 | 0x197, // wparam = hero_id

@@ -213,10 +213,24 @@ namespace GW {
             ControlAction_OpenBag1 = 0xB4,
             ControlAction_OpenBelt = 0xB3,
             ControlAction_OpenBackpack = 0xB2,
+            ControlAction_OpenSkillsAndAttributes = 0x8F,
+            ControlAction_OpenQuestLog = 0x8E,
+            ControlAction_OpenWorldMap = 0x8C,
+            ControlAction_OpenHero = 0x8A,
+
+            // Weapon sets
+            ControlAction_CycleEquipment = 0x86,
+            ControlAction_ActivateWeaponSet4 = 0x84,
+            ControlAction_ActivateWeaponSet3 = 0x83,
+            ControlAction_ActivateWeaponSet2 = 0x82,
+            ControlAction_ActivateWeaponSet1 = 0x81,
+
+            ControlAction_DropItem = 0xCD, // drops bundle item >> flags, ashes, etc
 
             // Chat
             ControlAction_CharReply = 0xBE,
             ControlAction_OpenChat = 0xA1,
+            ControlAction_OpenAlliance = 0x88,
 
             ControlAction_ReverseCamera = 0x90,
             ControlAction_StrafeLeft = 0x91,
@@ -235,8 +249,11 @@ namespace GW {
             ControlAction_TargetPartyMemberNext = 0xCA,
             ControlAction_TargetPartyMemberPrevious = 0xCB, 
             ControlAction_TargetAllyNearest = 0xBC,
-            ControlAction_TargetSelf = 0xA0,
+            ControlAction_TargetSelf = 0xA0, // also 0x96
             ControlAction_TargetPriorityTarget = 0x9F,
+            ControlAction_TargetNearestEnemy = 0x93,
+            ControlAction_TargetNextEnemy = 0x95,
+            ControlAction_TargetPreviousEnemy = 0x9E,
             
             ControlAction_CameraZoomIn = 0xCE,
             ControlAction_CameraZoomOut = 0xCF,

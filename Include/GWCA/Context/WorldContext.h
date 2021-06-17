@@ -41,16 +41,22 @@ namespace GW {
         } *sub1; // 0x0
 
         /* +h0004 */ Array<wchar_t> message_buff;
-        /* +h0014 */ uint8_t h0014[16];
+        /* +h0014 */ uint32_t h0014[4];
         /* +h0024 */ MerchItemArray merch_items;
         /* +h0034 */ MerchItemArray merch_items2;
-        /* +h0044 */ uint8_t h0044[56];
+        /* +h0044 */ uint32_t accumMapInitUnk0;
+        /* +h0048 */ uint32_t accumMapInitUnk1;
+        /* +h004C */ uint32_t accumMapInitOffset;
+        /* +h0050 */ uint32_t accumMapInitLength;
+        /* +h0054 */ uint32_t h0054;
+        /* +h0058 */ uint32_t accumMapInitUnk2;
+        /* +h005C */ uint32_t h005C[8];
         /* +h007C */ MapAgentArray map_agents;
-        /* +h008C */ uint8_t h008C[16];
+        /* +h008C */ uint32_t h008C[4];
         /* +h009C */ Vec3f all_flag;
-        /* +h00A8 */ uint8_t h00A8[4];
+        /* +h00A8 */ uint32_t h00A8;
         /* +h00AC */ PartyAttributeArray attributes;
-        /* +h00BC */ uint8_t h00BC[1020];
+        /* +h00BC */ uint32_t h00BC[255];
         /* +h04B8 */ Array<void *> h04B8;
         /* +h04C8 */ Array<void *> h04C8;
         /* +h04D8 */ uint8_t h04D8[4];
@@ -65,7 +71,7 @@ namespace GW {
         /* +h0574 */ Array<uint32_t> h0574; // Seems like agent/item ids (only appears in outpost?)
         /* +h0584 */ HeroFlagArray hero_flags;
         /* +h0594 */ HeroInfoArray hero_info;
-        /* +h05A4 */ Array<void *> h05A4; // Struct size = 0x20
+        /* +h05A4 */ Array<void *> cartographed_areas; // Struct size = 0x20
         /* +h05B4 */ uint32_t h05B4[2];
         /* +h05BC */ Array<void *> h05BC;
         /* +h05CC */ Array<uint32_t> missions_bonus;

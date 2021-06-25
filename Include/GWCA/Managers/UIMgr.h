@@ -89,6 +89,7 @@ namespace GW {
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
             kCheckboxPreference     = 0x10000000 | 0x13F,
             kTravel                 = 0x10000000 | 0x17A,
+            kOpenWikiUrl            = 0x10000000 | 0x17B, // wparam = url
             kHideHeroPanel          = 0x10000000 | 0x197, // wparam = hero_id
             kShowHeroPanel          = 0x10000000 | 0x198, // wparam = hero_id
             kOpenTemplate           = 0x10000000 | 0x1B9,
@@ -106,11 +107,21 @@ namespace GW {
             Preference_FrameLimiter = 0x7,
 
             // more_preferences_array | 0x800
+            Preference_ChatState = 0x801, // 1 == showing chat window, 0 = not showing chat window
+            Preference_ChatTab = 0x802,
+            Preference_DistrictLastVisitedLanguage = 0x803,
+            Preference_DistrictLastVisitedLanguage2 = 0x804,
+            Preference_DistrictLastVisitedNonInternationalLanguage = 0x805,
+            Preference_DistrictLastVisitedNonInternationalLanguage2 = 0x806,
             Preference_DamageTextSize = 0x807, // 0 to 100
             Preference_FullscreenGamma = 0x808, // 0 to 100
+            Preference_InventoryBag = 0x809, // Selected bag in inventory window
             Preference_TextLanguage = 0x80A,
             Preference_AudioLanguage = 0x80B,
+            Preference_SkillListSortMethod = 0x811, 
+            Preference_SkillListViewMode = 0x812,
             Preference_SoundQuality = 0x813, // 0 to 100
+            Preference_StorageBagPage = 0x814,
             Preference_TextureQuality = 0x816, // TextureLod
             Preference_UseBestTextureFiltering = 0x817,
             Preference_EffectsVolume = 0x818, // 0 to 100
@@ -122,11 +133,13 @@ namespace GW {
             Preference_WindowPosY = 0x81F,
             Preference_WindowSizeX = 0x820,
             Preference_WindowSizeY = 0x821,
+            Preference_SealedSeed = 0x822, // Used in codex arena
+            Preference_SealedCount = 0x823, // Used in codex arena
             Preference_FieldOfView = 0x824, // 0 to 100
             Preference_CameraRotationSpeed = 0x825, // 0 to 100
             Preference_ScreenBorderless = 0x826, // 0x1 = Windowed Borderless, 0x2 = Windowed Fullscreen
             Preference_MasterVolume = 0x827, // 0 to 100
-            Preference_ClockMode = 0x828,
+            Preference_ClockMode = 0x828
         };
         // Used with GetWindowPosition
         enum WindowID : uint32_t {
@@ -300,6 +313,36 @@ namespace GW {
             short y;
         };
 
+        enum TooltipType : uint32_t {
+            None = 0x0,
+            EncString1 = 0x4,
+            EncString2 = 0x6,
+            Item = 0x8,
+            WeaponSet = 0xC,
+            Skill = 0x14,
+            Attribute = 0x4000
+        };
+
+        struct TooltipInfo {
+            uint32_t bit_field;
+            void* render; // Function that the game uses to draw the content
+            uint32_t* payload; // uint32_t* for skill or item, wchar_t* for encoded string
+            uint32_t unk0; // can use used as an enum in this case
+            uint32_t unk1;
+            uint32_t unk2;
+            UI::TooltipType type() {
+                // Without sniffing into each render function to determine the source, we have to guess based on the arguments passed.
+                switch (unk0) {
+                case UI::TooltipType::Item:
+                    // 0x8 also used for attribute tooltips, title tooltips and more
+                    if(payload[1] != 0xff) // NB: Item tooltip has 2 item_id values, second is always 0xff
+                        return UI::TooltipType::None;
+                    break;
+                }
+                return static_cast<UI::TooltipType>(unk0);
+            }
+        };
+
         // SendMessage for Guild Wars UI messages, most UI interactions will use this.
         GWCA_API void SendUIMessage(unsigned message, unsigned int wParam = 0, int lParam = 0);
         GWCA_API void SendUIMessage(unsigned message, void* wParam = nullptr, void* lParam = nullptr);
@@ -357,5 +400,16 @@ namespace GW {
 
         GWCA_API void RemoveUIMessageCallback(
             HookEntry *entry);
+
+        typedef HookCallback<TooltipInfo*> TooltipCallback;
+        GWCA_API void RegisterTooltipCallback(
+            HookEntry* entry,
+            TooltipCallback callback,
+            int altitude = -0x8000);
+
+        GWCA_API void RemoveTooltipCallback(
+            HookEntry* entry);
+
+        GWCA_API TooltipInfo* GetCurrentTooltip();
     }
 }

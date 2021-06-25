@@ -26,6 +26,14 @@ namespace {
     SendUIMessage_pt SendUIMessage_Func = 0;
     SendUIMessage_pt RetSendUIMessage = 0;
 
+    struct TooltipObj {
+        UI::TooltipInfo* tooltip;
+    };
+
+    typedef void(__cdecl* SetTooltip_pt)(UI::TooltipInfo** tooltip);
+    SetTooltip_pt SetTooltip_Func = 0;
+    SetTooltip_pt RetSetTooltip = 0;
+
     typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
     SetWindowVisible_pt SetWindowVisible_Func = 0;
 
@@ -70,11 +78,11 @@ namespace {
     uintptr_t WorldMapState_Addr;
     uintptr_t AsyncDecodeStringPtr;
 
-    uintptr_t CurrentTooltipPtr = 0;
+    UI::TooltipInfo*** CurrentTooltipPtr = 0;
 
     uint32_t *preferences_array;
     uint32_t *more_preferences_array;
-    uint32_t* preferences_array2;
+    uint32_t *preferences_array2;
     UI::WindowPosition* window_positions_array = 0;
     UI::FloatingWindow* floating_windows_array = 0;
 
@@ -99,6 +107,17 @@ namespace {
         UI::UIMessageCallback callback;
     };
     std::vector<CallbackEntry> UIMessage_callbacks;
+
+    // Callbacks are triggered by weighting
+    struct OnTooltipEntry {
+        int altitude;
+        HookEntry* entry;
+        UI::TooltipCallback callback;
+    };
+    std::vector<OnTooltipEntry> Tooltip_callbacks;
+
+
+
     static void __cdecl OnSendUIMessage(uint32_t msgid, void *wParam, void *lParam)
     {
         HookBase::EnterHook();
@@ -125,6 +144,38 @@ namespace {
         }
         HookBase::LeaveHook();
     }
+
+    static void __cdecl OnSetTooltip(UI::TooltipInfo** tooltip) {
+        HookBase::EnterHook();
+        bool changed = tooltip != *CurrentTooltipPtr;
+        RetSetTooltip(tooltip);
+        if (!changed) {
+            HookBase::LeaveHook();
+            return;
+        }
+        HookStatus status;
+        auto it = Tooltip_callbacks.begin();
+        // Pre callbacks
+        while (it != Tooltip_callbacks.end()) {
+            if (it->altitude > 0)
+                break;
+            it->callback(&status, *tooltip);
+            ++status.altitude;
+            it++;
+        }
+
+        if (!status.blocked)
+            RetSetTooltip(tooltip);
+
+        // Post callbacks
+        while (it != Tooltip_callbacks.end()) {
+            it->callback(&status, *tooltip);
+            ++status.altitude;
+            it++;
+        }
+        HookBase::LeaveHook();
+    }
+
     // Add in visibility to the window array to allow GWCA to provide this into when querying
     static void __cdecl OnToggleFloatingWindow(uint32_t unk, uint32_t floating_window_id, uint32_t visible, void* unk1, void* unk2, void* unk3) {
         HookBase::EnterHook();
@@ -274,6 +325,24 @@ namespace {
                 more_preferences_array = reinterpret_cast<uint32_t*>(address);
             }
         }
+
+        {
+            address = GW::Scanner::FindAssertion("p:\\code\\engine\\frame\\frtip.cpp", "CMsg::Validate(id)");
+            if(address)
+                address = GW::Scanner::FindInRange("\x55\x8B\xEC", "xxx", 0, address, address - 0x200);
+            if (address) {
+                SetTooltip_Func = (SetTooltip_pt)address;
+                address += 0x9;
+                CurrentTooltipPtr = (UI::TooltipInfo***)(*(uintptr_t*)address);
+            }
+            GWCA_INFO("[SCAN] SetTooltip_Func = %p\n", (void*)SetTooltip_Func);
+            GWCA_INFO("[SCAN] CurrentTooltipPtr = %p\n", (void*)CurrentTooltipPtr);
+        }
+
+        address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
+        GWCA_INFO("[SCAN] GameSettings = %p\n", (void*)address);
+        if (Verify(address))
+            GameSettings_Addr = *(uintptr_t*)address;
     
 
         SetTickboxPref_Func = (SetTickboxPref_pt)Scanner::Find(
@@ -323,6 +392,8 @@ namespace {
 
         if (Verify(SendUIMessage_Func))
             HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
+        if (Verify(SetTooltip_Func))
+            HookBase::CreateHook(SetTooltip_Func, OnSetTooltip, (void**)&RetSetTooltip);
 
         UI::RegisterUIMessageCallback(&open_template_hook, OnOpenTemplate);
     }
@@ -336,6 +407,8 @@ namespace {
             HookBase::RemoveHook(DoAction_Func);
         if(SendUIMessage_Func)
             HookBase::RemoveHook(SendUIMessage_Func);
+        if (SetTooltip_Func)
+            HookBase::RemoveHook(SetTooltip_Func);
     }
 }
 
@@ -411,6 +484,7 @@ namespace GW {
         if (Verify(SendUIMessage_Func))
             SendUIMessage_Func(message, (void *)wParam, (void *)lParam);
     }
+
 
     void UI::SendUIMessage(unsigned message, void *wParam, void *lParam)
     {
@@ -632,5 +706,28 @@ namespace GW {
             }
             it++;
         }
+    }
+    void UI::RegisterTooltipCallback(
+        HookEntry* entry,
+        TooltipCallback callback,
+        int altitude)
+    {
+        Tooltip_callbacks.push_back({ altitude, entry, callback });
+    }
+
+    void UI::RemoveTooltipCallback(
+        HookEntry* entry)
+    {
+        auto it = Tooltip_callbacks.begin();
+        while (it != Tooltip_callbacks.end()) {
+            if (it->entry == entry) {
+                Tooltip_callbacks.erase(it);
+                break;
+            }
+            it++;
+        }
+    }
+    UI::TooltipInfo* UI::GetCurrentTooltip() {
+        return CurrentTooltipPtr && *CurrentTooltipPtr ? **CurrentTooltipPtr : 0;
     }
 } // namespace GW

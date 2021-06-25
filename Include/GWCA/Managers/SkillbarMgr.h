@@ -51,6 +51,7 @@ namespace GW {
         // Get array of skillbars, [0] = player [1-7] = heroes.
         GWCA_API SkillbarArray GetSkillbarArray();
         GWCA_API Skillbar *GetPlayerSkillbar();
+        GWCA_API Skill* GetHoveredSkill();
 
         GWCA_API bool DecodeSkillTemplate(SkillTemplate *result, const char *temp);
 

@@ -27,6 +27,7 @@
 #include <GWCA/Managers/PlayerMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/SkillbarMgr.h>
+#include <GWCA/Managers/UIMgr.h>
 
 namespace {
     using namespace GW;
@@ -381,6 +382,13 @@ namespace GW {
         }
         return nullptr;
     }
+    Skill* SkillbarMgr::GetHoveredSkill() {
+        UI::TooltipInfo* tooltip = UI::GetCurrentTooltip();
+        if (!(tooltip && tooltip->type() == UI::TooltipType::Skill))
+            return nullptr;
+        return &GetSkillConstantData(*(uint32_t*)tooltip->payload);
+    }
+
     void SkillbarMgr::RegisterUseSkillCallback(
         HookEntry* entry,
         UseSkillCallback callback)

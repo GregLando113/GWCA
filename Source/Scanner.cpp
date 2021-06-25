@@ -28,6 +28,7 @@ uintptr_t GW::Scanner::FindAssertion(char* assertion_file, char* assertion_msg, 
         for (i = 0; assertion_msg[i]; i++) {
             mask[i] = 'x';
         }
+        mask[i++] = 'x'; // Include terminating char
         mask[i] = 0;
         uint32_t rdata_addr = Find(assertion_msg, mask, 0, Section::RDATA);
         if (!rdata_addr)
@@ -44,6 +45,7 @@ uintptr_t GW::Scanner::FindAssertion(char* assertion_file, char* assertion_msg, 
         for (i = 0; assertion_file[i]; i++) {
             mask[i] = 'x';
         }
+        mask[i++] = 'x'; // Include terminating char
         mask[i] = 0;
         uint32_t rdata_addr = Find(assertion_file, mask, 0, Section::RDATA);
         if (!rdata_addr)
@@ -65,7 +67,7 @@ uintptr_t GW::Scanner::FindInRange(const char* pattern, const char* mask, int of
 
     if (start > end) {
         // Scan backward
-        for (DWORD i = end; i >= start ; i--) {
+        for (DWORD i = start; i >= end ; i--) {
             if (*(char*)i != first)
                 continue;
             found = true;

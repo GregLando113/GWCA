@@ -28,12 +28,7 @@
 namespace {
     using namespace GW;
 
-    uintptr_t storage_pannel_addr;
     uintptr_t storage_open_addr;
-
-    uint32_t hovered_item_id = 0;
-    uint32_t item_tooltip_ptr = 0;
-
     enum ItemClickType : uint32_t {
         ItemClickType_Add           = 2, // (when you load / open chest)
         ItemClickType_Click         = 5,
@@ -50,16 +45,9 @@ namespace {
         uint32_t type;
     };
 
-    uintptr_t* CurrentTooltipPtr = 0;
-
     typedef void (__fastcall *ItemClick_pt)(uint32_t *bag_id, void *edx, ItemClickParam *param);
     ItemClick_pt RetItemClick;
     ItemClick_pt ItemClick_Func;
-
-    typedef void(__cdecl * ItemTooltip_pt)(uint32_t item_id, void* unk1, void* unk2, void* unk3, void* unk4, void* unk5);
-    ItemTooltip_pt RetItemTooltip;
-    ItemTooltip_pt ItemTooltip_Func;
-
 
     std::unordered_map<HookEntry *, Items::ItemClickCallback> ItemClick_callbacks;
     void __fastcall OnItemClick(uint32_t* bag_id, void *edx, ItemClickParam *param) {
@@ -83,46 +71,16 @@ namespace {
             RetItemClick(bag_id, edx, param);
         HookBase::LeaveHook();
     }
-    void __cdecl OnItemTooltip(uint32_t item_id, void* unk1, void* unk2, void* unk3, void* unk4, void* unk5) {
-        HookBase::EnterHook();
-        hovered_item_id = item_id;
-        if (CurrentTooltipPtr)
-            item_tooltip_ptr = *CurrentTooltipPtr;
-        RetItemTooltip(item_id, unk1, unk2, unk3, unk4, unk5);
-        HookBase::LeaveHook();
-    }
 
     void Init() {
-        {
-            uintptr_t address = Scanner::Find(
-                "\x0F\x84\x5D\x01\x00\x00\x83\x7B\x14", "xxxxxxxxx", -4);
-            GWCA_INFO("[SCAN] StoragePannel = %p\n", (void *)address);
-            if (Verify(address))
-                storage_pannel_addr = *(uintptr_t *)address;
-        }
 
         {
             uintptr_t address = Scanner::Find(
                 "\xC7\x00\x0F\x00\x00\x00\x89\x48\x14", "xxxxxxxxx", -0x28);
-            GWCA_INFO("[SCAN] StorageOpen = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] StorageOpen = %p\n", (void*)address);
             if (Verify(address))
-                storage_open_addr = *(uintptr_t *)address;
+                storage_open_addr = *(uintptr_t*)address;
         }
-
-        ItemTooltip_Func = (ItemTooltip_pt)Scanner::Find(
-            "\x8B\x40\x40\x89\x45\xFC", "xxxxxx", -0xF);
-        GWCA_INFO("[SCAN] ItemTooltip = %p\n", ItemTooltip_Func);
-
-        if (Verify(ItemTooltip_Func))
-            HookBase::CreateHook(ItemTooltip_Func, OnItemTooltip, (void**)&RetItemTooltip);
-
-        {
-            uintptr_t address = Scanner::Find("\x8B\x00\x83\xC8\x20\x6A\xFF", "xxxxxxx", -0x22);
-            if (Verify(address)) {
-                CurrentTooltipPtr = *(uintptr_t**)address;
-            }
-        }
-        GWCA_INFO("[SCAN] CurrentTooltipPtr = %p\n", CurrentTooltipPtr);
 
         ItemClick_Func = (ItemClick_pt)Scanner::Find(
             "\x8B\x48\x08\x83\xEA\x00\x0F\x84", "xxxxxxxx", -0x1C);
@@ -135,8 +93,6 @@ namespace {
     void Exit() {
         if (ItemClick_Func)
             HookBase::RemoveHook(ItemClick_Func);
-        if (ItemTooltip_Func)
-            HookBase::RemoveHook(ItemTooltip_Func);
     }
 }
 
@@ -206,11 +162,10 @@ namespace GW {
     }
 
     Item* Items::GetHoveredItem() {
-        if (!hovered_item_id || !CurrentTooltipPtr || item_tooltip_ptr != *CurrentTooltipPtr) {
-            hovered_item_id = 0;
+        UI::TooltipInfo* tooltip = UI::GetCurrentTooltip();
+        if (!(tooltip && (tooltip->type() == UI::TooltipType::Item || tooltip->type() == UI::TooltipType::WeaponSet)))
             return nullptr;
-        }
-        return GetItemById(hovered_item_id);
+        return GetItemById(*(uint32_t*)tooltip->payload);
     }
 
     Item *Items::GetItemBySlot(uint32_t bag, uint32_t slot) {
@@ -288,30 +243,26 @@ namespace GW {
         CtoS::SendPacket(0x8, GAME_CMSG_OPEN_CHEST, 0x2);
     }
 
-    void Items::MoveItem(const Item *item, const Bag *bag, uint32_t slot, uint32_t quantity) {
-        UNREFERENCED_PARAMETER(quantity);
-        // @Cleanup:
-        // Whis is quantity never referenced?
-
-        if (!item || !bag) return;
+    void Items::MoveItem(const Item * from, const Bag *bag, uint32_t slot, uint32_t quantity) {
+        if (!from || !bag) return;
         if (bag->items.size() < (unsigned)slot) return;
-        // @Robustness: Check if there is enough space at the destination.
-        CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, item->item_id, bag->bag_id, slot);
+        if (quantity <= 0) quantity = from->quantity;
+        if (quantity > from->quantity) quantity = from->quantity;
+        if (quantity == from->quantity)
+            CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, from->item_id, bag->bag_id, slot);
+        else
+            CtoS::SendPacket(0x14, GAME_CMSG_ITEM_SPLIT_STACK, from->item_id, quantity, bag->bag_id, slot);
     }
 
     void Items::MoveItem(const Item *item, Constants::Bag bag_id, uint32_t slot, uint32_t quantity)
     {
-        Bag *bag = GetBag(bag_id);
-        if (!bag) return;
-        MoveItem(item, bag, slot, quantity);
+        MoveItem(item, GetBag(bag_id), slot, quantity);
     }
 
     void Items::MoveItem(const Item *from, const Item *to, uint32_t quantity) {
         if (!from || !to) return;
         if (!from->bag || !to->bag) return;
-        if (quantity <= 0) quantity = from->quantity;
-        if (quantity + to->quantity > 250) return;
-        CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, from->item_id, to->bag->bag_id, to->slot);
+        MoveItem(from, to->bag, to->slot, quantity);
     }
 
     bool Item::GetIsZcoin() const {
@@ -449,18 +400,12 @@ namespace GW {
     }
 
     uint32_t Items::GetStoragePage(void) {
-        if (Verify(storage_pannel_addr)) {
-            // @Cleanup: 20 being the position for the storage, but this
-            // array hold way more, for instance the current chat channel
-            return ((uint32_t *)storage_pannel_addr)[20];
-        } else {
-            return 0;
-        }
+        return UI::GetPreference(UI::Preference::Preference_StorageBagPage);
     }
 
     bool Items::GetIsStorageOpen(void) {
         if (Verify(storage_open_addr))
-            return *(uint32_t *)storage_open_addr != 0;
+            return *(uint32_t*)storage_open_addr != 0;
         else
             return false;
     }

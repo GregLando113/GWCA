@@ -248,6 +248,9 @@ namespace GW {
         inline bool GetIsCasting()         const { return model_state == 65 || model_state == 581; }
         inline bool GetIsIdle()            const { return model_state == 68 || model_state == 64 || model_state == 100; }
 
+        // Composite bool, sometimes agents can be dead but have hp (e.g. packets are received in wrong order)
+        inline bool GetIsAlive()            const { return !GetIsDead() && hp > .0f; }
+
         inline bool IsPlayer()             const { return login_number != 0; }
         inline bool IsNPC()                const { return login_number == 0; }
     };

@@ -9,6 +9,7 @@
 #include <GWCA/Context/GuildContext.h>
 
 #include <GWCA/Managers/Module.h>
+#include <GWCA/Managers/UIMgr.h>
 
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/GuildMgr.h>
@@ -45,16 +46,14 @@ namespace GW {
     }
 
     void GuildMgr::TravelGH() {
-        GHKey guild_uuid = GameContext::instance()->guild->player_gh_key;
-        CtoS::SendPacket(0x18, GAME_CMSG_PARTY_ENTER_GUILD_HALL,
-            guild_uuid.k[0], guild_uuid.k[1], guild_uuid.k[2], guild_uuid.k[3]);
+        TravelGH(GameContext::instance()->guild->player_gh_key);
     }
 
     void GuildMgr::TravelGH(GHKey key) {
-        CtoS::SendPacket(0x18, GAME_CMSG_PARTY_ENTER_GUILD_HALL, key.k[0], key.k[1], key.k[2], key.k[3]);
+        UI::SendUIMessage(UI::kGuildHall, &key);
     }
 
     void GuildMgr::LeaveGH() {
-        CtoS::SendPacket(0x8, GAME_CMSG_PARTY_LEAVE_GUILD_HALL, 0x1);
+        UI::SendUIMessage(UI::kLeaveGuildHall,nullptr);
     }
 } // namespace GW

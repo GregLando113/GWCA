@@ -88,6 +88,8 @@ namespace GW {
             kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
             kCheckboxPreference     = 0x10000000 | 0x13F,
+            kGuildHall              = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
+            kLeaveGuildHall         = 0x10000000 | 0x179,
             kTravel                 = 0x10000000 | 0x17A,
             kOpenWikiUrl            = 0x10000000 | 0x17B, // wparam = url
             kHideHeroPanel          = 0x10000000 | 0x197, // wparam = hero_id

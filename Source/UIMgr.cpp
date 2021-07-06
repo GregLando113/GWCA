@@ -68,6 +68,11 @@ namespace {
     typedef void (__cdecl *LoadSettings_pt)(uint32_t size, uint8_t *data);
     LoadSettings_pt LoadSettings_Func = 0;
 
+    typedef void(__cdecl* DecodeStr_Callback)(void* param, wchar_t* s, void* unk);
+    typedef void(__cdecl* AsyncDecodeStr_pt)(const wchar_t* s, DecodeStr_Callback cb, void* wParam);
+    AsyncDecodeStr_pt Gw_AsyncDecodeStr = 0;
+    AsyncDecodeStr_pt RetAsyncDecodeStr = 0;
+
     bool open_links = false;
     HookEntry open_template_hook;
 
@@ -76,7 +81,6 @@ namespace {
     uintptr_t ui_drawn_addr;
     uintptr_t shift_screen_addr;
     uintptr_t WorldMapState_Addr;
-    uintptr_t AsyncDecodeStringPtr;
 
     UI::TooltipInfo*** CurrentTooltipPtr = 0;
 
@@ -116,8 +120,6 @@ namespace {
     };
     std::vector<OnTooltipEntry> Tooltip_callbacks;
 
-
-
     static void __cdecl OnSendUIMessage(uint32_t msgid, void *wParam, void *lParam)
     {
         HookBase::EnterHook();
@@ -143,6 +145,31 @@ namespace {
             it++;
         }
         HookBase::LeaveHook();
+    }
+
+    struct OnPreDecodeString {
+        HookEntry* entry;
+        UI::DecodeStrCallback callback;
+    };
+    std::vector<OnPreDecodeString> PreDecodeStr_callbacks;
+
+    static void __cdecl OnAsyncDecodeStr(wchar_t* encoded_str, DecodeStr_Callback original_callback, void* wParam) {
+        HookBase::EnterHook();
+        HookStatus status;
+        auto it = PreDecodeStr_callbacks.begin();
+
+        // Pre callbacks
+        while (it != PreDecodeStr_callbacks.end()) {
+            encoded_str = it->callback(&status, encoded_str);
+            ++status.altitude;
+            it++;
+        }
+
+        if (!status.blocked) {
+            RetAsyncDecodeStr(encoded_str, original_callback, wParam);
+        }
+        HookBase::LeaveHook();
+        
     }
 
     static void __cdecl OnSetTooltip(UI::TooltipInfo** tooltip) {
@@ -197,6 +224,7 @@ namespace {
         RetSetTickboxPref(preference_index, value, unk0);
         HookBase::LeaveHook();
     }
+
     std::unordered_map<HookEntry*, UI::KeyCallback> OnKeydown_callbacks;
     std::unordered_map<HookEntry*, UI::KeyCallback> OnKeyup_callbacks;
     static void __fastcall OnDoAction(void* ecx, void* edx, uint32_t action_type, void* arg1, void* arg2) {
@@ -228,7 +256,7 @@ namespace {
         size_t size;
     };
 
-    void __cdecl __callback_copy_char(void *param, const wchar_t *s) {
+    void __cdecl __callback_copy_char(void *param, wchar_t *s, void*) {
         GWCA_ASSERT(param && s);
         AsyncBuffer *abuf = (AsyncBuffer *)param;
         char *outstr = (char *)abuf->buffer;
@@ -239,26 +267,20 @@ namespace {
         delete abuf;
     }
 
-    void __cdecl __callback_copy_wchar(void *param, const wchar_t *s) {
+    void __cdecl __callback_copy_wchar(void *param, wchar_t *s, void*) {
         GWCA_ASSERT(param && s);
         AsyncBuffer *abuf = (AsyncBuffer *)param;
         wcsncpy((wchar_t *)abuf->buffer, s, abuf->size);
         delete abuf;
     }
 
-    void __cdecl __calback_copy_wstring(void *param, const wchar_t *s) {
+    void __cdecl __calback_copy_wstring(void *param, wchar_t *s, void*) {
         GWCA_ASSERT(param && s);
         std::wstring *str = (std::wstring *)param;
         *str = s;
     }
 
-    typedef void (__cdecl *DecodeStr_Callback)(void *param, const wchar_t *s);
-    void AsyncDecodeStr(const wchar_t *enc_str, DecodeStr_Callback callback, void *param) {
-        typedef void(__cdecl *AsyncDecodeStr_pt)(const wchar_t *s, DecodeStr_Callback cb, void *param);
-        AsyncDecodeStr_pt Gw_AsyncDecodeStr = (AsyncDecodeStr_pt)AsyncDecodeStringPtr;
-        GWCA_ASSERT(enc_str && Gw_AsyncDecodeStr && callback);
-        Gw_AsyncDecodeStr(enc_str, callback, param);
-    }
+    
 
     void Init() {
         uintptr_t address;
@@ -387,8 +409,11 @@ namespace {
         GWCA_INFO("[SCAN] SetWindowPosition_Func = %08X\n", SetWindowPosition_Func);
         GWCA_INFO("[SCAN] window_positions_array = %p\n", (void*)window_positions_array);
 
-        AsyncDecodeStringPtr = Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
-        GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %08X\n", AsyncDecodeStringPtr);
+        Gw_AsyncDecodeStr = (AsyncDecodeStr_pt)Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
+        GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %08X\n", Gw_AsyncDecodeStr);
+        if (Verify(Gw_AsyncDecodeStr)) {
+            HookBase::CreateHook(Gw_AsyncDecodeStr, OnAsyncDecodeStr, (void**)&RetAsyncDecodeStr);
+        }
 
         if (Verify(SendUIMessage_Func))
             HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
@@ -409,6 +434,8 @@ namespace {
             HookBase::RemoveHook(SendUIMessage_Func);
         if (SetTooltip_Func)
             HookBase::RemoveHook(SetTooltip_Func);
+        if (Gw_AsyncDecodeStr)
+            HookBase::RemoveHook(Gw_AsyncDecodeStr);
     }
 }
 
@@ -595,7 +622,7 @@ namespace GW {
         AsyncBuffer *abuf = new AsyncBuffer;
         abuf->buffer = buffer;
         abuf->size = size;
-        ::AsyncDecodeStr(enc_str, __callback_copy_wchar, abuf);
+        ::OnAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_wchar, abuf);
     }
 
     void UI::AsyncDecodeStr(const wchar_t *enc_str, char *buffer, size_t size) {
@@ -603,11 +630,11 @@ namespace GW {
         AsyncBuffer *abuf = new AsyncBuffer;
         abuf->buffer = buffer;
         abuf->size = size;
-        ::AsyncDecodeStr(enc_str, __callback_copy_char, abuf);
+        ::OnAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_char, abuf);
     }
 
     void UI::AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out) {
-        ::AsyncDecodeStr(enc_str, __calback_copy_wstring, out);
+        ::OnAsyncDecodeStr((wchar_t*)enc_str, __calback_copy_wstring, out);
     }
 
     #define WORD_BIT_MORE       (0x8000)
@@ -722,6 +749,25 @@ namespace GW {
         while (it != Tooltip_callbacks.end()) {
             if (it->entry == entry) {
                 Tooltip_callbacks.erase(it);
+                break;
+            }
+            it++;
+        }
+    }
+    void UI::RegisterDecodeStringCallback(
+        HookEntry* entry,
+        DecodeStrCallback callback)
+    {
+        PreDecodeStr_callbacks.push_back({ entry, callback });
+    }
+
+    void UI::RemoveDecodeStringCallback(
+        HookEntry* entry)
+    {
+        auto it = PreDecodeStr_callbacks.begin();
+        while (it != PreDecodeStr_callbacks.end()) {
+            if (it->entry == entry) {
+                PreDecodeStr_callbacks.erase(it);
                 break;
             }
             it++;

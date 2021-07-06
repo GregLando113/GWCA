@@ -131,6 +131,7 @@ namespace GW {
                 constexpr uint32_t Urgoz = 1025;
                 constexpr uint32_t Ilsundur_Lord_of_Fire = 0; //UNKNOWN
                 constexpr uint32_t Chung_The_Attuned = 1026;
+                constexpr uint32_t Mungri_Magicbox = 1029;
                 constexpr uint32_t The_Stygian_Lords = 1046;
                 constexpr uint32_t Rragar_Maneater = 1049;
                 constexpr uint32_t Murakai_Lady_of_the_Night = 1050;
@@ -159,6 +160,25 @@ namespace GW {
             }
 
             namespace ZaishenVanquish {
+                constexpr uint32_t Dejarin_Estate = 1201;
+                constexpr uint32_t Watchtower_Coast = 1202;
+                constexpr uint32_t Arbor_Bay = 1203;
+                constexpr uint32_t Barbarous_Shore = 1204;
+                constexpr uint32_t Deldrimor_Bowl = 1205;
+                constexpr uint32_t Boreas_Seabed = 1206;
+                constexpr uint32_t Cliffs_of_Dohjok = 1207;
+                constexpr uint32_t Diessa_Lowlands = 1208;
+                constexpr uint32_t Bukdek_Byway = 1209;
+                constexpr uint32_t Bjora_Marches = 1210;
+                constexpr uint32_t Crystal_Overlook = 1211;
+                constexpr uint32_t Diviners_Ascent = 1212;
+                constexpr uint32_t Dalada_Uplands = 1213;
+                constexpr uint32_t Drazach_Thicket = 1214;
+                constexpr uint32_t Fahranur_the_First_City = 1215;
+                constexpr uint32_t Dragons_Gullet = 1216;
+                constexpr uint32_t Ferndale = 1217;
+                constexpr uint32_t Forum_Highlands = 1218;
+                constexpr uint32_t Dreadnoughts_Drift = 1219;
                 constexpr uint32_t Drakkar_Lake = 1220;
                 constexpr uint32_t Dry_Top = 1221;
                 constexpr uint32_t Tears_of_the_Fallen = 1222;

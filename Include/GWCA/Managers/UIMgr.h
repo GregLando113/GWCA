@@ -412,6 +412,15 @@ namespace GW {
         GWCA_API void RemoveTooltipCallback(
             HookEntry* entry);
 
+        // Return nullptr to block the string from being decoded, or override with a new string
+        typedef std::function<wchar_t*(HookStatus*,wchar_t*)> DecodeStrCallback;
+        GWCA_API void RegisterDecodeStringCallback(
+            HookEntry* entry,
+            DecodeStrCallback callback);
+
+        GWCA_API void RemoveDecodeStringCallback(
+            HookEntry* entry);
+
         GWCA_API TooltipInfo* GetCurrentTooltip();
     }
 }

@@ -46,7 +46,9 @@ namespace GW {
 
     template <typename T>
     struct TList {
-
+        TLink<T>* Get() {
+            return &link;
+        }
     protected:
         size_t   offset;
         TLink<T> link;

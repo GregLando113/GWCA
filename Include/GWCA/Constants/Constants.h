@@ -276,6 +276,27 @@ namespace GW {
             constexpr int NightfallMissionOutpost = 0x85;
         }
 
+        enum class EffectID : uint32_t {
+            black_cloud = 1,
+            mesmer_symbol = 4,
+            green_cloud = 7,
+            green_sparks = 8,
+            necro_symbol = 9,
+            ele_symbol = 11,
+            white_clouds = 13,
+            monk_symbol = 18,
+            bleeding = 23,
+            blind = 24,
+            burning = 25,
+            disease = 26,
+            poison = 27,
+            dazed = 28,
+            weakness = 29, //cracked_armor has same EffectID
+            assasin_symbol = 34,
+            ritualist_symbol = 35,
+            dervish_symbol = 36,
+        };
+
         namespace Camera {
             constexpr float FIRST_PERSON_DIST = 2.f;
             constexpr float DEFAULT_DIST = 750.f;

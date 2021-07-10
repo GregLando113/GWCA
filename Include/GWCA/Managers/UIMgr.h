@@ -75,6 +75,15 @@ namespace GW {
             uint32_t agent_id;
             wchar_t* message_enc;
         };
+        
+        struct DecodingString {
+            std::wstring encoded;
+            std::wstring decoded;
+            void* original_callback;
+            void* original_param;
+            void* ecx;
+            void* edx;
+        };
 
         enum UIMessage : uint32_t {
             kShowAgentNameTag       = 0x10000000 | 0x19, // wparam = AgentNameTagInfo*
@@ -413,10 +422,11 @@ namespace GW {
             HookEntry* entry);
 
         // Return nullptr to block the string from being decoded, or override with a new string
-        typedef std::function<wchar_t*(HookStatus*,wchar_t*)> DecodeStrCallback;
+        typedef std::function<wchar_t*(HookStatus*, DecodingString*)> DecodeStrCallback;
         GWCA_API void RegisterDecodeStringCallback(
             HookEntry* entry,
-            DecodeStrCallback callback);
+            DecodeStrCallback callback,
+            int altitude = -0x8000);
 
         GWCA_API void RemoveDecodeStringCallback(
             HookEntry* entry);

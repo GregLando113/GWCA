@@ -332,9 +332,6 @@ namespace {
         DoAction_Func = (DoAction_pt)Scanner::Find("\x8B\x75\x08\x57\x8B\xF9\x83\xFE\x09\x75", "xxxxxxxxxx", -0x4);
         GWCA_INFO("[SCAN] DoAction = %p\n", DoAction_Func);
 
-        if (Verify(DoAction_Func))
-            HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
-
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\x5D\xC3\x89\x45\x08\x5D\xE9", "x????xxxxxxx", -0x1A);
         GWCA_INFO("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
@@ -351,10 +348,10 @@ namespace {
         }
 
         {
-            address = Scanner::Find("\x83\xF8\x01\x75\x40\xD9\xEE\x8D\x45", "xxxxxxxxx", +0x6C);
-            GWCA_INFO("[SCAN] ui_drawn_addr = %p\n", (void *)address);
+            address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uiroot.cpp", "!s_count++", -0xD);
             if (Verify(address))
-                ui_drawn_addr = *(uintptr_t *)address;
+                ui_drawn_addr = *(uintptr_t *)address - 0x10;
+            GWCA_INFO("[SCAN] ui_drawn_addr = %p\n", (void*)ui_drawn_addr);
         }
 
         {
@@ -385,7 +382,7 @@ namespace {
         {
             address = GW::Scanner::FindAssertion("p:\\code\\engine\\frame\\frtip.cpp", "CMsg::Validate(id)");
             if(address)
-                address = GW::Scanner::FindInRange("\x55\x8B\xEC", "xxx", 0, address, address - 0x200);
+                address = GW::Scanner::FindInRange("\x56\x8B\xF7", "xxx", -0x13, address, address - 0x200);
             if (address) {
                 SetTooltip_Func = (SetTooltip_pt)address;
                 address += 0x9;
@@ -410,8 +407,6 @@ namespace {
             GWCA_INFO("[SCAN] preferences_array2 = %p\n", (void*)address);
             address = *(uintptr_t*)address;
             preferences_array2 = reinterpret_cast<uint32_t*>(address);
-
-            HookBase::CreateHook(SetTickboxPref_Func, OnSetTickboxPreference, (void**)&RetSetTickboxPref);
         }
 
         
@@ -447,32 +442,38 @@ namespace {
         GWCA_INFO("[SCAN] ValidateAsyncDecodeStr = %08X\n", ValidateAsyncDecodeStr);
         AsyncDecodeStringPtr = (DoAsyncDecodeStr_pt)Scanner::Find("\x8b\x47\x14\x8d\x9f\x80\xfe\xff\xff", "xxxxxxxxx", -0x8);
         GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %08X\n", AsyncDecodeStringPtr);
-        if (Verify(AsyncDecodeStringPtr)) {
-            // TODO: Re-enable this hook once the crashing is sorted.
-            //HookBase::CreateHook(AsyncDecodeStringPtr, OnAsyncDecodeStr, (void**)&RetAsyncDecodeStr);
-        }
+
 
         if (Verify(SendUIMessage_Func))
             HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
         if (Verify(SetTooltip_Func))
             HookBase::CreateHook(SetTooltip_Func, OnSetTooltip, (void**)&RetSetTooltip);
-
+        if(Verify(SetTickboxPref_Func))
+            HookBase::CreateHook(SetTickboxPref_Func, OnSetTickboxPreference, (void**)&RetSetTickboxPref);
+        if (Verify(DoAction_Func))
+            HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
+        if (Verify(AsyncDecodeStringPtr)) {
+            // TODO: Re-enable this hook once the crashing is sorted.
+            //HookBase::CreateHook(AsyncDecodeStringPtr, OnAsyncDecodeStr, (void**)&RetAsyncDecodeStr);
+        }
         UI::RegisterUIMessageCallback(&open_template_hook, OnOpenTemplate);
     }
 
     void Exit()
     {
         UI::RemoveUIMessageCallback(&open_template_hook);
-        if(SetTickboxPref_Func) 
-            HookBase::RemoveHook(SetTickboxPref_Func);
-        if (DoAction_Func) 
-            HookBase::RemoveHook(DoAction_Func);
-        if(SendUIMessage_Func)
-            HookBase::RemoveHook(SendUIMessage_Func);
-        if (SetTooltip_Func)
-            HookBase::RemoveHook(SetTooltip_Func);
         if (AsyncDecodeStringPtr)
             HookBase::RemoveHook(AsyncDecodeStringPtr);
+        if (DoAction_Func)
+            HookBase::RemoveHook(DoAction_Func);
+        if (SetTickboxPref_Func)
+            HookBase::RemoveHook(SetTickboxPref_Func);
+        if (SetTooltip_Func)
+            HookBase::RemoveHook(SetTooltip_Func);
+        if (SendUIMessage_Func)
+            HookBase::RemoveHook(SendUIMessage_Func);
+        if(SetTickboxPref_Func) 
+            HookBase::RemoveHook(SetTickboxPref_Func);
     }
 }
 

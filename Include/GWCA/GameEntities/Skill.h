@@ -22,7 +22,7 @@ namespace GW {
         /* +h0031 */ uint8_t target;
         /* +h0032 */ uint8_t h0032;
         /* +h0033 */ uint8_t skill_equip_type;
-        /* +h0034 */ uint8_t h0034;
+        /* +h0034 */ uint8_t overcast; // only if special flag has 0x000001 set
         /* +h0035 */ uint8_t energy_cost;
         /* +h0036 */ uint8_t health_cost;
         /* +h0037 */ uint8_t h0037;
@@ -32,18 +32,24 @@ namespace GW {
         /* +h0044 */ uint32_t duration0;
         /* +h0048 */ uint32_t duration15;
         /* +h004C */ uint32_t recharge;
-        /* +h0050 */ uint8_t h0050[12];
+        /* +h0050 */ uint16_t h0050[4];
+        /* +h0058 */ uint32_t skill_arguments; // 1 - duration set, 2 - scale set, 4 - bonus scale set (3 would mean duration and scale is set/used by the skill)
         /* +h005C */ uint32_t scale0;
         /* +h0060 */ uint32_t scale15;
         /* +h0064 */ uint32_t bonusScale0;
         /* +h0068 */ uint32_t bonusScale15;
         /* +h006C */ float aoe_range;
         /* +h0070 */ float const_effect;
-        /* +h0074 */ uint8_t h0074[24];
+        /* +h0074 */ uint32_t caster_overhead_animation_id; //2077 == max == no animation
+        /* +h0078 */ uint32_t caster_body_animation_id;
+        /* +h007C */ uint32_t target_body_animation_id;
+        /* +h0080 */ uint32_t target_overhead_animation_id;
+        /* +h0084 */ uint32_t projectile_animation_1_id;
+        /* +h0088 */ uint32_t projectile_animation_2_id;
 		/* +h008C */ uint32_t icon_file_id;
 		/* +h0090 */ uint8_t h0090[4];
         /* +h0094 */ uint32_t name; // String id
-        /* +h0098 */ uint32_t h0098;
+        /* +h0098 */ uint32_t concise; // String id
         /* +h009C */ uint32_t description; // String id
 
         uint8_t GetEnergyCost() const {

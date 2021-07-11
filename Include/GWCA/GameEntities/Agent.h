@@ -3,12 +3,21 @@
 #include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Array.h>
 #include <GWCA/GameContainers/GamePos.h>
+#include <GWCA/Constants/Constants.h>
 
 namespace GW {
     typedef uint32_t AgentID;
 
     struct Vec3f;
     struct GamePos;
+
+    struct VisibleEffect {
+        uint32_t unk; //enchantment = 1, weapon spell = 9
+        Constants::EffectID id;
+        uint32_t has_ended; //effect no longer active, effect ending animation plays.
+    };
+
+    typedef TList<VisibleEffect> VisibleEffectList;
 
     // Courtesy of DerMonech14
     struct Equipment {
@@ -98,9 +107,7 @@ namespace GW {
         /* +h0058 */ uint32_t name_properties; // Bitmap basically telling what the agent is
         /* +h005C */ uint32_t ground;
         /* +h0060 */ uint32_t h0060;
-        /* +h0064 */ float h0064;   // weird values, change with movement, always between -1 and 1
-        /* +h0068 */ float h0068;
-        /* +h006C */ float h006C;
+        /* +h0064 */ Vec3f terrain_normal;
         /* +h0070 */ uint8_t  h0070[4];
         union {
             struct {
@@ -203,7 +210,8 @@ namespace GW {
         /* +h0158 */ uint32_t type_map; // Odd variable! 0x08 = dead, 0xC00 = boss, 0x40000 = spirit, 0x400000 = player
         /* +h015C */ uint32_t h015C[4];
         /* +h016C */ uint32_t in_spirit_range; // Tells if agent is within spirit range of you. Doesn't work anymore?
-        /* +h0170 */ uint32_t h0170[4];
+        /* +h0170 */ VisibleEffectList visible_effects;
+        /* +h017C */ uint32_t h017C;
         /* +h0180 */ uint32_t login_number; // Unique number in instance that only works for players
         /* +h0184 */ float    animation_speed;  // Speed of the current animation
         /* +h0188 */ uint32_t animation_code; // related to animations
@@ -222,6 +230,7 @@ namespace GW {
         // Health Bar Effect Bitmasks.
         inline bool GetIsBleeding()        const { return (effects & 0x0001) != 0; }
         inline bool GetIsConditioned()     const { return (effects & 0x0002) != 0; }
+        inline bool GetIsCrippled()        const { return (effects & 0x000A) == 0xA; }
         inline bool GetIsDead()            const { return (effects & 0x0010) != 0; }
         inline bool GetIsDeepWounded()     const { return (effects & 0x0020) != 0; }
         inline bool GetIsPoisoned()        const { return (effects & 0x0040) != 0; }
@@ -317,6 +326,7 @@ namespace GW {
         // Health Bar Effect Bitmasks.
         inline bool GetIsBleeding()         const { return (effects & 0x0001) != 0; }
         inline bool GetIsConditioned()      const { return (effects & 0x0002) != 0; }
+        inline bool GetIsCrippled()        const { return (effects & 0x000A) == 0xA; }
         inline bool GetIsDead()             const { return (effects & 0x0010) != 0; }
         inline bool GetIsDeepWounded()      const { return (effects & 0x0020) != 0; }
         inline bool GetIsPoisoned()         const { return (effects & 0x0040) != 0; }

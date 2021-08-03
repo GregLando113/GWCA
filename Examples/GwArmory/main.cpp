@@ -579,7 +579,7 @@ static void Draw(IDirect3DDevice9* device)
         GW::Scanner::Initialize();
         SetItem_Func = (SetItem_pt)GW::Scanner::Find("\x83\xC4\x04\x8B\x08\x8B\xC1\xC1", "xxxxxxxx", -0x24);
         if (!SetItem_Func) {
-            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "GwArmory: Failed to find the SetItem function");
+            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"GwArmory: Failed to find the SetItem function");
         } else {
             GW::AgentLiving* player_agent = GW::Agents::GetPlayerAsAgentLiving();
             if (player_agent && player_agent->equip && player_agent->equip[0]) {
@@ -592,7 +592,7 @@ static void Draw(IDirect3DDevice9* device)
             }
         }
 
-        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "GwArmory: Initialized");
+        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"GwArmory: Initialized");
         initialized = true;
     }
 
@@ -619,7 +619,7 @@ static void Draw(IDirect3DDevice9* device)
         ImGui::DestroyContext();
         SetWindowLongPtr(hWnd, GWL_WNDPROC, OldWndProc);
 
-        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "GwArmory: Bye!");
+        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"GwArmory: Bye!");
         GW::DisableHooks();
         running = false;
     }

@@ -12,6 +12,7 @@ namespace GW {
 
     namespace Constants {
         enum class Bag;
+        enum EquipmentStatus : uint32_t;
     }
 
     struct Module;
@@ -110,5 +111,15 @@ namespace GW {
         GWCA_API int GetMaterialSlot(const Item *item);
 
         GWCA_API void AsyncGetItemByName(const Item *item, std::wstring& name);
+
+        GWCA_API Constants::EquipmentStatus GetCapeStatus();
+        GWCA_API Constants::EquipmentStatus GetHelmStatus();
+        GWCA_API Constants::EquipmentStatus GetCostumeBodyStatus();
+        GWCA_API Constants::EquipmentStatus GetCostumeHeadpieceStatus();
+        GWCA_API void SetCapeStatus(Constants::EquipmentStatus);
+        GWCA_API void SetHelmStatus(Constants::EquipmentStatus);
+        GWCA_API void SetCostumeBodyStatus(Constants::EquipmentStatus);
+        GWCA_API void SetCostumeHeadpieceStatus(Constants::EquipmentStatus);
+
     };
 }

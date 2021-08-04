@@ -94,6 +94,9 @@ namespace GW {
             Key, Leggings, Gold_Coin, Quest_Item, Wand, Shield = 24, Staff = 26, Sword,
             Kit = 29, Trophy, Scroll, Daggers, Present, Minipet, Scythe, Spear, Costume_Headpiece = 44, Costume
         };
+        enum EquipmentStatus : uint32_t {
+            AlwaysHide, HideInTownsAndOutposts, HideInCombatAreas, AlwaysShow
+        };
 
         enum HeroID : uint32_t {
             NoHero, Norgu, Goren, Tahlkora, MasterOfWhispers, AcolyteJin, Koss,

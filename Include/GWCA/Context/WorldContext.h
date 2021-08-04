@@ -128,7 +128,7 @@ namespace GW {
         /* +h07BC */ uint32_t max_luxon;
         /* +h07C0 */ uint32_t max_balth;
         /* +h07C4 */ uint32_t max_imperial;
-        /* +h07C8 */ uint32_t h07C8;
+        /* +h07C8 */ uint32_t equipment_status;
         /* +h07CC */ AgentInfoArray agent_infos;
         /* +h07DC */ Array<void *> h07DC;
         /* +h07EC */ MissionMapIconArray mission_map_icons;

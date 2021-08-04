@@ -17,6 +17,7 @@
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/ItemContext.h>
+#include <GWCA/Context/WorldContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -431,4 +432,34 @@ namespace GW {
         wchar_t *str = item->complete_name_enc;
         UI::AsyncDecodeStr(str, &res);
     }
+
+    Constants::EquipmentStatus Items::GetCapeStatus() {
+        return (Constants::EquipmentStatus)(GW::GameContext::instance()->world->equipment_status & 0x3);
+    }
+    void Items::SetCapeStatus(Constants::EquipmentStatus s) {
+        if (GetCapeStatus() != s)
+            GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s, 0x3);
+    }
+    Constants::EquipmentStatus Items::GetHelmStatus() {
+        return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0xC) >> 2);
+    }
+    void Items::SetHelmStatus(Constants::EquipmentStatus s) {
+        if (GetHelmStatus() != s)
+            GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 2, 0xC);
+    }
+    Constants::EquipmentStatus Items::GetCostumeBodyStatus() {
+        return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0x30) >> 4);
+    }
+    void Items::SetCostumeBodyStatus(Constants::EquipmentStatus s) {
+        if (GetCostumeBodyStatus() != s)
+            GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 4, 0x30);
+    }
+    Constants::EquipmentStatus Items::GetCostumeHeadpieceStatus() {
+        return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0xC0) >> 6);
+    }
+    void Items::SetCostumeHeadpieceStatus(Constants::EquipmentStatus s) {
+        if (GetCostumeHeadpieceStatus() != s)
+            GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 6, 0xC0);
+    }
+
 } // namespace GW

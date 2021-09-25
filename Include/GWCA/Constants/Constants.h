@@ -92,7 +92,10 @@ namespace GW {
             Salvage, Axe = 2, Bag, Boots, Bow, Chestpiece = 7, Rune_Mod, Usable, Dye,
             Materials_Zcoins, Offhand, Gloves, Hammer = 15, Headpiece, CC_Shards,
             Key, Leggings, Gold_Coin, Quest_Item, Wand, Shield = 24, Staff = 26, Sword,
-            Kit = 29, Trophy, Scroll, Daggers, Present, Minipet, Scythe, Spear, Costume = 45
+            Kit = 29, Trophy, Scroll, Daggers, Present, Minipet, Scythe, Spear, Costume_Headpiece = 44, Costume
+        };
+        enum EquipmentStatus : uint32_t {
+            AlwaysHide, HideInTownsAndOutposts, HideInCombatAreas, AlwaysShow
         };
 
         enum HeroID : uint32_t {
@@ -275,6 +278,27 @@ namespace GW {
             constexpr int FactionMissionOutpost = 0x80000B;
             constexpr int NightfallMissionOutpost = 0x85;
         }
+
+        enum class EffectID : uint32_t {
+            black_cloud = 1,
+            mesmer_symbol = 4,
+            green_cloud = 7,
+            green_sparks = 8,
+            necro_symbol = 9,
+            ele_symbol = 11,
+            white_clouds = 13,
+            monk_symbol = 18,
+            bleeding = 23,
+            blind = 24,
+            burning = 25,
+            disease = 26,
+            poison = 27,
+            dazed = 28,
+            weakness = 29, //cracked_armor has same EffectID
+            assasin_symbol = 34,
+            ritualist_symbol = 35,
+            dervish_symbol = 36,
+        };
 
         namespace Camera {
             constexpr float FIRST_PERSON_DIST = 2.f;

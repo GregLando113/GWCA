@@ -75,6 +75,15 @@ namespace GW {
             uint32_t agent_id;
             wchar_t* message_enc;
         };
+        
+        struct DecodingString {
+            std::wstring encoded;
+            std::wstring decoded;
+            void* original_callback;
+            void* original_param;
+            void* ecx;
+            void* edx;
+        };
 
         enum UIMessage : uint32_t {
             kShowAgentNameTag       = 0x10000000 | 0x19, // wparam = AgentNameTagInfo*
@@ -88,6 +97,8 @@ namespace GW {
             kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
             kCheckboxPreference     = 0x10000000 | 0x13F,
+            kGuildHall              = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
+            kLeaveGuildHall         = 0x10000000 | 0x179,
             kTravel                 = 0x10000000 | 0x17A,
             kOpenWikiUrl            = 0x10000000 | 0x17B, // wparam = url
             kHideHeroPanel          = 0x10000000 | 0x197, // wparam = hero_id
@@ -408,6 +419,16 @@ namespace GW {
             int altitude = -0x8000);
 
         GWCA_API void RemoveTooltipCallback(
+            HookEntry* entry);
+
+        // Return nullptr to block the string from being decoded, or override with a new string
+        typedef std::function<wchar_t*(HookStatus*, DecodingString*)> DecodeStrCallback;
+        GWCA_API void RegisterDecodeStringCallback(
+            HookEntry* entry,
+            DecodeStrCallback callback,
+            int altitude = -0x8000);
+
+        GWCA_API void RemoveDecodeStringCallback(
             HookEntry* entry);
 
         GWCA_API TooltipInfo* GetCurrentTooltip();

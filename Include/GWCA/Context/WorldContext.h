@@ -114,8 +114,8 @@ namespace GW {
         /* +h0784 */ uint32_t unk_faction5_dupe;
         /* +h0788 */ uint32_t level;
         /* +h078C */ uint32_t level_dupe;
-        /* +h0790 */ uint32_t unk_faction6;
-        /* +h0794 */ uint32_t unk_faction6_dupe;
+        /* +h0790 */ uint32_t morale;
+        /* +h0794 */ uint32_t morale_dupe;
         /* +h0798 */ uint32_t current_balth;
         /* +h079C */ uint32_t current_balth_dupe;
         /* +h07A0 */ uint32_t total_earned_balth;

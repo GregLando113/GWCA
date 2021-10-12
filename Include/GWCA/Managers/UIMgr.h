@@ -91,12 +91,20 @@ namespace GW {
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B, // wparam = AgentNameTagInfo*
             kChangeTarget           = 0x10000000 | 0x20, // wparam = ChangeTargetUIMsg*
             kShowXunlaiChest        = 0x10000000 | 0x40,
+
+            kMoraleChange           = 0x10000000 | 0x47, // wparam = {agent id, morale percent }
+            kEffectAdd              = 0x10000000 | 0x55, // wparam = {agent_id, GW::Effect*}
+            kEffectRenew            = 0x10000000 | 0x56, // wparam = GW::Effect*
+            kEffectRemove           = 0x10000000 | 0x57, // wparam = effect id
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
             kDialogBody             = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
             kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
+            kMapChange              = 0x10000000 | 0x10F, // wparam = map id
             kCheckboxPreference     = 0x10000000 | 0x13F,
+            kPreferenceChanged      = 0x10000000 | 0x140,
+            kUIPositionChanged      = 0x10000000 | 0x141,
             kGuildHall              = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
             kLeaveGuildHall         = 0x10000000 | 0x179,
             kTravel                 = 0x10000000 | 0x17A,

@@ -13,6 +13,23 @@ namespace GW {
 
     namespace Chat {
         typedef uint32_t Color;
+#pragma warning(push)
+#pragma warning(disable: 4200)
+        struct ChatMessage {
+            uint32_t channel;
+            uint32_t unk1;
+            FILETIME timestamp;
+            wchar_t message[0];
+        };
+#pragma warning(pop)
+
+        const size_t CHAT_LOG_LENGTH = 0x200;
+        struct ChatBuffer {
+            uint32_t next;
+            uint32_t unk1;
+            uint32_t unk2;
+            ChatMessage* messages[CHAT_LOG_LENGTH];
+        };
 
         enum Channel : int {
             CHANNEL_ALLIANCE    = 0,
@@ -39,6 +56,8 @@ namespace GW {
         
         // void SetChatChannelColor(Channel channel, Color sender, Color message);
         // void RegisterEvent(Event e);
+
+        GWCA_API Chat::ChatBuffer* GetChatLog();
 
         GWCA_API bool GetIsTyping();
 

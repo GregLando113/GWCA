@@ -23,23 +23,7 @@
 namespace {
     using namespace GW;
 
-#pragma warning(push)
-#pragma warning(disable: 4200)
-    struct ChatMessage {
-        uint32_t channel;
-        uint32_t unk1;
-        FILETIME timestamp;
-        wchar_t  message[0];
-    };
-#pragma warning(pop)
 
-    const size_t CHAT_LOG_LENGTH = 0x200;
-    struct ChatBuffer {
-        uint32_t next;
-        uint32_t unk1;
-        uint32_t unk2;
-        ChatMessage *messages[CHAT_LOG_LENGTH];
-    };
 
     bool ShowTimestamps = false;
     bool Timestamp_24hFormat = false;
@@ -50,7 +34,7 @@ namespace {
 
     // 08 01 07 01 [Time] 01 00 02 00
     // ChatBuffer **ChatBuffer_Addr;
-    uintptr_t ChatBuffer_Addr;
+    Chat::ChatBuffer** ChatBuffer_Addr;
     uintptr_t IsTyping_Addr;
 
     // There is maybe more.
@@ -356,11 +340,9 @@ namespace {
         GWCA_INFO("[SCAN] PrintChat = %p\n", PrintChat_Func);
 
         {
-            uintptr_t address = Scanner::Find(
+            ChatBuffer_Addr = *(Chat::ChatBuffer***)Scanner::Find(
                 "\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
-            GWCA_INFO("[SCAN] ChatBuffer_Addr = %p\n", (void *)address);
-            if (Verify(address))
-                ChatBuffer_Addr = *(uintptr_t *)address;
+            GWCA_INFO("[SCAN] ChatBuffer_Addr = %p\n", (void *)ChatBuffer_Addr);
         }
 
         {
@@ -500,6 +482,10 @@ namespace GW {
         auto it = StartWhisper_callbacks.find(entry);
         if (it != StartWhisper_callbacks.end())
             StartWhisper_callbacks.erase(it);
+    }
+
+    Chat::ChatBuffer* Chat::GetChatLog() {
+        return *ChatBuffer_Addr;
     }
 
     Chat::Color Chat::SetSenderColor(Channel chan, Color col) {

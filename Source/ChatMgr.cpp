@@ -655,60 +655,25 @@ namespace GW {
 
 
     void Chat::WriteChat(Channel channel, const wchar_t *msg, const wchar_t *sender,bool transient) {
-
-        size_t len = wcslen(msg);
-        wchar_t *buffer = new wchar_t[len + 4];
-        size_t written = 0;
-        buffer[written++] = 0x108;
-        buffer[written++] = 0x107;
-        for (size_t i = 0; i < len; i++)
-            buffer[written++] = msg[i];
-        buffer[written++] = 1;
-        buffer[written++] = 0;
+        size_t len = wcslen(msg) + 4;
+        wchar_t *buffer = new wchar_t[len];
+        swprintf(buffer, len, L"\x108\x107%s\x1", msg);
         WriteChatEnc(channel, buffer, sender, transient);
         delete[] buffer;
     }
     void Chat::WriteChatEnc(Channel channel, const wchar_t* msg, const wchar_t* sender, bool transient) {
         static wchar_t* new_message;
         UI::UIChatMessage param;
-        param.channel = channel;
-        param.channel2 = channel;
+        param.channel = param.channel2 = channel;
         param.message = (wchar_t*)msg;
         if (sender) {
-            size_t msg_len = wcslen(msg);
-            size_t sender_len = wcslen(sender);
-            size_t written = 0;
-            new_message = new wchar_t[msg_len + sender_len + 9];
-            param.message = new_message;
-            param.message[written++] = 0x76b;
-            param.message[written++] = 0x10a;
-            param.message[written++] = 0x108;
-            param.message[written++] = 0x107;
-            for (size_t i = 0; i < sender_len; i++)
-                param.message[written++] = sender[i];
-            param.message[written++] = 0x1;
-            param.message[written++] = 0x1;
-            param.message[written++] = 0x10b;
-            for (size_t i = 0; i < msg_len; i++)
-                param.message[written++] = msg[i];
-            param.message[written++] = 0x1;
-            param.message[written++] = 0;
+            size_t len = wcslen(msg) + wcslen(sender) + 9;
+            param.message = new wchar_t[len];
+            swprintf(param.message, len, L"\x76b\x10a\x108\x107%s\x1\x1\x10b%s\x1", sender,msg);
         }
-        if (transient) {
-            // NB: Due to the noddy way we try to get chat window context, it may not be available even when we try to get it. Silent fail.
-            if (GetChatWindowContext()) {
-                SYSTEMTIME now;
-                GetSystemTime(&now);
-                FILETIME now_ft;
-                GWCA_ASSERT(SystemTimeToFileTime(&now, &now_ft));
-                OnPrintChat(GetChatWindowContext(), 0, channel, param.message, now_ft, 0);
-            }
-        }
-        else {
-            UI::SendUIMessage(UI::kWriteToChatLog, &param);
-        }
+        UI::SendUIMessage(UI::kWriteToChatLog, &param);
         if (sender) 
-            delete[] new_message;
+            delete[] param.message;
     }
 
     void Chat::CreateCommand(std::wstring cmd, CmdCB callback) {

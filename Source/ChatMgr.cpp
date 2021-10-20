@@ -108,6 +108,12 @@ namespace {
     std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
     std::unordered_map<HookEntry*, Chat::PrintChatCallback>     PrintChat_callbacks;
     std::unordered_map<HookEntry *, Chat::StartWhisperCallback> StartWhisper_callbacks;
+    struct ChatLogCallbackEntry {
+        int altitude;
+        HookEntry* entry;
+        Chat::ChatLogCallback callback;
+    };
+    std::vector<ChatLogCallbackEntry> ChatLog_callbacks;
 
     typedef void(__cdecl *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
     ChatEvent_pt RetChatEvent;
@@ -221,6 +227,46 @@ namespace {
             RetStartWhisper(ctx, edx, name);
         GW::HookBase::LeaveHook();
     }
+
+    bool add_next_message_to_chat_log = true;
+
+    typedef void(_cdecl* AddToChatLog_pt)(wchar_t* message, uint32_t channel);
+    AddToChatLog_pt AddToChatLog_Func;
+    AddToChatLog_pt RetAddToChatLog;
+    void OnAddToChatLog(wchar_t* message, uint32_t channel) {
+        GW::HookBase::EnterHook();
+        HookStatus status;
+        auto it = ChatLog_callbacks.begin();
+       
+        status.blocked = !add_next_message_to_chat_log;
+
+        Chat::ChatMessage* logged_message = 0;
+        // Pre callbacks
+        while (it != ChatLog_callbacks.end()) {
+            if (it->altitude > 0)
+                break;
+            it->callback(&status, message,channel, logged_message);
+            ++status.altitude;
+            it++;
+        }
+
+        if (!status.blocked) {
+            GW::Chat::ChatBuffer* log = Chat::GetChatLog();
+            size_t log_idx = log->next;
+            RetAddToChatLog(message, channel);
+            if(log->next != log_idx)
+                logged_message = log->messages[log_idx];
+        }
+
+        // Post callbacks
+        while (it != ChatLog_callbacks.end()) {
+            it->callback(&status, message, channel, logged_message);
+            ++status.altitude;
+            it++;
+        }
+        GW::HookBase::LeaveHook();
+    }
+
 
     typedef void (__fastcall *PrintChat_pt)(void *ctx, uint32_t edx,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint);
@@ -340,6 +386,12 @@ namespace {
         GWCA_INFO("[SCAN] PrintChat = %p\n", PrintChat_Func);
 
         {
+            AddToChatLog_Func = (AddToChatLog_pt)GW::Scanner::Find(
+                "\x40\x25\xff\x01\x00\x00", "xxxxxx", -0x97);
+            GWCA_INFO("[SCAN] AddToChatLog_Func = %p\n", AddToChatLog_Func);
+        }
+
+        {
             ChatBuffer_Addr = *(Chat::ChatBuffer***)Scanner::Find(
                 "\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
             GWCA_INFO("[SCAN] ChatBuffer_Addr = %p\n", (void *)ChatBuffer_Addr);
@@ -369,6 +421,8 @@ namespace {
             HookBase::CreateHook(WriteWhisper_Func, OnWriteWhisper, (void **)&RetWriteWhisper);
         if (Verify(PrintChat_Func))
             HookBase::CreateHook(PrintChat_Func, OnPrintChat, (void **)&RetPrintChat);
+        if (Verify(AddToChatLog_Func))
+            HookBase::CreateHook(AddToChatLog_Func, OnAddToChatLog, (void**)&RetAddToChatLog);
     }
 
     void Exit() {
@@ -388,6 +442,8 @@ namespace {
             HookBase::RemoveHook(WriteWhisper_Func);
         if (PrintChat_Func)
             HookBase::RemoveHook(PrintChat_Func);
+        if (AddToChatLog_Func)
+            HookBase::RemoveHook(AddToChatLog_Func);
     }
 }
 
@@ -460,6 +516,25 @@ namespace GW {
         {
             PrintChat_callbacks.insert({ entry, callback });
         }
+    void Chat::RegisterChatLogCallback(
+        HookEntry* entry,
+        ChatLogCallback callback,
+        int altitude)
+    {
+        ChatLog_callbacks.push_back({ altitude, entry, callback });
+    }
+    void Chat::RemoveChatLogCallback(
+        HookEntry* entry)
+    {
+        auto it = ChatLog_callbacks.begin();
+        while (it != ChatLog_callbacks.end()) {
+            if (it->entry == entry) {
+                ChatLog_callbacks.erase(it);
+                break;
+            }
+            it++;
+        }
+    }
 
     void Chat::RemoveRegisterWhisperCallback(
         HookEntry *entry)
@@ -486,6 +561,11 @@ namespace GW {
 
     Chat::ChatBuffer* Chat::GetChatLog() {
         return *ChatBuffer_Addr;
+    }
+
+    void Chat::AddToChatLog(wchar_t* message, uint32_t channel) {
+        if (AddToChatLog_Func)
+            AddToChatLog_Func(message, channel);
     }
 
     Chat::Color Chat::SetSenderColor(Channel chan, Color col) {
@@ -671,7 +751,9 @@ namespace GW {
             param.message = new wchar_t[len];
             swprintf(param.message, len, L"\x76b\x10a\x108\x107%s\x1\x1\x10b%s\x1", sender,msg);
         }
+        add_next_message_to_chat_log = !transient;
         UI::SendUIMessage(UI::kWriteToChatLog, &param);
+        add_next_message_to_chat_log = true;
         if (sender) 
             delete[] param.message;
     }

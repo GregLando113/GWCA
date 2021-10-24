@@ -97,14 +97,19 @@ namespace GW {
             kEffectRenew            = 0x10000000 | 0x56, // wparam = GW::Effect*
             kEffectRemove           = 0x10000000 | 0x57, // wparam = effect id
             kWriteToChatLog         = 0x10000000 | 0x7E,
+            kFriendUpdated          = 0x10000000 | 0x89, // wparam = { GW::Friend*, ... }
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
+            kLogout                 = 0x10000000 | 0x9b, // wparam = { bool unknown, bool character_select } 
             kDialogBody             = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
             kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
+            kGuildMemberUpdated     = 0x10000000 | 0xD8, // wparam = { wchar_t* name, uint32_t unk0, uint32_t status }
             kMapChange              = 0x10000000 | 0x10F, // wparam = map id
             kCheckboxPreference     = 0x10000000 | 0x13F,
             kPreferenceChanged      = 0x10000000 | 0x140,
             kUIPositionChanged      = 0x10000000 | 0x141,
+            kCurrentQuestChanged    = 0x10000000 | 0x14C, // wparam = { quest_id, ... }
+            kDestroyUIObject        = 0x10000000 | 0x170, // Undocumented
             kGuildHall              = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
             kLeaveGuildHall         = 0x10000000 | 0x179,
             kTravel                 = 0x10000000 | 0x17A,

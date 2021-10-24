@@ -13,6 +13,8 @@ namespace GW {
 
         static uintptr_t GetPersonalDirPtr;
 
+        static uint32_t(_cdecl* GetGWVersion)(void);
+
         // Basics
         static bool Scan();
 

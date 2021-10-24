@@ -24,5 +24,8 @@ namespace GW {
 
         // Actual pattern finder.
         uintptr_t Find(const char* pattern, const char* mask, int offset = 0, Section section = Section::TEXT);
+
+        // Returns actual address of a function call given via CALL <near call> instruction e.g. *call_instruction_address = 0xE8 ?? ?? ?? 0xFF
+        uintptr_t FunctionFromNearCall(uintptr_t call_instruction_address);
     }
 }

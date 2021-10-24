@@ -105,6 +105,15 @@ uintptr_t GW::Scanner::Find(const char* pattern, const char* mask, int offset, S
     return FindInRange(pattern, mask, offset, sections[section].start, sections[section].end);
 }
 
+uintptr_t GW::Scanner::FunctionFromNearCall(uintptr_t call_instruction_address) {
+    if (!call_instruction_address)
+        return 0;
+    if (((*(uintptr_t*)call_instruction_address) & 0x000000e8) != 0x000000e8)
+        return 0; // Not a near call instruction
+    uintptr_t near_address = *(uintptr_t*)(call_instruction_address + 1);
+    return (near_address)+(call_instruction_address + 5);
+}
+
 void GW::Scanner::Initialize(const char* moduleName) {
 	HMODULE hModule = GetModuleHandleA(moduleName);
 	uint32_t dllImageBase = (uint32_t)hModule;

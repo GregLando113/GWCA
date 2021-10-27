@@ -95,10 +95,10 @@ namespace GW {
         /* +h0008 */ uint32_t effect_id; // unique identifier of effect
         /* +h000C */ uint32_t agent_id; // non-zero means maintained enchantment - caster id
         /* +h0010 */ float duration; // non-zero if effect has a duration
-        /* +h0014 */ uint32_t timestamp; // GW-timestamp of when effect was applied - only with duration
+        /* +h0014 */ DWORD timestamp; // GW-timestamp of when effect was applied - only with duration
 
-        uint32_t GetTimeElapsed() const;
-        uint32_t GetTimeRemaining() const;
+        DWORD GetTimeElapsed() const;
+        DWORD GetTimeRemaining() const;
     };
     static_assert(sizeof(Effect) == 24, "struct Effect has incorect size");
 

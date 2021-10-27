@@ -7,7 +7,7 @@
 #include <GWCA/Managers/MemoryMgr.h>
 
 // Used to get precise skill recharge times.
-uintptr_t GW::MemoryMgr::SkillTimerPtr = NULL;
+DWORD* GW::MemoryMgr::SkillTimerPtr = NULL;
 
 uintptr_t GW::MemoryMgr::WinHandlePtr = NULL;
 
@@ -19,11 +19,11 @@ bool GW::MemoryMgr::Scan() {
     Scanner::Initialize();
 
     // Skill timer to use for exact effect times.
-    SkillTimerPtr = Scanner::Find(
+    SkillTimerPtr = (DWORD*)Scanner::Find(
         "\x83\xCA\x01\x89\x15\x00\x00\x00\x00\xFF\xD6\x8B", "xxxxx????xxx", +5);
     if (SkillTimerPtr) {
         GWCA_INFO("[SCAN] SkillTimerPtr = %08X\n", SkillTimerPtr);
-        SkillTimerPtr = *(uintptr_t *)SkillTimerPtr;
+        SkillTimerPtr = *(DWORD**)SkillTimerPtr;
     } else {
         GWCA_INFO("[SCAN] SkillTimerPtr = ERR\n");
         return false;

@@ -28,12 +28,12 @@ namespace GW {
         return NULL;
     }
 
-    uint32_t Effect::GetTimeElapsed() const {
+    DWORD Effect::GetTimeElapsed() const {
         return MemoryMgr::GetSkillTimer() - timestamp;
     }
 
-    uint32_t Effect::GetTimeRemaining() const {
-        return (uint32_t)(duration * 1000) - GetTimeElapsed();
+    DWORD Effect::GetTimeRemaining() const {
+        return (DWORD)(duration * 1000.f) - GetTimeElapsed();
     }
 
 }

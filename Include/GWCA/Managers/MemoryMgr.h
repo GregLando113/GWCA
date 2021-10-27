@@ -7,7 +7,7 @@ namespace GW {
     struct MemoryMgr {
 
         // Skill timer for effects.
-        static uintptr_t SkillTimerPtr;
+        static DWORD* SkillTimerPtr;
 
         static uintptr_t WinHandlePtr;
 
@@ -18,8 +18,8 @@ namespace GW {
         // Basics
         static bool Scan();
 
-        static uint32_t GetSkillTimer() {
-            return GetTickCount() + *(uintptr_t *)SkillTimerPtr;
+        static DWORD GetSkillTimer() {
+            return GetTickCount() + *(DWORD*)SkillTimerPtr;
         }
 
         static HWND GetGWWindowHandle() {

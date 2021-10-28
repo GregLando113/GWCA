@@ -252,9 +252,9 @@ namespace {
 
         if (!status.blocked) {
             GW::Chat::ChatBuffer* log = Chat::GetChatLog();
-            size_t log_idx = log->next;
+            size_t log_idx = log ? log->next : 0;
             RetAddToChatLog(message, channel);
-            if(log->next != log_idx)
+            if(log && log->next != log_idx)
                 logged_message = log->messages[log_idx];
         }
 

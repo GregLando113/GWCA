@@ -104,6 +104,7 @@ namespace GW {
             kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
             kGuildMemberUpdated     = 0x10000000 | 0xD8, // wparam = { wchar_t* name, uint32_t unk0, uint32_t status }
+            kShowHint               = 0x10000000 | 0xDF, // wparam = { uint32_t icon_type, wchar_t* message_enc }
             kMapChange              = 0x10000000 | 0x10F, // wparam = map id
             kCheckboxPreference     = 0x10000000 | 0x13F,
             kPreferenceChanged      = 0x10000000 | 0x140,

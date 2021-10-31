@@ -15,11 +15,11 @@ namespace GW {
         /* +h0020 */ uint32_t h0020;
         /* +h0024 */ wchar_t *name_enc;
         /* +h0028 */ wchar_t *name;
-        /* +h002C */ uint32_t h002C;
+        /* +h002C */ uint32_t party_leader_player_number;
         /* +h0030 */ uint32_t active_title;
-        /* +h0034 */ uint32_t h0034;
+        /* +h0034 */ uint32_t player_number;
         /* +h0038 */ uint32_t party_size;
-        /* +h003C */ uint32_t h003C[4];
+        /* +h003C */ Array<void*> h003C;
     };
     static_assert(sizeof(Player) == 76, "struct Player has incorect size");
 

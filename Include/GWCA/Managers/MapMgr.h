@@ -29,6 +29,9 @@ namespace GW {
         GWCA_API Constants::MapID GetMapID();
 
         // Get current region you are in.
+        GWCA_API bool GetIsMapUnlocked(Constants::MapID map_id);
+
+        // Get current region you are in.
         GWCA_API int GetRegion();
 
         // Get current language you are in.

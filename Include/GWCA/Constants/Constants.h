@@ -10,6 +10,7 @@
 
 namespace GW {
     namespace Constants {
+        enum class Campaign { Core, Prophecies, Factions, Nightfall, EyeOfTheNorth, Dungeon };
         enum class Difficulty { Normal, Hard };
 
         enum class InstanceType { Outpost, Explorable, Loading };

@@ -161,6 +161,18 @@ namespace GW {
         return *(int32_t *)(map_info_addr + 0x10);
     }
 
+    bool Map::GetIsMapUnlocked(Constants::MapID map_id) {
+        const Array<uint32_t>& unlocked_map = GW::GameContext::instance()->world->unlocked_map;
+        if (!unlocked_map.valid())
+            return false;
+        uint32_t real_index = (uint32_t)map_id / 32;
+        if (real_index >= unlocked_map.size())
+            return false;
+        uint32_t shift = (uint32_t)map_id % 32;
+        uint32_t flag = 1u << shift;
+        return (unlocked_map[real_index] & flag) != 0;
+    }
+
     int Map::GetLanguage() {
         return *(int32_t *)(map_info_addr + 0xC);
     }

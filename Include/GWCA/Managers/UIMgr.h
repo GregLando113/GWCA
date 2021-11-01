@@ -98,13 +98,16 @@ namespace GW {
             kEffectRemove           = 0x10000000 | 0x57, // wparam = effect id
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kFriendUpdated          = 0x10000000 | 0x89, // wparam = { GW::Friend*, ... }
+            kMapLoaded              = 0x10000000 | 0x8A,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
             kLogout                 = 0x10000000 | 0x9b, // wparam = { bool unknown, bool character_select } 
             kDialogBody             = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
             kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
+            kQuotedItemPrice        = 0x10000000 | 0xBB, // wparam = { uint32_t item_id, uint32_t price }
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
             kGuildMemberUpdated     = 0x10000000 | 0xD8, // wparam = { wchar_t* name, uint32_t unk0, uint32_t status }
             kShowHint               = 0x10000000 | 0xDF, // wparam = { uint32_t icon_type, wchar_t* message_enc }
+            kPvPWindowContent       = 0x10000000 | 0xF8,
             kMapChange              = 0x10000000 | 0x10F, // wparam = map id
             kCheckboxPreference     = 0x10000000 | 0x13F,
             kPreferenceChanged      = 0x10000000 | 0x140,

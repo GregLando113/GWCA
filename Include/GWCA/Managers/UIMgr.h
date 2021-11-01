@@ -112,6 +112,7 @@ namespace GW {
             kCheckboxPreference     = 0x10000000 | 0x13F,
             kPreferenceChanged      = 0x10000000 | 0x140,
             kUIPositionChanged      = 0x10000000 | 0x141,
+            kQuestAdded             = 0x10000000 | 0x149, // wparam = { quest_id, ... }
             kCurrentQuestChanged    = 0x10000000 | 0x14C, // wparam = { quest_id, ... }
             kDestroyUIObject        = 0x10000000 | 0x170, // Undocumented
             kGuildHall              = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])

@@ -115,6 +115,7 @@ namespace GW {
             kUIPositionChanged      = 0x10000000 | 0x141,
             kQuestAdded             = 0x10000000 | 0x149, // wparam = { quest_id, ... }
             kCurrentQuestChanged    = 0x10000000 | 0x14C, // wparam = { quest_id, ... }
+            kObjectiveComplete      = 0x10000000 | 0x156, // wparam = { objective_id, ... }
             kDestroyUIObject        = 0x10000000 | 0x170, // Undocumented
             kGuildHall              = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
             kLeaveGuildHall         = 0x10000000 | 0x179,

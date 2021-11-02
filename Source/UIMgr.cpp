@@ -763,7 +763,13 @@ namespace GW {
         UIMessageCallback callback,
         int altitude)
     {
-        UIMessage_callbacks.push_back({ altitude, entry, callback});
+        auto it = UIMessage_callbacks.begin();
+        while (it != UIMessage_callbacks.end()) {
+            if (it->altitude > altitude)
+                break;
+            it++;
+        }
+        UIMessage_callbacks.insert(it, { altitude,entry,callback });
     }
 
     void UI::RemoveUIMessageCallback(

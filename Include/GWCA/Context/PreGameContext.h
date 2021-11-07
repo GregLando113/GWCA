@@ -10,7 +10,9 @@ namespace GW {
 
         static PreGameContext* instance();
 
-        /* +h0000 */ uint8_t h0000[0x148];
+        /* +h0000 */ uint8_t h0000[0x13C];
+        /* +h0140 */ uint32_t chosen_character_index;
+        /* +h0144 */ uint32_t h0144;
         /* +h0148 */ GW::Array<LoginCharacter> chars;
     };
 }

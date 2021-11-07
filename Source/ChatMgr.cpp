@@ -749,7 +749,10 @@ namespace GW {
         if (sender) {
             size_t len = wcslen(msg) + wcslen(sender) + 9;
             param.message = new wchar_t[len];
-            swprintf(param.message, len, L"\x76b\x10a\x108\x107%s\x1\x1\x10b%s\x1", sender,msg);
+            wchar_t* format = L"\x76b\x10a\x108\x107%s\x1\x1\x10b%s\x1";
+            if(sender[0] > 0x100) // Sender already encoded
+                format = L"\x76b\x10a%s\x1\x10b%s\x1";
+            swprintf(param.message, len, format, sender,msg);
         }
         add_next_message_to_chat_log = !transient;
         UI::SendUIMessage(UI::kWriteToChatLog, &param);

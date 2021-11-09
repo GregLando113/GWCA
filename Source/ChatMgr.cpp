@@ -343,14 +343,6 @@ namespace {
         RetPrintChat(ctx, edx, channel, buffer, timestamp, reprint);
         HookBase::LeaveHook();
     }
-    // Function to get chat window context. This is massively dodgy and the context should be found via offsets, but we don't have the functions mapped yet.
-    void* GetChatWindowContext() {
-        // This is caught (and blocked) in OnPrintChat above.
-        if(!PrintChat_Context)
-            Chat::WriteChatEnc(Chat::Channel::CHANNEL_GWCA1, PrintChat_Context_Sample_String);
-        // @Cleanup: The context is reset on map change; this is not a massive issue because the game re-calls OnPrintChat before we have a chance
-        return PrintChat_Context;
-    }
 
     void Init() {
         ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x2A);
@@ -734,30 +726,37 @@ namespace GW {
 
 
 
-    void Chat::WriteChat(Channel channel, const wchar_t *msg, const wchar_t *sender,bool transient) {
-        size_t len = wcslen(msg) + 4;
-        wchar_t *buffer = new wchar_t[len];
-        swprintf(buffer, len, L"\x108\x107%s\x1", msg);
-        WriteChatEnc(channel, buffer, sender, transient);
-        delete[] buffer;
+    void Chat::WriteChat(Channel channel, const wchar_t *message_unencoded, const wchar_t *sender_unencoded, bool transient) {
+        size_t len = wcslen(message_unencoded) + 4;
+        wchar_t* message_encoded = new wchar_t[len];
+        GWCA_ASSERT(swprintf(message_encoded, len, L"\x108\x107%s\x1", message_unencoded) >= 0);
+        wchar_t* sender_encoded = 0;
+        if (sender_unencoded) {
+            len = wcslen(sender_unencoded) + 4;
+            sender_encoded = new wchar_t[len];
+            GWCA_ASSERT(swprintf(sender_encoded, len, L"\x108\x107%s\x1", sender_unencoded) >= 0);
+        }
+        WriteChatEnc(channel, message_encoded, sender_encoded, transient);
+        delete[] message_encoded;
+        if (sender_encoded)
+            delete[] sender_encoded;
     }
-    void Chat::WriteChatEnc(Channel channel, const wchar_t* msg, const wchar_t* sender, bool transient) {
-        static wchar_t* new_message;
+    void Chat::WriteChatEnc(Channel channel, const wchar_t* message_encoded, const wchar_t* sender_encoded, bool transient) {
         UI::UIChatMessage param;
         param.channel = param.channel2 = channel;
-        param.message = (wchar_t*)msg;
-        if (sender) {
-            size_t len = wcslen(msg) + wcslen(sender) + 9;
+        param.message = (wchar_t*)message_encoded;
+        if (sender_encoded) {
+            // NB: If message contains link (<a=1>), make sender <a=2>
+            wchar_t sender_link_type = wcsstr(message_encoded, L"<a=1>") ? '2' : '1';
+            wchar_t* format = L"\x108\x107<a=%c>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+            size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 25;
             param.message = new wchar_t[len];
-            wchar_t* format = L"\x76b\x10a\x108\x107%s\x1\x1\x10b%s\x1";
-            if(sender[0] > 0x100) // Sender already encoded
-                format = L"\x76b\x10a%s\x1\x10b%s\x1";
-            swprintf(param.message, len, format, sender,msg);
+            GWCA_ASSERT(swprintf(param.message, len, format, sender_link_type, sender_encoded, message_encoded) >= 0);
         }
         add_next_message_to_chat_log = !transient;
         UI::SendUIMessage(UI::kWriteToChatLog, &param);
         add_next_message_to_chat_log = true;
-        if (sender) 
+        if (param.message != message_encoded)
             delete[] param.message;
     }
 

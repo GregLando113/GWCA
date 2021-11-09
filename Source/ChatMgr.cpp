@@ -746,12 +746,16 @@ namespace GW {
         param.channel = param.channel2 = channel;
         param.message = (wchar_t*)message_encoded;
         if (sender_encoded) {
-            // NB: If message contains link (<a=1>), make sender <a=2>
-            wchar_t sender_link_type = wcsstr(message_encoded, L"<a=1>") ? '2' : '1';
-            wchar_t* format = L"\x108\x107<a=%c>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
-            size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 25;
+            // If message contains link (<a=1>), manually create the message string
+            wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
+            size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 6;
+            if (wcsstr(message_encoded, L"<a=1>") != 0) {
+                // NB: When not using this method, any skill templates etc are NOT rendered by the game
+                format = L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                len += 19;
+            }
             param.message = new wchar_t[len];
-            GWCA_ASSERT(swprintf(param.message, len, format, sender_link_type, sender_encoded, message_encoded) >= 0);
+            GWCA_ASSERT(swprintf(param.message, len, format, sender_encoded, message_encoded) >= 0);
         }
         add_next_message_to_chat_log = !transient;
         UI::SendUIMessage(UI::kWriteToChatLog, &param);

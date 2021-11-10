@@ -21,7 +21,7 @@ namespace GW {
         /* +h0038 */ uint32_t party_size;
         /* +h003C */ Array<void*> h003C;
     };
-    static_assert(sizeof(Player) == 76, "struct Player has incorect size");
+    static_assert(sizeof(Player) == 0x4c, "struct Player has incorect size");
 
     typedef Array<Player> PlayerArray;
 }

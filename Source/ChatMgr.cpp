@@ -316,32 +316,32 @@ namespace {
         if(!Timestamp_24hFormat)
             hour %= 12;
 
-        wchar_t buffer[1024];
-        wchar_t t_buffer[16];
+
+        wchar_t* time_buffer = 0;
         if (localtime.wYear == 0) {
-            wsprintfW(t_buffer, Timestamp_seconds ? L"[--:--:--]" : L"[--:--]");
+            time_buffer = Timestamp_seconds ? L"[lbracket]--:--:--[rbracket]" : L"[lbracket]--:--[rbracket]";
         }
         else {
+            time_buffer = new wchar_t[29];
             if(Timestamp_seconds)
-                wsprintfW(t_buffer, L"[%02d:%02d:%02d]", hour, minute, second);
+                swprintf(time_buffer, 29, L"[lbracket]%02d:%02d:%02d[rbracket]", hour, minute, second);
             else
-                wsprintfW(t_buffer, L"[%02d:%02d]", hour, minute);
+                swprintf(time_buffer, 29, L"[lbracket]%02d:%02d[rbracket]", hour, minute);
         }
+        wchar_t* message_buffer;
+        size_t buf_len = 21 + 29 + wcslen(*str_p);
+        message_buffer = new wchar_t[buf_len];
         if (ChannelThatParseColorTag[channel]) {
-            if (localtime.wYear == 0) {
-                wsprintfW(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, *str_p);
-            } else {
-                wsprintfW(buffer, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), t_buffer, *str_p);
-            }
+            swprintf(message_buffer, buf_len, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), time_buffer, *str_p);
         } else {
-            if (localtime.wYear == 0) {
-                wsprintfW(buffer, L"\x108\x107[--:--] \x01\x02%s", *str_p);
-            } else {
-                wsprintfW(buffer, L"\x108\x107%s \x01\x02%s", t_buffer, *str_p);
-            }
+            swprintf(message_buffer, buf_len, L"\x108\x107%s \x01\x02%s", time_buffer, *str_p);
         }
-        RetPrintChat(ctx, edx, channel, buffer, timestamp, reprint);
+        if (localtime.wYear != 0) {
+            delete[] time_buffer;
+        }
+        RetPrintChat(ctx, edx, channel, message_buffer, timestamp, reprint);
         HookBase::LeaveHook();
+        delete[] message_buffer;
     }
 
     void Init() {
@@ -749,9 +749,16 @@ namespace GW {
             // If message contains link (<a=1>), manually create the message string
             wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
             size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 6;
-            if (wcsstr(message_encoded, L"<a=1>") != 0) {
+            bool has_link_in_message = wcsstr(message_encoded, L"<a=1>") != 0;
+            bool has_markup = has_link_in_message || wcsstr(message_encoded, L"<c=") != 0;
+            if (has_markup) {
                 // NB: When not using this method, any skill templates etc are NOT rendered by the game
-                format = L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                if (has_link_in_message) {
+                    format = L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                }
+                else {
+                    format = L"\x108\x107<a=1>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                }
                 len += 19;
             }
             param.message = new wchar_t[len];

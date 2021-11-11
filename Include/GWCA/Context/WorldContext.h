@@ -19,6 +19,7 @@ namespace GW {
     struct PartyAttribute;
     struct MissionMapIcon;
     struct MissionObjective;
+    struct TitleTier;
 
     typedef Array<NPC> NPCArray;
     typedef Array<Quest> QuestLog;
@@ -143,7 +144,7 @@ namespace GW {
         /* +h07FC */ NPCArray npcs;
         /* +h080C */ PlayerArray players;
         /* +h081C */ TitleArray titles;
-        /* +h082C */ uint32_t h082C[4];
+        /* +h082C */ Array<TitleTier> title_tiers;
         /* +h083C */ Array<uint32_t> vanquished_areas;
         /* +h084C */ uint32_t foes_killed;
         /* +h0850 */ uint32_t foes_to_kill;

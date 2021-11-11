@@ -60,7 +60,7 @@ namespace GW {
             }
         }
     };
-    static_assert(sizeof(Skill) == 160, "struct Skill has incorect size");
+    static_assert(sizeof(Skill) == 0xa0, "struct Skill has incorect size");
 
     struct SkillbarSkill { // total: 0x14/20
         /* +h0000 */ uint32_t adrenaline_a;

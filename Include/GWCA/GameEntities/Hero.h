@@ -15,7 +15,7 @@ namespace GW {
         /* +h001C */ AgentID locked_target_id;
         /* +h0020 */ uint32_t h0020; // type is unknown too, added for padding
     };
-    static_assert(sizeof(HeroFlag) == 36, "struct HeroFlag has incorect size");
+    static_assert(sizeof(HeroFlag) == 0x24, "struct HeroFlag has incorect size");
 
     struct HeroInfo { // total: 0x78/120
         /* +h0000 */ uint32_t hero_id;

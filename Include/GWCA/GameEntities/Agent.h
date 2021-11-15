@@ -352,9 +352,10 @@ namespace GW {
     };
 
     struct AgentInfo {
-        uint8_t h0000[52];
+        uint32_t h0000[13];
         wchar_t *name_enc;
     };
+    static_assert(sizeof(AgentInfo) == 0x38, "struct AgentInfo has incorect size");
 
     typedef TList<Agent> AgentList;
     typedef Array<Agent *> AgentArray;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GWCA/GameContainers/Array.h>
+
 namespace GW {
     struct TextCache {
         /* +h0000 */ uint32_t h0000;
@@ -23,20 +25,20 @@ namespace GW {
     };
 
     struct TextParser {
-        /* +h0000 */ uint8_t h0000[32];
+        /* +h0000 */ uint32_t h0000[8];
         /* +h0020 */ wchar_t *dec_start;
         /* +h0024 */ wchar_t *dec_end;
-        /* +h0028 */ wchar_t *h0028; // related to h0020 & h0024
-        /* +h002C */ wchar_t *h002C; // related to h0020 & h0024
+        /* +h0028 */ uint32_t substitute_1; // related to h0020 & h0024
+        /* +h002C */ uint32_t substitute_2; // related to h0020 & h0024
         /* +h0030 */ TextCache *cache;
-        /* +h0034 */ uint8_t h0034[300];
+        /* +h0034 */ uint32_t h0034[75];
         /* +h0160 */ uint32_t h0160; // @0078BEF5
         /* +h0164 */ uint32_t h0164;
         /* +h0168 */ uint32_t h0168; // set to 0 @0078BF34
-        /* +h016C */ uint8_t h016C[20];
+        /* +h016C */ uint32_t h016C[5];
         /* +h0180 */ SubStruct1 *sub_struct;
-        /* +h0184 */ uint8_t h0184[56];
-        /* +h01BC */ uint32_t h01BC; // @0078B9B2
+        /* +h0184 */ uint32_t h0184[19];
+        /* +h01d0 */ uint32_t language_id;
     };
 
 }

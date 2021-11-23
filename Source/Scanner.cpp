@@ -61,7 +61,7 @@ uintptr_t GW::Scanner::FindAssertion(char* assertion_file, char* assertion_msg, 
 }
 uintptr_t GW::Scanner::FindInRange(const char* pattern, const char* mask, int offset, DWORD start, DWORD end) {
     char first = pattern[0];
-    size_t patternLength = strlen(mask);
+    size_t patternLength = strlen(mask ? mask : pattern);
     bool found = false;
     end -= patternLength;
 
@@ -73,7 +73,7 @@ uintptr_t GW::Scanner::FindInRange(const char* pattern, const char* mask, int of
             found = true;
             //For each byte in the pattern
             for (size_t idx = 0; idx < patternLength; idx++) {
-                if (mask[idx] == 'x' && pattern[idx] != *(char*)(i + idx)) {
+                if ((!mask || mask[idx] == 'x') && pattern[idx] != *(char*)(i + idx)) {
                     found = false;
                     break;
                 }
@@ -90,7 +90,7 @@ uintptr_t GW::Scanner::FindInRange(const char* pattern, const char* mask, int of
             found = true;
             //For each byte in the pattern
             for (size_t idx = 0; idx < patternLength; idx++) {
-                if (mask[idx] == 'x' && pattern[idx] != *(char*)(i + idx)) {
+                if ((!mask || mask[idx] == 'x') && pattern[idx] != *(char*)(i + idx)) {
                     found = false;
                     break;
                 }

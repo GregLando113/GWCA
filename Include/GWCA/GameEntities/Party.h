@@ -39,6 +39,11 @@ namespace GW {
     typedef Array<HenchmanPartyMember> HenchmanPartyMemberArray;
     
     struct PartyInfo { // total: 0x84/132
+
+        size_t GetPartySize() {
+            return players.size() + henchmen.size() + heroes.size();
+        }
+
         /* +h0000 */ uint32_t party_id;
         /* +h0004 */ Array<PlayerPartyMember> players;
         /* +h0014 */ Array<HenchmanPartyMember> henchmen;

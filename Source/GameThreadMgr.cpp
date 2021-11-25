@@ -22,13 +22,15 @@ namespace {
     uintptr_t *g__thingy;
     Render_t g__thingyret;
 
+    bool in_gamethread = false;
+
     std::vector<std::function<void(void)>> singleshot_callbacks;
     std::unordered_map<HookEntry *, GameThread::GameThreadCallback> GameThread_callbacks;
 
     void CallFunctions()
     {
         EnterCriticalSection(&mutex);
-
+        in_gamethread = true;
         if (!singleshot_callbacks.empty()) {
             for (const auto& Call : singleshot_callbacks) {
                 Call();
@@ -42,7 +44,7 @@ namespace {
             it.second(&status);
             ++status.altitude;
         }
-
+        in_gamethread = false;
         LeaveCriticalSection(&mutex);
     }
 
@@ -108,7 +110,12 @@ namespace GW {
     void GameThread::Enqueue(std::function<void()> f)
     {
         EnterCriticalSection(&mutex);
-        singleshot_callbacks.emplace_back(f);
+        if (in_gamethread) {
+            f();
+        }
+        else {
+            singleshot_callbacks.emplace_back(f);
+        }
         LeaveCriticalSection(&mutex);
     }
 

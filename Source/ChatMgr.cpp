@@ -745,6 +745,7 @@ namespace GW {
         UI::UIChatMessage param;
         param.channel = param.channel2 = channel;
         param.message = (wchar_t*)message_encoded;
+        bool delete_message = false;
         if (sender_encoded) {
             // If message contains link (<a=1>), manually create the message string
             wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
@@ -762,12 +763,13 @@ namespace GW {
                 len += 19;
             }
             param.message = new wchar_t[len];
+            delete_message = true;
             GWCA_ASSERT(swprintf(param.message, len, format, sender_encoded, message_encoded) >= 0);
         }
         add_next_message_to_chat_log = !transient;
         UI::SendUIMessage(UI::kWriteToChatLog, &param);
         add_next_message_to_chat_log = true;
-        if (param.message != message_encoded)
+        if (delete_message)
             delete[] param.message;
     }
 

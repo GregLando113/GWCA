@@ -329,6 +329,18 @@ namespace GW {
         return L"";
     }
 
+    wchar_t* Agents::GetAgentEncName(uint32_t agent_id) {
+        const Agent* agent = GetAgentByID(agent_id);
+        if (agent) {
+            return GetAgentEncName(agent);
+        }
+        GW::AgentInfoArray& agent_infos = GameContext::instance()->world->agent_infos;
+        if (!agent_infos.valid() || agent_id >= agent_infos.size()) {
+            return nullptr;
+        }
+        return agent_infos[agent_id].name_enc;
+    }
+
     wchar_t* Agents::GetAgentEncName(const Agent* agent) {
         if (!agent) 
             return nullptr;

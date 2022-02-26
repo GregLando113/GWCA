@@ -20,6 +20,19 @@ namespace GW {
             Polish = 9,
             Russian
         };
+        enum class TextLanguage {
+            English,
+            Korean,
+            French,
+            German,
+            Italian,
+            Spanish,
+            TraditionalChinese,
+            Japanese = 8,
+            Polish,
+            Russian,
+            BorkBorkBork = 17
+        };
 
         enum class MapID {
             None = 0,

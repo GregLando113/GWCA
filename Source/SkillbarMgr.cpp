@@ -48,14 +48,14 @@ namespace {
         -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, // [96,  112)
         41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, // [112, 128)
     };
+    static const unsigned char _Base64Table[65] =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-    static void _WriteBits(int val, char* buff) {
-        buff[0] = ((val >> 0) & 1);
-        buff[1] = ((val >> 1) & 1);
-        buff[2] = ((val >> 2) & 1);
-        buff[3] = ((val >> 3) & 1);
-        buff[4] = ((val >> 4) & 1);
-        buff[5] = ((val >> 5) & 1);
+    static int _WriteBits(int val, char* buff, int count = 6) {
+        for (int i = 0; i < count; i++) {
+            buff[i] = ((val >> i) & 1);
+        }
+        return count;
     }
 
     static int _ReadBits(char** str, int n) {
@@ -66,6 +66,51 @@ namespace {
         *str = s;
         return val;
     }
+
+    Constants::Profession GetAttributeProfession(Constants::Attribute attribute, bool* is_primary_attribute) {
+        if (attribute <= Constants::Attribute::InspirationMagic) {
+            *is_primary_attribute = attribute == Constants::Attribute::FastCasting;
+            return Constants::Profession::Mesmer;
+        }
+        if (attribute <= Constants::Attribute::Curses) {
+            *is_primary_attribute = attribute == Constants::Attribute::SoulReaping;
+            return Constants::Profession::Necromancer;
+        }
+        if (attribute <= Constants::Attribute::EnergyStorage) {
+            *is_primary_attribute = attribute == Constants::Attribute::EnergyStorage;
+            return Constants::Profession::Elementalist;
+        }
+        if (attribute <= Constants::Attribute::DivineFavor) {
+            *is_primary_attribute = attribute == Constants::Attribute::DivineFavor;
+            return Constants::Profession::Monk;
+        }
+        if (attribute <= Constants::Attribute::Tactics) {
+            *is_primary_attribute = attribute == Constants::Attribute::Strength;
+            return Constants::Profession::Warrior;
+        }
+        if (attribute <= Constants::Attribute::Marksmanship) {
+            *is_primary_attribute = attribute == Constants::Attribute::Expertise;
+            return Constants::Profession::Ranger;
+        }
+        if (attribute <= Constants::Attribute::ShadowArts || attribute == Constants::Attribute::CriticalStrikes) {
+            *is_primary_attribute = attribute == Constants::Attribute::CriticalStrikes;
+            return Constants::Profession::Assassin;
+        }
+        if (attribute <= Constants::Attribute::ChannelingMagic || attribute == Constants::Attribute::SpawningPower) {
+            *is_primary_attribute = attribute == Constants::Attribute::SpawningPower;
+            return Constants::Profession::Ritualist;
+        }
+        if (attribute <= Constants::Attribute::Leadership) {
+            *is_primary_attribute = attribute == Constants::Attribute::Leadership;
+            return Constants::Profession::Paragon;
+        }
+        if (attribute <= Constants::Attribute::Mysticism) {
+            *is_primary_attribute = attribute == Constants::Attribute::Mysticism;
+            return Constants::Profession::Dervish;
+        }
+        return Constants::Profession::None;
+    }
+
 
     std::unordered_map<HookEntry*, SkillbarMgr::UseSkillCallback> OnUseSkill_Callbacks;
     static void __cdecl OnUseSkill(uint32_t agent_id, uint32_t slot, uint32_t target, uint32_t call_target)
@@ -143,7 +188,77 @@ namespace GW {
             skill_ids[i] = static_cast<uint32_t>(skills[i]);
         return LoadSkillbar(skill_ids, n_skills, hero_index);
     }
+    bool SkillbarMgr::EncodeSkillTemplate(const SkillTemplate& in, char* build_code_result, size_t build_code_result_len)
+    {
+        const int bufSize = 1024;
 
+        char bitStr[bufSize]; // @Cleanup: Confirm that the buffer is alway big enough.
+        size_t offset = 0;
+
+        offset += _WriteBits(14,&bitStr[offset], 4); // 4 Bits - Template Type - 14 (0xE) for Skill Template
+        offset += _WriteBits(0, &bitStr[offset], 4); // 4 Bits - Version Number - 0
+
+        // Professions
+        int bits_per_prof = 4; // Professions go up to 10 - more than 4 bits would be 16 - how could this ever be more than 4 bits?
+        offset += _WriteBits((bits_per_prof - 4) * 0.5, &bitStr[offset], 2); // 2 Bits - A code controlling the number of encoded bits per profession id
+        offset += _WriteBits((int)in.primary, &bitStr[offset], bits_per_prof);
+        offset += _WriteBits((int)in.secondary, &bitStr[offset], bits_per_prof);
+
+        // Attributes
+        int attributes_count_offset = offset;
+        int bits_per_attr = 4;
+        int attrib_count = 0;
+        for (const Attribute& attribute : in.attributes) {
+            if (attribute.attribute == Constants::Attribute::None) {
+                continue;
+            }
+            int tmp = (int)log2((int)attribute.attribute) + 1;
+            if (tmp > bits_per_attr) {
+                bits_per_attr = tmp;
+            }
+            attrib_count++;
+        }
+        offset += _WriteBits(attrib_count, &bitStr[offset], 4);
+        offset += _WriteBits(bits_per_attr - 4, &bitStr[offset], 4);
+        for (const Attribute& attribute : in.attributes) {
+            if (attribute.attribute != GW::Constants::Attribute::None) {
+                offset += _WriteBits((int)attribute.attribute, &bitStr[offset], bits_per_attr);
+                offset += _WriteBits((int)attribute.points, &bitStr[offset], 4);
+            }
+        }
+
+        // Skills
+        int bits_per_skill = 8;
+        for (const GW::Constants::SkillID skill : in.skills) {
+            int tmp = (int)log2((int)skill) + 1;
+            if (tmp > bits_per_skill) {
+                bits_per_skill = tmp;
+            }
+        }
+        offset += _WriteBits(bits_per_skill - 8, &bitStr[offset], 4);
+        for (const GW::Constants::SkillID skill : in.skills) {
+            offset += _WriteBits((int)skill, &bitStr[offset], bits_per_skill);
+        }
+
+        size_t out_offset = 0;
+        size_t read_offset = 0;
+        char* it = bitStr;
+        int r = offset % 6;
+        for (size_t i = 0; i < r; i++) {
+            bitStr[offset++] = 0;
+        }
+        size_t needed_length = offset / 6;
+        if (needed_length > build_code_result_len - 1) {
+            GWCA_ERR("Result length %d less than required build code length %d\n", needed_length, build_code_result_len);
+            return false;
+        }
+        for (size_t i = 0; i < needed_length; i++) {
+            int value = _ReadBits(&it, 6);
+            build_code_result[i] = _Base64Table[value];
+        }
+        build_code_result[needed_length] = 0;
+        return true;
+    }
     bool SkillbarMgr::DecodeSkillTemplate(SkillTemplate *result, const char *temp)
     {
         const int SKILL_MAX = 3431; // @Cleanup: This should go somewhere else (it could be readed from the client)
@@ -159,13 +274,14 @@ namespace GW {
         GWCA_ASSERT((len * 6) < bufSize);
         char bitStr[bufSize]; // @Cleanup: Confirm that the buffer is alway big enough.
 
+        size_t bitStrLen = 0;
         for (size_t i = 0; i < len; i++) {
             int numeric_value = _Base64ToValue[temp[i]];
             if (numeric_value == -1) {
                 GWCA_ERR("Unvalid base64 character '%c' in string '%s'\n", temp[i], temp);
                 return false;
             }
-            _WriteBits(numeric_value, bitStr + (6 * i));
+            bitStrLen += _WriteBits(numeric_value, &bitStr[bitStrLen], 6);
         }
 
         char *it = bitStr;
@@ -191,11 +307,28 @@ namespace GW {
         }
 
         int bits_per_attr = _ReadBits(&it, 4) + 4;
+        bool is_primary_attribute = false;
         for (int i = 0; i < attrib_count; i++) {
             int attrib_id = _ReadBits(&it, bits_per_attr);
             int attrib_val = _ReadBits(&it, 4);
             if (attrib_id > ATTRIBUTE_MAX) {
                 GWCA_ERR("Attribute id %d is out of range. (max = %d)\n", attrib_id, ATTRIBUTE_MAX);
+                return false;
+            }
+            if (attrib_val > 12) {
+                GWCA_ERR("Attribute id %d has a value of %d. (max = 12)\n", attrib_id, attrib_val);
+                return false;
+            }
+            if (!(attrib_id && attrib_val)) {
+                continue;
+            }
+            int prof = (int)GetAttributeProfession((Constants::Attribute)attrib_id, &is_primary_attribute);
+            if (prof != prof1 && prof != prof2) {
+                GWCA_ERR("Attribute id %d does not match build profession(s)\n", attrib_id);
+                return false;
+            }
+            if (is_primary_attribute && prof != prof1) {
+                GWCA_ERR("Primary attribute id %d does not match primary profession\n", attrib_id);
                 return false;
             }
             result->attributes[i].attribute = static_cast<Constants::Attribute>(attrib_id);
@@ -213,6 +346,11 @@ namespace GW {
             int skill_id = _ReadBits(&it, bits_per_skill);
             if (skill_id > SKILL_MAX) {
                 GWCA_ERR("Skill id %d is out of range. (max = %d)\n", skill_id, SKILL_MAX);
+                return false;
+            }
+            Skill& s = GetSkillConstantData(skill_id);
+            if (s.profession != 0 && s.profession != (uint8_t)prof1 && s.profession != (uint8_t)prof2) {
+                GWCA_ERR("Skill id %d doesn't match build profession(s)\n", skill_id);
                 return false;
             }
             result->skills[skill_count] = static_cast<Constants::SkillID>(skill_id);

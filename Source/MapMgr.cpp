@@ -33,6 +33,13 @@ namespace {
     uintptr_t area_info_addr;
     uintptr_t instance_type_addr;
 
+    typedef float(__cdecl* QueryAltitude_pt)(
+        GamePos* point, 
+        float radius, 
+        float* alt, 
+        Vec3f* unk);
+    QueryAltitude_pt QueryAltitude_Func;
+
     void Init() {
         {
             uintptr_t address = GW::Scanner::Find("\x8B\xF0\xEB\x03\x8B\x75\x0C\x3B", "xxxxxxxx", +0xA);
@@ -62,6 +69,13 @@ namespace {
             if (Verify(address))
                 instance_type_addr = *(uintptr_t *)address;
         }
+        {
+            uintptr_t address = Scanner::Find(
+                "\x8b\x58\x14\xff\x73\x78\xe8\x28\xbc\x02\x00\x83\xc4\x04\x85\xc0", "xxxxxxx????xxxxx", -0xd);
+            GWCA_INFO("[SCAN] QueryAltitude_Func = %p\n", (void*)address);
+            if (Verify(address))
+                QueryAltitude_Func = (QueryAltitude_pt)address;
+        }
     }
 }
 
@@ -75,6 +89,11 @@ namespace GW {
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
+    uint32_t Map::QueryAltitude(GamePos* pos, float radius, float* alt, Vec3f* terrain_normal) {
+        if (QueryAltitude_Func)
+            return QueryAltitude_Func(pos, radius, alt, terrain_normal);
+        return 0;
+    }
 
     bool Map::GetIsMapLoaded() {
         return GameContext::instance()->map != nullptr;

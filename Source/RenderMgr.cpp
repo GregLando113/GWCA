@@ -15,6 +15,8 @@
 
 namespace {
     using namespace GW;
+    typedef Mat4x3f*(__cdecl* GwGetTransform_pt)(int transform);
+    GwGetTransform_pt GwGetTransform_func;
 
     struct gwdx {
         /* +h0000 */ uint8_t    h0000[24];
@@ -81,6 +83,13 @@ namespace {
     }
 
     void Init() {
+
+        uintptr_t address = Scanner::Find(
+            "\x8B\x75\x08\x83\xFE\x05\x7C\x14\x68\xDB\x02\x00\x00", "xxxxxxxxxxxxx", -0x4);
+        GWCA_INFO("[SCAN] GwGetTransform = %p\n", address);
+        if (Verify(address)) {
+            GwGetTransform_func = (GwGetTransform_pt)address;
+        }
 
         GwEndScene_Func = (GwEndScene_pt)Scanner::Find(
             "\x89\x45\xFC\x57\x8B\x7D\x08\x8B\x8F", "xxxxxxxxx", -0xD);

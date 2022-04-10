@@ -1,6 +1,22 @@
 #pragma once
 
 namespace GW {
+    typedef struct Mat4x3f {
+        float _11;
+        float _12;
+        float _13;
+        float _14;
+        float _21;
+        float _22;
+        float _23;
+        float _24;
+        float _31;
+        float _32;
+        float _33;
+        float _34;
+        uint32_t flags;
+    } Mat4x3f;
+
     struct Vec3f {
         float x;
         float y;

@@ -55,7 +55,7 @@ namespace GW {
     struct MapProp { // total: 0x54/84
         /* +h0000 */ uint32_t h0000[5];
         /* +h0014 */ uint32_t uptime_seconds; // time since spawned
-        /* +h0018 */ uint32_t h001C;
+        /* +h0018 */ uint32_t h0018;
         /* +h001C */ uint32_t prop_index;
         /* +h0020 */ Vec2f position;
         /* +h0028 */ float z;

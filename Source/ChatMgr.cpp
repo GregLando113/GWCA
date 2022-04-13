@@ -237,7 +237,7 @@ namespace {
         GW::HookBase::EnterHook();
         HookStatus status;
         auto it = ChatLog_callbacks.begin();
-       
+
         status.blocked = !add_next_message_to_chat_log;
 
         Chat::ChatMessage* logged_message = 0;
@@ -319,7 +319,8 @@ namespace {
 
         wchar_t* time_buffer = 0;
         if (localtime.wYear == 0) {
-            time_buffer = Timestamp_seconds ? L"[lbracket]--:--:--[rbracket]" : L"[lbracket]--:--[rbracket]";
+            time_buffer = Timestamp_seconds ? static_cast<wchar_t[]>(L"[lbracket]--:--:--[rbracket]")
+                                            : static_cast<wchar_t[]>(L"[lbracket]--:--[rbracket]");
         }
         else {
             time_buffer = new wchar_t[29];
@@ -704,7 +705,7 @@ namespace GW {
     }
 
     // Change to WriteChatF(Channel chan, const wchar_t *from, const wchar_t *frmt, ..)
-    // and       WriteChat(Channel chan, const wchar_t *from, const wchar_t *msg) 
+    // and       WriteChat(Channel chan, const wchar_t *from, const wchar_t *msg)
     /*
     void Chat::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
         va_list vl;
@@ -713,7 +714,7 @@ namespace GW {
         wchar_t* chat = new wchar_t[szbuf];
         vswprintf_s(chat, szbuf, format, vl);
         va_end(vl);
-        
+
         WriteChat(from, chat);
         delete[] chat;
     }
@@ -748,17 +749,17 @@ namespace GW {
         bool delete_message = false;
         if (sender_encoded) {
             // If message contains link (<a=1>), manually create the message string
-            wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
+            wchar_t* format = static_cast<wchar_t[]>(L"\x76b\x10a%s\x1\x10b%s\x1");
             size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 6;
             bool has_link_in_message = wcsstr(message_encoded, L"<a=1>") != 0;
             bool has_markup = has_link_in_message || wcsstr(message_encoded, L"<c=") != 0;
             if (has_markup) {
                 // NB: When not using this method, any skill templates etc are NOT rendered by the game
                 if (has_link_in_message) {
-                    format = L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                    format = static_cast<wchar_t[]>(L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s");
                 }
                 else {
-                    format = L"\x108\x107<a=1>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                    format = static_cast<wchar_t[]>(L"\x108\x107<a=1>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s");
                 }
                 len += 19;
             }

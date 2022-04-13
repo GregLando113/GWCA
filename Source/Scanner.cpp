@@ -14,7 +14,7 @@ namespace {
     };
     SectionOffset sections[2] = { 0 };
 }
-uintptr_t GW::Scanner::FindAssertion(char* assertion_file, char* assertion_msg, int offset) {
+uintptr_t GW::Scanner::FindAssertion(const char* assertion_file, const char* assertion_msg, int offset) {
 #pragma warning( push )
 #pragma warning( disable : 4838 )
 #pragma warning( disable : 4242 )

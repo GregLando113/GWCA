@@ -317,13 +317,12 @@ namespace {
             hour %= 12;
 
 
-        wchar_t* time_buffer = 0;
+        wchar_t time_buffer[29];
         if (localtime.wYear == 0) {
-            time_buffer = Timestamp_seconds ? static_cast<wchar_t[]>(L"[lbracket]--:--:--[rbracket]")
-                                            : static_cast<wchar_t[]>(L"[lbracket]--:--[rbracket]");
+            Timestamp_seconds ? std::memcpy(time_buffer, L"[lbracket]--:--:--[rbracket]", 29)
+                              : std::memcpy(time_buffer, L"[lbracket]--:--[rbracket]", 26);
         }
         else {
-            time_buffer = new wchar_t[29];
             if(Timestamp_seconds)
                 swprintf(time_buffer, 29, L"[lbracket]%02d:%02d:%02d[rbracket]", hour, minute, second);
             else
@@ -336,9 +335,6 @@ namespace {
             swprintf(message_buffer, buf_len, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), time_buffer, *str_p);
         } else {
             swprintf(message_buffer, buf_len, L"\x108\x107%s \x01\x02%s", time_buffer, *str_p);
-        }
-        if (localtime.wYear != 0) {
-            delete[] time_buffer;
         }
         RetPrintChat(ctx, edx, channel, message_buffer, timestamp, reprint);
         HookBase::LeaveHook();

@@ -36,3 +36,6 @@ dox/
 *.sublime-workspace*
 *.vcxproj.user
 build/
+
+# VSCode stuff
+.vscode/

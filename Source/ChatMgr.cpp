@@ -749,17 +749,17 @@ namespace GW {
         bool delete_message = false;
         if (sender_encoded) {
             // If message contains link (<a=1>), manually create the message string
-            wchar_t* format = static_cast<wchar_t[]>(L"\x76b\x10a%s\x1\x10b%s\x1");
+            const wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
             size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 6;
             bool has_link_in_message = wcsstr(message_encoded, L"<a=1>") != 0;
             bool has_markup = has_link_in_message || wcsstr(message_encoded, L"<c=") != 0;
             if (has_markup) {
                 // NB: When not using this method, any skill templates etc are NOT rendered by the game
                 if (has_link_in_message) {
-                    format = static_cast<wchar_t[]>(L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s");
+                    format = L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
                 }
                 else {
-                    format = static_cast<wchar_t[]>(L"\x108\x107<a=1>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s");
+                    format = L"\x108\x107<a=1>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
                 }
                 len += 19;
             }

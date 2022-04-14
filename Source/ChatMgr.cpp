@@ -319,8 +319,8 @@ namespace {
 
         wchar_t time_buffer[29];
         if (localtime.wYear == 0) {
-            Timestamp_seconds ? std::memcpy(time_buffer, L"[lbracket]--:--:--[rbracket]", 29)
-                              : std::memcpy(time_buffer, L"[lbracket]--:--[rbracket]", 26);
+            Timestamp_seconds ? std::memcpy(time_buffer, L"[lbracket]--:--:--[rbracket]", sizeof(wchar_t) * 29)
+                              : std::memcpy(time_buffer, L"[lbracket]--:--[rbracket]", sizeof(wchar_t) * 26);
         }
         else {
             if(Timestamp_seconds)

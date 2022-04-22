@@ -102,8 +102,13 @@ namespace GW {
         CtoS::SendPacket(0x8, GAME_CMSG_PARTY_READY_STATUS, flag);
     }
 
-    PartyInfo* PartyMgr::GetPartyInfo() {
-        return GameContext::instance()->party->player_party;
+    PartyInfo* PartyMgr::GetPartyInfo(uint32_t party_id) {
+        GW::PartyContext* ctx = GameContext::instance()->party;
+        if (!ctx) return 0;
+        if (!party_id) return ctx->player_party;
+        if (!ctx->parties.valid() || party_id >= ctx->parties.size())
+            return 0;
+        return ctx->parties[party_id];
     }
 
     uint32_t PartyMgr::GetPartySize() {

@@ -39,12 +39,17 @@ namespace GW {
     typedef Array<HenchmanPartyMember> HenchmanPartyMemberArray;
     
     struct PartyInfo { // total: 0x84/132
+
+        size_t GetPartySize() {
+            return players.size() + henchmen.size() + heroes.size();
+        }
+
         /* +h0000 */ uint32_t party_id;
         /* +h0004 */ Array<PlayerPartyMember> players;
         /* +h0014 */ Array<HenchmanPartyMember> henchmen;
         /* +h0024 */ Array<HeroPartyMember> heroes;
         /* +h0034 */ Array<AgentID> others; // agent id of allies, minions, pets.
-        /* +h0044 */ uint8_t h0044[56];
+        /* +h0044 */ uint32_t h0044[14];
         /* +h007C */ TLink<PartyInfo> invite_link;
     };
     static_assert(sizeof(PartyInfo) == 132, "struct PartyInfo has incorect size");

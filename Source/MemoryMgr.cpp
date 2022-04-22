@@ -7,21 +7,23 @@
 #include <GWCA/Managers/MemoryMgr.h>
 
 // Used to get precise skill recharge times.
-uintptr_t GW::MemoryMgr::SkillTimerPtr = NULL;
+DWORD* GW::MemoryMgr::SkillTimerPtr = NULL;
 
 uintptr_t GW::MemoryMgr::WinHandlePtr = NULL;
 
 uintptr_t GW::MemoryMgr::GetPersonalDirPtr = NULL;
 
+uint32_t(_cdecl* GW::MemoryMgr::GetGWVersion)(void)  = NULL;
+
 bool GW::MemoryMgr::Scan() {
     Scanner::Initialize();
 
     // Skill timer to use for exact effect times.
-    SkillTimerPtr = Scanner::Find(
+    SkillTimerPtr = (DWORD*)Scanner::Find(
         "\x83\xCA\x01\x89\x15\x00\x00\x00\x00\xFF\xD6\x8B", "xxxxx????xxx", +5);
     if (SkillTimerPtr) {
         GWCA_INFO("[SCAN] SkillTimerPtr = %08X\n", SkillTimerPtr);
-        SkillTimerPtr = *(uintptr_t *)SkillTimerPtr;
+        SkillTimerPtr = *(DWORD**)SkillTimerPtr;
     } else {
         GWCA_INFO("[SCAN] SkillTimerPtr = ERR\n");
         return false;
@@ -41,6 +43,16 @@ bool GW::MemoryMgr::Scan() {
         GWCA_INFO("[SCAN] GetPersonalDirPtr = %08X\n", GetPersonalDirPtr);
     } else {
         GWCA_INFO("[SCAN] GetPersonalDirPtr= ERR\n");
+        return false;
+    }
+
+    uintptr_t addr = Scanner::Find("\x6A\x00\x68\x00\x00\x01\x00\x89", "xxxxxxxx", 0x42);
+    if (addr && (addr = Scanner::FunctionFromNearCall(addr))) {
+        GetGWVersion = (uint32_t(_cdecl *)(void))addr;
+        GWCA_INFO("[SCAN] GetGWVersion = %08X, %d\n", GetGWVersion, GetGWVersion());
+    }
+    else {
+        GWCA_INFO("[SCAN] GWVersion= ERR\n");
         return false;
     }
     return true;

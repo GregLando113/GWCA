@@ -513,12 +513,19 @@ namespace GW {
             };
             const uint32_t Packet<TransactionDone>::STATIC_HEADER = GAME_SMSG_TRANSACTION_DONE;
 
-            // Skill available in skills window. Signet of capture can have count > 1
-            struct UpdateSkillCount : Packet<UpdateSkillCount> {
+            // Used to duplicate skills in skill window i.e. more than 1 signet of capture. Packet is received after map is loaded
+            struct UpdateSkillCountAfterMapLoad : Packet<UpdateSkillCountAfterMapLoad> {
                 uint32_t skill_id;
                 uint32_t count;
             };
-            const uint32_t Packet<UpdateSkillCount>::STATIC_HEADER = GAME_SMSG_SKILL_ADD_TO_WINDOW_COUNT;
+            const uint32_t Packet<UpdateSkillCountAfterMapLoad>::STATIC_HEADER = GAME_SMSG_SKILL_UPDATE_SKILL_COUNT_1;
+
+            // Used to duplicate skills in skill window i.e. more than 1 signet of capture. Packet is received during initial character load
+            struct UpdateSkillCountPreMapLoad : Packet<UpdateSkillCountPreMapLoad> {
+                uint32_t skill_id;
+                uint32_t count;
+            };
+            const uint32_t Packet<UpdateSkillCountPreMapLoad>::STATIC_HEADER = GAME_SMSG_SKILL_UPDATE_SKILL_COUNT_2;
 
             // Skill Activate (begin casting)
             struct SkillActivate : Packet<SkillActivate> {

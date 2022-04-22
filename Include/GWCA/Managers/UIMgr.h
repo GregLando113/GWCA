@@ -91,18 +91,39 @@ namespace GW {
             kSetAgentNameTagAttribs = 0x10000000 | 0x1B, // wparam = AgentNameTagInfo*
             kChangeTarget           = 0x10000000 | 0x20, // wparam = ChangeTargetUIMsg*
             kShowXunlaiChest        = 0x10000000 | 0x40,
+
+            kMoraleChange           = 0x10000000 | 0x47, // wparam = {agent id, morale percent }
+            kEffectAdd              = 0x10000000 | 0x55, // wparam = {agent_id, GW::Effect*}
+            kEffectRenew            = 0x10000000 | 0x56, // wparam = GW::Effect*
+            kEffectRemove           = 0x10000000 | 0x57, // wparam = effect id
             kWriteToChatLog         = 0x10000000 | 0x7E,
+            kFriendUpdated          = 0x10000000 | 0x89, // wparam = { GW::Friend*, ... }
+            kMapLoaded              = 0x10000000 | 0x8A,
             kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
+            kLogout                 = 0x10000000 | 0x9b, // wparam = { bool unknown, bool character_select } 
             kDialogBody             = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
             kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
+            kQuotedItemPrice        = 0x10000000 | 0xBB, // wparam = { uint32_t item_id, uint32_t price }
+            kStartMapLoad           = 0x10000000 | 0xC0, // wparam = { uint32_t map_id, ...}
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
+            kGuildMemberUpdated     = 0x10000000 | 0xD8, // wparam = { wchar_t* name, uint32_t unk0, uint32_t status }
+            kShowHint               = 0x10000000 | 0xDF, // wparam = { uint32_t icon_type, wchar_t* message_enc }
+            kPvPWindowContent       = 0x10000000 | 0xF8,
+            kMapChange              = 0x10000000 | 0x10F, // wparam = map id
             kCheckboxPreference     = 0x10000000 | 0x13F,
+            kPreferenceChanged      = 0x10000000 | 0x140,
+            kUIPositionChanged      = 0x10000000 | 0x141,
+            kQuestAdded             = 0x10000000 | 0x149, // wparam = { quest_id, ... }
+            kCurrentQuestChanged    = 0x10000000 | 0x14C, // wparam = { quest_id, ... }
+            kObjectiveComplete      = 0x10000000 | 0x156, // wparam = { objective_id, ... }
+            kDestroyUIObject        = 0x10000000 | 0x170, // Undocumented
             kGuildHall              = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
             kLeaveGuildHall         = 0x10000000 | 0x179,
             kTravel                 = 0x10000000 | 0x17A,
             kOpenWikiUrl            = 0x10000000 | 0x17B, // wparam = url
             kHideHeroPanel          = 0x10000000 | 0x197, // wparam = hero_id
             kShowHeroPanel          = 0x10000000 | 0x198, // wparam = hero_id
+            kMoveItem               = 0x10000000 | 0x19e, // wparam = { item_id, to_bag, to_slot, bool prompt }
             kOpenTemplate           = 0x10000000 | 0x1B9,
         };
 
@@ -222,6 +243,7 @@ namespace GW {
 
         enum ControlAction : uint32_t {
             ControlAction_None = 0,
+            ControlAction_Screenshot = 0xAE,
             // Panels
             ControlAction_CloseAllPanels = 0x85,
             ControlAction_ToggleInventoryWindow = 0x8B,
@@ -245,10 +267,10 @@ namespace GW {
 
             // Weapon sets
             ControlAction_CycleEquipment = 0x86,
-            ControlAction_ActivateWeaponSet4 = 0x84,
-            ControlAction_ActivateWeaponSet3 = 0x83,
-            ControlAction_ActivateWeaponSet2 = 0x82,
             ControlAction_ActivateWeaponSet1 = 0x81,
+            ControlAction_ActivateWeaponSet2,
+            ControlAction_ActivateWeaponSet3,
+            ControlAction_ActivateWeaponSet4,
 
             ControlAction_DropItem = 0xCD, // drops bundle item >> flags, ashes, etc
 
@@ -264,44 +286,122 @@ namespace GW {
             ControlAction_TurnRight = 0xA3,
             ControlAction_MoveBackward = 0xAC,
             ControlAction_MoveForward = 0xAD,
+            ControlAction_CancelAction = 0xAF,
+            ControlAction_Interact = 0x80,
             ControlAction_ReverseDirection = 0xB1,
             ControlAction_Autorun = 0xB7,
+            ControlAction_Follow = 0xCC,
             
             // Targeting
+            ControlAction_TargetPartyMember1 = 0x96,
+            ControlAction_TargetPartyMember2,
+            ControlAction_TargetPartyMember3,
+            ControlAction_TargetPartyMember4,
+            ControlAction_TargetPartyMember5,
+            ControlAction_TargetPartyMember6,
+            ControlAction_TargetPartyMember7,
+            ControlAction_TargetPartyMember8,
+            ControlAction_TargetPartyMember9 = 0xC6,
+            ControlAction_TargetPartyMember10,
+            ControlAction_TargetPartyMember11,
+            ControlAction_TargetPartyMember12,
+
             ControlAction_TargetNearestItem = 0xC3,
             ControlAction_TargetNextItem = 0xC4,
             ControlAction_TargetPreviousItem = 0xC5,
             ControlAction_TargetPartyMemberNext = 0xCA,
             ControlAction_TargetPartyMemberPrevious = 0xCB, 
             ControlAction_TargetAllyNearest = 0xBC,
+            ControlAction_ClearTarget = 0xE3,
             ControlAction_TargetSelf = 0xA0, // also 0x96
             ControlAction_TargetPriorityTarget = 0x9F,
             ControlAction_TargetNearestEnemy = 0x93,
             ControlAction_TargetNextEnemy = 0x95,
             ControlAction_TargetPreviousEnemy = 0x9E,
+
+            ControlAction_ShowOthers = 0x89,
+            ControlAction_ShowTargets = 0x94,
             
             ControlAction_CameraZoomIn = 0xCE,
             ControlAction_CameraZoomOut = 0xCF,
             
             // Party/Hero commands
+            ControlAction_ClearPartyCommands = 0xDB,
             ControlAction_CommandParty = 0xD6,
-            ControlAction_CommandHero1 = 0xD7,
-            ControlAction_CommandHero2 = 0xD8,
-            ControlAction_CommandHero3 = 0xD9,
+            ControlAction_CommandHero1,
+            ControlAction_CommandHero2,
+            ControlAction_CommandHero3,
             ControlAction_CommandHero4 = 0x102,
-            ControlAction_CommandHero5 = 0x103,
-            ControlAction_CommandHero6 = 0x104,
-            ControlAction_CommandHero7 = 0x105,
+            ControlAction_CommandHero5,
+            ControlAction_CommandHero6,
+            ControlAction_CommandHero7,
+
+            ControlAction_Hero1Skill1 = 0xE5,
+            ControlAction_Hero1Skill2,
+            ControlAction_Hero1Skill3,
+            ControlAction_Hero1Skill4,
+            ControlAction_Hero1Skill5,
+            ControlAction_Hero1Skill6,
+            ControlAction_Hero1Skill7,
+            ControlAction_Hero1Skill8,
+            ControlAction_Hero2Skill1,
+            ControlAction_Hero2Skill2,
+            ControlAction_Hero2Skill3,
+            ControlAction_Hero2Skill4,
+            ControlAction_Hero2Skill5,
+            ControlAction_Hero2Skill6,
+            ControlAction_Hero2Skill7,
+            ControlAction_Hero2Skill8,
+            ControlAction_Hero3Skill1,
+            ControlAction_Hero3Skill2,
+            ControlAction_Hero3Skill3,
+            ControlAction_Hero3Skill4,
+            ControlAction_Hero3Skill5,
+            ControlAction_Hero3Skill6,
+            ControlAction_Hero3Skill7,
+            ControlAction_Hero3Skill8,
+            ControlAction_Hero4Skill1 = 0x106,
+            ControlAction_Hero4Skill2,
+            ControlAction_Hero4Skill3,
+            ControlAction_Hero4Skill4,
+            ControlAction_Hero4Skill5,
+            ControlAction_Hero4Skill6,
+            ControlAction_Hero4Skill7,
+            ControlAction_Hero4Skill8,
+            ControlAction_Hero5Skill1,
+            ControlAction_Hero5Skill2,
+            ControlAction_Hero5Skill3,
+            ControlAction_Hero5Skill4,
+            ControlAction_Hero5Skill5,
+            ControlAction_Hero5Skill6,
+            ControlAction_Hero5Skill7,
+            ControlAction_Hero5Skill8,
+            ControlAction_Hero6Skill1,
+            ControlAction_Hero6Skill2,
+            ControlAction_Hero6Skill3,
+            ControlAction_Hero6Skill4,
+            ControlAction_Hero6Skill5,
+            ControlAction_Hero6Skill6,
+            ControlAction_Hero6Skill7,
+            ControlAction_Hero6Skill8,
+            ControlAction_Hero7Skill1,
+            ControlAction_Hero7Skill2,
+            ControlAction_Hero7Skill3,
+            ControlAction_Hero7Skill4,
+            ControlAction_Hero7Skill5,
+            ControlAction_Hero7Skill6,
+            ControlAction_Hero7Skill7,
+            ControlAction_Hero7Skill8,
 
             // Skills
             ControlAction_UseSkill1 = 0xA4,
-            ControlAction_UseSkill2 = 0xA5,
-            ControlAction_UseSkill3 = 0xA6,
-            ControlAction_UseSkill4 = 0xA7,
-            ControlAction_UseSkill5 = 0xA8,
-            ControlAction_UseSkill6 = 0xA9,
-            ControlAction_UseSkill7 = 0xAA,
-            ControlAction_UseSkill8 = 0xAB
+            ControlAction_UseSkill2,
+            ControlAction_UseSkill3,
+            ControlAction_UseSkill4,
+            ControlAction_UseSkill5,
+            ControlAction_UseSkill6,
+            ControlAction_UseSkill7,
+            ControlAction_UseSkill8
             
         };
         struct FloatingWindow {
@@ -378,7 +478,7 @@ namespace GW {
 
         GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, wchar_t *buffer, size_t size);
         GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, char    *buffer, size_t size);
-        GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out);
+        GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id = -1);
 
         GWCA_API bool UInt32ToEncStr(uint32_t value, wchar_t *buffer, size_t count);
         GWCA_API uint32_t EncStrToUInt32(const wchar_t *enc_str);

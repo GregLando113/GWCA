@@ -20,6 +20,19 @@ namespace GW {
             Polish = 9,
             Russian
         };
+        enum class TextLanguage {
+            English,
+            Korean,
+            French,
+            German,
+            Italian,
+            Spanish,
+            TraditionalChinese,
+            Japanese = 8,
+            Polish,
+            Russian,
+            BorkBorkBork = 17
+        };
 
         enum class MapID {
             None = 0,
@@ -720,7 +733,7 @@ namespace GW {
             Zaishen_Menagerie_Grounds,
             Zaishen_Menagerie_outpost,
             Codex_Arena_outpost,
-            The_Underworld_Something_Wicked_This_Way_Comes,
+            The_Underworld_Something_Wicked_This_Way_Comes = 806,
             The_Underworld_Dont_Fear_the_Reapers,
             Lions_Arch_Halloween_outpost,
             Lions_Arch_Wintersday_outpost,
@@ -731,8 +744,8 @@ namespace GW {
             Tomb_of_the_Primeval_Kings_Halloween_outpost,
             Shing_Jea_Monastery_Dragon_Festival_outpost,
             Shing_Jea_Monastery_Canthan_New_Year_outpost,
-
-            Kamadan_Jewel_of_Istan_Halloween_outpost = 818,
+            Kaineng_Center_Canthan_New_Year_outpost,
+            Kamadan_Jewel_of_Istan_Halloween_outpost,
             Kamadan_Jewel_of_Istan_Wintersday_outpost,
             Kamadan_Jewel_of_Istan_Canthan_New_Year_outpost,
             Eye_of_the_North_outpost_Wintersday_outpost,

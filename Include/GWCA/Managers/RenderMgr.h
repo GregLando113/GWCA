@@ -11,6 +11,8 @@ namespace GW {
     extern Module RenderModule;
 
     namespace Render {
+        GWCA_API Mat4x3f* GetTransform(int transform);
+
         // Set up a callback for drawing on screen. 
         // Will be called after GW render. 
         // 

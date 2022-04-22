@@ -1,11 +1,26 @@
 #pragma once
 
+#include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
     struct PathingMap;
+    struct MapProp;
+    struct PropByType;
+    struct PropModelInfo;
 
     typedef Array<PathingMap> PathingMapArray;
+
+    struct PropsContext {
+        /* +h0000 */ uint8_t pad1[0x6C];
+        /* +h006C */ Array<TList<PropByType>> propsByType;
+        /* +h007C */ uint8_t h007C[0x28];
+        /* +h00A4 */ Array<PropModelInfo> propModels;
+        /* +h00B4 */ uint8_t h00B4[0xE0];
+        /* +h0194 */ Array<MapProp*> propArray;
+    };
+    static_assert(sizeof(PropsContext) == 0x1A4, "struct PropsContext has incorect size");
+
 
     struct MapContext {
         /* +h0000 */ float map_boundaries[5];
@@ -16,22 +31,16 @@ namespace GW {
         /* +h005C */ float h005C[6]; // Some trapezoid i think.
         /* +h0074 */ struct sub1 {
             struct sub2 {
-                uint8_t pad1[24];
+                uint32_t pad1[6];
                 PathingMapArray pmaps;
             } *sub2;
+            /* +h0004 */ Array<void*> something_for_props;
+            /* +h0014 */ uint32_t h0014[0x13];
+            /* +h0060 */ Array<TList<void*>> something_else_for_props;
             //... Bunch of arrays and shit
         } *sub1;
         /* +h0078 */ uint8_t pad1[4];
-        /* +h007C */ struct pathSub1 {
-            /* +h0000 */ uint8_t pad1[8];
-            /* +h0008 */struct path {
-                /* +h0000 */ uint8_t pad1[280];
-                /* +h0118 */ uint32_t visMode; // 0 to 6, dunno
-                /* +h011C */ uint8_t pad2[78];
-                /* +h0194 */Array<void*> propArray;
-
-            } *path;
-        } *pathSub1;
+        /* +h007C */ PropsContext *props;
         //... Player coords and shit beyond this point if they are desirable :p
     };
 }

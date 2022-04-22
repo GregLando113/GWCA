@@ -329,6 +329,18 @@ namespace GW {
         return L"";
     }
 
+    wchar_t* Agents::GetAgentEncName(uint32_t agent_id) {
+        const Agent* agent = GetAgentByID(agent_id);
+        if (agent) {
+            return GetAgentEncName(agent);
+        }
+        GW::AgentInfoArray& agent_infos = GameContext::instance()->world->agent_infos;
+        if (!agent_infos.valid() || agent_id >= agent_infos.size()) {
+            return nullptr;
+        }
+        return agent_infos[agent_id].name_enc;
+    }
+
     wchar_t* Agents::GetAgentEncName(const Agent* agent) {
         if (!agent) 
             return nullptr;
@@ -361,11 +373,11 @@ namespace GW {
             AgentContext* ctx = GameContext::instance()->agent;
             GadgetContext* gadget = GameContext::instance()->gadget;
             if (!ctx || !gadget) return nullptr;
-            auto* GadgetIds = ctx->gadget_data[agent->agent_id].gadget_ids;
+            auto* GadgetIds = ctx->agent_summary_info[agent->agent_id].extra_info_sub;
             if (!GadgetIds) 
                 return nullptr;
-            if (GadgetIds->name_enc)
-                return GadgetIds->name_enc;
+            if (GadgetIds->gadget_name_enc)
+                return GadgetIds->gadget_name_enc;
             size_t id = GadgetIds->gadget_id;
             if (gadget->GadgetInfo.size() <= id) return nullptr;
             if (gadget->GadgetInfo[id].name_enc)

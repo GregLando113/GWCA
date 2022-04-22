@@ -5,18 +5,20 @@
 namespace GW {
     struct AgentMovement;
 
-    struct AgentToGadget {
-        struct GadgetID {
-            uint32_t h0000;
-            uint32_t h0004;
-            uint32_t gadget_id;
-            uint32_t h000C;
-            wchar_t *name_enc;
+    struct AgentSummaryInfo {
+        struct AgentSummaryInfoSub {
+            /* +h0000 */ uint32_t h0000;
+            /* +h0004 */ uint32_t h0004;
+            /* +h0008 */ uint32_t gadget_id;
+            /* +h000C */ uint32_t h000C;
+            /* +h0010 */ wchar_t * gadget_name_enc;
+            /* +h0014 */ uint32_t h0014;
+            /* +h0018 */ uint32_t composite_agent_id; // 0x30000000 | player_id, 0x20000000 | npc_id etc
         };
 
         uint32_t h0000;
         uint32_t h0004;
-        GadgetID *gadget_ids;
+        AgentSummaryInfoSub* extra_info_sub;
     };
 
     struct AgentContext {
@@ -34,7 +36,7 @@ namespace GW {
         /* +h0058 */ uint32_t h0058[11];
         /* +h0084 */ Array<void *> h0084;
         /* +h0094 */   uint32_t h0094; // this field and the next array are link together in a structure.
-        /* +h0098 */   Array<AgentToGadget> gadget_data; // elements are of size 12. {ptr, func, ptr}
+        /* +h0098 */   Array<AgentSummaryInfo> agent_summary_info; // elements are of size 12. {ptr, func, ptr}
         /* +h00A8 */ Array<void *> h00A8;
         /* +h00B8 */ Array<void *> h00B8;
         /* +h00C8 */ uint32_t rand1; // Number seems to be randomized quite a bit o.o seems to be accessed by textparser.cpp
@@ -42,10 +44,10 @@ namespace GW {
         /* +h00D0 */ uint8_t h00D0[24];
         /* +h00E8 */ Array<AgentMovement *> agent_movement;
         /* +h00F8 */ Array<void *> h00F8;
-        /* +h0108 */ uint8_t h0108[68];
-        /* +h014C */ Array<void *> h014C;
-        /* +h015C */ Array<void *> h015C;
-        /* +h016C */ uint8_t h016C[64];
+        /* +h0108 */ uint32_t h0108[0x11];
+        /* +h014C */ Array<void *> agent_array1;
+        /* +h015C */ Array<void *> agent_async_movement;
+        /* +h016C */ uint32_t h016C[0x10];
         /* +h01AC */ uint32_t instance_timer;
         //... more but meh
     };

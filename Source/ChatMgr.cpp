@@ -23,23 +23,7 @@
 namespace {
     using namespace GW;
 
-#pragma warning(push)
-#pragma warning(disable: 4200)
-    struct ChatMessage {
-        uint32_t channel;
-        uint32_t unk1;
-        FILETIME timestamp;
-        wchar_t  message[0];
-    };
-#pragma warning(pop)
 
-    const size_t CHAT_LOG_LENGTH = 0x200;
-    struct ChatBuffer {
-        uint32_t next;
-        uint32_t unk1;
-        uint32_t unk2;
-        ChatMessage *messages[CHAT_LOG_LENGTH];
-    };
 
     bool ShowTimestamps = false;
     bool Timestamp_24hFormat = false;
@@ -50,7 +34,7 @@ namespace {
 
     // 08 01 07 01 [Time] 01 00 02 00
     // ChatBuffer **ChatBuffer_Addr;
-    uintptr_t ChatBuffer_Addr;
+    Chat::ChatBuffer** ChatBuffer_Addr;
     uintptr_t IsTyping_Addr;
 
     // There is maybe more.
@@ -124,6 +108,12 @@ namespace {
     std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
     std::unordered_map<HookEntry*, Chat::PrintChatCallback>     PrintChat_callbacks;
     std::unordered_map<HookEntry *, Chat::StartWhisperCallback> StartWhisper_callbacks;
+    struct ChatLogCallbackEntry {
+        int altitude;
+        HookEntry* entry;
+        Chat::ChatLogCallback callback;
+    };
+    std::vector<ChatLogCallbackEntry> ChatLog_callbacks;
 
     typedef void(__cdecl *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
     ChatEvent_pt RetChatEvent;
@@ -238,6 +228,46 @@ namespace {
         GW::HookBase::LeaveHook();
     }
 
+    bool add_next_message_to_chat_log = true;
+
+    typedef void(_cdecl* AddToChatLog_pt)(wchar_t* message, uint32_t channel);
+    AddToChatLog_pt AddToChatLog_Func;
+    AddToChatLog_pt RetAddToChatLog;
+    void OnAddToChatLog(wchar_t* message, uint32_t channel) {
+        GW::HookBase::EnterHook();
+        HookStatus status;
+        auto it = ChatLog_callbacks.begin();
+       
+        status.blocked = !add_next_message_to_chat_log;
+
+        Chat::ChatMessage* logged_message = 0;
+        // Pre callbacks
+        while (it != ChatLog_callbacks.end()) {
+            if (it->altitude > 0)
+                break;
+            it->callback(&status, message,channel, logged_message);
+            ++status.altitude;
+            it++;
+        }
+
+        if (!status.blocked) {
+            GW::Chat::ChatBuffer* log = Chat::GetChatLog();
+            size_t log_idx = log ? log->next : 0;
+            RetAddToChatLog(message, channel);
+            if(log && log->next != log_idx)
+                logged_message = log->messages[log_idx];
+        }
+
+        // Post callbacks
+        while (it != ChatLog_callbacks.end()) {
+            it->callback(&status, message, channel, logged_message);
+            ++status.altitude;
+            it++;
+        }
+        GW::HookBase::LeaveHook();
+    }
+
+
     typedef void (__fastcall *PrintChat_pt)(void *ctx, uint32_t edx,
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint);
     PrintChat_pt RetPrintChat;
@@ -286,40 +316,32 @@ namespace {
         if(!Timestamp_24hFormat)
             hour %= 12;
 
-        wchar_t buffer[1024];
-        wchar_t t_buffer[16];
+
+        wchar_t* time_buffer = 0;
         if (localtime.wYear == 0) {
-            wsprintfW(t_buffer, Timestamp_seconds ? L"[--:--:--]" : L"[--:--]");
+            time_buffer = Timestamp_seconds ? L"[lbracket]--:--:--[rbracket]" : L"[lbracket]--:--[rbracket]";
         }
         else {
+            time_buffer = new wchar_t[29];
             if(Timestamp_seconds)
-                wsprintfW(t_buffer, L"[%02d:%02d:%02d]", hour, minute, second);
+                swprintf(time_buffer, 29, L"[lbracket]%02d:%02d:%02d[rbracket]", hour, minute, second);
             else
-                wsprintfW(t_buffer, L"[%02d:%02d]", hour, minute);
+                swprintf(time_buffer, 29, L"[lbracket]%02d:%02d[rbracket]", hour, minute);
         }
+        wchar_t* message_buffer;
+        size_t buf_len = 21 + 29 + wcslen(*str_p);
+        message_buffer = new wchar_t[buf_len];
         if (ChannelThatParseColorTag[channel]) {
-            if (localtime.wYear == 0) {
-                wsprintfW(buffer, L"\x108\x107<c=#%06x>[--:--] </c>\x01\x02%s", TimestampsColor, *str_p);
-            } else {
-                wsprintfW(buffer, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), t_buffer, *str_p);
-            }
+            swprintf(message_buffer, buf_len, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), time_buffer, *str_p);
         } else {
-            if (localtime.wYear == 0) {
-                wsprintfW(buffer, L"\x108\x107[--:--] \x01\x02%s", *str_p);
-            } else {
-                wsprintfW(buffer, L"\x108\x107%s \x01\x02%s", t_buffer, *str_p);
-            }
+            swprintf(message_buffer, buf_len, L"\x108\x107%s \x01\x02%s", time_buffer, *str_p);
         }
-        RetPrintChat(ctx, edx, channel, buffer, timestamp, reprint);
+        if (localtime.wYear != 0) {
+            delete[] time_buffer;
+        }
+        RetPrintChat(ctx, edx, channel, message_buffer, timestamp, reprint);
         HookBase::LeaveHook();
-    }
-    // Function to get chat window context. This is massively dodgy and the context should be found via offsets, but we don't have the functions mapped yet.
-    void* GetChatWindowContext() {
-        // This is caught (and blocked) in OnPrintChat above.
-        if(!PrintChat_Context)
-            Chat::WriteChatEnc(Chat::Channel::CHANNEL_GWCA1, PrintChat_Context_Sample_String);
-        // @Cleanup: The context is reset on map change; this is not a massive issue because the game re-calls OnPrintChat before we have a chance
-        return PrintChat_Context;
+        delete[] message_buffer;
     }
 
     void Init() {
@@ -356,11 +378,15 @@ namespace {
         GWCA_INFO("[SCAN] PrintChat = %p\n", PrintChat_Func);
 
         {
-            uintptr_t address = Scanner::Find(
+            AddToChatLog_Func = (AddToChatLog_pt)GW::Scanner::Find(
+                "\x40\x25\xff\x01\x00\x00", "xxxxxx", -0x97);
+            GWCA_INFO("[SCAN] AddToChatLog_Func = %p\n", AddToChatLog_Func);
+        }
+
+        {
+            ChatBuffer_Addr = *(Chat::ChatBuffer***)Scanner::Find(
                 "\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
-            GWCA_INFO("[SCAN] ChatBuffer_Addr = %p\n", (void *)address);
-            if (Verify(address))
-                ChatBuffer_Addr = *(uintptr_t *)address;
+            GWCA_INFO("[SCAN] ChatBuffer_Addr = %p\n", (void *)ChatBuffer_Addr);
         }
 
         {
@@ -387,6 +413,8 @@ namespace {
             HookBase::CreateHook(WriteWhisper_Func, OnWriteWhisper, (void **)&RetWriteWhisper);
         if (Verify(PrintChat_Func))
             HookBase::CreateHook(PrintChat_Func, OnPrintChat, (void **)&RetPrintChat);
+        if (Verify(AddToChatLog_Func))
+            HookBase::CreateHook(AddToChatLog_Func, OnAddToChatLog, (void**)&RetAddToChatLog);
     }
 
     void Exit() {
@@ -406,6 +434,8 @@ namespace {
             HookBase::RemoveHook(WriteWhisper_Func);
         if (PrintChat_Func)
             HookBase::RemoveHook(PrintChat_Func);
+        if (AddToChatLog_Func)
+            HookBase::RemoveHook(AddToChatLog_Func);
     }
 }
 
@@ -478,6 +508,25 @@ namespace GW {
         {
             PrintChat_callbacks.insert({ entry, callback });
         }
+    void Chat::RegisterChatLogCallback(
+        HookEntry* entry,
+        ChatLogCallback callback,
+        int altitude)
+    {
+        ChatLog_callbacks.push_back({ altitude, entry, callback });
+    }
+    void Chat::RemoveChatLogCallback(
+        HookEntry* entry)
+    {
+        auto it = ChatLog_callbacks.begin();
+        while (it != ChatLog_callbacks.end()) {
+            if (it->entry == entry) {
+                ChatLog_callbacks.erase(it);
+                break;
+            }
+            it++;
+        }
+    }
 
     void Chat::RemoveRegisterWhisperCallback(
         HookEntry *entry)
@@ -500,6 +549,15 @@ namespace GW {
         auto it = StartWhisper_callbacks.find(entry);
         if (it != StartWhisper_callbacks.end())
             StartWhisper_callbacks.erase(it);
+    }
+
+    Chat::ChatBuffer* Chat::GetChatLog() {
+        return *ChatBuffer_Addr;
+    }
+
+    void Chat::AddToChatLog(wchar_t* message, uint32_t channel) {
+        if (AddToChatLog_Func)
+            AddToChatLog_Func(message, channel);
     }
 
     Chat::Color Chat::SetSenderColor(Channel chan, Color col) {
@@ -668,61 +726,51 @@ namespace GW {
 
 
 
-    void Chat::WriteChat(Channel channel, const wchar_t *msg, const wchar_t *sender,bool transient) {
-
-        size_t len = wcslen(msg);
-        wchar_t *buffer = new wchar_t[len + 4];
-        size_t written = 0;
-        buffer[written++] = 0x108;
-        buffer[written++] = 0x107;
-        for (size_t i = 0; i < len; i++)
-            buffer[written++] = msg[i];
-        buffer[written++] = 1;
-        buffer[written++] = 0;
-        WriteChatEnc(channel, buffer, sender, transient);
-        delete[] buffer;
+    void Chat::WriteChat(Channel channel, const wchar_t *message_unencoded, const wchar_t *sender_unencoded, bool transient) {
+        size_t len = wcslen(message_unencoded) + 4;
+        wchar_t* message_encoded = new wchar_t[len];
+        GWCA_ASSERT(swprintf(message_encoded, len, L"\x108\x107%s\x1", message_unencoded) >= 0);
+        wchar_t* sender_encoded = 0;
+        if (sender_unencoded) {
+            len = wcslen(sender_unencoded) + 4;
+            sender_encoded = new wchar_t[len];
+            GWCA_ASSERT(swprintf(sender_encoded, len, L"\x108\x107%s\x1", sender_unencoded) >= 0);
+        }
+        WriteChatEnc(channel, message_encoded, sender_encoded, transient);
+        delete[] message_encoded;
+        if (sender_encoded)
+            delete[] sender_encoded;
     }
-    void Chat::WriteChatEnc(Channel channel, const wchar_t* msg, const wchar_t* sender, bool transient) {
-        static wchar_t* new_message;
+    void Chat::WriteChatEnc(Channel channel, const wchar_t* message_encoded, const wchar_t* sender_encoded, bool transient) {
         UI::UIChatMessage param;
-        param.channel = channel;
-        param.channel2 = channel;
-        param.message = (wchar_t*)msg;
-        if (sender) {
-            size_t msg_len = wcslen(msg);
-            size_t sender_len = wcslen(sender);
-            size_t written = 0;
-            new_message = new wchar_t[msg_len + sender_len + 9];
-            param.message = new_message;
-            param.message[written++] = 0x76b;
-            param.message[written++] = 0x10a;
-            param.message[written++] = 0x108;
-            param.message[written++] = 0x107;
-            for (size_t i = 0; i < sender_len; i++)
-                param.message[written++] = sender[i];
-            param.message[written++] = 0x1;
-            param.message[written++] = 0x1;
-            param.message[written++] = 0x10b;
-            for (size_t i = 0; i < msg_len; i++)
-                param.message[written++] = msg[i];
-            param.message[written++] = 0x1;
-            param.message[written++] = 0;
-        }
-        if (transient) {
-            // NB: Due to the noddy way we try to get chat window context, it may not be available even when we try to get it. Silent fail.
-            if (GetChatWindowContext()) {
-                SYSTEMTIME now;
-                GetSystemTime(&now);
-                FILETIME now_ft;
-                GWCA_ASSERT(SystemTimeToFileTime(&now, &now_ft));
-                OnPrintChat(GetChatWindowContext(), 0, channel, param.message, now_ft, 0);
+        param.channel = param.channel2 = channel;
+        param.message = (wchar_t*)message_encoded;
+        bool delete_message = false;
+        if (sender_encoded) {
+            // If message contains link (<a=1>), manually create the message string
+            wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
+            size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 6;
+            bool has_link_in_message = wcsstr(message_encoded, L"<a=1>") != 0;
+            bool has_markup = has_link_in_message || wcsstr(message_encoded, L"<c=") != 0;
+            if (has_markup) {
+                // NB: When not using this method, any skill templates etc are NOT rendered by the game
+                if (has_link_in_message) {
+                    format = L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                }
+                else {
+                    format = L"\x108\x107<a=1>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                }
+                len += 19;
             }
+            param.message = new wchar_t[len];
+            delete_message = true;
+            GWCA_ASSERT(swprintf(param.message, len, format, sender_encoded, message_encoded) >= 0);
         }
-        else {
-            UI::SendUIMessage(UI::kWriteToChatLog, &param);
-        }
-        if (sender) 
-            delete[] new_message;
+        add_next_message_to_chat_log = !transient;
+        UI::SendUIMessage(UI::kWriteToChatLog, &param);
+        add_next_message_to_chat_log = true;
+        if (delete_message)
+            delete[] param.message;
     }
 
     void Chat::CreateCommand(std::wstring cmd, CmdCB callback) {

@@ -22,11 +22,15 @@ namespace GW {
     extern Module MapModule;
 
     namespace Map {
+		GWCA_API uint32_t QueryAltitude(GamePos* pos, float radius, float* alt, Vec3f* terrain_normal = nullptr);
 
         GWCA_API bool GetIsMapLoaded();
 
         // Get current map ID.
         GWCA_API Constants::MapID GetMapID();
+
+        // Get current region you are in.
+        GWCA_API bool GetIsMapUnlocked(Constants::MapID map_id);
 
         // Get current region you are in.
         GWCA_API int GetRegion();

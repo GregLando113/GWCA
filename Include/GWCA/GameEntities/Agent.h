@@ -340,7 +340,7 @@ namespace GW {
         /* +h0000 */ uint32_t h0000[3];
         /* +h000C */ uint32_t agent_id;
         /* +h0010 */ uint32_t h0010[3];
-        /* +h001C */ uint32_t h001C;
+        /* +h001C */ uint32_t agentDef; // GW_AGENTDEF_CHAR = 1
         /* +h0020 */ uint32_t h0020[6];
         /* +h0038 */ uint32_t moving1; //tells if you are stuck even if your client doesn't know
         /* +h003C */ uint32_t h003C[2];
@@ -352,9 +352,10 @@ namespace GW {
     };
 
     struct AgentInfo {
-        uint8_t h0000[52];
+        uint32_t h0000[13];
         wchar_t *name_enc;
     };
+    static_assert(sizeof(AgentInfo) == 0x38, "struct AgentInfo has incorect size");
 
     typedef TList<Agent> AgentList;
     typedef Array<Agent *> AgentArray;

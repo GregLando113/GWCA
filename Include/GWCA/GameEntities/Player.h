@@ -9,19 +9,24 @@ namespace GW {
         /* +h0000 */ uint32_t agent_id;
         /* +h0004 */ uint32_t h0004[3];
         /* +h0010 */ uint32_t appearance_bitmap;
-        /* +h0014 */ uint32_t h0014;
+        /* +h0014 */ uint32_t flags; // Bitwise field
         /* +h0018 */ uint32_t primary;
         /* +h001C */ uint32_t secondary;
         /* +h0020 */ uint32_t h0020;
         /* +h0024 */ wchar_t *name_enc;
         /* +h0028 */ wchar_t *name;
-        /* +h002C */ uint32_t h002C;
+        /* +h002C */ uint32_t party_leader_player_number;
         /* +h0030 */ uint32_t active_title;
-        /* +h0034 */ uint32_t h0034;
+        /* +h0034 */ uint32_t player_number;
         /* +h0038 */ uint32_t party_size;
-        /* +h003C */ uint32_t h003C[4];
+        /* +h003C */ Array<void*> h003C;
+
+        inline bool IsPvP() {
+            return (flags & 0x800) != 0;
+        }
+
     };
-    static_assert(sizeof(Player) == 76, "struct Player has incorect size");
+    static_assert(sizeof(Player) == 0x4c, "struct Player has incorect size");
 
     typedef Array<Player> PlayerArray;
 }

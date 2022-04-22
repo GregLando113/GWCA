@@ -21,7 +21,7 @@ namespace GW {
         // Set party ready status.
         GWCA_API void Tick(bool flag = true);
 
-        GWCA_API PartyInfo *GetPartyInfo();
+        GWCA_API PartyInfo *GetPartyInfo(uint32_t party_id = 0);
 
         GWCA_API uint32_t GetPartySize();
         GWCA_API uint32_t GetPartyPlayerCount();

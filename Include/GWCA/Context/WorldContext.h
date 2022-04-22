@@ -19,6 +19,7 @@ namespace GW {
     struct PartyAttribute;
     struct MissionMapIcon;
     struct MissionObjective;
+    struct TitleTier;
 
     typedef Array<NPC> NPCArray;
     typedef Array<Quest> QuestLog;
@@ -33,6 +34,15 @@ namespace GW {
     typedef Array<AgentEffects> AgentEffectsArray;
     typedef Array<MissionMapIcon> MissionMapIconArray;
     typedef Array<PartyAttribute> PartyAttributeArray;
+
+    struct ControlledMinions {
+        uint32_t agent_id;
+        uint32_t minion_count;
+    };
+    struct DupeSkill {
+        uint32_t skill_id;
+        uint32_t count;
+    };
 
     struct WorldContext {
         struct sub1 {
@@ -59,21 +69,21 @@ namespace GW {
         /* +h00BC */ uint32_t h00BC[255];
         /* +h04B8 */ Array<void *> h04B8;
         /* +h04C8 */ Array<void *> h04C8;
-        /* +h04D8 */ uint8_t h04D8[4];
+        /* +h04D8 */ uint32_t h04D8;
         /* +h04DC */ Array<void *> h04DC;
-        /* +h04EC */ uint8_t h04EC[28];
+        /* +h04EC */ uint32_t h04EC[7];
         /* +h0508 */ AgentEffectsArray party_effects;
         /* +h0518 */ Array<void *> h0518;
         /* +h0528 */ uint32_t active_quest_id;
         /* +h052C */ QuestLog quest_log;
-        /* +h053C */ uint8_t h053C[40];
+        /* +h053C */ uint32_t h053C[10];
         /* +h0564 */ Array<MissionObjective> mission_objectives;
-        /* +h0574 */ Array<uint32_t> h0574; // Seems like agent/item ids (only appears in outpost?)
+        /* +h0574 */ Array<uint32_t> henchmen_agent_ids;
         /* +h0584 */ HeroFlagArray hero_flags;
         /* +h0594 */ HeroInfoArray hero_info;
         /* +h05A4 */ Array<void *> cartographed_areas; // Struct size = 0x20
         /* +h05B4 */ uint32_t h05B4[2];
-        /* +h05BC */ Array<void *> h05BC;
+        /* +h05BC */ Array<ControlledMinions> controlled_minion_count;
         /* +h05CC */ Array<uint32_t> missions_bonus;
         /* +h05DC */ Array<uint32_t> missions_completed;
         /* +h05EC */ Array<uint32_t> missions_bonus_hm;
@@ -81,10 +91,13 @@ namespace GW {
         /* +h060C */ Array<uint32_t> unlocked_map;
         /* +h061C */ uint32_t h061C[4];
         /* +h062C */ Array<void *> h062C;
-        /* +h063C */ uint8_t h063C[68];
+        /* +h063C */ uint32_t h063C[16];
+        /* +h067C */ uint32_t player_number;
         /* +h0680 */ Array<void *> h0680; // Struct size = 0x138 i think, has a vtable
         /* +h0690 */ uint32_t salvage_session_id;
-        /* +h0694 */ uint32_t h0694[10];
+        /* +h0694 */ uint32_t h0694[5];
+        /* +h06A8 */ uint32_t playerTeamToken;
+        /* +h06AC */ uint32_t h06AC[4];
         /* +h06BC */ Array<void *> h06BC;
         /* +h06CC */ Array<void *> h06CC;
         /* +h06DC */ uint32_t h06DC;
@@ -92,7 +105,7 @@ namespace GW {
         /* +h06F0 */ SkillbarArray skillbar;
         /* +h0700 */ Array<void *> h0700; // related to +h0710, but always 0
         /* +h0710 */ Array<uint32_t> unlocked_character_skills; // bit field
-        /* +h0720 */ Array<void *> h0720;
+        /* +h0720 */ Array<DupeSkill> duplicated_character_skills; // When res signet is bought more than once, its mapped into this array. Used in skill window.
         /* +h0730 */ Array<void *> h0730;
         /* +h0740 */ uint32_t experience;
         /* +h0744 */ uint32_t experience_dupe;
@@ -114,8 +127,8 @@ namespace GW {
         /* +h0784 */ uint32_t unk_faction5_dupe;
         /* +h0788 */ uint32_t level;
         /* +h078C */ uint32_t level_dupe;
-        /* +h0790 */ uint32_t unk_faction6;
-        /* +h0794 */ uint32_t unk_faction6_dupe;
+        /* +h0790 */ uint32_t morale;
+        /* +h0794 */ uint32_t morale_dupe;
         /* +h0798 */ uint32_t current_balth;
         /* +h079C */ uint32_t current_balth_dupe;
         /* +h07A0 */ uint32_t total_earned_balth;
@@ -135,7 +148,7 @@ namespace GW {
         /* +h07FC */ NPCArray npcs;
         /* +h080C */ PlayerArray players;
         /* +h081C */ TitleArray titles;
-        /* +h082C */ uint32_t h082C[4];
+        /* +h082C */ Array<TitleTier> title_tiers;
         /* +h083C */ Array<uint32_t> vanquished_areas;
         /* +h084C */ uint32_t foes_killed;
         /* +h0850 */ uint32_t foes_to_kill;

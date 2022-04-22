@@ -116,10 +116,13 @@ namespace GW {
     EffectArray Effects::GetPlayerEffectArray() {
         AgentEffectsArray agent_effects = GetPartyEffectArray();
         if (agent_effects.valid()) {
-            return agent_effects[0].effects;
-        } else {
-            return EffectArray();
+            uint32_t agent_id = Agents::GetPlayerId();
+            for (const AgentEffects& effect : agent_effects) {
+                if (effect.agent_id == agent_id)
+                    return effect.effects;
+            }
         }
+        return EffectArray();
     }
 
     AgentEffectsArray Effects::GetPartyEffectArray() {

@@ -2,6 +2,9 @@
 
 #include <GWCA/Packets/Opcodes.h>
 
+#include <GWCA/Context/GameContext.h>
+#include <GWCA/Context/TextParser.h>
+
 #include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
@@ -675,10 +678,16 @@ namespace GW {
         ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_char, abuf);
     }
 
-    void UI::AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out) {
+    void UI::AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id) {
         if (!ValidateAsyncDecodeStr)
             return;
+        auto& textParser = GameContext::instance()->text_parser;
+        uint32_t prev_language_id = textParser->language_id;
+        if (language_id != -1) {
+            textParser->language_id = language_id;
+        }
         ValidateAsyncDecodeStr((wchar_t*)enc_str, __calback_copy_wstring, out);
+        textParser->language_id = prev_language_id;
     }
 
     #define WORD_BIT_MORE       (0x8000)
@@ -763,7 +772,13 @@ namespace GW {
         UIMessageCallback callback,
         int altitude)
     {
-        UIMessage_callbacks.push_back({ altitude, entry, callback});
+        auto it = UIMessage_callbacks.begin();
+        while (it != UIMessage_callbacks.end()) {
+            if (it->altitude > altitude)
+                break;
+            it++;
+        }
+        UIMessage_callbacks.insert(it, { altitude,entry,callback });
     }
 
     void UI::RemoveUIMessageCallback(

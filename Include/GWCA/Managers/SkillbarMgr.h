@@ -54,6 +54,7 @@ namespace GW {
         GWCA_API Skill* GetHoveredSkill();
 
         GWCA_API bool DecodeSkillTemplate(SkillTemplate *result, const char *temp);
+        GWCA_API bool EncodeSkillTemplate(const SkillTemplate& in, char* result, size_t result_len);
 
         // @Remark:
         // `skill_ids` must contains at least 8 elements

@@ -2,6 +2,7 @@
 
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/GameContainers/Array.h>
 
 namespace GW {
 

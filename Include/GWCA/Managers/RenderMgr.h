@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GWCA/GameContainers/GamePos.h>
+
 #include <GWCA/Utilities/Export.h>
 
 // forward declaration, we don't need to include the full directx header here

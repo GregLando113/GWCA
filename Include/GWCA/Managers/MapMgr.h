@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GWCA/GameContainers/GamePos.h>
+
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
 

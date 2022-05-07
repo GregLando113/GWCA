@@ -34,7 +34,7 @@ namespace {
     uintptr_t instance_type_addr;
 
     typedef float(__cdecl* QueryAltitude_pt)(
-        GamePos* point, 
+        const GamePos* point,
         float radius, 
         float* alt, 
         Vec3f* unk);
@@ -89,9 +89,9 @@ namespace GW {
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
-    uint32_t Map::QueryAltitude(GamePos* pos, float radius, float* alt, Vec3f* terrain_normal) {
+    float Map::QueryAltitude(const GamePos& pos, float radius, float& alt, Vec3f* terrain_normal) {
         if (QueryAltitude_Func)
-            return QueryAltitude_Func(pos, radius, alt, terrain_normal);
+            return QueryAltitude_Func(&pos, radius, &alt, terrain_normal);
         return 0;
     }
 

@@ -102,7 +102,7 @@ public:
 		m_device->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
 		m_device->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-		auto R0 = *GW::Render::GetTransform(0);
+		auto R0 = *GW::Render::GetTransform((GW::Render::Transform)0);
 		//This projection transform doesn't work when there is opened map.
 		D3DXMATRIX matProjection(
 			R0._11 / R0._33, 0.0f, 0.0f, 0.0f,
@@ -113,7 +113,7 @@ public:
 
 		D3DXMATRIX matWord;    // the wts transform matrix
 		D3DXMatrixIdentity(&matWord);
-		auto R1 = *GW::Render::GetTransform(1);
+		auto R1 = *GW::Render::GetTransform((GW::Render::Transform)1);
 		matWord._11 = R1._11;
 		matWord._21 = R1._12;
 		matWord._31 = R1._13;

@@ -50,7 +50,7 @@ namespace GW {
         uint32_t unlocked_professions; // bitwise
         uint32_t unk;
     };
-    static_assert(sizeof(AttributeState) == 0x14);
+    static_assert(sizeof(ProfessionState) == 0x14);
 
     struct WorldContext {
         struct sub1 {

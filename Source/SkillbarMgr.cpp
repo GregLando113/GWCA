@@ -14,6 +14,7 @@
 #include <GWCA/GameEntities/Party.h>
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Skill.h>
+#include <GWCA/GameEntities/Hero.h>
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
@@ -319,7 +320,7 @@ namespace GW {
                 GWCA_ERR("Attribute id %d has a value of %d. (max = 12)\n", attrib_id, attrib_val);
                 return false;
             }
-            if (!(attrib_id && attrib_val)) {
+            if (!attrib_val) {
                 continue;
             }
             int prof = (int)GetAttributeProfession((Constants::Attribute)attrib_id, &is_primary_attribute);
@@ -423,16 +424,25 @@ namespace GW {
         if (hero.owner_player_id != me->login_number)
             return false;
 
-        // @Enhancement: There should be a systematic way to get the profession of an hero.
-        Constants::Profession expected_primary = Constants::HeroProfs[hero.hero_id];
-
-        // Hacky, because we can't check for mercenary heroes and Razah
-        if (expected_primary != skill_template.primary && expected_primary != Profession::None) {
-            return false;
+        GW::WorldContext* w = GameContext::instance()->world;
+        const HeroInfo* existing_hero = nullptr;
+        for (const HeroInfo& it_hero : w->hero_info) {
+            if (it_hero.hero_id != hero.hero_id)
+                continue;
+            existing_hero = &it_hero;
+            break;
+        }
+        if (!existing_hero) {
+            return false; // Hero not unlocked??
         }
 
-        // @Enhancement: We may want to check if the hero already have the secondary prof needed.
-        PlayerMgr::ChangeSecondProfession(skill_template.secondary, hero_index);
+        if (existing_hero->primary != static_cast<uint32_t>(skill_template.primary)) {
+            return false;
+        }
+        if (existing_hero->secondary != static_cast<uint32_t>(skill_template.secondary)) {
+            PlayerMgr::ChangeSecondProfession(skill_template.secondary, hero_index);
+        }
+        
         // @Robustness: That cast is not very good :(
         LoadSkillbar(skill_template.skills, _countof(skill_template.skills), hero_index);
         SetAttributes(skill_template.attributes, _countof(skill_template.attributes), hero_index);

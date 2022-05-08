@@ -49,6 +49,10 @@ namespace GW {
         uint32_t current_secondary;
         uint32_t unlocked_professions; // bitwise
         uint32_t unk;
+
+        inline bool IsProfessionUnlocked(Constants::Profession profession) {
+            return (unlocked_professions & (1 << (int)profession)) != 0;
+        }
     };
     static_assert(sizeof(ProfessionState) == 0x14);
 

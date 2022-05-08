@@ -393,7 +393,7 @@ static void WorldInformation_Draw(IDirect3DDevice9 *device)
         D3DXCreateTextureFromFileW(device, L"D:\\GWToolboxpp\\Dependencies\\GWCA\\Examples\\WorldInformation\\ressources\\94px-HardModeMissionIcon2.png", &mission_icon_textures[MissionIcon_HmComplete]);
         D3DXCreateTextureFromFileW(device, L"D:\\GWToolboxpp\\Dependencies\\GWCA\\Examples\\WorldInformation\\ressources\\94px-HardModeMissionIcon.png", &mission_icon_textures[MissionIcon_HmMaster]);
 
-        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "WorldInformation: Initialized");
+        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"WorldInformation: Initialized");
         initialized = true;
     }
 
@@ -411,16 +411,16 @@ static void WorldInformation_Draw(IDirect3DDevice9 *device)
         static char search_buffer[256];
         ImGui::PushItemWidth(375.f);
         if (ImGui::InputText("", search_buffer, 256, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "Pressed enter");
+            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Pressed enter");
         }
         ImGui::SameLine();
         if (ImGui::Button("Search", ImVec2(80.0f, 0))) {
-            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "Press search");
+            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Press search");
         }
         ImGui::SameLine();
         if (ImGui::Button("Clear", ImVec2(80.0f, 0))) {
             strcpy_s(search_buffer, sizeof(search_buffer), "");
-            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "Clear");
+            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Clear");
         }
         ImGui::Separator();
 
@@ -495,7 +495,7 @@ static void WorldInformation_Draw(IDirect3DDevice9 *device)
         ImGui::DestroyContext();
         SetWindowLongPtr(hWnd, GWL_WNDPROC, OldWndProc);
 
-        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "WorldInformation: Bye!");
+        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"WorldInformation: Bye!");
         GW::DisableHooks();
 
         for (uint32_t i = 0; i < MissionIcon_Count; i++) {

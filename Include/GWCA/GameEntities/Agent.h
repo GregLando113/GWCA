@@ -77,6 +77,7 @@ namespace GW {
         /* +h0000 */ uint16_t guild_id;
         /* +h0002 */ uint8_t primary;
         /* +h0003 */ uint8_t secondary;
+        /* +h0004 */ uint16_t level;
         // ...
     };
 

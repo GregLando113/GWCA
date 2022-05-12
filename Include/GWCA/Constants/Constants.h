@@ -171,7 +171,12 @@ namespace GW {
 
         enum TitleID : uint32_t {
             Hero, TyrianCarto, CanthanCarto, Gladiator, Champion, Kurzick,
-            Luxon, Drunkard, Survivor = 0x9, KoaBD, ProtectorTyria = 0xD,
+            Luxon, Drunkard, 
+            Deprecated_SkillHunter, // Pre hard mode update version
+            Survivor, KoaBD, 
+            Deprecated_TreasureHunter, // Old title, non-account bound
+            Deprecated_Wisdom, // Old title, non-account bound
+            ProtectorTyria,
             ProtectorCantha, Lucky, Unlucky, Sunspear, ElonianCarto,
             ProtectorElona, Lightbringer, LDoA, Commander, Gamer,
             SkillHunterTyria, VanquisherTyria, SkillHunterCantha,

@@ -40,6 +40,13 @@ namespace {
     typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
     SetWindowVisible_pt SetWindowVisible_Func = 0;
 
+    typedef void(__cdecl* SetVolume_pt)(uint32_t volume_id, float amount);
+    SetVolume_pt SetVolume_Func = 0;
+
+    typedef void(__cdecl* SetMasterVolume_pt)(float amount);
+    SetMasterVolume_pt SetMasterVolume_Func = 0;
+
+
     typedef void(__cdecl* SetFloatingWindowVisible_pt)(uint32_t unk, uint32_t window_id, uint32_t visible, void* unk1, void* unk2, void* unk3);
     SetFloatingWindowVisible_pt SetFloatingWindowVisible_Func = 0;
     SetFloatingWindowVisible_pt RetSetFloatingWindowVisible = 0;
@@ -446,6 +453,12 @@ namespace {
         AsyncDecodeStringPtr = (DoAsyncDecodeStr_pt)Scanner::Find("\x8b\x47\x14\x8d\x9f\x80\xfe\xff\xff", "xxxxxxxxx", -0x8);
         GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %08X\n", AsyncDecodeStringPtr);
 
+        // NB: "p:\\code\\engine\\sound\\sndmain.cpp", "(unsigned)type < arrsize(s_volume)" works, but also matches SetVolume()
+        SetVolume_Func = (SetVolume_pt)GW::Scanner::Find("\x8b\x75\x08\x83\xfe\x05\x72\x14\x68\x5b\x04\x00\x00\xba", "xxxxxxxxxxxxxx", -0x4);
+        GWCA_INFO("[SCAN] SetVolume_Func = %08X\n", SetVolume_Func);
+
+        SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);
+        GWCA_INFO("[SCAN] SetMasterVolume_Func = %08X\n", SetMasterVolume_Func);
 
         if (Verify(SendUIMessage_Func))
             HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
@@ -743,10 +756,33 @@ namespace GW {
 
     void UI::SetPreference(Preference pref, uint32_t value)
     {
-        if (pref & 0x800)
+        if (pref & 0x800) {
             more_preferences_array[pref ^ 0x800] = value;
-        else
+        }
+        else {
             preferences_array[pref] = value;
+        }
+        // Set in-game volume
+        switch (pref) {
+        case GW::UI::Preference::Preference_EffectsVolume:
+            if(SetVolume_Func) SetVolume_Func(0, (float)(value / 100.f));
+            break;
+        case GW::UI::Preference::Preference_DialogVolume:
+            if (SetVolume_Func) SetVolume_Func(4, (float)(value / 100.f));
+            break;
+        case GW::UI::Preference::Preference_BackgroundVolume:
+            if (SetVolume_Func) SetVolume_Func(1, (float)(value / 100.f));
+            break;
+        case GW::UI::Preference::Preference_MusicVolume:
+            if (SetVolume_Func) SetVolume_Func(3, (float)(value / 100.f));
+            break;
+        case GW::UI::Preference::Preference_UIVolume:
+            if (SetVolume_Func) SetVolume_Func(2, (float)(value / 100.f));
+            break;
+        case GW::UI::Preference::Preference_MasterVolume:
+            if(SetMasterVolume_Func) SetMasterVolume_Func((float)(value / 100.f));
+            break;
+        }
     }
 
     void UI::RegisterKeyupCallback(HookEntry* entry, KeyCallback callback) {

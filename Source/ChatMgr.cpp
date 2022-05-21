@@ -237,7 +237,7 @@ namespace {
         GW::HookBase::EnterHook();
         HookStatus status;
         auto it = ChatLog_callbacks.begin();
-       
+
         status.blocked = !add_next_message_to_chat_log;
 
         Chat::ChatMessage* logged_message = 0;
@@ -317,12 +317,12 @@ namespace {
             hour %= 12;
 
 
-        wchar_t* time_buffer = 0;
+        wchar_t time_buffer[29];
         if (localtime.wYear == 0) {
-            time_buffer = Timestamp_seconds ? L"[lbracket]--:--:--[rbracket]" : L"[lbracket]--:--[rbracket]";
+            Timestamp_seconds ? std::memcpy(time_buffer, L"[lbracket]--:--:--[rbracket]", sizeof(wchar_t) * 29)
+                              : std::memcpy(time_buffer, L"[lbracket]--:--[rbracket]", sizeof(wchar_t) * 26);
         }
         else {
-            time_buffer = new wchar_t[29];
             if(Timestamp_seconds)
                 swprintf(time_buffer, 29, L"[lbracket]%02d:%02d:%02d[rbracket]", hour, minute, second);
             else
@@ -335,9 +335,6 @@ namespace {
             swprintf(message_buffer, buf_len, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), time_buffer, *str_p);
         } else {
             swprintf(message_buffer, buf_len, L"\x108\x107%s \x01\x02%s", time_buffer, *str_p);
-        }
-        if (localtime.wYear != 0) {
-            delete[] time_buffer;
         }
         RetPrintChat(ctx, edx, channel, message_buffer, timestamp, reprint);
         HookBase::LeaveHook();
@@ -704,7 +701,7 @@ namespace GW {
     }
 
     // Change to WriteChatF(Channel chan, const wchar_t *from, const wchar_t *frmt, ..)
-    // and       WriteChat(Channel chan, const wchar_t *from, const wchar_t *msg) 
+    // and       WriteChat(Channel chan, const wchar_t *from, const wchar_t *msg)
     /*
     void Chat::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
         va_list vl;
@@ -713,7 +710,7 @@ namespace GW {
         wchar_t* chat = new wchar_t[szbuf];
         vswprintf_s(chat, szbuf, format, vl);
         va_end(vl);
-        
+
         WriteChat(from, chat);
         delete[] chat;
     }
@@ -748,7 +745,7 @@ namespace GW {
         bool delete_message = false;
         if (sender_encoded) {
             // If message contains link (<a=1>), manually create the message string
-            wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
+            const wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
             size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 6;
             bool has_link_in_message = wcsstr(message_encoded, L"<a=1>") != 0;
             bool has_markup = has_link_in_message || wcsstr(message_encoded, L"<c=") != 0;

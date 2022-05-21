@@ -26,6 +26,8 @@ file(GLOB SOURCES
     "include/gwca/utilities/*.h")
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
 target_sources(gwca PRIVATE ${SOURCES})
+target_compile_features(gwca PUBLIC cxx_std_17)
+
 target_precompile_headers(gwca PRIVATE "source/stdafx.h")
 target_include_directories(gwca PUBLIC "include/")
 

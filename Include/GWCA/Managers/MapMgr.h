@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GWCA/GameContainers/GamePos.h>
+
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
 
@@ -22,7 +24,7 @@ namespace GW {
     extern Module MapModule;
 
     namespace Map {
-		GWCA_API uint32_t QueryAltitude(GamePos* pos, float radius, float* alt, Vec3f* terrain_normal = nullptr);
+		GWCA_API float QueryAltitude(const GamePos& pos, float radius, float& alt, Vec3f* terrain_normal = nullptr);
 
         GWCA_API bool GetIsMapLoaded();
 

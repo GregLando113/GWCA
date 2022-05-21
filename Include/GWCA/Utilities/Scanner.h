@@ -17,7 +17,7 @@ namespace GW {
         };
 
         // Find reference in GW memory to a specific assertion message
-        uintptr_t FindAssertion(char* assertion_file, char* assertion_msg, int offset = 0);
+        uintptr_t FindAssertion(const char* assertion_file, const char* assertion_msg, int offset = 0);
 
         // Pattern find between a start and end address. If end is less than start, will scan backward.
         uintptr_t FindInRange(const char* pattern, const char* mask, int offset, DWORD start, DWORD end);

@@ -15,7 +15,7 @@
 
 namespace {
     using namespace GW;
-    typedef Mat4x3f*(__cdecl* GwGetTransform_pt)(int transform);
+    typedef Render::Mat4x3f*(__cdecl* GwGetTransform_pt)(int transform);
     GwGetTransform_pt GwGetTransform_func;
 
     struct gwdx {
@@ -150,6 +150,11 @@ namespace GW {
         // @Cleanup: What to really do here?
         GWCA_ASSERT(gwdx_ptr != nullptr);
         return gwdx_ptr->viewport_height;
+    }
+
+    Render::Mat4x3f* Render::GetTransform(Transform transform) {
+        GWCA_ASSERT(GwGetTransform_func != nullptr);
+        return GwGetTransform_func(transform);
     }
 
     void Render::SetRenderCallback(std::function<void(IDirect3DDevice9*)> callback) {

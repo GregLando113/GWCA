@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GWCA/GameContainers/GamePos.h>
+
 #include <GWCA/Utilities/Export.h>
 
 // forward declaration, we don't need to include the full directx header here
@@ -11,7 +13,36 @@ namespace GW {
     extern Module RenderModule;
 
     namespace Render {
-        GWCA_API Mat4x3f* GetTransform(int transform);
+
+        typedef struct Mat4x3f {
+            float _11;
+            float _12;
+            float _13;
+            float _14;
+            float _21;
+            float _22;
+            float _23;
+            float _24;
+            float _31;
+            float _32;
+            float _33;
+            float _34;
+
+
+            enum Flags {
+                Shear = 1 << 3
+            };
+            
+            uint32_t flags;
+        } Mat4x3f;
+
+        enum Transform : int {
+            // TODO: 
+            TRANSFORM_COUNT = 5
+        };
+
+
+        GWCA_API Mat4x3f* GetTransform(Transform transform);
 
         // Set up a callback for drawing on screen. 
         // Will be called after GW render. 

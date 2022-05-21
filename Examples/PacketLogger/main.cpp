@@ -363,11 +363,11 @@ static void GameLoop(IDirect3DDevice9* device)
             GW::StoC::RegisterPacketCallback(&hook_entries[i], i, PacketHandler);
         }
 
-        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "PacketLogger: Initialized");
+        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"PacketLogger: Initialized");
     }
 
     if (GetAsyncKeyState(VK_END) & 1) {
-        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, "PacketLogger: Bye!");
+        GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"PacketLogger: Bye!");
         GW::DisableHooks();
         running = false;
     }
@@ -390,7 +390,7 @@ static DWORD WINAPI ThreadProc(LPVOID lpModule)
     freopen_s(&stdout_proxy, "CONOUT$", "w", stdout);
 #endif
     freopen_s(&stderr_proxy, "CONOUT$", "w", stderr);
-    SetConsoleTitle("PacketLogger Console");
+    SetConsoleTitleA("PacketLogger Console");
 
     GW::Initialize();
     GW::Render::SetRenderCallback(GameLoop);

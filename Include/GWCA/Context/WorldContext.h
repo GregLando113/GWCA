@@ -43,6 +43,18 @@ namespace GW {
         uint32_t skill_id;
         uint32_t count;
     };
+    struct ProfessionState {
+        uint32_t agent_id;
+        uint32_t current_primary;
+        uint32_t current_secondary;
+        uint32_t unlocked_professions; // bitwise
+        uint32_t unk;
+
+        inline bool IsProfessionUnlocked(uint32_t profession) {
+            return (unlocked_professions & (1 << profession)) != 0;
+        }
+    };
+    static_assert(sizeof(ProfessionState) == 0x14);
 
     struct WorldContext {
         struct sub1 {
@@ -98,7 +110,7 @@ namespace GW {
         /* +h0694 */ uint32_t h0694[5];
         /* +h06A8 */ uint32_t playerTeamToken;
         /* +h06AC */ uint32_t h06AC[4];
-        /* +h06BC */ Array<void *> h06BC;
+        /* +h06BC */ Array<ProfessionState> party_profession_states; // Current state of primary/secondary/unlocked for current player and party heroes, used in skill window. aka attribStates
         /* +h06CC */ Array<void *> h06CC;
         /* +h06DC */ uint32_t h06DC;
         /* +h06E0 */ Array<void *> h06E0;

@@ -16,7 +16,7 @@ namespace GW {
         /* +h0024 */ wchar_t *name_enc;
         /* +h0028 */ wchar_t *name;
         /* +h002C */ uint32_t party_leader_player_number;
-        /* +h0030 */ uint32_t active_title;
+        /* +h0030 */ uint32_t active_title_tier;
         /* +h0034 */ uint32_t player_number;
         /* +h0038 */ uint32_t party_size;
         /* +h003C */ Array<void*> h003C;

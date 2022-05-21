@@ -73,7 +73,7 @@ namespace GW {
             None, Backpack, Belt_Pouch, Bag_1, Bag_2, Equipment_Pack,
             Material_Storage, Unclaimed_Items, Storage_1, Storage_2,
             Storage_3, Storage_4, Storage_5, Storage_6, Storage_7,
-            Storage_8, Storage_9, Storage_10, Storage_11, Storage_12, 
+            Storage_8, Storage_9, Storage_10, Storage_11, Storage_12,
 			Storage_13, Storage_14, Equipped_Items, Max
         };
 		// Order of storage panes.
@@ -87,6 +87,10 @@ namespace GW {
 
         enum class AgentType {
             Living = 0xDB, Gadget = 0x200, Item = 0x400
+        };
+
+        enum class Allegiance {
+            Ally_NonAttackable = 0x1, Neutral = 0x2, Enemy = 0x3, Spirit_Pet = 0x4, Minion = 0x5, Npc_Minipet = 0x6
         };
 
         enum class ItemType {

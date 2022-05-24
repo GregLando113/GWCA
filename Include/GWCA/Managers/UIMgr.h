@@ -66,8 +66,8 @@ namespace GW {
             float right(float multiplier = 1.f) const;
             float top(float multiplier = 1.f) const;
             float bottom(float multiplier = 1.f) const;
-            float width() const { return right() - left(); }
-            float height() const { return bottom() - top(); }
+            float width(float multiplier = 1.f) const { return right(multiplier) - left(multiplier); }
+            float height(float multiplier = 1.f) const { return bottom(multiplier) - top(multiplier); }
         };
 
         struct DialogBodyInfo {
@@ -150,6 +150,7 @@ namespace GW {
             Preference_InventoryBag = 0x809, // Selected bag in inventory window
             Preference_TextLanguage = 0x80A,
             Preference_AudioLanguage = 0x80B,
+            Preference_ChatFilterLevel = 0x80C,
             Preference_SkillListSortMethod = 0x811, 
             Preference_SkillListViewMode = 0x812,
             Preference_SoundQuality = 0x813, // 0 to 100
@@ -171,7 +172,34 @@ namespace GW {
             Preference_CameraRotationSpeed = 0x825, // 0 to 100
             Preference_ScreenBorderless = 0x826, // 0x1 = Windowed Borderless, 0x2 = Windowed Fullscreen
             Preference_MasterVolume = 0x827, // 0 to 100
-            Preference_ClockMode = 0x828
+            Preference_ClockMode = 0x828,
+
+            // checkbox preference array | 0x8000 ( count = 0x5d)
+            Preference_ChannelAlliance = 0x8004,
+            Preference_ChannelEmotes = 0x8006,
+            Preference_ChannelGuild = 0x8007,
+            Preference_ChannelLocal = 0x8008,
+            Preference_ChannelGroup = 0x8009,
+            Preference_ChannelTrade = 0x800A,
+            Preference_ShowTextInSkillFloaters = 0x8011,
+            Preference_InvertMouseControlOfCamera = 0x8016,
+            Preference_DisableMouseWalking = 0x8017,
+            Preference_ConciseSkillDescriptions = 0x8032,
+            Preference_DoNotShowSkillTipsOnEffectMonitor = 0x8033,
+            Preference_DoNotShowSkillTipsOnSkillBars = 0x8034,
+            Preference_AutoTargetFoes = 0x8039,
+            Preference_AutoTargetNPCs = 0x803a,
+            Preference_AlwaysShowNearbyNamesPvP = 0x803b,
+            Preference_FadeDistantNameTags = 0x803c,
+            Preference_DoNotCloseWindowsOnEscape = 0x8045,
+            Preference_WaitForVSync = 0x8054,
+            Preference_WhispersFromFriendsEtcOnly = 0x8055,
+            Preference_ShowChatTimestamps = 0x8056,
+            Preference_ShowCollapsedBags = 0x8057,
+            Preference_ItemRarityBorder = 0x8058,
+            Preference_AlwaysShowAllyNames = 0x8059,
+            Preference_AlwaysShowFoeNames = 0x805a,
+            Preference_LockCompassRotation = 0x805c
         };
         // Used with GetWindowPosition
         enum WindowID : uint32_t {
@@ -217,28 +245,12 @@ namespace GW {
             WindowID_PartyWindow = 0x48, // NB: state flag is ignored for party window, but position is still good
             WindowID_PartySearch = 0x49,
             WindowID_QuestLog = 0x4F,
+            WindowID_Merchant = 0x5C,
             WindowID_Hero4 = 0x5E,
             WindowID_Hero5 = 0x5F,
             WindowID_Hero6 = 0x60,
             WindowID_Hero7 = 0x61,
             WindowID_Count = 0x66
-        };
-        enum CheckboxPreference : uint32_t {
-            CheckboxPreference_ChannelAlliance = 0x4,
-            CheckboxPreference_ChannelEmotes = 0x6,
-            CheckboxPreference_ChannelGuild = 0x7,
-            CheckboxPreference_ChannelLocal = 0x8,
-            CheckboxPreference_ChannelGroup = 0x9,
-            CheckboxPreference_ChannelTrade = 0xA,
-
-            CheckboxPreference_InvertMouseControlOfCamera = 0x16,
-            CheckboxPreference_DisableMouseWalking = 0x17,
-
-            CheckboxPreference_WaitForVSync = 0x54,
-            CheckboxPreference_ShowChatTimestamps = 0x56,
-            CheckboxPreference_ShowCollapsedBags = 0x57,
-            CheckboxPreference_LockCompassRotation = 0x5c,
-            CheckboxPreference_Count = 0x5D
         };
 
         enum ControlAction : uint32_t {
@@ -502,9 +514,6 @@ namespace GW {
 
         GWCA_API uint32_t GetPreference(Preference pref);
         GWCA_API void SetPreference(Preference pref, uint32_t value);
-
-        GWCA_API uint32_t GetCheckboxPreference(CheckboxPreference pref);
-        GWCA_API void SetCheckboxPreference(CheckboxPreference pref, uint32_t value);
 
         typedef HookCallback<uint32_t> KeyCallback;
         GWCA_API void RegisterKeydownCallback(

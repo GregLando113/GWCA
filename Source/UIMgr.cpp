@@ -737,20 +737,14 @@ namespace GW {
         open_links = toggle;
     }
 
-    uint32_t UI::GetCheckboxPreference(CheckboxPreference pref) {
-        return preferences_array2[pref];
-    }
-    void UI::SetCheckboxPreference(CheckboxPreference pref, uint32_t value) {
-        if ((value != 1 && value != 0) || preferences_array2[pref] == value)
-            return; // Invalid checkbox value
-        if(Verify(SetTickboxPref_Func))
-            OnSetTickboxPreference(pref, value, 0);
-    }
-
     uint32_t UI::GetPreference(Preference pref)
     {
-        if (pref & 0x800)
+        if (pref & 0x800) {
             return more_preferences_array[pref ^ 0x800];
+        }
+        else if (pref & 0x8000) {
+            return preferences_array2[pref ^ 0x8000];
+        }
         return preferences_array[pref];
     }
 
@@ -758,9 +752,11 @@ namespace GW {
     {
         if (pref & 0x800) {
             more_preferences_array[pref ^ 0x800] = value;
-        }
-        else {
-            preferences_array[pref] = value;
+        } else if(pref & 0x8000) {
+            // Checkbox values
+            if ((value == 1 || value == 0) && preferences_array2[pref ^ 0x8000] != value)
+                OnSetTickboxPreference(pref ^ 0x8000, value, 0);
+            return;
         }
         // Set in-game volume
         switch (pref) {

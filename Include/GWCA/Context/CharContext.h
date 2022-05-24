@@ -27,7 +27,7 @@ namespace GW {
         /* +h009C */ uint32_t h009C[20];
         /* +h00EC */ Array<void *> h00EC;
         /* +h00FC */ uint32_t h00FC[37]; // 40
-        /* +h0190 */ uint32_t h0190;
+        /* +h0190 */ uint32_t world_flags;
         /* +h0194 */ uint32_t token1; // world id
         /* +h0198 */ uint32_t map_id;
         /* +h019C */ uint32_t is_explorable;
@@ -38,9 +38,11 @@ namespace GW {
         /* +h0224 */ uint32_t language;
         /* +h0228 */ uint32_t observe_map_id;
         /* +h022C */ uint32_t current_map_id;
-        /* +h0230 */ uint32_t h0230[2];
+        /* +h0230 */ uint32_t observe_map_type;
+        /* +h0234 */ uint32_t current_map_type;
         /* +h0238 */ Array<ObserverMatch *> observer_matchs;
-        /* +h0248 */ uint32_t h0248[23];
+        /* +h0248 */ uint32_t h0248[22];
+        /* +h02a0 */ uint32_t player_flags; // bitwise something
         /* +h02A4 */ uint32_t player_number;
         /* +h02A8 */ uint32_t h02A8[40];
         /* +h0348 */ ProgressBar *progress_bar; // seems to never be nullptr

@@ -105,7 +105,9 @@ namespace GW {
         /* +h062C */ Array<void *> h062C;
         /* +h063C */ uint32_t h063C[16];
         /* +h067C */ uint32_t player_number;
-        /* +h0680 */ Array<void *> h0680; // Struct size = 0x138 i think, has a vtable
+        /* +h0680 */ void* playerControlledChar; // Struct size = 0x134 ?
+        /* +h0684 */ uint32_t is_hard_mode_unlocked;
+        /* +h0688 */ uint32_t h0688[2];
         /* +h0690 */ uint32_t salvage_session_id;
         /* +h0694 */ uint32_t h0694[5];
         /* +h06A8 */ uint32_t playerTeamToken;
@@ -166,4 +168,5 @@ namespace GW {
         /* +h0850 */ uint32_t foes_to_kill;
         //... couple more arrays after this
     };
+    static_assert(sizeof(WorldContext) == 0x854); // Not the final size of WorldContext, but used to make sure offsets are correct.
 }

@@ -59,6 +59,7 @@ namespace GW {
             default: return energy_cost;
             }
         }
+        inline bool IsPvP() { return (special & 0x400000) != 0; }
     };
     static_assert(sizeof(Skill) == 0xa0, "struct Skill has incorect size");
 

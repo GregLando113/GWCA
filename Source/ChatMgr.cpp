@@ -783,7 +783,7 @@ namespace GW {
     void Chat::ToggleTimestamps(bool enable) {
         ShowTimestamps = enable;
         if (ShowTimestamps)
-            UI::SetCheckboxPreference(UI::CheckboxPreference::CheckboxPreference_ShowChatTimestamps, 0);
+            UI::SetPreference(UI::Preference_ShowChatTimestamps, 0);
     }
 
     void Chat::SetTimestampsFormat(bool use_24h, bool show_timestamp_seconds) {

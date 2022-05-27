@@ -1,8 +1,10 @@
 #pragma once
-
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
+    namespace Constants {
+        enum class MapID;
+    }
     enum FriendType : uint32_t {
         FriendType_Unknow = 0,
         FriendType_Friend = 1,
@@ -25,7 +27,7 @@ namespace GW {
         /* +h0018 */ wchar_t alias[20];
         /* +h002C */ wchar_t charname[20];
         /* +h0040 */ uint32_t friend_id;
-        /* +h0044 */ uint32_t zone_id;
+        /* +h0044 */ Constants::MapID zone_id;
     };
 
     typedef Array<Friend *> FriendsListArray;

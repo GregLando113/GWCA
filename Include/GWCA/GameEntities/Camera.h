@@ -1,8 +1,9 @@
 #pragma once
 
 namespace GW {
+    enum class AgentID;
     struct Camera {
-        /* +h0000 */ uint32_t look_at_agent_id;
+        /* +h0000 */ AgentID look_at_agent_id;
         /* +h0004 */ uint32_t h0004;
         /* +h0008 */ float h0008;
         /* +h000C */ float h000C;

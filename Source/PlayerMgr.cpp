@@ -39,40 +39,41 @@ namespace GW {
         CtoS::SendPacket(0x4, GAME_CMSG_TITLE_HIDE);
     }
 
-    PlayerArray& PlayerMgr::GetPlayerArray() {
-        return GameContext::instance()->world->players;
+    PlayerArray* PlayerMgr::GetPlayerArray() {
+        auto* w = WorldContext::instance();
+        return w && w->players.valid() ? &w->players : nullptr;
     }
-    uint32_t PlayerMgr::GetPlayerNumber() {
-        GameContext* g = GameContext::instance();
-        if (!g || !g->character)
-            return 0;
-        return g->character->player_number;
-    }
-
-    Player *PlayerMgr::GetPlayerByID(uint32_t player_id) {
-		PlayerArray players = GetPlayerArray();
-		if (players.valid() && player_id > 0 && player_id < players.size()) {
-			return &players[player_id];
-		}
-		else {
-			return nullptr;
-		}
+    PlayerID PlayerMgr::GetPlayerID() {
+        auto* c = CharContext::instance();
+        return c ? c->player_id : PlayerID::None;
     }
 
-    wchar_t *PlayerMgr::GetPlayerName(uint32_t player_id) {
+    Player *PlayerMgr::GetPlayerByID(PlayerID player_id) {
+		PlayerArray* players = GetPlayerArray();
+        if (!(players && player_id > PlayerID::None && (uint32_t)player_id < players->size()))
+            return nullptr;
+        return &players->at((uint32_t)player_id);
+    }
+
+    wchar_t *PlayerMgr::GetPlayerName(PlayerID player_id) {
 		GW::Player* p = GetPlayerByID(player_id);
         return p ? p->name : nullptr;
     }
 
-    void PlayerMgr::SetPlayerName(uint32_t player_id, const wchar_t *replace_name) {
+    bool PlayerMgr::SetPlayerName(PlayerID player_id, const wchar_t *replace_name) {
 		GW::Player* p = GetPlayerByID(player_id);
-		if (p) {
-			wcsncpy(p->name_enc + 2, replace_name, 20);
-		}
+        if (!p) return false;
+        // @Cleanup: wcslen, terminate, encoded check
+        wcsncpy(p->name_enc + 2, replace_name, 20);
+        return true;
     }
 
-    void PlayerMgr::ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index) {
-        CtoS::SendPacket(12, GAME_CMSG_CHANGE_SECOND_PROFESSION, Agents::GetHeroAgentID(hero_index), prof);
+    bool PlayerMgr::ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index) {
+        AgentID agent_id = Agents::GetHeroAgentID(hero_index);
+        if (agent_id == AgentID::None)
+            return false;
+        CtoS::SendPacket(12, GAME_CMSG_CHANGE_SECOND_PROFESSION, agent_id, prof);
+        return true;
     }
 
     static int wcsncasecmp(const wchar_t *s1, const wchar_t *s2, size_t n)
@@ -89,13 +90,14 @@ namespace GW {
 
     Player *PlayerMgr::GetPlayerByName(const wchar_t *name) {
         if (!name) return NULL;
-        PlayerArray& players = GetPlayerArray();
-        for (Player &player : players) {
+        PlayerArray* players = GetPlayerArray();
+        for (size_t i = 1; players && i < players->size();i++) {
+            Player& player = players->at(i);
             if (!player.name) continue;
             if (!wcsncasecmp(name, player.name, 32))
                 return &player;
         }
-        return NULL;
+        return nullptr;
     }
 
 } // namespace GW

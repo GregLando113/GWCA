@@ -1,12 +1,11 @@
 #pragma once
 
+#include <GWCA/Constants/Types.h>
 #include <GWCA/Utilities/Export.h>
 
 namespace GW {
     struct GamePos;
     struct PartyInfo;
-
-    typedef uint32_t AgentID;
 
     struct Module;
     extern Module PartyModule;
@@ -21,8 +20,9 @@ namespace GW {
         // Set party ready status.
         GWCA_API void Tick(bool flag = true);
 
-        GWCA_API PartyInfo *GetPartyInfo(uint32_t party_id = 0);
+        GWCA_API PartyInfo *GetPartyInfo(PartyID party_id = PartyID::PlayerParty);
 
+        GWCA_API GW::Array<PartyInfo*>* GetPartyArray();
         GWCA_API uint32_t GetPartySize();
         GWCA_API uint32_t GetPartyPlayerCount();
         GWCA_API uint32_t GetPartyHeroCount();
@@ -48,13 +48,15 @@ namespace GW {
         // returns if the player agent is leader
         GWCA_API bool GetPlayerIsLeader();
 
+        GWCA_API bool GetIsHardModeUnlocked();
+
         GWCA_API void RespondToPartyRequest(bool accept);
 
         GWCA_API void LeaveParty();
 
         // hero managment
-        GWCA_API void AddHero(uint32_t heroid);
-        GWCA_API void KickHero(uint32_t heroid);
+        GWCA_API void AddHero(Constants::HeroID heroid);
+        GWCA_API void KickHero(Constants::HeroID heroid);
         GWCA_API void KickAllHeroes();
 
         // hero flagging

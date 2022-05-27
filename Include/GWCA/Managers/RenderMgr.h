@@ -29,14 +29,14 @@ namespace GW {
             float _34;
 
 
-            enum Flags {
+            enum class Flags {
                 Shear = 1 << 3
             };
             
             uint32_t flags;
         } Mat4x3f;
 
-        enum Transform : int {
+        enum class Transform : int {
             // TODO: 
             TRANSFORM_COUNT = 5
         };

@@ -33,6 +33,7 @@
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
+#include <GWCA/Managers/PartyMgr.h>
 
 namespace {
     using namespace GW;
@@ -63,7 +64,7 @@ namespace {
         HookBase::LeaveHook();
     };
 
-    typedef void(*ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
+    typedef void(*ChangeTarget_pt)(AgentID agent_id, uint32_t unk1);
     ChangeTarget_pt ChangeTarget_Func;
 
     typedef void(*MovementChange_pt)(uint32_t type, void* unk1, void* type_ptr);
@@ -162,30 +163,38 @@ namespace GW {
         CtoS::SendPacket(0x8, GAME_CMSG_SEND_DIALOG, dialog_id);
     }
 
-    AgentArray Agents::GetAgentArray() {
-        return *(AgentArray *)AgentArrayPtr;
+    AgentArray* Agents::GetAgentArray() {
+        AgentArray* agents = (AgentArray *)AgentArrayPtr;
+        return agents && agents->valid() ? agents : nullptr;
     }
-    uint32_t Agents::GetPlayerId() {
-        return *(uint32_t *)PlayerAgentIdPtr;
+    AgentInfoArray* Agents::GetAgentInfoArray() {
+        auto* w = WorldContext::instance();
+        return w && w->agent_infos.valid() ? &w->agent_infos : nullptr;
     }
-    uint32_t Agents::GetTargetId() {
-        return *(uint32_t *)TargetAgentIdPtr;
-    }
-    uint32_t Agents::GetMouseoverId() {
-        return *(uint32_t *)MouseOverAgentIdPtr;
-    }
-
-    void Agents::ChangeTarget(AgentID agent_id) {
-        if (!Verify(ChangeTarget_Func))
-            return;
-        AgentArray agents = GetAgentArray();
-        if (agent_id == 0 || (agents.valid() && agents[agent_id] != nullptr))
-            ChangeTarget_Func(agent_id, 0);
+    AgentInfo* Agents::GetAgentInfo(AgentID agent_id) {
+        auto* a = GetAgentInfoArray();
+        return a && (uint32_t)agent_id < a->size() ? &a->at((uint32_t)agent_id) : nullptr;
     }
 
-    void Agents::ChangeTarget(const Agent *agent) {
-        if (agent)
-            ChangeTarget(agent->agent_id);
+    AgentID Agents::GetPlayerId() {
+        return *(AgentID*)PlayerAgentIdPtr;
+    }
+    AgentID Agents::GetTargetId() {
+        return *(AgentID*)TargetAgentIdPtr;
+    }
+    AgentID Agents::GetMouseoverId() {
+        return *(AgentID*)MouseOverAgentIdPtr;
+    }
+
+    bool Agents::ChangeTarget(AgentID agent_id) {
+        return ChangeTarget(GetAgentByID(agent_id));
+    }
+
+    bool Agents::ChangeTarget(const Agent *agent) {
+        if (!(agent && ChangeTarget_Func))
+            return false;
+        ChangeTarget_Func(agent->agent_id, 0);
+        return true;
     }
 
     void Agents::Move(float x, float y, uint32_t zplane /*= 0*/) {
@@ -210,60 +219,50 @@ namespace GW {
         }
     }
 
-    MapAgentArray Agents::GetMapAgentArray() {
-        return GameContext::instance()->world->map_agents;
+    MapAgentArray* Agents::GetMapAgentArray() {
+        auto* w = WorldContext::instance();
+        return w && w->map_agents.valid() ? &w->map_agents : nullptr;
     }
 
-    Agent *Agents::GetAgentByID(uint32_t agent_id) {
-        AgentArray agents = GetAgentArray();
-        if (agents.valid() && agent_id > 0 && agent_id < agents.size()) {
-            return agents[agent_id];
-        } else {
-            return nullptr;
-        }
+    Agent *Agents::GetAgentByID(AgentID agent_id) {
+        AgentArray* agents = GetAgentArray();
+        return agents && (uint32_t)agent_id > 0 && (uint32_t)agent_id < agents->size() ? agents->at((uint32_t)agent_id) : nullptr;
     }
 
 
-
-    Agent* Agents::GetPlayerByID(uint32_t player_id)
+    Agent* Agents::GetPlayerByID(PlayerID player_id)
     {
         Player* p = PlayerMgr::GetPlayerByID(player_id);
         return p ? GetAgentByID(p->agent_id) : nullptr;
     }
 
     AgentLiving* Agents::GetCharacter() {
-        Agent* a = GetPlayerByID(PlayerMgr::GetPlayerNumber());
+        Agent* a = GetPlayerByID(PlayerMgr::GetPlayerID());
         return a ? a->GetAsAgentLiving() : nullptr;
     }
 
     AgentLiving *Agents::GetPlayerAsAgentLiving()
     {
         Agent *agent = GetPlayer();
-        if (agent)
-            return agent->GetAsAgentLiving();
-        else
-            return nullptr;
+        return agent ? agent->GetAsAgentLiving() : nullptr;
     }
 
     AgentLiving *Agents::GetTargetAsAgentLiving()
     {
         Agent *agent = GetTarget();
-        if (agent)
-            return agent->GetAsAgentLiving();
-        else
-            return nullptr;
+        return agent ? agent->GetAsAgentLiving() : nullptr;
     }
 
-    void Agents::GoNPC(const Agent *agent, uint32_t call_target) {
-        CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_LIVING, agent->agent_id, call_target);
+    void Agents::GoNPC(const Agent *agent, bool call_target) {
+        CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_LIVING, agent->agent_id, (uint32_t)call_target);
     }
 
     void Agents::GoPlayer(const Agent *agent) {
         CtoS::SendPacket(0x8, GAME_CMSG_INTERACT_PLAYER, agent->agent_id);
     }
 
-    void Agents::GoSignpost(const Agent *agent, uint32_t call_target) {
-        CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_GADGET, agent->agent_id, call_target);
+    void Agents::GoSignpost(const Agent *agent, bool call_target) {
+        CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_GADGET, agent->agent_id,(uint32_t)call_target);
     }
 
     void Agents::CallTarget(const Agent *agent) {
@@ -275,130 +274,98 @@ namespace GW {
         return GameContext::instance()->world->players.size() - 1;
     }
 
-    wchar_t *Agents::GetPlayerNameByLoginNumber(uint32_t login_number) {
-        PlayerArray &players = GameContext::instance()->world->players;
-        if (login_number >= players.size())
-            return nullptr;
-        return players[login_number].name;
+    wchar_t *Agents::GetPlayerNameByLoginNumber(PlayerID login_number) {
+        return PlayerMgr::GetPlayerName(login_number);
     }
-
-    uint32_t Agents::GetAgentIdByLoginNumber(uint32_t login_number) {
-        return GameContext::instance()->world->players[login_number].agent_id;
+    
+    AgentID Agents::GetAgentIdByLoginNumber(PlayerID login_number) {
+        Player* p = PlayerMgr::GetPlayerByID(login_number);
+        return p ? p->agent_id : AgentID::None;
     }
 
     AgentID Agents::GetHeroAgentID(uint32_t hero_index) {
         if (hero_index == 0)
             return GetPlayerId();
-
-        GameContext *ctx = GameContext::instance();
-        if (ctx == nullptr) return 0;
-        if (ctx->party == nullptr) return 0;
-        if (ctx->party->player_party == nullptr) return 0;
-        HeroPartyMemberArray heroarray = ctx->party->player_party->heroes;
-
-        if (!heroarray.valid() || (uint32_t)hero_index > heroarray.size())
-            return 0;
-        else
-            return heroarray[--hero_index].agent_id;
+        auto* p = PartyMgr::GetPartyInfo();
+        auto* heroes = p ? &p->heroes : nullptr;
+        return heroes->valid() && hero_index <= heroes->size() ? heroes->at(--hero_index).agent_id : AgentID::None;
     }
 
-    PlayerArray Agents::GetPlayerArray() {
-        return GameContext::instance()->world->players;
+    PlayerArray* Agents::GetPlayerArray() {
+        auto* w = WorldContext::instance();
+        return w && w->players.valid() ? &w->players : nullptr;
     }
 
-    NPCArray Agents::GetNPCArray() {
-        return GameContext::instance()->world->npcs;
+    NPCArray* Agents::GetNPCArray() {
+        auto* w = WorldContext::instance();
+        return w && w->npcs.valid() ? &w->npcs : nullptr;
     }
 
-    NPC *Agents::GetNPCByID(uint32_t npc_id) {
-        NPCArray npcs = GetNPCArray();
-        if (npc_id >= npcs.size())
-            return NULL;
-        else
-            return &npcs[npc_id];
+    NPC *Agents::GetNPCByID(Constants::NpcID npc_id) {
+        NPCArray* npcs = GetNPCArray();
+        return npcs && (uint32_t)npc_id < npcs->size() ? &npcs->at((uint32_t)npc_id) : nullptr;
     }
 
-    std::wstring Agents::GetAgentName(const Agent *agent) {
-        // @Remark: I'm not conviced that the name is decoded synchronously so that could avoid crashes
-        // if it is not the cases. We should still avoid to call this function.
-        static std::wstring buffer;
-        buffer.clear();
-        AsyncGetAgentName(agent, buffer);
-        if (buffer.size() != 0)
-            return buffer;
-        return L"";
-    }
-
-    wchar_t* Agents::GetAgentEncName(uint32_t agent_id) {
+    wchar_t* Agents::GetAgentEncName(AgentID agent_id) {
         const Agent* agent = GetAgentByID(agent_id);
         if (agent) {
-            return GetAgentEncName(agent);
-        }
-        GW::AgentInfoArray& agent_infos = GameContext::instance()->world->agent_infos;
-        if (!agent_infos.valid() || agent_id >= agent_infos.size()) {
-            return nullptr;
-        }
-        return agent_infos[agent_id].name_enc;
-    }
-
-    wchar_t* Agents::GetAgentEncName(const Agent* agent) {
-        if (!agent) 
-            return nullptr;
-        if (agent->GetIsLivingType()) {
-            const AgentLiving *ag = agent->GetAsAgentLiving();
-            if (ag->login_number) {
-                PlayerArray players = GameContext::instance()->world->players;
-                if (!players.valid()) 
-                    return nullptr;
-                Player* player = &players[ag->login_number];
-                if (player)
-                    return player->name_enc;
+            if (agent->GetIsLivingType()) {
+                const AgentLiving* ag = agent->GetAsAgentLiving();
+                if (ag->IsPlayer()) {
+                    Player* player = PlayerMgr::GetPlayerByID(ag->player_id());
+                    if (player)
+                        return player->name_enc;
+                }
+                // @Remark:
+                // For living npcs it's not elegant, but the game does it as well. See arround GetLivingName(AgentID id)@007C2A00.
+                // It first look in the AgentInfo arrays, if it doesn't find it, it does a bunch a shit and fallback on NPCArray.
+                // If we only use NPCArray, we have a problem because 2 agents can share the same PlayerNumber.
+                // In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
+                // But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
+                auto* agent_info = GetAgentInfo(agent->agent_id);
+                if (agent_info && agent_info->name_enc)
+                    return agent_info->name_enc;
+                auto* npc = GetNPCByID(ag->npc_id());
+                if (npc)
+                    return npc->name_enc;
             }
-            // @Remark:
-            // For living npcs it's not elegant, but the game does it as well. See arround GetLivingName(AgentID id)@007C2A00.
-            // It first look in the AgentInfo arrays, if it doesn't find it, it does a bunch a shit and fallback on NPCArray.
-            // If we only use NPCArray, we have a problem because 2 agents can share the same PlayerNumber.
-            // In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
-            // But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
-            Array<AgentInfo> agent_infos = GameContext::instance()->world->agent_infos;
-            if (ag->agent_id >= agent_infos.size()) return nullptr;
-            if (agent_infos[ag->agent_id].name_enc)
-                return agent_infos[ag->agent_id].name_enc;
-            NPCArray npcs = GameContext::instance()->world->npcs;
-            if (!npcs.valid()) 
-                return nullptr;
-            return npcs[ag->player_number].name_enc;
+            else if (agent->GetIsGadgetType()) {
+                AgentContext* ctx = AgentContext::instance();
+                GadgetContext* gadget = GameContext::instance()->gadget;
+                if (!ctx || !gadget) return nullptr;
+                auto* GadgetIds = ctx->agent_summary_info[(uint32_t)agent->agent_id].extra_info_sub;
+                if (!GadgetIds)
+                    return nullptr;
+                if (GadgetIds->gadget_name_enc)
+                    return GadgetIds->gadget_name_enc;
+                size_t id = GadgetIds->gadget_id;
+                if (gadget->GadgetInfo.size() <= id) return nullptr;
+                if (gadget->GadgetInfo[id].name_enc)
+                    return gadget->GadgetInfo[id].name_enc;
+            }
+            else if (agent->GetIsItemType()) {
+                const AgentItem* ag = agent->GetAsAgentItem();
+                ItemArray* items = Items::GetItemArray();
+                Item* item = items && (uint32_t)ag->item_id < items->size() ? items->at((uint32_t)ag->item_id) : nullptr;
+                if (item && !item->name_enc)
+                    return item->name_enc;
+            }
         }
-        if (agent->GetIsGadgetType()) {
-            AgentContext* ctx = GameContext::instance()->agent;
-            GadgetContext* gadget = GameContext::instance()->gadget;
-            if (!ctx || !gadget) return nullptr;
-            auto* GadgetIds = ctx->agent_summary_info[agent->agent_id].extra_info_sub;
-            if (!GadgetIds) 
-                return nullptr;
-            if (GadgetIds->gadget_name_enc)
-                return GadgetIds->gadget_name_enc;
-            size_t id = GadgetIds->gadget_id;
-            if (gadget->GadgetInfo.size() <= id) return nullptr;
-            if (gadget->GadgetInfo[id].name_enc)
-                return gadget->GadgetInfo[id].name_enc;
-            return nullptr;
-        }
-        if (agent->GetIsItemType()) {
-            const AgentItem *ag = agent->GetAsAgentItem();
-            ItemArray items = Items::GetItemArray();
-            if (!items.valid()) return nullptr;
-            Item* item = items[ag->item_id];
-            if (!item || !item->name_enc) return nullptr;
-            return item->name_enc;
-        }
+        auto* agent_info = GetAgentInfo(agent_id);
+        if (agent_info)
+            return agent_info->name_enc;
         return nullptr;
     }
 
-    void Agents::AsyncGetAgentName(const Agent *agent, std::wstring& res) {
+    wchar_t* Agents::GetAgentEncName(const Agent* agent) {
+        return GetAgentEncName(agent->agent_id);
+    }
+
+    bool Agents::AsyncGetAgentName(const Agent *agent, std::wstring& res) {
         wchar_t* str = GetAgentEncName(agent);
-        if (!str) return;
+        if (!str) return false;
         UI::AsyncDecodeStr(str, &res);
+        return true;
     }
 
     void Agents::RegisterDialogCallback(

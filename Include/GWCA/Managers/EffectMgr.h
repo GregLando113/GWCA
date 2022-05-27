@@ -29,13 +29,16 @@ namespace GW {
         GWCA_API void GetDrunkAf(uint32_t intensity, uint32_t tint);
 
         // Get full array of effects and buffs for player and heroes.
-        GWCA_API AgentEffectsArray GetPartyEffectArray();
+        GWCA_API AgentEffectsArray* GetPartyEffectArray();
+
+        // Get array of buffs/effects on the agent.
+        GWCA_API AgentEffects* GetAgentEffectArray(AgentID agent_id);
 
         // Get array of effects on the player.
-        GWCA_API EffectArray GetPlayerEffectArray();
+        GWCA_API EffectArray* GetPlayerEffectArray();
 
         // Get array of buffs on the player.
-        GWCA_API BuffArray GetPlayerBuffArray();
+        GWCA_API BuffArray* GetPlayerBuffArray();
 
         // Drop buffid buff.
         GWCA_API void DropBuff(uint32_t buff_id);

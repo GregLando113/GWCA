@@ -15,7 +15,7 @@
 
 namespace {
     using namespace GW;
-    typedef Render::Mat4x3f*(__cdecl* GwGetTransform_pt)(int transform);
+    typedef Render::Mat4x3f*(__cdecl* GwGetTransform_pt)(Render::Transform transform);
     GwGetTransform_pt GwGetTransform_func;
 
     struct gwdx {

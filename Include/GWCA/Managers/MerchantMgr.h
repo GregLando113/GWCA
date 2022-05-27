@@ -1,4 +1,5 @@
 #pragma once
+#include <GWCA/Constants/Types.h>
 
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
@@ -8,21 +9,20 @@ namespace GW {
     struct Module;
     extern Module MerchantModule;
 
-    typedef uint32_t ItemID;
     typedef Array<ItemID> MerchItemArray;
 
     namespace Merchant {
 
         struct TransactionInfo {
             uint32_t  item_count = 0;
-            uint32_t *item_ids = nullptr;
+            ItemID *item_ids = nullptr;
             uint32_t *item_quantities = nullptr;
         };
 
         struct QuoteInfo {
             uint32_t  unknown = 0;
             uint32_t  item_count = 0;
-            uint32_t *item_ids = nullptr;
+            ItemID *item_ids = nullptr;
         };
 
         enum TransactionType : uint32_t {

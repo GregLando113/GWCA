@@ -1,4 +1,5 @@
 #pragma once
+#include <GWCA/Constants/Types.h>
 
 #include <GWCA/Packets/Opcodes.h>
 #include <GWCA/GameContainers/GamePos.h>
@@ -390,7 +391,7 @@ namespace GW {
             // agent animation lock (and probably something else)
             struct GenericValue : Packet<GenericValue> {
                 uint32_t Value_id;
-                uint32_t agent_id;
+                AgentID agent_id;
                 uint32_t value;
             };
             const uint32_t Packet<GenericValue>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_INT;
@@ -453,7 +454,7 @@ namespace GW {
 
             // agent text above head
             struct SpeechBubble : Packet<SpeechBubble> {
-                uint32_t agent_id;
+                AgentID agent_id;
                 wchar_t message[122];
             };
             const uint32_t Packet<SpeechBubble>::STATIC_HEADER = GAME_SMSG_SPEECH_BUBBLE;

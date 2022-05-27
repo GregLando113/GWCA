@@ -1,6 +1,5 @@
 #pragma once
-
-#include <stdint.h>
+#include <GWCA/Constants/Constants.h>
 
 #include <GWCA/GameContainers/Array.h>
 
@@ -21,7 +20,7 @@ namespace GW {
         inline bool has_tiers() { return (props & 3) == 2; };
 
         uint32_t name_id();
-        uint32_t title_id();
+        Constants::TitleID title_id();
 
     };
     static_assert(sizeof(Title) == 40, "struct Title has incorect size");
@@ -34,9 +33,5 @@ namespace GW {
     };
     static_assert(sizeof(TitleTier) == 0xc, "struct TitleTier has incorect size");
 
-    struct TitleClientData {
-        uint32_t title_id;
-        uint32_t name_id;
-    };
     typedef Array<Title> TitleArray;
 }

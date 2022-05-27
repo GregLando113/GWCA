@@ -1,13 +1,15 @@
 #pragma once
+#include <GWCA/GameEntities/Party.h>
 
 #include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
-    struct PartyInfo;
-    struct PartySearch;
 
     struct PartyContext { // total: 0x58/88
+
+        static PartyContext* instance();
+
         /* +h0000 */ uint32_t h0000;
         /* +h0004 */ Array<void *> h0004;
         /* +h0014 */ uint32_t flag;
@@ -26,4 +28,5 @@ namespace GW {
         bool InHardMode() const { return (flag & 0x10) > 0; }
         bool IsDefeated() const { return (flag & 0x20) > 0; }
     };
+    static_assert(sizeof(PartyContext) == 0xD0);
 }

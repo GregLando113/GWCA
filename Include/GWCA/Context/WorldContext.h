@@ -1,25 +1,20 @@
 #pragma once
+#include <GWCA/GameEntities/NPC.h>
+#include <GWCA/GameEntities/Quest.h>
+#include <GWCA/GameEntities/Title.h>
+#include <GWCA/GameEntities/Player.h>
+#include <GWCA/GameEntities/Hero.h>
+#include <GWCA/GameEntities/Agent.h>
+#include <GWCA/GameEntities/Skill.h>
+#include <GWCA/GameEntities/Party.h>
+#include <GWCA/GameEntities/Map.h>
+#include <GWCA/GameEntities/Attribute.h>
 
 #include <GWCA/GameContainers/Array.h>
 #include <GWCA/GameContainers/GamePos.h>
 
-namespace GW {
-    typedef uint32_t ItemID;
 
-    struct NPC;
-    struct Quest;
-    struct Title;
-    struct Player;
-    struct HeroInfo;
-    struct HeroFlag;
-    struct MapAgent;
-    struct Skillbar;
-    struct AgentInfo;
-    struct AgentEffects;
-    struct PartyAttribute;
-    struct MissionMapIcon;
-    struct MissionObjective;
-    struct TitleTier;
+namespace GW {
 
     typedef Array<NPC> NPCArray;
     typedef Array<Quest> QuestLog;
@@ -36,27 +31,30 @@ namespace GW {
     typedef Array<PartyAttribute> PartyAttributeArray;
 
     struct ControlledMinions {
-        uint32_t agent_id;
+        AgentID agent_id;
         uint32_t minion_count;
     };
     struct DupeSkill {
-        uint32_t skill_id;
+        Constants::SkillID skill_id;
         uint32_t count;
     };
     struct ProfessionState {
-        uint32_t agent_id;
-        uint32_t current_primary;
-        uint32_t current_secondary;
+        AgentID agent_id;
+        Constants::Profession current_primary;
+        Constants::Profession current_secondary;
         uint32_t unlocked_professions; // bitwise
         uint32_t unk;
 
-        inline bool IsProfessionUnlocked(uint32_t profession) {
-            return (unlocked_professions & (1 << profession)) != 0;
+        inline bool IsProfessionUnlocked(Constants::Profession profession) {
+            return (unlocked_professions & (1 << (int)profession)) != 0;
         }
     };
     static_assert(sizeof(ProfessionState) == 0x14);
 
     struct WorldContext {
+
+        static WorldContext* instance();
+
         struct sub1 {
             wchar_t* name;
             //...
@@ -90,7 +88,7 @@ namespace GW {
         /* +h052C */ QuestLog quest_log;
         /* +h053C */ uint32_t h053C[10];
         /* +h0564 */ Array<MissionObjective> mission_objectives;
-        /* +h0574 */ Array<uint32_t> henchmen_agent_ids;
+        /* +h0574 */ Array<AgentID> henchmen_agent_ids;
         /* +h0584 */ HeroFlagArray hero_flags;
         /* +h0594 */ HeroInfoArray hero_info;
         /* +h05A4 */ Array<void *> cartographed_areas; // Struct size = 0x20
@@ -104,7 +102,7 @@ namespace GW {
         /* +h061C */ uint32_t h061C[4];
         /* +h062C */ Array<void *> h062C;
         /* +h063C */ uint32_t h063C[16];
-        /* +h067C */ uint32_t player_number;
+        /* +h067C */ PlayerID player_number;
         /* +h0680 */ void* playerControlledChar; // Struct size = 0x134 ?
         /* +h0684 */ uint32_t is_hard_mode_unlocked;
         /* +h0688 */ uint32_t h0688[2];
@@ -167,6 +165,8 @@ namespace GW {
         /* +h084C */ uint32_t foes_killed;
         /* +h0850 */ uint32_t foes_to_kill;
         //... couple more arrays after this
+
+
     };
     static_assert(sizeof(WorldContext) == 0x854); // Not the final size of WorldContext, but used to make sure offsets are correct.
 }

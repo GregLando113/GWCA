@@ -1,4 +1,5 @@
 #pragma once
+#include <GWCA/Constants/Types.h>
 
 #include <GWCA/GameContainers/Array.h>
 
@@ -35,7 +36,7 @@ namespace GW {
     struct Guild { // total: 0xAC/172
         /* +h0000 */ GHKey key;
         /* +h0010 */ uint32_t h0010[5];
-        /* +h0024 */ uint32_t index; // Same as PlayerGuildIndex
+        /* +h0024 */ GuildID index; // Same as PlayerGuildIndex
         /* +h0028 */ uint32_t rank;
         /* +h002C */ uint32_t features;
         /* +h0030 */ wchar_t name[32];
@@ -53,6 +54,4 @@ namespace GW {
         /* +h00A8 */ uint32_t cape_trim;
     };
     static_assert(sizeof(Guild) == 172, "struct Guild has incorect size");
-
-    typedef Array<Guild *> GuildArray;
 }

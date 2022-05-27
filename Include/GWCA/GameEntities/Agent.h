@@ -1,15 +1,42 @@
 #pragma once
+#include <GWCA/Constants/Types.h>
 
 #include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Array.h>
 #include <GWCA/GameContainers/GamePos.h>
-#include <GWCA/Constants/Constants.h>
 
 namespace GW {
-    typedef uint32_t AgentID;
+    struct AgentItem;
+    struct AgentGadget;
+    struct AgentLiving;
+    namespace Constants {
+        enum class AgentType {
+            Living = 0xDB, Gadget = 0x200, Item = 0x400
+        };
 
-    struct Vec3f;
-    struct GamePos;
+        enum class Allegiance {
+            Ally_NonAttackable = 0x1, Neutral = 0x2, Enemy = 0x3, Spirit_Pet = 0x4, Minion = 0x5, Npc_Minipet = 0x6
+        };
+        enum class EffectID;
+        enum class Profession;
+    }
+
+
+    struct AgentSummaryInfo {
+        struct AgentSummaryInfoSub {
+            /* +h0000 */ uint32_t h0000;
+            /* +h0004 */ uint32_t h0004;
+            /* +h0008 */ uint32_t gadget_id;
+            /* +h000C */ uint32_t h000C;
+            /* +h0010 */ wchar_t* gadget_name_enc;
+            /* +h0014 */ uint32_t h0014;
+            /* +h0018 */ uint32_t composite_agent_id; // 0x30000000 | player_id, 0x20000000 | npc_id etc
+        };
+
+        uint32_t h0000;
+        uint32_t h0004;
+        AgentSummaryInfoSub* extra_info_sub;
+    };
 
     struct VisibleEffect {
         uint32_t unk; //enchantment = 1, weapon spell = 9
@@ -62,28 +89,29 @@ namespace GW {
         /* +h00A4 */ ItemData costume_head;
             };
         };
-        /* +h00B4 */ uint32_t item_id_weapon;
-        /* +h00B8 */ uint32_t item_id_offhand;
-        /* +h00BC */ uint32_t item_id_chest;
-        /* +h00C0 */ uint32_t item_id_legs;
-        /* +h00C4 */ uint32_t item_id_head;
-        /* +h00C8 */ uint32_t item_id_feet;
-        /* +h00CC */ uint32_t item_id_hands;
-        /* +h00D0 */ uint32_t item_id_costume_body;
-        /* +h00D4 */ uint32_t item_id_costume_head;
+        /* +h00B4 */ ItemID item_id_weapon;
+        /* +h00B8 */ ItemID item_id_offhand;
+        /* +h00BC */ ItemID item_id_chest;
+        /* +h00C0 */ ItemID item_id_legs;
+        /* +h00C4 */ ItemID item_id_head;
+        /* +h00C8 */ ItemID item_id_feet;
+        /* +h00CC */ ItemID item_id_hands;
+        /* +h00D0 */ ItemID item_id_costume_body;
+        /* +h00D4 */ ItemID item_id_costume_head;
     };
 
     struct TagInfo {
-        /* +h0000 */ uint16_t guild_id;
-        /* +h0002 */ uint8_t primary;
-        /* +h0003 */ uint8_t secondary;
+        /* +h0000 */ uint16_t guild_id_uint16;
+        /* +h0002 */ uint8_t primary_uint8;
+        /* +h0003 */ uint8_t secondary_uint8;
         /* +h0004 */ uint16_t level;
         // ...
+        inline Constants::Profession primary() const { return (Constants::Profession)primary_uint8; }
+        inline Constants::Profession secondary() const { return (Constants::Profession)secondary_uint8; }
+        inline GuildID guild_id() const { return (GuildID)guild_id_uint16; }
     };
 
-    struct AgentItem;
-    struct AgentGadget;
-    struct AgentLiving;
+
 
     struct Agent {
         /* +h0000 */ uint32_t* vtable;
@@ -125,7 +153,7 @@ namespace GW {
         /* +h0090 */ uint16_t visual_effects; // Number of Visual Effects of Agent (Skills, Weapons); 1 = Always set;
         /* +h0092 */ uint16_t h0092;
         /* +h0094 */ uint32_t h0094[2];
-        /* +h009C */ uint32_t type; // Livings = 0xDB, Gadgets = 0x200, Items = 0x400.
+        /* +h009C */ Constants::AgentType type; // Livings = 0xDB, Gadgets = 0x200, Items = 0x400.
         union {
             struct {
         /* +h00A0 */ float move_x; //If moving, how much on the X axis per second
@@ -139,9 +167,9 @@ namespace GW {
         /* +h00B4 */ uint32_t h00B4[4];
 
         // Agent Type Bitmasks.
-        inline bool GetIsItemType()        const { return (type & 0x400) != 0; }
-        inline bool GetIsGadgetType()      const { return (type & 0x200) != 0; }
-        inline bool GetIsLivingType()      const { return (type & 0xDB)  != 0; }
+        inline bool GetIsItemType()        const { return type == Constants::AgentType::Item; }
+        inline bool GetIsGadgetType()      const { return type == Constants::AgentType::Gadget; }
+        inline bool GetIsLivingType()      const { return type == Constants::AgentType::Living; }
 
         inline AgentItem*   GetAsAgentItem();
         inline AgentGadget* GetAsAgentGadget();
@@ -153,8 +181,8 @@ namespace GW {
     };
 
     struct AgentItem : public Agent { // total: 0xD4/212
-        /* +h00C4 */ uint32_t owner;
-        /* +h00C8 */ uint32_t item_id;
+        /* +h00C4 */ AgentID owner;
+        /* +h00C8 */ ItemID item_id;
         /* +h00CC */ uint32_t h00CC;
         /* +h00D0 */ uint32_t extra_type;
     };
@@ -172,7 +200,7 @@ namespace GW {
     static_assert(offsetof(AgentGadget, h00C4) == 0xC4, "struct AgentGadget offsets are incorect");
 
     struct AgentLiving : public Agent { // total: 0x1C0/448
-        /* +h00C4 */ uint32_t owner;
+        /* +h00C4 */ AgentID owner;
         /* +h00C8 */ uint32_t h00C8;
         /* +h00CC */ uint32_t h00CC;
         /* +h00D0 */ uint32_t h00D0;
@@ -181,15 +209,15 @@ namespace GW {
         /* +h00E4 */ uint32_t h00E4[2];
         /* +h00EC */ float weapon_attack_speed; // The base attack speed in float of last attacks weapon. 1.33 = axe, sWORD, daggers etc.
         /* +h00F0 */ float attack_speed_modifier; // Attack speed modifier of the last attack. 0.67 = 33% increase (1-.33)
-        /* +h00F4 */ uint16_t player_number; // Selfexplanatory. All non-players have identifiers for their type. Two of the same mob = same number
+        /* +h00F4 */ uint16_t class_id; // The identifier for the agent class relating to the lookup array for this agent type. NPC = NpcID, Player = PlayerID
         /* +h00F6 */ uint16_t h00F6;
         /* +h00F8 */ uint32_t transmog_npc_id; // Actually, it's 0x20000000 | npc_id, It's not defined for npc, minipet, etc...
         /* +h00FC */ Equipment** equip;
         /* +h0100 */ uint32_t h0100;
         /* +h0104 */ TagInfo *tags; // struct { uint16_t guild_id, uint8_t primary, uint8_t secondary, uint16_t level
         /* +h0108 */ uint16_t  h0108;
-        /* +h010A */ uint8_t  primary; // Primary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
-        /* +h010B */ uint8_t  secondary; // Secondary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
+        /* +h010A */ uint8_t primary_uint8; // Primary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
+        /* +h010B */ uint8_t secondary_uint8; // Secondary profession 0-10 (None,W,R,Mo,N,Me,E,A,Rt,P,D)
         /* +h010C */ uint8_t  level; // Duh!
         /* +h010D */ uint8_t  team_id; // 0=None, 1=Blue, 2=Red, 3=Yellow
         /* +h010E */ uint8_t  h010E[2];
@@ -213,7 +241,7 @@ namespace GW {
         /* +h016C */ uint32_t in_spirit_range; // Tells if agent is within spirit range of you. Doesn't work anymore?
         /* +h0170 */ VisibleEffectList visible_effects;
         /* +h017C */ uint32_t h017C;
-        /* +h0180 */ uint32_t login_number; // Unique number in instance that only works for players
+        /* +h0180 */ uint16_t player_id_uint16; // Unique number in instance that only works for players
         /* +h0184 */ float    animation_speed;  // Speed of the current animation
         /* +h0188 */ uint32_t animation_code; // related to animations
         /* +h018C */ uint32_t animation_id;     // Id of the current animation
@@ -221,12 +249,21 @@ namespace GW {
         /* +h01B0 */ uint8_t  dagger_status; // 0x1 = used lead attack, 0x2 = used offhand attack, 0x3 = used dual attack
         /* +h01B1 */ uint8_t  allegiance; // 0x1 = ally/non-attackable, 0x2 = neutral, 0x3 = enemy, 0x4 = spirit/pet, 0x5 = minion, 0x6 = npc/minipet
         /* +h01B2 */ uint16_t  weapon_type; // 1=bow, 2=axe, 3=hammer, 4=daggers, 5=scythe, 6=spear, 7=sWORD, 10=wand, 12=staff, 14=staff
-        /* +h01B4 */ uint16_t  skill; // 0 = not using a skill. Anything else is the Id of that skill
+        /* +h01B4 */ uint16_t  skill_uint16; // 0 = not using a skill. Anything else is the Id of that skill
         /* +h01B6 */ uint16_t  h01B6;
         /* +h01B8 */ uint8_t  weapon_item_type;
         /* +h01B9 */ uint8_t  offhand_item_type;
-        /* +h01BA */ uint16_t  weapon_item_id;
-        /* +h01BC */ uint16_t  offhand_item_id;
+        /* +h01BA */ uint16_t  weapon_item_id_uint16;
+        /* +h01BC */ uint16_t  offhand_item_id_uint16;
+
+        // Agent structs have a squished down footprint of these ID's, but the game uses uint32_t everywhere else.
+        inline Constants::Profession primary() const { return (Constants::Profession)primary_uint8; };
+        inline Constants::Profession secondary() const { return (Constants::Profession)secondary_uint8; };
+        inline Constants::NpcID npc_id() const { return (Constants::NpcID)class_id; };
+        inline Constants::SkillID skill() const { return (Constants::SkillID)skill_uint16; };
+        inline PlayerID player_id() const { return (PlayerID)player_id_uint16; };
+        inline ItemID weapon_item_id() const { return (ItemID)weapon_item_id_uint16; };
+        inline ItemID offhand_item_id() const { return (ItemID)offhand_item_id_uint16; };
 
         // Health Bar Effect Bitmasks.
         inline bool GetIsBleeding()        const { return (effects & 0x0001) != 0; }
@@ -261,8 +298,9 @@ namespace GW {
         // Composite bool, sometimes agents can be dead but have hp (e.g. packets are received in wrong order)
         inline bool GetIsAlive()            const { return !GetIsDead() && hp > .0f; }
 
-        inline bool IsPlayer()             const { return login_number != 0; }
-        inline bool IsNPC()                const { return login_number == 0; }
+        inline bool IsPlayer()              const { return player_id() != PlayerID::None; }
+        inline bool IsNPC()                 const { return !IsPlayer(); }
+        
     };
     static_assert(sizeof(AgentLiving) == 448, "struct AgentLiving has incorect size");
     static_assert(offsetof(AgentLiving, owner) == 0xC4, "struct AgentLiving offsets are incorect");
@@ -339,7 +377,7 @@ namespace GW {
 
     struct AgentMovement {
         /* +h0000 */ uint32_t h0000[3];
-        /* +h000C */ uint32_t agent_id;
+        /* +h000C */ AgentID agent_id;
         /* +h0010 */ uint32_t h0010[3];
         /* +h001C */ uint32_t agentDef; // GW_AGENTDEF_CHAR = 1
         /* +h0020 */ uint32_t h0020[6];

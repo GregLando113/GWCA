@@ -33,11 +33,13 @@
 namespace {
     using namespace GW;
 
-    typedef void(__cdecl* UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
+    typedef void(__cdecl* UseSkill_pt)(AgentID agent_id, uint32_t slot, AgentID target, uint32_t call_target);
     UseSkill_pt UseSkill_Func;
     UseSkill_pt RetUseSkill;
 
     uintptr_t skill_array_addr;
+    Constants::SkillID SKILL_MAX = (Constants::SkillID)0;
+    const int ATTRIBUTE_MAX = 44;
 
     static const char _Base64ToValue[128] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
@@ -114,12 +116,12 @@ namespace {
 
 
     std::unordered_map<HookEntry*, SkillbarMgr::UseSkillCallback> OnUseSkill_Callbacks;
-    static void __cdecl OnUseSkill(uint32_t agent_id, uint32_t slot, uint32_t target, uint32_t call_target)
+    static void __cdecl OnUseSkill(AgentID agent_id, uint32_t slot, AgentID target, uint32_t call_target)
     {
         HookBase::EnterHook();
         HookStatus status;
         for (auto& it : OnUseSkill_Callbacks) {
-            it.second(&status, agent_id, slot, target, call_target);
+            it.second(&status, agent_id, slot, target, (bool)call_target);
             ++status.altitude;
         }
         if (!status.blocked)
@@ -132,9 +134,10 @@ namespace {
             uintptr_t address = GW::Scanner::Find(
                 "\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
             GWCA_INFO("[SCAN] SkillArray = %p\n", (void*)address);
-            if (Verify(address))
+            if (Verify(address)) {
                 skill_array_addr = *(uintptr_t*)address;
-            // NB: Skill count is *(uint32_t*)(address - 0x20), but not much point in rewriting GetSkillConstantData to accommodate.         
+                SKILL_MAX = *(GW::Constants::SkillID*)(address - 0x20);
+            }
         }
 
         UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
@@ -162,32 +165,30 @@ namespace GW {
         NULL,               // disable_hooks
     };
 
-    Skill& SkillbarMgr::GetSkillConstantData(uint32_t skill_id) {
-        // @Cleanup: This should really return a pointer instead of a struct reference (skill_id could be invalid)
+    Skill* SkillbarMgr::GetSkillConstantData(Constants::SkillID skill_id) {
         Skill *skill_constants = (Skill *)skill_array_addr;
-        return skill_constants[skill_id];
+        return skill_array_addr && skill_id < SKILL_MAX ? &skill_constants[(uint32_t)skill_id] : nullptr;
     }
 
-    void SkillbarMgr::ChangeSecondary(uint32_t profession, uint32_t hero_index) {
+    bool SkillbarMgr::ChangeSecondary(Constants::Profession profession, uint32_t hero_index) {
         AgentID agent_id = Agents::GetHeroAgentID(hero_index);
+        if (agent_id == AgentID::None)
+            return false;
         CtoS::SendPacket(0xC, GAME_CMSG_CHANGE_SECOND_PROFESSION, agent_id, profession);
+        return true;
     }
 
-    void SkillbarMgr::LoadSkillbar(uint32_t *skills, size_t n_skills, uint32_t hero_index) {
-        uint32_t skill_ids[8] = {0};
-        memcpy(skill_ids, skills, n_skills * sizeof(uint32_t));
+    bool SkillbarMgr::LoadSkillbar(Constants::SkillID* skills, size_t n_skills, uint32_t hero_index) {
+        uint32_t skill_ids[8] = { 0 };
+        GWCA_ASSERT(n_skills <= _countof(skill_ids));
+        memcpy(skill_ids, skills, n_skills * sizeof(*skill_ids));
         AgentID agent_id = Agents::GetHeroAgentID(hero_index);
+        if (agent_id == AgentID::None)
+            return false;
         CtoS::SendPacket(0x2C, GAME_CMSG_SKILLBAR_LOAD, agent_id, 0x8,
             skill_ids[0], skill_ids[1], skill_ids[2], skill_ids[3], skill_ids[4],
             skill_ids[5], skill_ids[6], skill_ids[7]);
-    }
-
-    void SkillbarMgr::LoadSkillbar(Constants::SkillID *skills, size_t n_skills, uint32_t hero_index) {
-        uint32_t skill_ids[8];
-        GWCA_ASSERT(n_skills <= _countof(skill_ids));
-        for (size_t i = 0; i < n_skills; i++)
-            skill_ids[i] = static_cast<uint32_t>(skills[i]);
-        return LoadSkillbar(skill_ids, n_skills, hero_index);
+        return true;
     }
     bool SkillbarMgr::EncodeSkillTemplate(const SkillTemplate& in, char* build_code_result, size_t build_code_result_len)
     {
@@ -209,7 +210,7 @@ namespace GW {
         int attributes_count_offset = offset;
         int bits_per_attr = 4;
         int attrib_count = 0;
-        for (const Attribute& attribute : in.attributes) {
+        for (const SkillbarAttribute& attribute : in.attributes) {
             if (attribute.attribute == Constants::Attribute::None) {
                 continue;
             }
@@ -221,7 +222,7 @@ namespace GW {
         }
         offset += _WriteBits(attrib_count, &bitStr[offset], 4);
         offset += _WriteBits(bits_per_attr - 4, &bitStr[offset], 4);
-        for (const Attribute& attribute : in.attributes) {
+        for (const SkillbarAttribute& attribute : in.attributes) {
             if (attribute.attribute != GW::Constants::Attribute::None) {
                 offset += _WriteBits((int)attribute.attribute, &bitStr[offset], bits_per_attr);
                 offset += _WriteBits((int)attribute.points, &bitStr[offset], 4);
@@ -230,15 +231,16 @@ namespace GW {
 
         // Skills
         int bits_per_skill = 8;
-        for (const GW::Constants::SkillID skill : in.skills) {
-            int tmp = (int)log2((int)skill) + 1;
+        int* skills = (int*)in.skills;
+        for (size_t i = 0; i < 8; i++) {
+            int tmp = (int)log2(skills[i]) + 1;
             if (tmp > bits_per_skill) {
                 bits_per_skill = tmp;
             }
         }
         offset += _WriteBits(bits_per_skill - 8, &bitStr[offset], 4);
-        for (const GW::Constants::SkillID skill : in.skills) {
-            offset += _WriteBits((int)skill, &bitStr[offset], bits_per_skill);
+        for (size_t i = 0; i < 8; i++) {
+            offset += _WriteBits(skills[i], &bitStr[offset], bits_per_skill);
         }
 
         size_t out_offset = 0;
@@ -262,8 +264,7 @@ namespace GW {
     }
     bool SkillbarMgr::DecodeSkillTemplate(SkillTemplate *result, const char *temp)
     {
-        const int SKILL_MAX = 3431; // @Cleanup: This should go somewhere else (it could be readed from the client)
-        const int ATTRIBUTE_MAX = 44; // @Cleanup: This should go somewhere else (it could be readed from the client)
+         // @Cleanup: This should go somewhere else (it could be readed from the client)
 
         int skill_count = 0;
         int attrib_count = 0;
@@ -344,20 +345,20 @@ namespace GW {
         int bits_per_skill = _ReadBits(&it, 4) + 8;
         for (skill_count = 0; skill_count < _countof(result->skills); skill_count++) {
             if (it + bits_per_skill > end) break; // Gw parse a template that doesn't specifie all empty skills.
-            int skill_id = _ReadBits(&it, bits_per_skill);
-            if (skill_id > SKILL_MAX) {
+            Constants::SkillID skill_id = (Constants::SkillID)_ReadBits(&it, bits_per_skill);
+            if (skill_id >= SKILL_MAX) {
                 GWCA_ERR("Skill id %d is out of range. (max = %d)\n", skill_id, SKILL_MAX);
                 return false;
             }
-            Skill& s = GetSkillConstantData(skill_id);
-            if (s.profession != 0 && s.profession != (uint8_t)prof1 && s.profession != (uint8_t)prof2) {
+            Skill* s = GetSkillConstantData(skill_id);
+            if (!(s && s->profession != 0 && s->profession != (uint8_t)prof1 && s->profession != (uint8_t)prof2)) {
                 GWCA_ERR("Skill id %d doesn't match build profession(s)\n", skill_id);
                 return false;
             }
             result->skills[skill_count] = static_cast<Constants::SkillID>(skill_id);
         }
         for (int i = skill_count; i < _countof(result->skills); i++) {
-            result->skills[i] = Constants::SkillID::No_Skill;
+            result->skills[i] = (Constants::SkillID)0;
         }
 
         result->primary = static_cast<Constants::Profession>(prof1);
@@ -379,10 +380,10 @@ namespace GW {
         AgentLiving *me = Agents::GetPlayerAsAgentLiving();
         if (!me) return false;
 
-        if (me->primary != (BYTE)skill_template.primary)
+        if (me->primary() != skill_template.primary)
             return false;
         // @Enhancement: Check if we already bought this secondary profession.
-        if (me->secondary != (BYTE)skill_template.secondary)
+        if (me->secondary() != skill_template.secondary)
             PlayerMgr::ChangeSecondProfession(skill_template.secondary);
         // @Robustness: That cast is not very good :(
         LoadSkillbar(skill_template.skills, _countof(skill_template.skills));
@@ -410,8 +411,8 @@ namespace GW {
         PartyInfo *info = PartyMgr::GetPartyInfo();
         if (!info) return false;
 
-        PlayerArray players = Agents::GetPlayerArray();
-        if (!players.valid()) return false;
+        PlayerArray* players = Agents::GetPlayerArray();
+        if (!players) return false;
 
         AgentLiving *me = Agents::GetPlayerAsAgentLiving();
         if (!me) return false;
@@ -421,7 +422,7 @@ namespace GW {
             return false;
 
         HeroPartyMember &hero = heroes[hero_index-1];
-        if (hero.owner_player_id != me->login_number)
+        if (hero.owner_player_id != me->player_id())
             return false;
 
         GW::WorldContext* w = GameContext::instance()->world;
@@ -436,10 +437,10 @@ namespace GW {
             return false; // Hero not unlocked??
         }
 
-        if (existing_hero->primary != static_cast<uint32_t>(skill_template.primary)) {
+        if (existing_hero->primary != skill_template.primary) {
             return false;
         }
-        if (existing_hero->secondary != static_cast<uint32_t>(skill_template.secondary)) {
+        if (existing_hero->secondary != skill_template.secondary) {
             PlayerMgr::ChangeSecondProfession(skill_template.secondary, hero_index);
         }
         
@@ -450,13 +451,13 @@ namespace GW {
     }
 
     void SkillbarMgr::SetAttributes(uint32_t attribute_count,
-        uint32_t *attribute_ids, uint32_t *attribute_values, uint32_t hero_index) {
+        Constants::Attribute *attribute_ids, uint32_t *attribute_values, uint32_t hero_index) {
 
         struct tSetAttributes {
             uint32_t header;
             AgentID  agent_id;
             uint32_t attribute_count1;
-            uint32_t attribute_ids[16];
+            Constants::Attribute attribute_ids[16];
             uint32_t attribute_count2;
             uint32_t attribute_values[16];
         };
@@ -478,53 +479,73 @@ namespace GW {
         CtoS::SendPacket<tSetAttributes>(&set_attributes_buffer);
     }
 
-    void SkillbarMgr::SetAttributes(Attribute *attributes, size_t n_attributes, uint32_t hero_index) {
+    void SkillbarMgr::SetAttributes(SkillbarAttribute *attributes, size_t n_attributes, uint32_t hero_index) {
         uint32_t count;
-        uint32_t attribute_ids[16];
+        Constants::Attribute attribute_ids[16];
         uint32_t attribute_values[16];
 
         for (count = 0; count < n_attributes; count++) {
             if (attributes[count].attribute == Constants::Attribute::None)
                 break;
-            attribute_ids[count] = static_cast<uint32_t>(attributes[count].attribute);
-            attribute_values[count] = static_cast<uint32_t>(attributes[count].points);
+            attribute_ids[count] = attributes[count].attribute;
+            attribute_values[count] = attributes[count].points;
         }
 
         return SetAttributes(count, attribute_ids, attribute_values, hero_index);
     }
 
-    void SkillbarMgr::UseSkill(uint32_t slot, uint32_t target, uint32_t call_target) {
+    bool SkillbarMgr::UseSkill(uint32_t slot, AgentID target, bool call_target) {
+        GWCA_ASSERT(slot < 8);
         if (Verify(UseSkill_Func)) {
-            UseSkill_Func(Agents::GetPlayerId(), slot, target, call_target);
+            UseSkill_Func(Agents::GetPlayerId(), slot, target, (uint32_t)call_target);
+            return true;
         }
+        return false;
     }
 
-    void SkillbarMgr::UseSkillByID(uint32_t skill_id, uint32_t target, uint32_t call_target) {
-        CtoS::SendPacket(0x14, GAME_CMSG_USE_SKILL, skill_id, 0, target, call_target);
+    bool SkillbarMgr::UseSkillByID(Constants::SkillID skill_id, AgentID target, bool call_target) {
+        // @Enhancement: Handle echo'd skills
+        int slot = GetSkillSlot(skill_id);
+        if (slot == -1)
+            return false;
+        return UseSkill((uint32_t)slot, target, call_target);
     }
 
     int SkillbarMgr::GetSkillSlot(Constants::SkillID skill_id) {
-        uint32_t id = static_cast<uint32_t>(skill_id);
         Skillbar *bar = SkillbarMgr::GetPlayerSkillbar();
         if (!bar || !bar->IsValid()) return -1;
         for (int i = 0; i < 8; ++i) {
-            if (bar->skills[i].skill_id == id) {
+            if (bar->skills[i].skill_id == skill_id) {
                 return i;
             }
         }
         return -1;
     }
 
-    SkillbarArray SkillbarMgr::GetSkillbarArray() {
-        return GameContext::instance()->world->skillbar;
+    SkillbarArray* SkillbarMgr::GetSkillbarArray() {
+        auto* w = WorldContext::instance();
+        return w && w->skillbar.valid() ? &w->skillbar : nullptr;
+    }
+    bool SkillbarMgr::GetIsSkillUnlocked(Constants::SkillID skill_id) {
+        auto* w = WorldContext::instance();
+        if (!w) return false;
+        auto& array = w->unlocked_character_skills;
+        uint32_t index = static_cast<uint32_t>(skill_id);
+        uint32_t real_index = index / 32;
+        if (real_index >= array.size())
+            return false;
+        uint32_t shift = index % 32;
+        uint32_t flag = 1 << shift;
+        return (array[real_index] & flag) != 0;
     }
 
     Skillbar *SkillbarMgr::GetPlayerSkillbar() {
-        SkillbarArray sba = SkillbarMgr::GetSkillbarArray();
-        if (!sba.valid())
+        auto* sba = SkillbarMgr::GetSkillbarArray();
+        if (!sba)
             return nullptr;
-        uint32_t player_id = GW::Agents::GetPlayerId();
-        for (auto& sb : sba) {
+        AgentID player_id = GW::Agents::GetPlayerId();
+        for (size_t i = 0; i < sba->size(); i++) {
+            auto& sb = sba->at(i);
             if (sb.agent_id == player_id)
                 return &sb;
         }
@@ -534,7 +555,7 @@ namespace GW {
         UI::TooltipInfo* tooltip = UI::GetCurrentTooltip();
         if (!(tooltip && tooltip->type() == UI::TooltipType::Skill))
             return nullptr;
-        return &GetSkillConstantData(*(uint32_t*)tooltip->payload);
+        return GetSkillConstantData(*(Constants::SkillID*)tooltip->payload);
     }
 
     void SkillbarMgr::RegisterUseSkillCallback(

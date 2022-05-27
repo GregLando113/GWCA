@@ -13,13 +13,14 @@
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Party.h>
 
-#include <GWCA/Context/GameContext.h>
+#include <GWCA/Context/WorldContext.h>
 #include <GWCA/Context/PartyContext.h>
 
 #include <GWCA/Managers/Module.h>
 
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
+#include <GWCA/Managers/PlayerMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
 
 namespace {
@@ -102,59 +103,60 @@ namespace GW {
         CtoS::SendPacket(0x8, GAME_CMSG_PARTY_READY_STATUS, flag);
     }
 
-    PartyInfo* PartyMgr::GetPartyInfo(uint32_t party_id) {
-        GW::PartyContext* ctx = GameContext::instance()->party;
-        if (!ctx) return 0;
-        if (!party_id) return ctx->player_party;
-        if (!ctx->parties.valid() || party_id >= ctx->parties.size())
-            return 0;
-        return ctx->parties[party_id];
+    GW::Array<PartyInfo*>* PartyMgr::GetPartyArray() {
+        auto* p = PartyContext::instance();
+        return p && p->parties.valid() ? &p->parties : nullptr;
+    }
+
+    PartyInfo* PartyMgr::GetPartyInfo(PartyID party_id) {
+        if (party_id == PartyID::PlayerParty) {
+            auto* p = PartyContext::instance();
+            return p ? p->player_party : nullptr;
+        }
+        auto* parties = GetPartyArray();
+        return parties && (uint32_t)party_id < parties->size() ? parties->at((uint32_t)party_id) : nullptr;
     }
 
     uint32_t PartyMgr::GetPartySize() {
         PartyInfo* info = GetPartyInfo();
-        if (info == nullptr) return 0;
-        return info->players.size() + info->heroes.size() + info->henchmen.size();
+        return info ? info->GetPartySize() : 0;
     }
 
     uint32_t PartyMgr::GetPartyPlayerCount() {
-        if (GetPartyInfo()) {
-            return GetPartyInfo()->players.size();
-        } else {
-            return 0;
-        }
+        PartyInfo* info = GetPartyInfo();
+        return info && info->players.valid() ? info->players.size() : 0;
     }
     uint32_t PartyMgr::GetPartyHeroCount() {
-        if (GetPartyInfo()) {
-            return GetPartyInfo()->heroes.size();
-        } else {
-            return 0;
-        }
+        PartyInfo* info = GetPartyInfo();
+        return info && info->heroes.valid() ? info->heroes.size() : 0;
     }
     uint32_t PartyMgr::GetPartyHenchmanCount() {
-        if (GetPartyInfo()) {
-            return GetPartyInfo()->henchmen.size();
-        } else {
-            return 0;
-        }
+        PartyInfo* info = GetPartyInfo();
+        return info && info->henchmen.valid() ? info->heroes.size() : 0;
     }
 
     bool PartyMgr::GetIsPartyDefeated() {
-        return GameContext::instance()->party->IsDefeated(); 
+        auto* p = PartyContext::instance();
+        return p ? p->IsDefeated() : false;
     }
 
     void PartyMgr::SetHardMode(bool flag) {
         CtoS::SendPacket(0x8, GAME_CMSG_PARTY_SET_DIFFICULTY, flag);
     }
     bool PartyMgr::GetIsPartyInHardMode() {
-        return GameContext::instance()->party->InHardMode();
+        auto* p = PartyContext::instance();
+        return p ? p->InHardMode() : false;
+    }
+    bool PartyMgr::GetIsHardModeUnlocked() {
+        auto* w = WorldContext::instance();
+        return w ? w->is_hard_mode_unlocked : false;
     }
 
     bool PartyMgr::GetIsPartyTicked() {
         PartyInfo* info = GetPartyInfo();
         if (info == nullptr) return false;
         if (!info->players.valid()) return false;
-        for (PlayerPartyMember player : info->players) {
+        for (const PlayerPartyMember& player : info->players) {
             if (!player.ticked()) return false;
         }
         return true;
@@ -162,9 +164,8 @@ namespace GW {
 
     bool PartyMgr::GetIsPartyLoaded() {
         PartyInfo* info = GetPartyInfo();
-        if (info == nullptr) return false;
-        if (!info->players.valid()) return false;
-        for (PlayerPartyMember player : info->players) {
+        if (!(info && info->players.valid())) return false;
+        for (const PlayerPartyMember& player : info->players) {
             if (!player.connected()) return false;
         }
         return true;
@@ -172,49 +173,45 @@ namespace GW {
 
     bool PartyMgr::GetIsTicked(uint32_t player_index) {
         PartyInfo* info = GetPartyInfo();
-        if (info == nullptr) return false;
-        if (!info->players.valid()) return false;
+        if (!(info && info->players.valid())) return false;
         if (player_index >= info->players.size()) return false;
         return (info->players[player_index].ticked());
     }
 
     bool PartyMgr::GetIsPlayerTicked() {
         PartyInfo* info = GetPartyInfo();
-        if (info == nullptr) return false;
-        if (!info->players.valid()) return false;
-        AgentLiving *me = Agents::GetPlayerAsAgentLiving();
-        if (me == nullptr) return false;
-        for (uint32_t i = 0; i < info->players.size(); i++) {
-            if (info->players[i].login_number == me->login_number) {
-                return info->players[i].ticked();
-            }
+        if (!(info && info->players.valid())) return false;
+        PlayerID player_id = PlayerMgr::GetPlayerID();
+        for (const PlayerPartyMember& player : info->players) {
+            if (player.player_id == player_id) return player.ticked();
         }
         return false;
     }
 
     bool PartyMgr::GetPlayerIsLeader() {
-        PartyInfo *party = GetPartyInfo();
-        if (!party) return false;
-        AgentLiving *me = Agents::GetCharacter();
-        if (!me) return false;
-        if (!party->players.size()) return false;
-        return (party->players[0].login_number == me->login_number);
+        PartyInfo * info = GetPartyInfo();
+        if (!(info && info->players.valid())) return false;
+        PlayerID player_id = PlayerMgr::GetPlayerID();
+        for (const PlayerPartyMember& player : info->players) {
+            if (player.connected()) return player.player_id == player_id;;
+        }
+        return false;
     }
 
     void PartyMgr::RespondToPartyRequest(bool accept) {
         CtoS::SendPacket(0x8, accept ? GAME_CMSG_PARTY_ACCEPT_INVITE : GAME_CMSG_PARTY_ACCEPT_CANCEL, 1);
     }
 
-    void PartyMgr::AddHero(uint32_t heroid) {
+    void PartyMgr::AddHero(Constants::HeroID heroid) {
         CtoS::SendPacket(0x8, GAME_CMSG_HERO_ADD, heroid);
     }
 
-    void PartyMgr::KickHero(uint32_t heroid) {
+    void PartyMgr::KickHero(Constants::HeroID heroid) {
         CtoS::SendPacket(0x8, GAME_CMSG_HERO_KICK, heroid);
     }
 
     void PartyMgr::KickAllHeroes() {
-        KickHero(0x26);
+        KickHero((Constants::HeroID)0x26);
     }
 
     void PartyMgr::LeaveParty() {
@@ -222,17 +219,16 @@ namespace GW {
     }
 
     void PartyMgr::FlagHero(uint32_t hero_index, GamePos pos) {
-        uint32_t agent_id = Agents::GetHeroAgentID(hero_index);
-        FlagHeroAgent(agent_id, pos);
+        FlagHeroAgent(Agents::GetHeroAgentID(hero_index), pos);
     }
 
     void PartyMgr::FlagHeroAgent(AgentID agent_id, GamePos pos) {
         struct FlagHero { // Flag Hero
             const uint32_t header = GAME_CMSG_HERO_FLAG_SINGLE;
-            uint32_t id;
+            AgentID id;
             GamePos pos;
         };
-        if (agent_id == 0) return;
+        if (agent_id == AgentID::None) return;
         if (agent_id == Agents::GetPlayerId()) return;
         static FlagHero pak; // TODO
         pak.id = agent_id;

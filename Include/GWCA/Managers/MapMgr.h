@@ -1,5 +1,8 @@
 #pragma once
 
+#include <GWCA/GameEntities/Map.h>
+#include <GWCA/GameEntities/Pathing.h>
+
 #include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/Utilities/Export.h>
@@ -7,21 +10,19 @@
 
 namespace GW {
 
-    struct AreaInfo;
-    struct PathingMap;
-    struct MissionMapIcon;
-
     typedef Array<PathingMap> PathingMapArray;
     typedef Array<MissionMapIcon> MissionMapIconArray;
 
-    namespace Constants {
-        enum class MapID;
-        enum class District;
-        enum class InstanceType;
-    }
-
     struct Module;
     extern Module MapModule;
+
+    namespace Constants {
+        enum class ServerRegion;
+        enum class MapLanguage;
+        enum class District;
+        enum class MapID;
+        enum class InstanceType;
+    }
 
     namespace Map {
 		GWCA_API float QueryAltitude(const GamePos& pos, float radius, float& alt, Vec3f* terrain_normal = nullptr);
@@ -35,10 +36,10 @@ namespace GW {
         GWCA_API bool GetIsMapUnlocked(Constants::MapID map_id);
 
         // Get current region you are in.
-        GWCA_API int GetRegion();
+        GWCA_API Constants::ServerRegion GetRegion();
 
         // Get current language you are in.
-        GWCA_API int GetLanguage();
+        GWCA_API Constants::MapLanguage GetLanguage();
 
         // Get whether current character is observing a match
         GWCA_API bool GetIsObserving();
@@ -54,16 +55,16 @@ namespace GW {
 
         // Travel to specified outpost.
         GWCA_API void Travel(Constants::MapID map_id,
-            int district = 0, int region = 0, int language = 0);
+            int district, Constants::ServerRegion region, Constants::MapLanguage language);
         GWCA_API void Travel(Constants::MapID map_id,
             Constants::District district, int district_number = 0);
 
         // Returns array of icons (res shrines, quarries, traders, etc) on mission map.
         // Look at MissionMapIcon struct for more info.
-        GWCA_API MissionMapIconArray GetMissionMapIconArray();
+        GWCA_API MissionMapIconArray* GetMissionMapIconArray();
 
         // Returns pointer of collision trapezoid array.
-        GWCA_API PathingMapArray GetPathingMap();
+        GWCA_API PathingMapArray* GetPathingMap();
 
         GWCA_API uint32_t GetFoesKilled();
         GWCA_API uint32_t GetFoesToKill();
@@ -71,8 +72,7 @@ namespace GW {
         GWCA_API AreaInfo *GetMapInfo(Constants::MapID map_id);
 
         inline AreaInfo *GetCurrentMapInfo() {
-            Constants::MapID map_id = GetMapID();
-            return GetMapInfo(map_id);
+            return GetMapInfo(GetMapID());
         }
 
         GWCA_API bool GetIsInCinematic(void);

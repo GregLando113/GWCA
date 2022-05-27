@@ -22,22 +22,22 @@
 #include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/RenderMgr.h>
 
+#define WORD_BIT_MORE       (0x8000)
+#define WORD_VALUE_BASE     (0x100)
+#define WORD_VALUE_RANGE    (WORD_BIT_MORE - WORD_VALUE_BASE)
+
 namespace {
     using namespace GW;
 
-    typedef void (__cdecl *SendUIMessage_pt)(uint32_t msgid, void *wParam, void *lParam);
+    typedef void (__cdecl *SendUIMessage_pt)(UI::UIMessage msgid, void *wParam, void *lParam);
     SendUIMessage_pt SendUIMessage_Func = 0;
     SendUIMessage_pt RetSendUIMessage = 0;
-
-    struct TooltipObj {
-        UI::TooltipInfo* tooltip;
-    };
 
     typedef void(__cdecl* SetTooltip_pt)(UI::TooltipInfo** tooltip);
     SetTooltip_pt SetTooltip_Func = 0;
     SetTooltip_pt RetSetTooltip = 0;
 
-    typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
+    typedef void(__cdecl* SetWindowVisible_pt)(UI::WindowID window_id, uint32_t is_visible, void* wParam, void* lParam);
     SetWindowVisible_pt SetWindowVisible_Func = 0;
 
     typedef void(__cdecl* SetVolume_pt)(uint32_t volume_id, float amount);
@@ -51,10 +51,10 @@ namespace {
     SetFloatingWindowVisible_pt SetFloatingWindowVisible_Func = 0;
     SetFloatingWindowVisible_pt RetSetFloatingWindowVisible = 0;
 
-    typedef void(__cdecl* SetWindowPosition_pt)(uint32_t window_id, UI::WindowPosition* info, void* wParam, void* lParam);
+    typedef void(__cdecl* SetWindowPosition_pt)(UI::WindowID window_id, UI::WindowPosition* info, void* wParam, void* lParam);
     SetWindowPosition_pt SetWindowPosition_Func = 0;
 
-    typedef void(__cdecl* SetTickboxPref_pt)(uint32_t preference_index, uint32_t value, uint32_t unk0);
+    typedef void(__cdecl* SetTickboxPref_pt)(uint32_t index, uint32_t value, uint32_t unk0);
     SetTickboxPref_pt SetTickboxPref_Func = 0;
     SetTickboxPref_pt RetSetTickboxPref = 0;
 
@@ -63,7 +63,7 @@ namespace {
     DoAction_pt RetDoAction = 0;
 
     struct KeypressPacket {
-        uint32_t key = 0;
+        UI::ControlAction key;
         uint32_t unk1 = 0x4000;
         uint32_t unk2 = 0;
     };
@@ -104,11 +104,11 @@ namespace {
     UI::WindowPosition* window_positions_array = 0;
     UI::FloatingWindow* floating_windows_array = 0;
 
-    static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
+    static void OnOpenTemplate(HookStatus *hook_status, UI::UIMessage msgid, void *wParam, void *lParam)
     {
         UNREFERENCED_PARAMETER(lParam);
 
-        if (msgid != UI::kOpenTemplate)
+        if (msgid != UI::UIMessage::kOpenTemplate)
             return;
         UI::ChatTemplate *info = static_cast<UI::ChatTemplate *>(wParam);
         if (!(open_links && info && info->code.valid() && info->name))
@@ -134,7 +134,7 @@ namespace {
     };
     std::vector<OnTooltipEntry> Tooltip_callbacks;
 
-    static void __cdecl OnSendUIMessage(uint32_t msgid, void *wParam, void *lParam)
+    static void __cdecl OnSendUIMessage(UI::UIMessage msgid, void *wParam, void *lParam)
     {
         HookBase::EnterHook();
         HookStatus status;
@@ -254,7 +254,7 @@ namespace {
         UI::FloatingWindow& window = floating_windows_array[floating_window_id];
         // Patch to trigger window visibility for floating windows that aren't normally logged.
         // NB: Some floating windows don't have a mapping to s_window array, so we catch that by checking the index
-        if (!window.save_preference && window.window_id < UI::WindowID::WindowID_Count && window_positions_array) {
+        if (!window.save_preference && window.window_id < (uint32_t)UI::WindowID::Count && window_positions_array) {
             if (visible == 1)
                 window_positions_array[window.window_id].state |= 0x1;
             else
@@ -263,9 +263,9 @@ namespace {
         RetSetFloatingWindowVisible(unk, floating_window_id, visible, unk1, unk2, unk3);
         HookBase::LeaveHook();
     }
-    static void __cdecl OnSetTickboxPreference(uint32_t preference_index, uint32_t value, uint32_t unk0) {
+    static void __cdecl OnSetTickboxPreference(uint32_t index, uint32_t value, uint32_t unk0) {
         HookBase::EnterHook();
-        RetSetTickboxPref(preference_index, value, unk0);
+        RetSetTickboxPref(index, value, unk0);
         HookBase::LeaveHook();
     }
 
@@ -503,369 +503,363 @@ namespace GW {
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
-    Vec2f UI::WindowPosition::yAxis(float multiplier) const {
-        const float h = static_cast<float>(Render::GetViewportHeight());
-        Vec2f y;
-        float correct;
-        switch (state ^ 0x1) {
-        case 0x20:
-        case 0x24:
-        case 0x30:
-            y = { h - p1.y * multiplier, h - p2.y * multiplier };
-            break;
-        case 0x4:
-        case 0x10:
-        case 0x0:
-            correct = (h / 2.f);
-            y = { correct - p1.y * multiplier, correct + p2.y * multiplier };
-            break;
-        default:
-            y = { p1.y * multiplier, p2.y * multiplier };
-            break;
+    namespace UI {
+        Vec2f WindowPosition::yAxis(float multiplier) const {
+            const float h = static_cast<float>(Render::GetViewportHeight());
+            Vec2f y;
+            float correct;
+            switch (state ^ 0x1) {
+            case 0x20:
+            case 0x24:
+            case 0x30:
+                y = { h - p1.y * multiplier, h - p2.y * multiplier };
+                break;
+            case 0x4:
+            case 0x10:
+            case 0x0:
+                correct = (h / 2.f);
+                y = { correct - p1.y * multiplier, correct + p2.y * multiplier };
+                break;
+            default:
+                y = { p1.y * multiplier, p2.y * multiplier };
+                break;
+            }
+            return y;
         }
-        return y;
-    }
-    Vec2f UI::WindowPosition::xAxis(float multiplier) const {
-        const float w = static_cast<float>(Render::GetViewportWidth());
-        Vec2f x;
-        float correct;
-        switch (state ^ 0x1) {
-        case 0x10:
-        case 0x18:
-        case 0x30:
-            x = { w - p1.x * multiplier, w - p2.x * multiplier };
-            break;
-        case 0x8:
-        case 0x20:
-        case 0x0:
-            correct = (w / 2.f);
-            x = { correct - p1.x * multiplier, correct + p2.x * multiplier };
-            break;
-        default:
-            x = { p1.x * multiplier, p2.x * multiplier };
-            break;
+        Vec2f WindowPosition::xAxis(float multiplier) const {
+            const float w = static_cast<float>(Render::GetViewportWidth());
+            Vec2f x;
+            float correct;
+            switch (state ^ 0x1) {
+            case 0x10:
+            case 0x18:
+            case 0x30:
+                x = { w - p1.x * multiplier, w - p2.x * multiplier };
+                break;
+            case 0x8:
+            case 0x20:
+            case 0x0:
+                correct = (w / 2.f);
+                x = { correct - p1.x * multiplier, correct + p2.x * multiplier };
+                break;
+            default:
+                x = { p1.x * multiplier, p2.x * multiplier };
+                break;
+            }
+
+            return x;
         }
-
-        return x;
-    }
-    float UI::WindowPosition::top(float multiplier) const {
-        return yAxis(multiplier).x;
-    }
-    float UI::WindowPosition::left(float multiplier) const {
-        return xAxis(multiplier).x;
-    }
-    float UI::WindowPosition::bottom(float multiplier) const {
-        return yAxis(multiplier).y;
-    }
-    float UI::WindowPosition::right(float multiplier) const {
-        return xAxis(multiplier).y;
-    }
-    void UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)
-    {
-        if (Verify(SendUIMessage_Func))
-            SendUIMessage_Func(message, (void *)wParam, (void *)lParam);
-    }
-
-
-    void UI::SendUIMessage(unsigned message, void *wParam, void *lParam)
-    {
-        if (Verify(RetSendUIMessage))
-            OnSendUIMessage(message, (void *)wParam, (void *)lParam);
-    }
-    bool UI::Keydown(ControlAction key) {
-        uintptr_t ecx = GetActionContext();
-        if (!(ecx && RetDoAction))
-            return false;
-        KeypressPacket action;
-        action.key = key;
-        OnDoAction((void*)ecx, 0, 0x1E, &action, 0);
-        return true;
-    }
-    bool UI::Keyup(ControlAction key) {
-        uintptr_t ecx = GetActionContext();
-        if (!(ecx && RetDoAction))
-            return false;
-        KeypressPacket action;
-        action.key = key;
-        OnDoAction((void*)ecx, 0, 0x20, &action, 0);
-        return true;
-    }
-
-    bool UI::SetWindowVisible(UI::WindowID window_id,bool is_visible) {
-        if (!SetWindowVisible_Func || window_id >= UI::WindowID::WindowID_Count)
-            return false;
-        SetWindowVisible_Func(window_id, is_visible ? 1u : 0u, 0, 0);
-        return true;
-    }
-    bool UI::SetWindowPosition(UI::WindowID window_id, UI::WindowPosition* info) {
-        if (!SetWindowPosition_Func || window_id >= UI::WindowID::WindowID_Count)
-            return false;
-        SetWindowPosition_Func(window_id, info, 0, 0);
-        return true;
-    }
-    UI::WindowPosition* UI::GetWindowPosition(UI::WindowID window_id) {
-        if (!window_positions_array || window_id >= UI::WindowID::WindowID_Count)
-            return nullptr;
-        return &window_positions_array[window_id];
-    }
-
-    bool UI::Keypress(ControlAction key) {
-        if (!Keydown(key))
-            return false;
-        GW::GameThread::Enqueue([key]() {
-            Keyup(key);
-            });
-        return true;
-    }
-    void UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
-    {
-        struct P037 {                   // Used to send pings and drawings in the minimap. Related to StoC::P133
-            uint32_t header;
-            uint32_t session_id;     // unique for every player and shape. changes for every ping or shape.
-            uint32_t pt_count;           // number of points in the following array
-            CompassPoint pts[8]; // in world coordinates divided by 100
-            uint32_t unk[8];
-        };
-        P037 pack = {0};
-        pack.header = GAME_CMSG_DRAW_MAP;
-        pack.session_id = session_id;
-        pack.pt_count = pt_count;
-        for (unsigned i = 0; i < pt_count; ++i)
-            pack.pts[i] = pts[i];
-        CtoS::SendPacket(&pack);
-    }
-
-    void UI::LoadSettings(size_t size, uint8_t *data) {
-        if (Verify(LoadSettings_Func))
-            LoadSettings_Func(size, data);
-    }
-
-    UI::ArrayByte UI::GetSettings() {
-        ArrayByte *GameSettings = (ArrayByte *)GameSettings_Addr;
-        if (Verify(GameSettings))
-            return *GameSettings;
-        else
-            return ArrayByte();
-    }
-
-    bool UI::GetIsUIDrawn() {
-        uint32_t *ui_drawn = (uint32_t *)ui_drawn_addr;
-        if (Verify(ui_drawn))
-            return (*ui_drawn == 0);
-        else
+        float WindowPosition::top(float multiplier) const {
+            return yAxis(multiplier).x;
+        }
+        float WindowPosition::left(float multiplier) const {
+            return xAxis(multiplier).x;
+        }
+        float WindowPosition::bottom(float multiplier) const {
+            return yAxis(multiplier).y;
+        }
+        float WindowPosition::right(float multiplier) const {
+            return xAxis(multiplier).y;
+        }
+        void SendUIMessage(UIMessage message, void* wParam, void* lParam)
+        {
+            if (Verify(RetSendUIMessage))
+                OnSendUIMessage(message, (void*)wParam, (void*)lParam);
+        }
+        bool Keydown(ControlAction key) {
+            uintptr_t ecx = GetActionContext();
+            if (!(ecx && RetDoAction))
+                return false;
+            KeypressPacket action;
+            action.key = key;
+            OnDoAction((void*)ecx, 0, 0x1E, &action, 0);
             return true;
-    }
-    bool UI::GetIsWorldMapShowing() {
-        uint32_t* WorldMapState = (uint32_t*)WorldMapState_Addr;
-        if (Verify(WorldMapState))
-            return (*WorldMapState & 0x80000) != 0;
-        else
-            return false;
-    }
-
-    bool UI::GetIsShiftScreenShot() {
-        uint32_t *shift_screen = (uint32_t *)shift_screen_addr;
-        if (Verify(shift_screen))
-            return (*shift_screen != 0);
-        else
-            return false;
-    }
-
-    void UI::AsyncDecodeStr(const wchar_t *enc_str, wchar_t *buffer, size_t size) {
-        if (!ValidateAsyncDecodeStr)
-            return;
-        // @Enhancement: Should use a pool of this buffer, but w/e for now
-        AsyncBuffer *abuf = new AsyncBuffer;
-        abuf->buffer = buffer;
-        abuf->size = size;
-        ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_wchar, abuf);
-    }
-
-    void UI::AsyncDecodeStr(const wchar_t *enc_str, char *buffer, size_t size) {
-        if (!ValidateAsyncDecodeStr)
-            return;
-        // @Enhancement: Should use a pool of this buffer, but w/e for now
-        AsyncBuffer *abuf = new AsyncBuffer;
-        abuf->buffer = buffer;
-        abuf->size = size;
-        ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_char, abuf);
-    }
-
-    void UI::AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id) {
-        if (!ValidateAsyncDecodeStr)
-            return;
-        auto& textParser = GameContext::instance()->text_parser;
-        uint32_t prev_language_id = textParser->language_id;
-        if (language_id != -1) {
-            textParser->language_id = language_id;
         }
-        ValidateAsyncDecodeStr((wchar_t*)enc_str, __calback_copy_wstring, out);
-        textParser->language_id = prev_language_id;
-    }
-
-    #define WORD_BIT_MORE       (0x8000)
-    #define WORD_VALUE_BASE     (0x100)
-    #define WORD_VALUE_RANGE    (WORD_BIT_MORE - WORD_VALUE_BASE)
-    bool UI::UInt32ToEncStr(uint32_t value, wchar_t *buffer, size_t count) {
-        // Each "case" in the array of wchar_t contains a value in the range [0, WORD_VALUE_RANGE)
-        // This value is offseted by WORD_VALUE_BASE and if it take more than 1 "case" it set the bytes WORD_BIT_MORE
-        size_t case_required = (value + WORD_VALUE_RANGE - 1) / WORD_VALUE_RANGE;
-        if (case_required + 1 > count)
-            return false;
-        buffer[case_required] = 0;
-        for (size_t i = case_required - 1; i < case_required; i--) {
-            buffer[i] = WORD_VALUE_BASE + (value % WORD_VALUE_RANGE);
-            value /= WORD_VALUE_RANGE;
-            if (i != case_required - 1)
-                buffer[i] |= WORD_BIT_MORE;
+        bool Keyup(ControlAction key) {
+            uintptr_t ecx = GetActionContext();
+            if (!(ecx && RetDoAction))
+                return false;
+            KeypressPacket action;
+            action.key = key;
+            OnDoAction((void*)ecx, 0, 0x20, &action, 0);
+            return true;
         }
-        return true;
-    }
 
-    uint32_t UI::EncStrToUInt32(const wchar_t *enc_str) {
-        uint32_t val = 0;
-        do {
-            GWCA_ASSERT(*enc_str >= WORD_VALUE_BASE);
-            val *= WORD_VALUE_RANGE;
-            val += (*enc_str & ~WORD_BIT_MORE) - WORD_VALUE_BASE;
-        } while (*enc_str++ & WORD_BIT_MORE);
-        return val;
-    }
-
-    void UI::SetOpenLinks(bool toggle)
-    {
-        open_links = toggle;
-    }
-
-    uint32_t UI::GetPreference(Preference pref)
-    {
-        if (pref & 0x800) {
-            return more_preferences_array[pref ^ 0x800];
+        bool SetWindowVisible(UI::WindowID window_id, bool is_visible) {
+            if (!SetWindowVisible_Func || window_id >= UI::WindowID::Count)
+                return false;
+            SetWindowVisible_Func(window_id, is_visible ? 1u : 0u, 0, 0);
+            return true;
         }
-        else if (pref & 0x8000) {
-            return preferences_array2[pref ^ 0x8000];
+        bool SetWindowPosition(UI::WindowID window_id, UI::WindowPosition* info) {
+            if (!SetWindowPosition_Func || window_id >= UI::WindowID::Count)
+                return false;
+            SetWindowPosition_Func(window_id, info, 0, 0);
+            return true;
         }
-        return preferences_array[pref];
-    }
-
-    void UI::SetPreference(Preference pref, uint32_t value)
-    {
-        if (pref & 0x800) {
-            more_preferences_array[pref ^ 0x800] = value;
-        } else if(pref & 0x8000) {
-            // Checkbox values
-            if ((value == 1 || value == 0) && preferences_array2[pref ^ 0x8000] != value)
-                OnSetTickboxPreference(pref ^ 0x8000, value, 0);
-            return;
+        WindowPosition* GetWindowPosition(UI::WindowID window_id) {
+            if (!window_positions_array || window_id >= UI::WindowID::Count)
+                return nullptr;
+            return &window_positions_array[(uint32_t)window_id];
         }
-        // Set in-game volume
-        switch (pref) {
-        case GW::UI::Preference::Preference_EffectsVolume:
-            if(SetVolume_Func) SetVolume_Func(0, (float)(value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_DialogVolume:
-            if (SetVolume_Func) SetVolume_Func(4, (float)(value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_BackgroundVolume:
-            if (SetVolume_Func) SetVolume_Func(1, (float)(value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_MusicVolume:
-            if (SetVolume_Func) SetVolume_Func(3, (float)(value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_UIVolume:
-            if (SetVolume_Func) SetVolume_Func(2, (float)(value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_MasterVolume:
-            if(SetMasterVolume_Func) SetMasterVolume_Func((float)(value / 100.f));
-            break;
+
+        bool Keypress(ControlAction key) {
+            if (!Keydown(key))
+                return false;
+            GW::GameThread::Enqueue([key]() {
+                Keyup(key);
+                });
+            return true;
         }
-    }
+        void DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint* pts)
+        {
+            struct P037 {                   // Used to send pings and drawings in the minimap. Related to StoC::P133
+                uint32_t header;
+                uint32_t session_id;     // unique for every player and shape. changes for every ping or shape.
+                uint32_t pt_count;           // number of points in the following array
+                CompassPoint pts[8]; // in world coordinates divided by 100
+                uint32_t unk[8];
+            };
+            P037 pack = { 0 };
+            pack.header = GAME_CMSG_DRAW_MAP;
+            pack.session_id = session_id;
+            pack.pt_count = pt_count;
+            for (unsigned i = 0; i < pt_count; ++i)
+                pack.pts[i] = pts[i];
+            CtoS::SendPacket(&pack);
+        }
 
-    void UI::RegisterKeyupCallback(HookEntry* entry, KeyCallback callback) {
-        OnKeyup_callbacks.insert({ entry, callback });
-    }
-    void UI::RemoveKeyupCallback(HookEntry* entry) {
-        auto it = OnKeyup_callbacks.find(entry);
-        if (it != OnKeyup_callbacks.end())
-            OnKeyup_callbacks.erase(it);
-    }
+        void LoadSettings(size_t size, uint8_t* data) {
+            if (Verify(LoadSettings_Func))
+                LoadSettings_Func(size, data);
+        }
 
-    void UI::RegisterKeydownCallback(HookEntry* entry, KeyCallback callback) {
-        OnKeydown_callbacks.insert({ entry, callback });
-    }
-    void UI::RemoveKeydownCallback(HookEntry* entry) {
-        auto it = OnKeydown_callbacks.find(entry);
-        if (it != OnKeydown_callbacks.end())
-            OnKeydown_callbacks.erase(it);
-    }
+        ArrayByte GetSettings() {
+            ArrayByte* GameSettings = (GW::Array<unsigned char> *)GameSettings_Addr;
+            if (Verify(GameSettings))
+                return *GameSettings;
+            else
+                return ArrayByte();
+        }
 
-    void UI::RegisterUIMessageCallback(
-        HookEntry *entry,
-        UIMessageCallback callback,
-        int altitude)
-    {
-        auto it = UIMessage_callbacks.begin();
-        while (it != UIMessage_callbacks.end()) {
-            if (it->altitude > altitude)
+        bool GetIsUIDrawn() {
+            uint32_t* ui_drawn = (uint32_t*)ui_drawn_addr;
+            if (Verify(ui_drawn))
+                return (*ui_drawn == 0);
+            else
+                return true;
+        }
+        bool GetIsWorldMapShowing() {
+            uint32_t* WorldMapState = (uint32_t*)WorldMapState_Addr;
+            if (Verify(WorldMapState))
+                return (*WorldMapState & 0x80000) != 0;
+            else
+                return false;
+        }
+
+        bool GetIsShiftScreenShot() {
+            uint32_t* shift_screen = (uint32_t*)shift_screen_addr;
+            if (Verify(shift_screen))
+                return (*shift_screen != 0);
+            else
+                return false;
+        }
+
+        void AsyncDecodeStr(const wchar_t* enc_str, wchar_t* buffer, size_t size) {
+            if (!ValidateAsyncDecodeStr)
+                return;
+            // @Enhancement: Should use a pool of this buffer, but w/e for now
+            AsyncBuffer* abuf = new AsyncBuffer;
+            abuf->buffer = buffer;
+            abuf->size = size;
+            ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_wchar, abuf);
+        }
+
+        void AsyncDecodeStr(const wchar_t* enc_str, char* buffer, size_t size) {
+            if (!ValidateAsyncDecodeStr)
+                return;
+            // @Enhancement: Should use a pool of this buffer, but w/e for now
+            AsyncBuffer* abuf = new AsyncBuffer;
+            abuf->buffer = buffer;
+            abuf->size = size;
+            ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_char, abuf);
+        }
+
+        void AsyncDecodeStr(const wchar_t* enc_str, std::wstring* out, Constants::TextLanguage language_id) {
+            if (!ValidateAsyncDecodeStr)
+                return;
+            auto& textParser = GameContext::instance()->text_parser;
+            Constants::TextLanguage prev_language_id = textParser->language_id;
+            if (language_id != Constants::TextLanguage::None) {
+                textParser->language_id = language_id;
+            }
+            ValidateAsyncDecodeStr((wchar_t*)enc_str, __calback_copy_wstring, out);
+            textParser->language_id = prev_language_id;
+        }
+
+
+        bool UInt32ToEncStr(uint32_t value, wchar_t* buffer, size_t count) {
+            // Each "case" in the array of wchar_t contains a value in the range [0, WORD_VALUE_RANGE)
+            // This value is offseted by WORD_VALUE_BASE and if it take more than 1 "case" it set the bytes WORD_BIT_MORE
+            size_t case_required = (value + WORD_VALUE_RANGE - 1) / WORD_VALUE_RANGE;
+            if (case_required + 1 > count)
+                return false;
+            buffer[case_required] = 0;
+            for (size_t i = case_required - 1; i < case_required; i--) {
+                buffer[i] = WORD_VALUE_BASE + (value % WORD_VALUE_RANGE);
+                value /= WORD_VALUE_RANGE;
+                if (i != case_required - 1)
+                    buffer[i] |= WORD_BIT_MORE;
+            }
+            return true;
+        }
+
+        uint32_t EncStrToUInt32(const wchar_t* enc_str) {
+            uint32_t val = 0;
+            do {
+                GWCA_ASSERT(*enc_str >= WORD_VALUE_BASE);
+                val *= WORD_VALUE_RANGE;
+                val += (*enc_str & ~WORD_BIT_MORE) - WORD_VALUE_BASE;
+            } while (*enc_str++ & WORD_BIT_MORE);
+            return val;
+        }
+
+        void SetOpenLinks(bool toggle)
+        {
+            open_links = toggle;
+        }
+
+        uint32_t GetPreference(Preference pref)
+        {
+            if ((int)pref & 0x800) {
+                return more_preferences_array[(int)pref ^ 0x800];
+            }
+            else if ((int)pref & 0x8000) {
+                return preferences_array2[(int)pref ^ 0x8000];
+            }
+            return preferences_array[(int)pref];
+        }
+
+        void SetPreference(Preference pref, uint32_t value)
+        {
+            if ((int)pref & 0x800) {
+                more_preferences_array[(int)pref ^ 0x800] = value;
+            }
+            else if ((int)pref & 0x8000) {
+                // Checkbox values
+                if ((value == 1 || value == 0) && preferences_array2[(int)pref ^ 0x8000] != value)
+                    OnSetTickboxPreference((int)pref ^ 0x8000, value, 0);
+                return;
+            }
+            // Set in-game volume
+            switch (pref) {
+            case Preference::EffectsVolume:
+                if (SetVolume_Func) SetVolume_Func(0, (float)(value / 100.f));
                 break;
-            it++;
-        }
-        UIMessage_callbacks.insert(it, { altitude,entry,callback });
-    }
-
-    void UI::RemoveUIMessageCallback(
-        HookEntry *entry)
-    {
-        auto it = UIMessage_callbacks.begin();
-        while (it != UIMessage_callbacks.end()) {
-            if (it->entry == entry) {
-                UIMessage_callbacks.erase(it);
+            case Preference::DialogVolume:
+                if (SetVolume_Func) SetVolume_Func(4, (float)(value / 100.f));
+                break;
+            case Preference::BackgroundVolume:
+                if (SetVolume_Func) SetVolume_Func(1, (float)(value / 100.f));
+                break;
+            case Preference::MusicVolume:
+                if (SetVolume_Func) SetVolume_Func(3, (float)(value / 100.f));
+                break;
+            case Preference::UIVolume:
+                if (SetVolume_Func) SetVolume_Func(2, (float)(value / 100.f));
+                break;
+            case Preference::MasterVolume:
+                if (SetMasterVolume_Func) SetMasterVolume_Func((float)(value / 100.f));
                 break;
             }
-            it++;
         }
-    }
-    void UI::RegisterTooltipCallback(
-        HookEntry* entry,
-        TooltipCallback callback,
-        int altitude)
-    {
-        Tooltip_callbacks.push_back({ altitude, entry, callback });
-    }
 
-    void UI::RemoveTooltipCallback(
-        HookEntry* entry)
-    {
-        auto it = Tooltip_callbacks.begin();
-        while (it != Tooltip_callbacks.end()) {
-            if (it->entry == entry) {
-                Tooltip_callbacks.erase(it);
-                break;
-            }
-            it++;
+        void RegisterKeyupCallback(HookEntry* entry, KeyCallback callback) {
+            OnKeyup_callbacks.insert({ entry, callback });
         }
-    }
-    void UI::RegisterDecodeStringCallback(
-        HookEntry* entry,
-        DecodeStrCallback callback,
-        int altitude)
-    {
-        DecodeStr_callbacks.push_back({ altitude, entry, callback });
-    }
+        void RemoveKeyupCallback(HookEntry* entry) {
+            auto it = OnKeyup_callbacks.find(entry);
+            if (it != OnKeyup_callbacks.end())
+                OnKeyup_callbacks.erase(it);
+        }
 
-    void UI::RemoveDecodeStringCallback(
-        HookEntry* entry)
-    {
-        auto it = DecodeStr_callbacks.begin();
-        while (it != DecodeStr_callbacks.end()) {
-            if (it->entry == entry) {
-                DecodeStr_callbacks.erase(it);
-                break;
-            }
-            it++;
+        void RegisterKeydownCallback(HookEntry* entry, KeyCallback callback) {
+            OnKeydown_callbacks.insert({ entry, callback });
         }
-    }
-    UI::TooltipInfo* UI::GetCurrentTooltip() {
-        return CurrentTooltipPtr && *CurrentTooltipPtr ? **CurrentTooltipPtr : 0;
+        void RemoveKeydownCallback(HookEntry* entry) {
+            auto it = OnKeydown_callbacks.find(entry);
+            if (it != OnKeydown_callbacks.end())
+                OnKeydown_callbacks.erase(it);
+        }
+
+        void RegisterUIMessageCallback(
+            HookEntry* entry,
+            UIMessageCallback callback,
+            int altitude)
+        {
+            auto it = UIMessage_callbacks.begin();
+            while (it != UIMessage_callbacks.end()) {
+                if (it->altitude > altitude)
+                    break;
+                it++;
+            }
+            UIMessage_callbacks.insert(it, { altitude,entry,callback });
+        }
+
+        void RemoveUIMessageCallback(
+            HookEntry* entry)
+        {
+            auto it = UIMessage_callbacks.begin();
+            while (it != UIMessage_callbacks.end()) {
+                if (it->entry == entry) {
+                    UIMessage_callbacks.erase(it);
+                    break;
+                }
+                it++;
+            }
+        }
+        void RegisterTooltipCallback(
+            HookEntry* entry,
+            TooltipCallback callback,
+            int altitude)
+        {
+            Tooltip_callbacks.push_back({ altitude, entry, callback });
+        }
+
+        void RemoveTooltipCallback(
+            HookEntry* entry)
+        {
+            auto it = Tooltip_callbacks.begin();
+            while (it != Tooltip_callbacks.end()) {
+                if (it->entry == entry) {
+                    Tooltip_callbacks.erase(it);
+                    break;
+                }
+                it++;
+            }
+        }
+        void RegisterDecodeStringCallback(
+            HookEntry* entry,
+            DecodeStrCallback callback,
+            int altitude)
+        {
+            DecodeStr_callbacks.push_back({ altitude, entry, callback });
+        }
+
+        void RemoveDecodeStringCallback(
+            HookEntry* entry)
+        {
+            auto it = DecodeStr_callbacks.begin();
+            while (it != DecodeStr_callbacks.end()) {
+                if (it->entry == entry) {
+                    DecodeStr_callbacks.erase(it);
+                    break;
+                }
+                it++;
+            }
+        }
+        TooltipInfo* GetCurrentTooltip() {
+            return CurrentTooltipPtr && *CurrentTooltipPtr ? **CurrentTooltipPtr : 0;
+        }
     }
 } // namespace GW

@@ -8,7 +8,7 @@ namespace GW {
     // generic game container seen throughout the games memory.
     // reccomended to only use references to maintain up-to-date information ( Array<T>& )
 
-    template <typename T>
+    template <typename T, typename I = uint32_t>
     class Array {
     public:
         typedef       T* iterator;
@@ -26,16 +26,16 @@ namespace GW {
             , m_param(0)
         {}
 
-        T& at(uint32_t index) {
+        T& at(I index) {
             GWCA_ASSERT(m_buffer && index < m_size);
             return m_buffer[index];
         }
 
-        T& operator[](uint32_t index) {
+        T& operator[](I index) {
             return at(index);
         }
 
-        const T& operator[](uint32_t index) const {
+        const T& operator[](I index) const {
             GWCA_ASSERT(m_buffer && index < m_size);
             return m_buffer[index];
         }

@@ -3,6 +3,10 @@
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
+    namespace Constants {
+        enum class MapRegion;
+        enum class RegionType;
+    }
     struct MissionMapIcon { // total: 0x28/40
         /* +h0000 */ uint32_t index;
         /* +h0004 */ float X;
@@ -19,68 +23,12 @@ namespace GW {
 
     typedef Array<MissionMapIcon> MissionMapIconArray;
 
-    enum RegionType : uint32_t {
-        RegionType_AllianceBattle,
-        RegionType_Arena,
-        RegionType_ExplorableZone,
-        RegionType_GuildBattleArea,
-        RegionType_GuildHall,
-        RegionType_MissionOutpost,
-        RegionType_CooperativeMission,
-        RegionType_CompetitiveMission,
-        RegionType_EliteMission,
-        RegionType_Challenge,
-        RegionType_Outpost,
-        RegionType_ZaishenBattle,
-        RegionType_HeroesAscent,
-        RegionType_City,
-        RegionType_MissionArea,
-        RegionType_HeroBattleOutpost,
-        RegionType_HeroBattleArea,
-        RegionType_EotnMission,
-        RegionType_Dungeon,
-        RegionType_Marketplace,
-        RegionType_Unknown,
-        RegionType_DevRegion
-    };
-
-    enum Region : uint32_t {
-        Region_Kryta,
-        Region_Maguuma,
-        Region_Ascalon,
-        Region_NorthernShiverpeaks,
-        Region_HeroesAscent,
-        Region_CrystalDesert,
-        Region_FissureOfWoe,
-        Region_Presearing,
-        Region_Kaineng,
-        Region_Kurzick,
-        Region_Luxon,
-        Region_ShingJea,
-        Region_Kourna,
-        Region_Vaabi,
-        Region_Desolation,
-        Region_Istan,
-        Region_DomainOfAnguish,
-        Region_TarnishedCoast,
-        Region_DepthsOfTyria,
-        Region_FarShiverpeaks,
-        Region_CharrHomelands,
-        Region_BattleIslands,
-        Region_TheBattleOfJahai,
-        Region_TheFlightNorth,
-        Region_TheTenguAccords,
-        Region_TheRiseOfTheWhiteMantle,
-        Region_Swat,
-        Region_DevRegion
-    };
-
     // https://github.com/entice/gw-interface/blob/master/GuildWarsInterface/Datastructures/Const/AreaInfo.cs
     struct AreaInfo { // total: 0x7C/124
         /* +h0000 */ uint32_t campaign;
         /* +h0004 */ uint32_t continent;
-        /* +h0008 */ Region region;
-        /* +h000C */ RegionType type;
+        /* +h0008 */ Constants::MapRegion region;
+        /* +h000C */ Constants::RegionType type;
         /* +h0010 */ uint32_t flags;
         /* +h0014 */ uint32_t thumbnail_id;
         /* +h0018 */ uint32_t min_party_size;

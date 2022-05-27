@@ -1,12 +1,16 @@
 #pragma once
+#include <GWCA/Constants/Types.h>
 
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
+    namespace Constants {
+        enum class Campaign;
+    }
     struct Skill { // total : 0xA0/160
-        /* +h0000 */ uint32_t skill_id;
+        /* +h0000 */ Constants::SkillID skill_id;
         /* +h0004 */ uint32_t h0004;
-        /* +h0008 */ uint32_t campaign;
+        /* +h0008 */ Constants::Campaign campaign;
         /* +h000C */ uint32_t type;
         /* +h0010 */ uint32_t special;
         /* +h0014 */ uint32_t combo_req;
@@ -17,7 +21,7 @@ namespace GW {
         /* +h0028 */ uint8_t profession;
         /* +h0029 */ uint8_t attribute;
         /* +h002A */ uint8_t h002A[2];
-        /* +h002C */ uint32_t skill_id_pvp;
+        /* +h002C */ Constants::SkillID skill_id_pvp;
         /* +h0030 */ uint8_t combo;
         /* +h0031 */ uint8_t target;
         /* +h0032 */ uint8_t h0032;
@@ -67,7 +71,7 @@ namespace GW {
         /* +h0000 */ uint32_t adrenaline_a;
         /* +h0004 */ uint32_t adrenaline_b;
         /* +h0008 */ uint32_t recharge;
-        /* +h000C */ uint32_t skill_id; // see GWConst::SkillIds
+        /* +h000C */ Constants::SkillID skill_id; // see GWConst::SkillIds
         /* +h0010 */ uint32_t event;
 
         uint32_t GetRecharge() const; // returns recharge time remaining in milliseconds, or 0 if recharged
@@ -75,14 +79,14 @@ namespace GW {
     static_assert(sizeof(SkillbarSkill) == 20, "struct SkillbarSkill has incorect size");
 
     struct Skillbar { // total: 0xBC/188
-        /* +h0000 */ uint32_t agent_id; // id of the agent whose skillbar this is
+        /* +h0000 */ AgentID agent_id; // id of the agent whose skillbar this is
         /* +h0004 */ SkillbarSkill skills[8];
         /* +h00A4 */ uint32_t disabled;
         /* +h00A8 */ uint32_t h00A8[2];
         /* +h00B0 */ uint32_t casting;
         /* +h00B4 */ uint32_t h00B4[2];
 
-        bool IsValid() const { return agent_id > 0; }
+        bool IsValid() const { return agent_id > AgentID::None; }
 
         SkillbarSkill *GetSkillById(Constants::SkillID skill_id);
     };
@@ -91,10 +95,10 @@ namespace GW {
     typedef Array<Skillbar> SkillbarArray;
 
     struct Effect { // total: 0x18/24
-        /* +h0000 */ uint32_t skill_id; // skill id of the effect
+        /* +h0000 */ Constants::SkillID skill_id; // skill id of the effect
         /* +h0004 */ uint32_t effect_type; // 0 = condition/shout, 8 = stance, 11 = maintained enchantment, 14 = enchantment/nature ritual
-        /* +h0008 */ uint32_t effect_id; // unique identifier of effect
-        /* +h000C */ uint32_t agent_id; // non-zero means maintained enchantment - caster id
+        /* +h0008 */ Constants::EffectID effect_id; // unique identifier of effect
+        /* +h000C */ AgentID agent_id; // non-zero means maintained enchantment - caster id
         /* +h0010 */ float duration; // non-zero if effect has a duration
         /* +h0014 */ DWORD timestamp; // GW-timestamp of when effect was applied - only with duration
 
@@ -103,19 +107,20 @@ namespace GW {
     };
     static_assert(sizeof(Effect) == 24, "struct Effect has incorect size");
 
+    typedef Array<Effect> EffectArray;
+
     struct Buff { // total: 0x10/16
-        /* +h0000 */ uint32_t skill_id; // skill id of the buff
+        /* +h0000 */ Constants::SkillID skill_id; // skill id of the buff
         /* +h0004 */ uint32_t h0004;
         /* +h0008 */ uint32_t buff_id; // id of buff in the buff array
-        /* +h000C */ uint32_t target_agent_id; // agent id of the target (0 if no target)
+        /* +h000C */ AgentID target_agent_id; // agent id of the target (0 if no target)
     };
     static_assert(sizeof(Buff) == 16, "struct Buff has incorect size");
 
     typedef Array<Buff> BuffArray;
-    typedef Array<Effect> EffectArray;
 
     struct AgentEffects { // total: 0x24/36
-        /* +h0000 */ uint32_t agent_id;
+        /* +h0000 */ AgentID agent_id;
         /* +h0004 */ BuffArray buffs;
         /* +h0014 */ EffectArray effects;
     };

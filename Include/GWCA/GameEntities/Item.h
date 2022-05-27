@@ -1,10 +1,13 @@
 #pragma once
+#include <GWCA/Constants/Items.h>
 
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/Constants/ItemIDs.h>
+
 
 namespace GW {
-    typedef uint32_t ItemID;
+    namespace Constants {
+        enum class Profession;
+    }
 
     struct Item;
     typedef Array<Item *> ItemArray;
@@ -18,7 +21,7 @@ namespace GW {
     struct Bag { // total: 0x28/40
         /* +h0000 */ uint32_t bag_type; // Bag 1, Equipped 2, NotCollected 3, Storage 4, MaterialStorage 5
         /* +h0004 */ uint32_t index;
-        /* +h0008 */ uint32_t bag_id;
+        /* +h0008 */ Constants::Bag bag_id;
         /* +h000C */ uint32_t container_item;
         /* +h0010 */ uint32_t items_count;
         /* +h0014 */ Bag  *bag_array;
@@ -30,9 +33,9 @@ namespace GW {
 
         static const size_t npos = (size_t)-1;
 
-        size_t find_dye(uint32_t model_id, DyeInfo ExtraId, size_t pos = 0) const;
+        size_t find_dye(DyeInfo ExtraId, size_t pos = 0) const;
 
-        size_t find1(uint32_t model_id, size_t pos = 0) const;
+        size_t find1(Constants::ModelID model_id, size_t pos = 0) const;
         size_t find2(const Item *item, size_t pos = 0) const;
     };
     static_assert(sizeof(Bag) == 40, "struct Bag has incorect size");
@@ -47,20 +50,20 @@ namespace GW {
     };
 
     struct Item { // total: 0x54/84
-        /* +h0000 */ uint32_t       item_id;
-        /* +h0004 */ uint32_t       agent_id;
+        /* +h0000 */ ItemID       item_id;
+        /* +h0004 */ AgentID       agent_id;
         /* +h0008 */ Bag           *bag_equipped; // Only valid if Item is a equipped Bag
         /* +h000C */ Bag           *bag;
         /* +h0010 */ ItemModifier  *mod_struct; // Pointer to an array of mods.
         /* +h0014 */ uint32_t       mod_struct_size; // Size of this array.
         /* +h0018 */ wchar_t       *customized;
         /* +h001C */ uint32_t       model_file_id;
-        /* +h0020 */ uint8_t        type;
+        /* +h0020 */ uint8_t        type_uint8;
         /* +h0021 */ DyeInfo        dye;
         /* +h0024 */ uint16_t       value;
         /* +h0026 */ uint16_t       h0026;
         /* +h0028 */ uint32_t       interaction;
-        /* +h002C */ uint32_t       model_id;
+        /* +h002C */ Constants::ModelID       model_id;
         /* +h0030 */ wchar_t       *info_string;
         /* +h0034 */ wchar_t       *name_enc;
         /* +h0038 */ wchar_t       *complete_name_enc; // with color, quantity, etc.
@@ -70,8 +73,11 @@ namespace GW {
         /* +h004B */ uint8_t        h004B; // probably used for quantity extension for new material storage
         /* +h004C */ uint16_t       quantity;
         /* +h004E */ uint8_t        equipped;
-        /* +h004F */ uint8_t        profession;
+        /* +h004F */ uint8_t        profession_uint8;
         /* +h0050 */ uint8_t        slot;
+
+        inline Constants::Profession profession() const { return (Constants::Profession)profession_uint8; }
+        inline Constants::ItemType type() const { return (Constants::ItemType)type_uint8; }
 
         inline bool GetIsStackable() const {
             return (interaction & 0x80000) != 0;
@@ -141,10 +147,10 @@ namespace GW {
 
     typedef Array<ItemID> MerchItemArray;
 
-    inline size_t Bag::find1(uint32_t model_id, size_t pos) const {
+    inline size_t Bag::find1(Constants::ModelID model_id, size_t pos) const {
         for (size_t i = pos; i < items.size(); i++) {
             Item *item = items[i];
-            if (!item && model_id == 0) return i;
+            if (!item && model_id == Constants::ModelID::None) return i;
             if (!item) continue;
             if (item->model_id == model_id)
                 return i;
@@ -152,12 +158,11 @@ namespace GW {
         return npos;
     }
 
-    inline size_t Bag::find_dye(uint32_t model_id, DyeInfo extra_id, size_t pos) const {
+    inline size_t Bag::find_dye(DyeInfo extra_id, size_t pos) const {
         for (size_t i = pos; i < items.size(); i++) {
             Item *item = items[i];
-            if (!item && model_id == 0) return i;
             if (!item) continue;
-            if (item->model_id == model_id && memcmp(&item->dye,&extra_id,sizeof(item->dye)) == 0)
+            if (item->model_id == Constants::ModelID::Dye && memcmp(&item->dye,&extra_id,sizeof(item->dye)) == 0)
                 return i;
         }
         return npos;
@@ -165,8 +170,8 @@ namespace GW {
 
     // Find a similar item
     inline size_t Bag::find2(const Item *item, size_t pos) const {
-        if (item->model_id == Constants::ItemID::Dye)
-            return find_dye(item->model_id, item->dye, pos);
+        if (item->model_id == Constants::ModelID::Dye)
+            return find_dye(item->dye, pos);
         else
             return find1(item->model_id, pos);
     }

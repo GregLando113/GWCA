@@ -13,8 +13,15 @@
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
-#include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PreGameContext.h>
+#include <GWCA/Context/GameContext.h>
+#include <GWCA/Context/CharContext.h>
+#include <GWCA/Context/WorldContext.h>
+#include <GWCA/Context/PartyContext.h>
+#include <GWCA/Context/AgentContext.h>
+#include <GWCA/Context/GuildContext.h>
+#include <GWCA/Context/ItemContext.h>
+#include <GWCA/Context/TradeContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -117,12 +124,40 @@ namespace GW
         HookBase::Deinitialize();
     }
 
+    PreGameContext* PreGameContext::instance()
+    {
+        return *(PreGameContext**)PreGameContext_addr;
+    }
     GameContext* GameContext::instance()
     {
         return *(GameContext**)((*(uint8_t **)base_ptr) + 0x18);
     }
-    PreGameContext* PreGameContext::instance()
-    {
-        return *(PreGameContext**)PreGameContext_addr;
+    CharContext* CharContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->character : nullptr;
+    }
+    WorldContext* WorldContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->world : nullptr;
+    }
+    PartyContext* PartyContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->party : nullptr;
+    }
+    AgentContext* AgentContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->agent : nullptr;
+    }
+    GuildContext* GuildContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->guild : nullptr;
+    }
+    TradeContext* TradeContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->trade : nullptr;
+    }
+    ItemContext* ItemContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->items : nullptr;
     }
 } // namespace GW

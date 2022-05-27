@@ -17,50 +17,39 @@
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 
-#define COLOR_ARGB(a, r, g, b) (GW::Chat::Color)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
+#define COLOR_ARGB(a, r, g, b) (GW::Color)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
 #define COLOR_RGB(r, g, b) COLOR_ARGB(0xff, r, g, b)
 
 namespace {
     using namespace GW;
-
-
+    using namespace Chat;
 
     bool ShowTimestamps = false;
     bool Timestamp_24hFormat = false;
     bool Timestamp_seconds = false;
-    Chat::Color TimestampsColor = COLOR_RGB(0xff, 0xff, 0xff);
+    Color TimestampsColor = COLOR_RGB(0xff, 0xff, 0xff);
 
-    std::unordered_map<std::wstring, Chat::CmdCB> SlashCmdList;
+    std::unordered_map<std::wstring, CmdCB> SlashCmdList;
 
     // 08 01 07 01 [Time] 01 00 02 00
     // ChatBuffer **ChatBuffer_Addr;
-    Chat::ChatBuffer** ChatBuffer_Addr;
+    ChatBuffer** ChatBuffer_Addr;
     uintptr_t IsTyping_Addr;
 
     // There is maybe more.
     // Though, we can probably fix this.
-    bool ChannelThatParseColorTag[] = {
-        true, true, true, true, true, true, true,
-        false, // WARNING
-        true, true, true, true, true,
-        false, // ADVISORY
-        true
-    };
-
-    Chat::Channel GetChannel(wchar_t opcode) {
-        switch (opcode) {
-            case '!': return Chat::Channel::CHANNEL_ALL;
-            case '@': return Chat::Channel::CHANNEL_GUILD;
-            case '#': return Chat::Channel::CHANNEL_GROUP;
-            case '$': return Chat::Channel::CHANNEL_TRADE;
-            case '%': return Chat::Channel::CHANNEL_ALLIANCE;
-            case '"': return Chat::Channel::CHANNEL_WHISPER;
-            case '/': return Chat::Channel::CHANNEL_COMMAND;
-            default:  return Chat::Channel::CHANNEL_UNKNOW;
+    bool DoesChannelParseColorTag(Chat::Channel in) {
+        switch (in) {
+        case Chat::Channel::CHANNEL_WARNING:
+        case Chat::Channel::CHANNEL_ADVISORY:
+            return false;
         }
+        return true;
     }
 
-    Chat::Color ChatSenderColor[] = {
+
+
+    Color ChatSenderColor[] = {
         COLOR_RGB(0xFF, 0xC0, 0x60),
         COLOR_RGB(0x60, 0xA0, 0xFF),
         COLOR_RGB(0xC0, 0xD0, 0xFF),
@@ -78,7 +67,7 @@ namespace {
         COLOR_RGB(0x80, 0xC0, 0xFF)
     };
 
-    Chat::Color ChatMessageColor[] = {
+    Color ChatMessageColor[] = {
         COLOR_RGB(0xE0, 0xE0, 0xE0),
         COLOR_RGB(0xE0, 0xE0, 0xE0),
         COLOR_RGB(0xC0, 0xD0, 0xFF),
@@ -102,16 +91,16 @@ namespace {
             s[i] = towlower(s[i]);
     }
 
-    std::unordered_map<HookEntry *, Chat::SendChatCallback>     SendChat_callbacks;
-    std::unordered_map<HookEntry *, Chat::ChatEventCallback>    ChatEvent_callbacks;
-    std::unordered_map<HookEntry *, Chat::LocalMessageCallback> LocalMessage_callbacks;
-    std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
-    std::unordered_map<HookEntry*, Chat::PrintChatCallback>     PrintChat_callbacks;
-    std::unordered_map<HookEntry *, Chat::StartWhisperCallback> StartWhisper_callbacks;
+    std::unordered_map<HookEntry *, SendChatCallback>     SendChat_callbacks;
+    std::unordered_map<HookEntry *, ChatEventCallback>    ChatEvent_callbacks;
+    std::unordered_map<HookEntry *, LocalMessageCallback> LocalMessage_callbacks;
+    std::unordered_map<HookEntry *, WhisperCallback>      Whisper_callbacks;
+    std::unordered_map<HookEntry*, PrintChatCallback>     PrintChat_callbacks;
+    std::unordered_map<HookEntry *, StartWhisperCallback> StartWhisper_callbacks;
     struct ChatLogCallbackEntry {
         int altitude;
         HookEntry* entry;
-        Chat::ChatLogCallback callback;
+        ChatLogCallback callback;
     };
     std::vector<ChatLogCallbackEntry> ChatLog_callbacks;
 
@@ -130,10 +119,10 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef Chat::Color* (__cdecl *GetChannelColor_pt)(Chat::Color *color, Chat::Channel chan);
+    typedef Color* (__cdecl *GetChannelColor_pt)(Color *color, Chat::Channel chan);
     GetChannelColor_pt RetGetSenderColor;
     GetChannelColor_pt GetSenderColor_Func;
-    Chat::Color* __cdecl OnGetSenderColor(Chat::Color *color, Chat::Channel chan) {
+    Color* __cdecl OnGetSenderColor(Color *color, Chat::Channel chan) {
         HookBase::EnterHook();
         *color = ChatSenderColor[(int)chan];
         HookBase::LeaveHook();
@@ -143,17 +132,17 @@ namespace {
 
     GetChannelColor_pt RetGetMessageColor;
     GetChannelColor_pt GetMessageColor_Func;
-    Chat::Color* __cdecl OnGetMessageColor(Chat::Color *color, Chat::Channel chan) {
+    Color* __cdecl OnGetMessageColor(Color *color, Chat::Channel chan) {
         HookBase::EnterHook();
         *color = ChatMessageColor[(int)chan];
         HookBase::LeaveHook();
         return color;
     };
 
-    typedef void(__cdecl *LocalMessage_pt)(int channel, wchar_t *message);
+    typedef void(__cdecl *LocalMessage_pt)(Chat::Channel channel, wchar_t *message);
     LocalMessage_pt LocalMessage_Func;
     LocalMessage_pt RetLocalMessage;
-    void __cdecl OnLocalMessage(int channel, wchar_t *message) {
+    void __cdecl OnLocalMessage(Chat::Channel channel, wchar_t *message) {
         HookBase::EnterHook();
         HookStatus status;
         for (auto& it : LocalMessage_callbacks) {
@@ -165,10 +154,10 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__cdecl *SendChat_pt)(wchar_t *message, uint32_t agent_id);
+    typedef void(__cdecl *SendChat_pt)(wchar_t *message, AgentID agent_id);
     SendChat_pt SendChat_Func;
     SendChat_pt RetSendChat;
-    void __cdecl OnSendChat(wchar_t *message, uint32_t agent_id) {
+    void __cdecl OnSendChat(wchar_t *message, AgentID agent_id = AgentID::None) {
         HookBase::EnterHook();
         if (*message == '/') {
             int argc;
@@ -230,17 +219,17 @@ namespace {
 
     bool add_next_message_to_chat_log = true;
 
-    typedef void(_cdecl* AddToChatLog_pt)(wchar_t* message, uint32_t channel);
+    typedef void(_cdecl* AddToChatLog_pt)(wchar_t* message, Chat::Channel channel);
     AddToChatLog_pt AddToChatLog_Func;
     AddToChatLog_pt RetAddToChatLog;
-    void OnAddToChatLog(wchar_t* message, uint32_t channel) {
+    void OnAddToChatLog(wchar_t* message, Chat::Channel channel) {
         GW::HookBase::EnterHook();
         HookStatus status;
         auto it = ChatLog_callbacks.begin();
 
         status.blocked = !add_next_message_to_chat_log;
 
-        Chat::ChatMessage* logged_message = 0;
+        ChatMessage* logged_message = 0;
         // Pre callbacks
         while (it != ChatLog_callbacks.end()) {
             if (it->altitude > 0)
@@ -251,7 +240,7 @@ namespace {
         }
 
         if (!status.blocked) {
-            GW::Chat::ChatBuffer* log = Chat::GetChatLog();
+            ChatBuffer* log = GetChatLog();
             size_t log_idx = log ? log->next : 0;
             RetAddToChatLog(message, channel);
             if(log && log->next != log_idx)
@@ -279,7 +268,7 @@ namespace {
         Chat::Channel channel, wchar_t *str, FILETIME timestamp, int reprint)
     {
         HookBase::EnterHook();
-        GWCA_ASSERT(ChatBuffer_Addr && 0 <= channel && channel < Chat::Channel::CHANNEL_COUNT);
+        GWCA_ASSERT(ChatBuffer_Addr && 0 <= (uint32_t)channel && channel < Chat::Channel::CHANNEL_COUNT);
         PrintChat_Context = ctx;
         if (channel == Chat::Channel::CHANNEL_GWCA1 && wcscmp(str, PrintChat_Context_Sample_String) == 0) {
             HookBase::LeaveHook();
@@ -331,7 +320,7 @@ namespace {
         wchar_t* message_buffer;
         size_t buf_len = 21 + 29 + wcslen(*str_p);
         message_buffer = new wchar_t[buf_len];
-        if (ChannelThatParseColorTag[channel]) {
+        if (DoesChannelParseColorTag(channel)) {
             swprintf(message_buffer, buf_len, L"\x108\x107<c=#%06x>%s </c>\x01\x02%s", (TimestampsColor & 0x00FFFFFF), time_buffer, *str_p);
         } else {
             swprintf(message_buffer, buf_len, L"\x108\x107%s \x01\x02%s", time_buffer, *str_p);
@@ -381,7 +370,7 @@ namespace {
         }
 
         {
-            ChatBuffer_Addr = *(Chat::ChatBuffer***)Scanner::Find(
+            ChatBuffer_Addr = *(ChatBuffer***)Scanner::Find(
                 "\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
             GWCA_INFO("[SCAN] ChatBuffer_Addr = %p\n", (void *)ChatBuffer_Addr);
         }
@@ -446,353 +435,365 @@ namespace GW {
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
+    namespace Chat {
+        Chat::Channel GetChannel(wchar_t opcode) {
+            switch (opcode) {
+            case '!': return Chat::Channel::CHANNEL_ALL;
+            case '@': return Chat::Channel::CHANNEL_GUILD;
+            case '#': return Chat::Channel::CHANNEL_GROUP;
+            case '$': return Chat::Channel::CHANNEL_TRADE;
+            case '%': return Chat::Channel::CHANNEL_ALLIANCE;
+            case '"': return Chat::Channel::CHANNEL_WHISPER;
+            case '/': return Chat::Channel::CHANNEL_COMMAND;
+            default:  return Chat::Channel::CHANNEL_UNKNOW;
+            }
+        }
+        void RegisterSendChatCallback(
+            HookEntry* entry,
+            SendChatCallback callback)
+        {
+            SendChat_callbacks.insert({ entry, callback });
+        }
 
-    void Chat::RegisterSendChatCallback(
-        HookEntry *entry,
-        SendChatCallback callback)
-    {
-        SendChat_callbacks.insert({entry, callback});
-    }
+        void RemoveSendChatCallback(
+            HookEntry* entry)
+        {
+            auto it = SendChat_callbacks.find(entry);
+            if (it != SendChat_callbacks.end())
+                SendChat_callbacks.erase(it);
+        }
 
-    void Chat::RemoveSendChatCallback(
-        HookEntry *entry)
-    {
-        auto it = SendChat_callbacks.find(entry);
-        if (it != SendChat_callbacks.end())
-            SendChat_callbacks.erase(it);
-    }
+        void RegisterChatEventCallback(
+            HookEntry* entry,
+            ChatEventCallback callback)
+        {
+            ChatEvent_callbacks.insert({ entry, callback });
+        }
 
-    void Chat::RegisterChatEventCallback(
-        HookEntry *entry,
-        ChatEventCallback callback)
-    {
-        ChatEvent_callbacks.insert({entry, callback});
-    }
+        void RemoveChatEventCallback(
+            HookEntry* entry)
+        {
+            auto it = ChatEvent_callbacks.find(entry);
+            if (it != ChatEvent_callbacks.end())
+                ChatEvent_callbacks.erase(it);
+        }
 
-    void Chat::RemoveChatEventCallback(
-        HookEntry *entry)
-    {
-        auto it = ChatEvent_callbacks.find(entry);
-        if (it != ChatEvent_callbacks.end())
-            ChatEvent_callbacks.erase(it);
-    }
+        void RegisterLocalMessageCallback(
+            HookEntry* entry,
+            LocalMessageCallback callback)
+        {
+            LocalMessage_callbacks.insert({ entry, callback });
+        }
 
-    void Chat::RegisterLocalMessageCallback(
-        HookEntry *entry,
-        LocalMessageCallback callback)
-    {
-        LocalMessage_callbacks.insert({entry, callback});
-    }
+        void RemoveLocalMessageCallback(
+            HookEntry* entry)
+        {
+            auto it = LocalMessage_callbacks.find(entry);
+            if (it != LocalMessage_callbacks.end())
+                LocalMessage_callbacks.erase(it);
+        }
 
-    void Chat::RemoveLocalMessageCallback(
-        HookEntry *entry)
-    {
-        auto it = LocalMessage_callbacks.find(entry);
-        if (it != LocalMessage_callbacks.end())
-            LocalMessage_callbacks.erase(it);
-    }
+        void RegisterWhisperCallback(
+            HookEntry* entry,
+            WhisperCallback callback)
+        {
+            Whisper_callbacks.insert({ entry, callback });
+        }
 
-    void Chat::RegisterWhisperCallback(
-        HookEntry *entry,
-        WhisperCallback callback)
-    {
-        Whisper_callbacks.insert({entry, callback});
-    }
-
-    void Chat::RegisterPrintChatCallback(
-        HookEntry* entry,
-        PrintChatCallback callback)
+        void RegisterPrintChatCallback(
+            HookEntry* entry,
+            PrintChatCallback callback)
         {
             PrintChat_callbacks.insert({ entry, callback });
         }
-    void Chat::RegisterChatLogCallback(
-        HookEntry* entry,
-        ChatLogCallback callback,
-        int altitude)
-    {
-        ChatLog_callbacks.push_back({ altitude, entry, callback });
-    }
-    void Chat::RemoveChatLogCallback(
-        HookEntry* entry)
-    {
-        auto it = ChatLog_callbacks.begin();
-        while (it != ChatLog_callbacks.end()) {
-            if (it->entry == entry) {
-                ChatLog_callbacks.erase(it);
+        void RegisterChatLogCallback(
+            HookEntry* entry,
+            ChatLogCallback callback,
+            int altitude)
+        {
+            ChatLog_callbacks.push_back({ altitude, entry, callback });
+        }
+        void RemoveChatLogCallback(
+            HookEntry* entry)
+        {
+            auto it = ChatLog_callbacks.begin();
+            while (it != ChatLog_callbacks.end()) {
+                if (it->entry == entry) {
+                    ChatLog_callbacks.erase(it);
+                    break;
+                }
+                it++;
+            }
+        }
+
+        void RemoveRegisterWhisperCallback(
+            HookEntry* entry)
+        {
+            auto it = Whisper_callbacks.find(entry);
+            if (it != Whisper_callbacks.end())
+                Whisper_callbacks.erase(it);
+        }
+
+        void RegisterStartWhisperCallback(
+            HookEntry* entry,
+            StartWhisperCallback callback)
+        {
+            StartWhisper_callbacks.insert({ entry, callback });
+        }
+
+        void RemoveStartWhisperCallback(
+            HookEntry* entry)
+        {
+            auto it = StartWhisper_callbacks.find(entry);
+            if (it != StartWhisper_callbacks.end())
+                StartWhisper_callbacks.erase(it);
+        }
+
+        ChatBuffer* GetChatLog() {
+            return *ChatBuffer_Addr;
+        }
+
+        void AddToChatLog(wchar_t* message, Chat::Channel channel) {
+            if (AddToChatLog_Func)
+                AddToChatLog_Func(message, channel);
+        }
+
+        GW::Color SetSenderColor(Chat::Channel chan, GW::Color col) {
+            GW::Color old = ChatSenderColor[(int)chan];
+            ChatSenderColor[(int)chan] = col;
+            return old;
+        }
+
+        GW::Color SetMessageColor(Chat::Channel chan, GW::Color col) {
+            GW::Color old = ChatMessageColor[(int)chan];
+            ChatMessageColor[(int)chan] = col;
+            return old;
+        }
+
+        void GetChannelColors(Chat::Channel chan, GW::Color* sender, GW::Color* message) {
+            *sender = ChatSenderColor[(int)chan];
+            *message = ChatMessageColor[(int)chan];
+        }
+
+        void GetDefaultColors(Chat::Channel chan, GW::Color* sender, GW::Color* message) {
+            switch (chan) {
+            case Chat::Channel::CHANNEL_ALLIANCE:
+                *sender = COLOR_RGB(0xFF, 0xC0, 0x60);
+                *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
                 break;
+            case Chat::Channel::CHANNEL_ALLIES:
+                *sender = COLOR_RGB(0x60, 0xA0, 0xFF);
+                *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+                break;
+            case Chat::Channel::CHANNEL_GWCA1:
+                *sender = COLOR_RGB(0xC0, 0xD0, 0xFF);
+                *message = COLOR_RGB(0xC0, 0xD0, 0xFF);
+                break;
+            case Chat::Channel::CHANNEL_ALL:
+                *sender = COLOR_RGB(0xFF, 0xFF, 0x80);
+                *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
+                break;
+            case Chat::Channel::CHANNEL_GWCA2:
+                *sender = COLOR_RGB(0xCC, 0xCC, 0xCC);
+                *message = COLOR_RGB(0xB0, 0xB0, 0xB0);
+                break;
+            case Chat::Channel::CHANNEL_MODERATOR:
+                *sender = COLOR_RGB(0xFF, 0x50, 0xDF);
+                *message = COLOR_RGB(0x50, 0xFF, 0xDF);
+                break;
+            case Chat::Channel::CHANNEL_EMOTE:
+                *sender = COLOR_RGB(0xFF, 0xFF, 0xFF);
+                *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
+                break;
+            case Chat::Channel::CHANNEL_WARNING:
+                *sender = COLOR_RGB(0xCC, 0xCC, 0xCC);
+                *message = COLOR_RGB(0xCC, 0xCC, 0xCC);
+                break;
+            case Chat::Channel::CHANNEL_GWCA3:
+                *sender = COLOR_RGB(0xCC, 0xCC, 0xCC);
+                *message = COLOR_RGB(0x50, 0xFF, 0xDF);
+                break;
+            case Chat::Channel::CHANNEL_GUILD:
+                *sender = COLOR_RGB(0x00, 0xFF, 0x60);
+                *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+                break;
+            case Chat::Channel::CHANNEL_GLOBAL:
+                *sender = COLOR_RGB(0x80, 0xFF, 0x80);
+                *message = COLOR_RGB(0x80, 0xFF, 0x80);
+                break;
+            case Chat::Channel::CHANNEL_GROUP:
+                *sender = COLOR_RGB(0x80, 0xC0, 0xFF);
+                *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+                break;
+            case Chat::Channel::CHANNEL_TRADE:
+                *sender = COLOR_RGB(0xFF, 0xC0, 0xC4);
+                *message = COLOR_RGB(0xFF, 0xC4, 0xC0);
+                break;
+            case Chat::Channel::CHANNEL_ADVISORY:
+                *sender = COLOR_RGB(0xFF, 0x90, 0x20);
+                *message = COLOR_RGB(0xFF, 0x90, 0x20);
+                break;
+            case Chat::Channel::CHANNEL_WHISPER:
+                *sender = COLOR_RGB(0x80, 0xC0, 0xFF);
+                *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
+                break;
+            default:
+                *sender = COLOR_RGB(0xFF, 0xFF, 0x80);
+                *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
             }
-            it++;
         }
-    }
 
-    void Chat::RemoveRegisterWhisperCallback(
-        HookEntry *entry)
-    {
-        auto it = Whisper_callbacks.find(entry);
-        if (it != Whisper_callbacks.end())
-            Whisper_callbacks.erase(it);
-    }
-
-    void Chat::RegisterStartWhisperCallback(
-        HookEntry* entry,
-        StartWhisperCallback callback)
-    {
-        StartWhisper_callbacks.insert({entry, callback});
-    }
-
-    void Chat::RemoveStartWhisperCallback(
-        HookEntry *entry)
-    {
-        auto it = StartWhisper_callbacks.find(entry);
-        if (it != StartWhisper_callbacks.end())
-            StartWhisper_callbacks.erase(it);
-    }
-
-    Chat::ChatBuffer* Chat::GetChatLog() {
-        return *ChatBuffer_Addr;
-    }
-
-    void Chat::AddToChatLog(wchar_t* message, uint32_t channel) {
-        if (AddToChatLog_Func)
-            AddToChatLog_Func(message, channel);
-    }
-
-    Chat::Color Chat::SetSenderColor(Channel chan, Color col) {
-        Color old = ChatSenderColor[(int)chan];
-        ChatSenderColor[(int)chan] = col;
-        return old;
-    }
-
-    Chat::Color Chat::SetMessageColor(Channel chan, Color col) {
-        Color old = ChatMessageColor[(int)chan];
-        ChatMessageColor[(int)chan] = col;
-        return old;
-    }
-
-    void Chat::GetChannelColors(Channel chan, Color *sender, Color *message) {
-        *sender  = ChatSenderColor[chan];
-        *message = ChatMessageColor[chan];
-    }
-
-    void Chat::GetDefaultColors(Channel chan, Color *sender, Color *message) {
-        switch (chan) {
-        case Channel::CHANNEL_ALLIANCE:
-            *sender  = COLOR_RGB(0xFF, 0xC0, 0x60);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        case Channel::CHANNEL_ALLIES:
-            *sender  = COLOR_RGB(0x60, 0xA0, 0xFF);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        case Channel::CHANNEL_GWCA1:
-            *sender  = COLOR_RGB(0xC0, 0xD0, 0xFF);
-            *message = COLOR_RGB(0xC0, 0xD0, 0xFF);
-            break;
-        case Channel::CHANNEL_ALL:
-            *sender  = COLOR_RGB(0xFF, 0xFF, 0x80);
-            *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
-            break;
-        case Channel::CHANNEL_GWCA2:
-            *sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
-            *message = COLOR_RGB(0xB0, 0xB0, 0xB0);
-            break;
-        case Channel::CHANNEL_MODERATOR:
-            *sender  = COLOR_RGB(0xFF, 0x50, 0xDF);
-            *message = COLOR_RGB(0x50, 0xFF, 0xDF);
-            break;
-        case Channel::CHANNEL_EMOTE:
-            *sender  = COLOR_RGB(0xFF, 0xFF, 0xFF);
-            *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
-            break;
-        case Channel::CHANNEL_WARNING:
-            *sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
-            *message = COLOR_RGB(0xCC, 0xCC, 0xCC);
-            break;
-        case Channel::CHANNEL_GWCA3:
-            *sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
-            *message = COLOR_RGB(0x50, 0xFF, 0xDF);
-            break;
-        case Channel::CHANNEL_GUILD:
-            *sender  = COLOR_RGB(0x00, 0xFF, 0x60);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        case Channel::CHANNEL_GLOBAL:
-            *sender  = COLOR_RGB(0x80, 0xFF, 0x80);
-            *message = COLOR_RGB(0x80, 0xFF, 0x80);
-            break;
-        case Channel::CHANNEL_GROUP:
-            *sender  = COLOR_RGB(0x80, 0xC0, 0xFF);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        case Channel::CHANNEL_TRADE:
-            *sender  = COLOR_RGB(0xFF, 0xC0, 0xC4);
-            *message = COLOR_RGB(0xFF, 0xC4, 0xC0);
-            break;
-        case Channel::CHANNEL_ADVISORY:
-            *sender  = COLOR_RGB(0xFF, 0x90, 0x20);
-            *message = COLOR_RGB(0xFF, 0x90, 0x20);
-            break;
-        case Channel::CHANNEL_WHISPER:
-            *sender  = COLOR_RGB(0x80, 0xC0, 0xFF);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        default:
-            *sender = COLOR_RGB(0xFF, 0xFF, 0x80);
-            *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
+        bool GetIsTyping() {
+            if (!Verify(IsTyping_Addr))
+                return false;
+            else
+                return (*(uint32_t*)IsTyping_Addr == 1);
         }
-    }
 
-    bool Chat::GetIsTyping() {
-        if (!Verify(IsTyping_Addr))
-            return false;
-        else
-            return (*(uint32_t *)IsTyping_Addr == 1);
-    }
+        void SendChat(char channel, const wchar_t* msg) {
+            GWCA_ASSERT(SendChat_Func);
+            wchar_t buffer[140];
 
-    void Chat::SendChat(char channel, const wchar_t *msg) {
-        GWCA_ASSERT(SendChat_Func);
-        wchar_t buffer[140];
+            // We could take 140 char long, but the chat only allow 120 ig.
+            size_t len = wcslen(msg);
+            len = len > 120 ? 120 : len;
 
-        // We could take 140 char long, but the chat only allow 120 ig.
-        size_t len = wcslen(msg);
-        len = len > 120 ? 120 : len;
+            buffer[0] = static_cast<wchar_t>(channel);
+            buffer[len + 1] = 0;
+            for (size_t i = 0; i < len; i++)
+                buffer[i + 1] = static_cast<wchar_t>(msg[i]);
 
-        buffer[0] = static_cast<wchar_t>(channel);
-        buffer[len + 1] = 0;
-        for (size_t i = 0; i < len; i++)
-            buffer[i + 1] = static_cast<wchar_t>(msg[i]);
-
-        OnSendChat(buffer, 0);
-    }
-
-    void Chat::SendChat(char channel, const char *msg) {
-        GWCA_ASSERT(SendChat_Func);
-        wchar_t buffer[140];
-
-        size_t len = strlen(msg);
-        len = len > 120 ? 120 : len;
-
-        buffer[0] = static_cast<wchar_t>(channel);
-        buffer[len + 1] = 0;
-        for (size_t i = 0; i < len; i++)
-            buffer[i + 1] = static_cast<wchar_t>(msg[i]);
-
-        OnSendChat(buffer, 0);
-    }
-
-    void Chat::SendChat(const wchar_t *from, const wchar_t *msg) {
-        GWCA_ASSERT(SendChat_Func);
-        wchar_t buffer[140];
-
-        if (swprintf(buffer, 140, L"\"%s,%s", from, msg) < 140) {
-            buffer[139] = 0;
-            OnSendChat(buffer, 0);
+            OnSendChat(buffer);
         }
-    }
 
-    void Chat::SendChat(const char *from, const char *msg) {
-        GWCA_ASSERT(SendChat_Func);
-        wchar_t buffer[140];
+        void SendChat(char channel, const char* msg) {
+            GWCA_ASSERT(SendChat_Func);
+            wchar_t buffer[140];
 
-        if (swprintf(buffer, 140, L"\"%S,%S", from, msg) < 140) {
-            buffer[139] = 0;
-            OnSendChat(buffer, 0);
+            size_t len = strlen(msg);
+            len = len > 120 ? 120 : len;
+
+            buffer[0] = static_cast<wchar_t>(channel);
+            buffer[len + 1] = 0;
+            for (size_t i = 0; i < len; i++)
+                buffer[i + 1] = static_cast<wchar_t>(msg[i]);
+
+            OnSendChat(buffer);
         }
-    }
 
-    // Change to WriteChatF(Channel chan, const wchar_t *from, const wchar_t *frmt, ..)
-    // and       WriteChat(Channel chan, const wchar_t *from, const wchar_t *msg)
-    /*
-    void Chat::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
-        va_list vl;
-        va_start(vl, format);
-        size_t szbuf = _vscwprintf(format, vl) + 1;
-        wchar_t* chat = new wchar_t[szbuf];
-        vswprintf_s(chat, szbuf, format, vl);
-        va_end(vl);
+        void SendChat(const wchar_t* from, const wchar_t* msg) {
+            GWCA_ASSERT(SendChat_Func);
+            wchar_t buffer[140];
 
-        WriteChat(from, chat);
-        delete[] chat;
-    }
-
-    void Chat::WriteChat(const wchar_t *from, const wchar_t *msg) {
-        if (WriteWhisper_addr == nullptr) Initialize();
-        WriteWhisper_addr(0, from, msg);
-    }
-    */
-
-
-
-    void Chat::WriteChat(Channel channel, const wchar_t *message_unencoded, const wchar_t *sender_unencoded, bool transient) {
-        size_t len = wcslen(message_unencoded) + 4;
-        wchar_t* message_encoded = new wchar_t[len];
-        GWCA_ASSERT(swprintf(message_encoded, len, L"\x108\x107%s\x1", message_unencoded) >= 0);
-        wchar_t* sender_encoded = 0;
-        if (sender_unencoded) {
-            len = wcslen(sender_unencoded) + 4;
-            sender_encoded = new wchar_t[len];
-            GWCA_ASSERT(swprintf(sender_encoded, len, L"\x108\x107%s\x1", sender_unencoded) >= 0);
-        }
-        WriteChatEnc(channel, message_encoded, sender_encoded, transient);
-        delete[] message_encoded;
-        if (sender_encoded)
-            delete[] sender_encoded;
-    }
-    void Chat::WriteChatEnc(Channel channel, const wchar_t* message_encoded, const wchar_t* sender_encoded, bool transient) {
-        UI::UIChatMessage param;
-        param.channel = param.channel2 = channel;
-        param.message = (wchar_t*)message_encoded;
-        bool delete_message = false;
-        if (sender_encoded) {
-            // If message contains link (<a=1>), manually create the message string
-            const wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
-            size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 6;
-            bool has_link_in_message = wcsstr(message_encoded, L"<a=1>") != 0;
-            bool has_markup = has_link_in_message || wcsstr(message_encoded, L"<c=") != 0;
-            if (has_markup) {
-                // NB: When not using this method, any skill templates etc are NOT rendered by the game
-                if (has_link_in_message) {
-                    format = L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
-                }
-                else {
-                    format = L"\x108\x107<a=1>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
-                }
-                len += 19;
+            if (swprintf(buffer, 140, L"\"%s,%s", from, msg) < 140) {
+                buffer[139] = 0;
+                OnSendChat(buffer);
             }
-            param.message = new wchar_t[len];
-            delete_message = true;
-            GWCA_ASSERT(swprintf(param.message, len, format, sender_encoded, message_encoded) >= 0);
         }
-        add_next_message_to_chat_log = !transient;
-        UI::SendUIMessage(UI::kWriteToChatLog, &param);
-        add_next_message_to_chat_log = true;
-        if (delete_message)
-            delete[] param.message;
-    }
 
-    void Chat::CreateCommand(std::wstring cmd, CmdCB callback) {
-        ::wstring_tolower(cmd);
-        SlashCmdList[cmd] = callback;
-    }
+        void SendChat(const char* from, const char* msg) {
+            GWCA_ASSERT(SendChat_Func);
+            wchar_t buffer[140];
 
-    void Chat::DeleteCommand(std::wstring cmd) {
-        ::wstring_tolower(cmd);
-        SlashCmdList.erase(cmd);
-    }
+            if (swprintf(buffer, 140, L"\"%S,%S", from, msg) < 140) {
+                buffer[139] = 0;
+                OnSendChat(buffer);
+            }
+        }
 
-    void Chat::ToggleTimestamps(bool enable) {
-        ShowTimestamps = enable;
-        if (ShowTimestamps)
-            UI::SetPreference(UI::Preference_ShowChatTimestamps, 0);
-    }
+        // Change to WriteChatF(Channel chan, const wchar_t *from, const wchar_t *frmt, ..)
+        // and       WriteChat(Channel chan, const wchar_t *from, const wchar_t *msg)
+        /*
+        void Chat::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
+            va_list vl;
+            va_start(vl, format);
+            size_t szbuf = _vscwprintf(format, vl) + 1;
+            wchar_t* chat = new wchar_t[szbuf];
+            vswprintf_s(chat, szbuf, format, vl);
+            va_end(vl);
 
-    void Chat::SetTimestampsFormat(bool use_24h, bool show_timestamp_seconds) {
-        Timestamp_24hFormat = use_24h;
-        Timestamp_seconds = show_timestamp_seconds;
-    }
+            WriteChat(from, chat);
+            delete[] chat;
+        }
 
-    void Chat::SetTimestampsColor(Color color) {
-        TimestampsColor = color;
-    }
+        void Chat::WriteChat(const wchar_t *from, const wchar_t *msg) {
+            if (WriteWhisper_addr == nullptr) Initialize();
+            WriteWhisper_addr(0, from, msg);
+        }
+        */
 
+
+
+        void WriteChat(Chat::Channel channel, const wchar_t* message_unencoded, const wchar_t* sender_unencoded, bool transient) {
+            size_t len = wcslen(message_unencoded) + 4;
+            wchar_t* message_encoded = new wchar_t[len];
+            GWCA_ASSERT(swprintf(message_encoded, len, L"\x108\x107%s\x1", message_unencoded) >= 0);
+            wchar_t* sender_encoded = 0;
+            if (sender_unencoded) {
+                len = wcslen(sender_unencoded) + 4;
+                sender_encoded = new wchar_t[len];
+                GWCA_ASSERT(swprintf(sender_encoded, len, L"\x108\x107%s\x1", sender_unencoded) >= 0);
+            }
+            WriteChatEnc(channel, message_encoded, sender_encoded, transient);
+            delete[] message_encoded;
+            if (sender_encoded)
+                delete[] sender_encoded;
+        }
+        void WriteChatEnc(Chat::Channel channel, const wchar_t* message_encoded, const wchar_t* sender_encoded, bool transient) {
+            UI::UIChatMessage param;
+            param.channel = param.channel2 = channel;
+            param.message = (wchar_t*)message_encoded;
+            bool delete_message = false;
+            if (sender_encoded) {
+                // If message contains link (<a=1>), manually create the message string
+                const wchar_t* format = L"\x76b\x10a%s\x1\x10b%s\x1";
+                size_t len = wcslen(message_encoded) + wcslen(sender_encoded) + 6;
+                bool has_link_in_message = wcsstr(message_encoded, L"<a=1>") != 0;
+                bool has_markup = has_link_in_message || wcsstr(message_encoded, L"<c=") != 0;
+                if (has_markup) {
+                    // NB: When not using this method, any skill templates etc are NOT rendered by the game
+                    if (has_link_in_message) {
+                        format = L"\x108\x107<a=2>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                    }
+                    else {
+                        format = L"\x108\x107<a=1>\x1\x2%s\x2\x108\x107</a>\x1\x2\x108\x107: \x1\x2%s";
+                    }
+                    len += 19;
+                }
+                param.message = new wchar_t[len];
+                delete_message = true;
+                GWCA_ASSERT(swprintf(param.message, len, format, sender_encoded, message_encoded) >= 0);
+            }
+            add_next_message_to_chat_log = !transient;
+            UI::SendUIMessage(UI::UIMessage::kWriteToChatLog, &param);
+            add_next_message_to_chat_log = true;
+            if (delete_message)
+                delete[] param.message;
+        }
+
+        void CreateCommand(std::wstring cmd, CmdCB callback) {
+            ::wstring_tolower(cmd);
+            SlashCmdList[cmd] = callback;
+        }
+
+        void DeleteCommand(std::wstring cmd) {
+            ::wstring_tolower(cmd);
+            SlashCmdList.erase(cmd);
+        }
+
+        void ToggleTimestamps(bool enable) {
+            ShowTimestamps = enable;
+            if (ShowTimestamps)
+                UI::SetPreference(UI::Preference::ShowChatTimestamps, 0);
+        }
+
+        void SetTimestampsFormat(bool use_24h, bool show_timestamp_seconds) {
+            Timestamp_24hFormat = use_24h;
+            Timestamp_seconds = show_timestamp_seconds;
+        }
+
+        void SetTimestampsColor(Color color) {
+            TimestampsColor = color;
+        }
+    }
 } // namespace GW

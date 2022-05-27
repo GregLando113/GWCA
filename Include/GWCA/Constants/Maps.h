@@ -1,16 +1,32 @@
 #pragma once
+#include <GWCA/Constants/Types.h>
 
 namespace GW {
     namespace Constants {
-        enum class MapRegion {
+        // travel, region, districts
+        enum class ServerRegion { // in-game region code
             International = -2,
-            American = 0,
-            Korean,
-            European,
-            Chinese,
-            Japanese
+            America = 0,
+            Korea = 1,
+            Europe = 2,
+            China = 3,
+            Japan = 4,
         };
-
+        enum class District { // arbitrary enum for game district; not from GW
+            Current,
+            International,
+            American,
+            EuropeEnglish,
+            EuropeFrench,
+            EuropeGerman,
+            EuropeItalian,
+            EuropeSpanish,
+            EuropePolish,
+            EuropeRussian,
+            AsiaKorean,
+            AsiaChinese,
+            AsiaJapanese,
+        };
         enum class MapLanguage {
             English,
             French = 2,
@@ -20,19 +36,64 @@ namespace GW {
             Polish = 9,
             Russian
         };
-        enum class TextLanguage {
-            English,
-            Korean,
-            French,
-            German,
-            Italian,
-            Spanish,
-            TraditionalChinese,
-            Japanese = 8,
-            Polish,
-            Russian,
-            BorkBorkBork = 17
+        // Map related constants
+        enum class RegionType {
+            RegionType_AllianceBattle,
+            RegionType_Arena,
+            RegionType_ExplorableZone,
+            RegionType_GuildBattleArea,
+            RegionType_GuildHall,
+            RegionType_MissionOutpost,
+            RegionType_CooperativeMission,
+            RegionType_CompetitiveMission,
+            RegionType_EliteMission,
+            RegionType_Challenge,
+            RegionType_Outpost,
+            RegionType_ZaishenBattle,
+            RegionType_HeroesAscent,
+            RegionType_City,
+            RegionType_MissionArea,
+            RegionType_HeroBattleOutpost,
+            RegionType_HeroBattleArea,
+            RegionType_EotnMission,
+            RegionType_Dungeon,
+            RegionType_Marketplace,
+            RegionType_Unknown,
+            RegionType_DevRegion
         };
+
+        enum class MapRegion {
+            Region_Kryta,
+            Region_Maguuma,
+            Region_Ascalon,
+            Region_NorthernShiverpeaks,
+            Region_HeroesAscent,
+            Region_CrystalDesert,
+            Region_FissureOfWoe,
+            Region_Presearing,
+            Region_Kaineng,
+            Region_Kurzick,
+            Region_Luxon,
+            Region_ShingJea,
+            Region_Kourna,
+            Region_Vaabi,
+            Region_Desolation,
+            Region_Istan,
+            Region_DomainOfAnguish,
+            Region_TarnishedCoast,
+            Region_DepthsOfTyria,
+            Region_FarShiverpeaks,
+            Region_CharrHomelands,
+            Region_BattleIslands,
+            Region_TheBattleOfJahai,
+            Region_TheFlightNorth,
+            Region_TheTenguAccords,
+            Region_TheRiseOfTheWhiteMantle,
+            Region_Swat,
+            Region_DevRegion
+        };
+
+
 
         enum class MapID {
             None = 0,
@@ -789,6 +850,7 @@ namespace GW {
 
             Count,
         };
+        ENUM_CLASS_OPERATORS(MapID, 0)
 
         // This array needs testing lol.
         const char* const NAME_FROM_ID[] = {

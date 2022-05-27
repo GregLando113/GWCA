@@ -3,6 +3,7 @@
 #pragma warning(disable: 4619) // there is no warning number 'number'
 
 #pragma warning(push)
+#pragma warning(disable: 4006) // already defined in ; second definition ignored
 #pragma warning(disable: 4061) // enumerator 'identifier' in switch of enum 'enumeration' is not explicitly handled by a case label
 #pragma warning(disable: 4365) // 'action' : conversion from 'type_1' to 'type_2', signed/unsigned mismatch
 #pragma warning(disable: 4514) // 'function' : unreferenced inline function has been removed
@@ -63,7 +64,7 @@
 #include <ShellApi.h>
 
 #pragma warning(pop)
-
+#pragma warning(disable: 4006) // already defined in ; second definition ignored
 #pragma warning(disable: 4061) // enumerator 'identifier' in switch of enum 'enumeration' is not explicitly handled by a case label
 #pragma warning(disable: 4201) // nonstandard extension used : nameless struct/union
 #pragma warning(disable: 4514) // 'function' : unreferenced inline function has been removed

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <GWCA/Constants/Constants.h>
+
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameEntities/Title.h>
@@ -8,7 +10,11 @@
 #include <GWCA/Context/WorldContext.h>
 
 namespace {
-    GW::TitleClientData** title_data = 0;
+    struct TitleClientData {
+        GW::Constants::TitleID title_id;
+        uint32_t name_id;
+    };
+    TitleClientData** title_data = 0;
 }
 
 namespace GW {
@@ -17,14 +23,14 @@ namespace GW {
         if (!title_data) {
             title_data = (TitleClientData**)Scanner::FindAssertion("p:\\code\\gw\\const\\consttitle.cpp", "index < arrsize(s_titleClientData)", 0x12);
         }
-        return title_data ? (*title_data)[title_id()].name_id : 0;
+        return title_data ? (*title_data)[(uint32_t)title_id()].name_id : 0;
     }
-    uint32_t Title::title_id()  {
+    Constants::TitleID Title::title_id()  {
         const Array<Title>& titles = GameContext::instance()->world->titles;
         for (uint32_t i = 0; i < titles.size(); i++) {
-            if (&titles[i] == this)
-                return i;
+            if (titles[i].max_title_tier_index == max_title_tier_index)
+                return (Constants::TitleID)i;
         }
-        return -1;
+        return Constants::TitleID::None;
     }
 }

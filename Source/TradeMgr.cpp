@@ -32,7 +32,7 @@ namespace {
 
     std::unordered_map<HookEntry*, Trade::OfferItemCallback> OnOfferItem_callbacks;
     
-    typedef void(__fastcall* OfferTradeItem_pt)(void* ecx, void* edx, uint32_t item_id, uint32_t quantity, uint32_t always_one);
+    typedef void(__fastcall* OfferTradeItem_pt)(void* ecx, void* edx, ItemID item_id, uint32_t quantity, uint32_t always_one);
     OfferTradeItem_pt OfferTradeItem_Func = 0;
     OfferTradeItem_pt RetOfferTradeItem = 0;
 
@@ -55,7 +55,7 @@ namespace {
         if (action_type == 0x4A && !wParam)
             trade_window_context = static_cast<TradeWindow*>(*(TradeWindow**)ecx + 0x4);
     }
-    static void __fastcall OnOfferTradeItem(void* ecx, void* edx, uint32_t item_id, uint32_t quantity, uint32_t always_one) {
+    static void __fastcall OnOfferTradeItem(void* ecx, void* edx, ItemID item_id, uint32_t quantity, uint32_t always_one) {
         HookBase::EnterHook();
         HookStatus status;
         for (auto& it : OnOfferItem_callbacks) {
@@ -93,7 +93,7 @@ namespace GW {
         NULL,           // disable_hooks
     };
 
-    void Trade::OpenTradeWindow(uint32_t agent_id) {
+    void Trade::OpenTradeWindow(AgentID agent_id) {
         CtoS::SendPacket(0x8, GAME_CMSG_TRADE_INITIATE, agent_id);
     }
 
@@ -112,7 +112,7 @@ namespace GW {
     void Trade::SubmitOffer(uint32_t gold) {
         CtoS::SendPacket(0x8, GAME_CMSG_TRADE_SEND_OFFER, gold);
     }
-    void Trade::OfferItem(uint32_t item_id, uint32_t quantity) {
+    void Trade::OfferItem(ItemID item_id, uint32_t quantity) {
         if (OfferTradeItem_Func && trade_window_context && !trade_window_context->isDisabled()) {
             OnOfferTradeItem(trade_window_context, 0, item_id, quantity, 1);
         }

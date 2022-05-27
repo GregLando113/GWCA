@@ -1,13 +1,12 @@
 #pragma once
-
+#include <GWCA/GameEntities/Item.h>
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
-    struct Bag;
-    struct Item;
-    struct Inventory;
-
     struct ItemContext { // total: 0x10C/268 BYTEs
+
+        static ItemContext* instance();
+
         /* +h0000 */ Array<void *> h0000;
         /* +h0010 */ Array<void *> h0010;
         /* +h0020 */ DWORD h0020;

@@ -1,14 +1,8 @@
 #pragma once
-
-#include <string>
-
-#include "Skills.h"
-#include "Maps.h"
-#include "ItemIDs.h"
-#include "AgentIDs.h"
-#include "QuestIDs.h"
+#include "Types.h"
 
 namespace GW {
+    typedef uint32_t Color;
     namespace Constants {
         enum class Campaign { Core, Prophecies, Factions, Nightfall, EyeOfTheNorth, BonusMissionPack };
         enum class Difficulty { Normal, Hard };
@@ -19,23 +13,23 @@ namespace GW {
             None, Warrior, Ranger, Monk, Necromancer, Mesmer,
             Elementalist, Assassin, Ritualist, Paragon, Dervish
         };
-        static std::string GetProfessionAcronym(Profession prof) {
+        static char* GetProfessionAcronym(Profession prof) {
             switch (prof) {
-            case GW::Constants::Profession::None: return "X";
-            case GW::Constants::Profession::Warrior: return "W";
-            case GW::Constants::Profession::Ranger: return "R";
-            case GW::Constants::Profession::Monk: return "Mo";
-            case GW::Constants::Profession::Necromancer: return "N";
-            case GW::Constants::Profession::Mesmer: return "Me";
-            case GW::Constants::Profession::Elementalist: return "E";
-            case GW::Constants::Profession::Assassin: return "A";
-            case GW::Constants::Profession::Ritualist: return "Rt";
-            case GW::Constants::Profession::Paragon: return "P";
-            case GW::Constants::Profession::Dervish: return "D";
+            case Profession::None: return "X";
+            case Profession::Warrior: return "W";
+            case Profession::Ranger: return "R";
+            case Profession::Monk: return "Mo";
+            case Profession::Necromancer: return "N";
+            case Profession::Mesmer: return "Me";
+            case Profession::Elementalist: return "E";
+            case Profession::Assassin: return "A";
+            case Profession::Ritualist: return "Rt";
+            case Profession::Paragon: return "P";
+            case Profession::Dervish: return "D";
             default: return "";
             }
         }
-        static std::wstring GetWProfessionAcronym(Profession prof) {
+        static wchar_t* GetWProfessionAcronym(Profession prof) {
             switch (prof) {
             case GW::Constants::Profession::None: return L"X";
             case GW::Constants::Profession::Warrior: return L"W";
@@ -69,63 +63,21 @@ namespace GW {
 
         enum class OnlineStatus { OFFLINE, ONLINE, DO_NOT_DISTURB, AWAY };
 
-        enum class Bag {
-            None, Backpack, Belt_Pouch, Bag_1, Bag_2, Equipment_Pack,
-            Material_Storage, Unclaimed_Items, Storage_1, Storage_2,
-            Storage_3, Storage_4, Storage_5, Storage_6, Storage_7,
-            Storage_8, Storage_9, Storage_10, Storage_11, Storage_12,
-			Storage_13, Storage_14, Equipped_Items, Max
-        };
+
 		// Order of storage panes.
-		enum class StoragePane {
-			Storage_1,Storage_2,Storage_3,Storage_4,Storage_5,
-			Storage_6,Storage_7,Storage_8,Storage_9,Storage_10,
-			Storage_11,Storage_12,Storage_13,Storage_14,Material_Storage
-		};
-
-        constexpr size_t BagMax = (size_t)Bag::Max;
-
-        enum class AgentType {
-            Living = 0xDB, Gadget = 0x200, Item = 0x400
+        enum class StoragePane {
+            Storage_1, Storage_2, Storage_3, Storage_4, Storage_5,
+            Storage_6, Storage_7, Storage_8, Storage_9, Storage_10,
+            Storage_11, Storage_12, Storage_13, Storage_14, Material_Storage
         };
 
-        enum class Allegiance {
-            Ally_NonAttackable = 0x1, Neutral = 0x2, Enemy = 0x3, Spirit_Pet = 0x4, Minion = 0x5, Npc_Minipet = 0x6
-        };
-
-        enum class ItemType {
-            Salvage, Axe = 2, Bag, Boots, Bow, Chestpiece = 7, Rune_Mod, Usable, Dye,
-            Materials_Zcoins, Offhand, Gloves, Hammer = 15, Headpiece, CC_Shards,
-            Key, Leggings, Gold_Coin, Quest_Item, Wand, Shield = 24, Staff = 26, Sword,
-            Kit = 29, Trophy, Scroll, Daggers, Present, Minipet, Scythe, Spear, Costume_Headpiece = 44, Costume
-        };
-        enum EquipmentStatus : uint32_t {
-            AlwaysHide, HideInTownsAndOutposts, HideInCombatAreas, AlwaysShow
-        };
-
-        enum HeroID : uint32_t {
+        enum class HeroID {
             NoHero, Norgu, Goren, Tahlkora, MasterOfWhispers, AcolyteJin, Koss,
             Dunkoro, AcolyteSousuke, Melonni, ZhedShadowhoof, GeneralMorgahn,
             MargridTheSly, Zenmai, Olias, Razah, MOX, KeiranThackeray, Jora,
             PyreFierceshot, Anton, Livia, Hayda, Kahmu, Gwen, Xandra, Vekk,
             Ogden, Merc1, Merc2, Merc3, Merc4, Merc5, Merc6, Merc7, Merc8,
             Miku, ZeiRi
-        };
-
-        enum MaterialSlot : uint32_t {
-            Bone, IronIngot, TannedHideSquare, Scale, ChitinFragment,
-            BoltofCloth, WoodPlank, GraniteSlab = 8,
-            PileofGlitteringDust, PlantFiber, Feather,
-
-            FurSquare, BoltofLinen, BoltofDamask, BoltofSilk,
-            GlobofEctoplasm, SteelIngot, DeldrimorSteelIngot,
-            MonstrousClaw, MonstrousEye, MonstrousFang, Ruby,
-            Sapphire, Diamond, OnyxGemstone, LumpofCharcoal,
-            ObsidianShard, TemperedGlassVial = 29, LeatherSquare,
-            ElonianLeatherSquare, VialofInk, RollofParchment,
-            RollofVellum, SpiritwoodPlank, AmberChunk, JadeiteShard,
-
-            N_MATS
         };
 
         constexpr Profession HeroProfs[] = {
@@ -169,15 +121,15 @@ namespace GW {
             Profession::Ritualist, // Zei Ri
         };
 
-        enum HeroBehavior : uint32_t {
+        enum class HeroBehavior {
             Fight, Guard, AvoidCombat
         };
 
-        enum TitleID : uint32_t {
+        enum class TitleID {
             Hero, TyrianCarto, CanthanCarto, Gladiator, Champion, Kurzick,
-            Luxon, Drunkard, 
+            Luxon, Drunkard,
             Deprecated_SkillHunter, // Pre hard mode update version
-            Survivor, KoaBD, 
+            Survivor, KoaBD,
             Deprecated_TreasureHunter, // Old title, non-account bound
             Deprecated_Wisdom, // Old title, non-account bound
             ProtectorTyria,
@@ -188,7 +140,9 @@ namespace GW {
             LegendaryCarto, LegendaryGuardian, LegendarySkillHunter,
             LegendaryVanquisher, Sweets, GuardianTyria, GuardianCantha,
             GuardianElona, Asuran, Deldrimor, Vanguard, Norn, MasterOfTheNorth,
-            Party, Zaishen, TreasureHunter, Wisdom, Codex
+            Party, Zaishen, TreasureHunter, Wisdom, Codex,
+
+            None = -1
         };
 
         enum class Tick { NOT_READY, READY };
@@ -199,43 +153,9 @@ namespace GW {
             constexpr size_t Normal = 22;
             constexpr size_t Large = 26;
             constexpr size_t Larger = 30;
-        }
-
-        // travel, region, districts
-        namespace Region { // in-game region code
-            constexpr int International = -2;
-            constexpr int America = 0;
-            constexpr int Korea = 1;
-            constexpr int Europe = 2;
-            constexpr int China = 3;
-            constexpr int Japan = 4;
         };
 
-        namespace EuropeLanguage { // in-game language code for the european region
-            constexpr int English = 0;
-            constexpr int French = 2;
-            constexpr int German = 3;
-            constexpr int Italian = 4;
-            constexpr int Spanish = 5;
-            constexpr int Polish = 9;
-            constexpr int Russian = 10;
-        };
 
-        enum class District { // arbitrary enum for game district
-            Current,
-            International,
-            American,
-            EuropeEnglish,
-            EuropeFrench,
-            EuropeGerman,
-            EuropeItalian,
-            EuropeSpanish,
-            EuropePolish,
-            EuropeRussian,
-            AsiaKorean,
-            AsiaChinese,
-            AsiaJapanese,
-        };
 
         namespace Range {
             constexpr float Adjacent = 166.0f;
@@ -254,42 +174,42 @@ namespace GW {
             constexpr float Earshot = Range::Earshot * Range::Earshot;
             constexpr float Spellcast = Range::Spellcast * Range::Spellcast;
             constexpr float Spirit = Range::Spirit * Range::Spirit;
-            constexpr float Compass = Range::Compass * Range::Compass;
+            constexpr float Compass = Range::Compass * Range::Compass;  
         };
 
-        namespace DialogID {
-            constexpr int UwTeleVale = 138;
-            constexpr int UwTelePlanes = 139;
-            constexpr int UwTeleWastes = 140;
-            constexpr int UwTeleLab = 141;
-            constexpr int UwTeleMnt = 142;
-            constexpr int UwTelePits = 143;
-            constexpr int UwTelePools = 144;
+        enum class DialogID {
+            UwTeleVale = 138,
+            UwTelePlanes = 139,
+            UwTeleWastes = 140,
+            UwTeleLab = 141,
+            UwTeleMnt = 142,
+            UwTelePits = 143,
+            UwTelePools = 144,
 
-            constexpr int FowCraftArmor = 127;
+            FowCraftArmor = 127,
 
-            constexpr int FerryKamadanToDocks = 133; // Assistant Hahnna
-            constexpr int FerryDocksToKaineng = 136; // Mhenlo
-            constexpr int FerryDocksToLA = 137;      // Mhenlo
-            constexpr int FerryGateToLA = 133;       // Lionguard Neiro
+            FerryKamadanToDocks = 133, // Assistant Hahnna
+            FerryDocksToKaineng = 136, // Mhenlo
+            FerryDocksToLA = 137,      // Mhenlo
+            FerryGateToLA = 133,       // Lionguard Neiro
 
             // Profession Changer Dialogs.
-            constexpr int ProfChangeWarrior = 0x184;
-            constexpr int ProfChangeRanger = 0x284;
-            constexpr int ProfChangeMonk = 0x384;
-            constexpr int ProfChangeNecro = 0x484;
-            constexpr int ProfChangeMesmer = 0x584;
-            constexpr int ProfChangeEle = 0x684;
-            constexpr int ProfChangeAssassin = 0x784;
-            constexpr int ProfChangeRitualist = 0x884;
-            constexpr int ProfChangeParagon = 0x984;
-            constexpr int ProfChangeDervish = 0xA84;
+            ProfChangeWarrior = 0x184,
+            ProfChangeRanger = 0x284,
+            ProfChangeMonk = 0x384,
+            ProfChangeNecro = 0x484,
+            ProfChangeMesmer = 0x584,
+            ProfChangeEle = 0x684,
+            ProfChangeAssassin = 0x784,
+            ProfChangeRitualist = 0x884,
+            ProfChangeParagon = 0x984,
+            ProfChangeDervish = 0xA84,
 
-            constexpr int FactionMissionOutpost = 0x80000B;
-            constexpr int NightfallMissionOutpost = 0x85;
-        }
+            FactionMissionOutpost = 0x80000B,
+            NightfallMissionOutpost = 0x85,
+        };
 
-        enum class EffectID : uint32_t {
+        enum class EffectID {
             black_cloud = 1,
             mesmer_symbol = 4,
             green_cloud = 7,

@@ -1,4 +1,5 @@
 #pragma once
+#include <GWCA/Constants/Chat.h>
 
 #include <GWCA/GameContainers/Array.h>
 
@@ -38,7 +39,7 @@ namespace GW {
         /* +h016C */ uint32_t h016C[5];
         /* +h0180 */ SubStruct1 *sub_struct;
         /* +h0184 */ uint32_t h0184[19];
-        /* +h01d0 */ uint32_t language_id;
+        /* +h01d0 */ Constants::TextLanguage language_id;
     };
 
 }

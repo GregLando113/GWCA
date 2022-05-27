@@ -1,17 +1,16 @@
 #pragma once
-
-#include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameEntities/Guild.h>
 
 namespace GW {
-    struct Guild;
-    struct GuildPlayer;
-    struct GuildHistoryEvent;
 
     typedef Array<Guild *> GuildArray;
     typedef Array<GuildPlayer *> GuildRoster;
     typedef Array<GuildHistoryEvent *> GuildHistory;
 
     struct GuildContext {
+
+        static GuildContext* instance();
+
         /* +h0000 */ uint32_t h0000;
         /* +h0004 */ uint32_t h0004;
         /* +h0008 */ uint32_t h0008;
@@ -44,5 +43,7 @@ namespace GW {
         /* +h033C */ uint32_t h033C[7];
         /* +h0358 */ GuildRoster player_roster;
         //... end of what i care about
+
+
     };
 }

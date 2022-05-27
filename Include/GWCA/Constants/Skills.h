@@ -1,4 +1,5 @@
 #pragma once
+#include <GWCA/Constants/Types.h>
 
 namespace GW {
     namespace Constants {
@@ -3002,6 +3003,7 @@ namespace GW {
             Heroic_Refrain,
             Count = 0xD69
         };
+        ENUM_CLASS_OPERATORS(SkillID, 0)
 
         enum class SkillType {
             Bounty = 1,

@@ -10,6 +10,8 @@
 
 namespace GW {
     namespace Constants {
+
+
         enum class Campaign { Core, Prophecies, Factions, Nightfall, EyeOfTheNorth, BonusMissionPack };
         enum class Difficulty { Normal, Hard };
 
@@ -314,5 +316,7 @@ namespace GW {
             constexpr float FIRST_PERSON_DIST = 2.f;
             constexpr float DEFAULT_DIST = 750.f;
         }
+
+        constexpr size_t SkillMax = 0x269;
     }
 }

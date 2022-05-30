@@ -44,12 +44,12 @@ namespace GW {
         GWCA_API void UseSkillByID(uint32_t skill_id, uint32_t target = 0, uint32_t call_target = 0);
 
         // Get skill structure of said id, houses pretty much everything you would want to know about the skill.
-        GWCA_API Skill& GetSkillConstantData(uint32_t skill_id);
+        GWCA_API Skill* GetSkillConstantData(uint32_t skill_id);
 
         GWCA_API void ChangeSecondary(uint32_t profession, uint32_t hero_index = 0);
 
         // Get array of skillbars, [0] = player [1-7] = heroes.
-        GWCA_API SkillbarArray GetSkillbarArray();
+        GWCA_API SkillbarArray* GetSkillbarArray();
         GWCA_API Skillbar *GetPlayerSkillbar();
         GWCA_API Skill* GetHoveredSkill();
 

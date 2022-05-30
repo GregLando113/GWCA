@@ -4,6 +4,8 @@
 
 namespace GW {
 
+    typedef uint32_t PlayerNumber;
+
     struct Player;
     typedef Array<Player> PlayerArray;
 
@@ -21,16 +23,18 @@ namespace GW {
 
         GWCA_API void RemoveActiveTitle();
 
-        GWCA_API PlayerArray& GetPlayerArray();
+        GWCA_API uint32_t GetAmountOfPlayersInInstance();
+
+        GWCA_API PlayerArray* GetPlayerArray();
 
         // Get the player number of the currently logged in character
-        GWCA_API uint32_t GetPlayerNumber();
+        GWCA_API PlayerNumber GetPlayerNumber();
 
         GWCA_API Player *GetPlayerByID(uint32_t player_id);
 
         GWCA_API wchar_t *GetPlayerName(uint32_t player_id);
 
-        GWCA_API void SetPlayerName(uint32_t player_id, const wchar_t *replace_name);
+        GWCA_API wchar_t* SetPlayerName(uint32_t player_id, const wchar_t *replace_name);
 
         GWCA_API void ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index = 0);
 

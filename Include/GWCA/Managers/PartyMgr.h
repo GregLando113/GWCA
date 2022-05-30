@@ -30,25 +30,23 @@ namespace GW {
 
         GWCA_API bool GetIsPartyDefeated();
 
-        GWCA_API void SetHardMode(bool flag);
-        GWCA_API bool GetIsPartyInHardMode();
+        GWCA_API void SetIsHardMode(bool flag);
+
+        GWCA_API bool GetIsHardMode();
+
+        GWCA_API bool GetIsHardModeUnlocked();
 
         // check if the whole party is ticked
         GWCA_API bool GetIsPartyTicked();
 
         // check if selected party member is ticked
-        GWCA_API bool GetIsTicked(uint32_t player_index);
-
-        // check if the player is ticked
-        GWCA_API bool GetIsPlayerTicked();
+        GWCA_API bool GetIsTicked(uint32_t player_index = -1);
 
         // check if the whole party is loaded
         GWCA_API bool GetIsPartyLoaded();
 
         // returns if the player agent is leader
-        GWCA_API bool GetPlayerIsLeader();
-
-        GWCA_API void RespondToPartyRequest(bool accept);
+        GWCA_API bool GetIsLeader();
 
         GWCA_API void LeaveParty();
 

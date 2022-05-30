@@ -30,72 +30,70 @@ namespace GW {
         NULL,               // exit_module
         NULL,               // remove_hooks
     };
+    namespace PlayerMgr {
+        void SetActiveTitle(Constants::TitleID title_id) {
+            CtoS::SendPacket(0x8, GAME_CMSG_TITLE_DISPLAY, (uint32_t)title_id);
+        }
 
-    void PlayerMgr::SetActiveTitle(Constants::TitleID title_id) {
-        CtoS::SendPacket(0x8, GAME_CMSG_TITLE_DISPLAY, (uint32_t)title_id);
-    }
+        void RemoveActiveTitle() {
+            CtoS::SendPacket(0x4, GAME_CMSG_TITLE_HIDE);
+        }
+        uint32_t GetAmountOfPlayersInInstance() {
+            auto* w = WorldContext::instance();
+            // -1 because the 1st array element is nil
+            return w && w->players.valid() ? w->players.size() - 1 : 0;
+        }
+        PlayerArray* GetPlayerArray() {
+            auto* w = WorldContext::instance();
+            return w && w->players.valid() ? &w->players : nullptr;
+        }
+        PlayerNumber GetPlayerNumber() {
+            auto* c = CharContext::instance();
+            return c ? c->player_number : 0;
+        }
 
-    void PlayerMgr::RemoveActiveTitle() {
-        CtoS::SendPacket(0x4, GAME_CMSG_TITLE_HIDE);
-    }
+        Player* GetPlayerByID(uint32_t player_id) {
+            auto* players = GetPlayerArray();
+            return players && player_id < players->size() ? &players->at(player_id) : nullptr;
+        }
 
-    PlayerArray& PlayerMgr::GetPlayerArray() {
-        return GameContext::instance()->world->players;
-    }
-    uint32_t PlayerMgr::GetPlayerNumber() {
-        GameContext* g = GameContext::instance();
-        if (!g || !g->character)
+        wchar_t* GetPlayerName(uint32_t player_id) {
+            GW::Player* p = GetPlayerByID(player_id);
+            return p ? p->name : nullptr;
+        }
+
+        wchar_t* SetPlayerName(uint32_t player_id, const wchar_t* replace_name) {
+            GW::Player* p = GetPlayerByID(player_id);
+            return p ? wcsncpy(p->name_enc + 2, replace_name, 20) : nullptr;
+        }
+
+        void ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index) {
+            CtoS::SendPacket(12, GAME_CMSG_CHANGE_SECOND_PROFESSION, Agents::GetHeroAgentID(hero_index), prof);
+        }
+
+        static int wcsncasecmp(const wchar_t* s1, const wchar_t* s2, size_t n)
+        {
+            if (s1 == s2)   return 0;
+            if (s1 == NULL) return -*s2;
+            if (s2 == NULL) return *s1;
+            for (size_t i = 0; i < n; i++) {
+                if (tolower(s1[i]) != tolower(s2[i]) || s1[i] == 0)
+                    return s1[i] - s2[i];
+            }
             return 0;
-        return g->character->player_number;
-    }
-
-    Player *PlayerMgr::GetPlayerByID(uint32_t player_id) {
-		PlayerArray players = GetPlayerArray();
-		if (players.valid() && player_id > 0 && player_id < players.size()) {
-			return &players[player_id];
-		}
-		else {
-			return nullptr;
-		}
-    }
-
-    wchar_t *PlayerMgr::GetPlayerName(uint32_t player_id) {
-		GW::Player* p = GetPlayerByID(player_id);
-        return p ? p->name : nullptr;
-    }
-
-    void PlayerMgr::SetPlayerName(uint32_t player_id, const wchar_t *replace_name) {
-		GW::Player* p = GetPlayerByID(player_id);
-		if (p) {
-			wcsncpy(p->name_enc + 2, replace_name, 20);
-		}
-    }
-
-    void PlayerMgr::ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index) {
-        CtoS::SendPacket(12, GAME_CMSG_CHANGE_SECOND_PROFESSION, Agents::GetHeroAgentID(hero_index), prof);
-    }
-
-    static int wcsncasecmp(const wchar_t *s1, const wchar_t *s2, size_t n)
-    {
-        if (s1 == s2)   return 0;
-        if (s1 == NULL) return -*s2;
-        if (s2 == NULL) return *s1;
-        for (size_t i = 0; i < n; i++) {
-            if (tolower(s1[i]) != tolower(s2[i]) || s1[i] == 0)
-                return s1[i] - s2[i];
         }
-        return 0;
-    }
 
-    Player *PlayerMgr::GetPlayerByName(const wchar_t *name) {
-        if (!name) return NULL;
-        PlayerArray& players = GetPlayerArray();
-        for (Player &player : players) {
-            if (!player.name) continue;
-            if (!wcsncasecmp(name, player.name, 32))
-                return &player;
+        Player* GetPlayerByName(const wchar_t* name) {
+            if (!name) return nullptr;
+            PlayerArray* players = GetPlayerArray();
+            if (!players) return nullptr;
+            for (Player& player : *players) {
+                if (!player.name) continue;
+                if (!wcsncasecmp(name, player.name, 32))
+                    return &player;
+            }
+            return nullptr;
         }
-        return NULL;
     }
 
 } // namespace GW

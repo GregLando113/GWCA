@@ -39,7 +39,7 @@ namespace GW {
         GWCA_API uint32_t GetMouseoverId();
 
         // Returns Agentstruct Array of agents in compass range, full structs.
-        GWCA_API AgentArray GetAgentArray();
+        GWCA_API AgentArray* GetAgentArray();
 
         // Get AgentArray Structures of player or target.
         GWCA_API Agent *GetAgentByID(uint32_t id);
@@ -62,12 +62,12 @@ namespace GW {
 
         // Returns array of alternate agent array that can be read beyond compass range.
         // Holds limited info and needs to be explored more.
-        GWCA_API MapAgentArray GetMapAgentArray();
+        GWCA_API MapAgentArray* GetMapAgentArray();
 
         // === Other Arrays ===
-        GWCA_API PlayerArray GetPlayerArray();
+        GWCA_API PlayerArray* GetPlayerArray();
 
-        GWCA_API NPCArray GetNPCArray();
+        GWCA_API NPCArray* GetNPCArray();
         GWCA_API NPC *GetNPCByID(uint32_t npc_id);
 
         // Change targeted agent to (Agent)
@@ -92,9 +92,6 @@ namespace GW {
         // Call target of specified agent without interacting with the agent.
         GWCA_API void CallTarget(const Agent *agent);
 
-        // Uses size of player array. Needs testing.
-        GWCA_API uint32_t GetAmountOfPlayersInInstance();
-
         // Returns name of player with selected login_number.
         GWCA_API wchar_t *GetPlayerNameByLoginNumber(uint32_t login_number);
 
@@ -104,7 +101,6 @@ namespace GW {
         GWCA_API AgentID GetHeroAgentID(uint32_t hero_index);
 
         // Might be bugged, avoid to use.
-        GWCA_API std::wstring GetAgentName(const Agent *agent);
         GWCA_API wchar_t* GetAgentEncName(const Agent* agent);
         GWCA_API wchar_t* GetAgentEncName(uint32_t agent_id);
 

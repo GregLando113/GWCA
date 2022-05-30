@@ -410,8 +410,8 @@ namespace GW {
         PartyInfo *info = PartyMgr::GetPartyInfo();
         if (!info) return false;
 
-        PlayerArray players = Agents::GetPlayerArray();
-        if (!players.valid()) return false;
+        PlayerArray* players = Agents::GetPlayerArray();
+        if (!players) return false;
 
         AgentLiving *me = Agents::GetPlayerAsAgentLiving();
         if (!me) return false;

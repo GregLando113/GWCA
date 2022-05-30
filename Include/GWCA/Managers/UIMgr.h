@@ -451,7 +451,7 @@ namespace GW {
             short y;
         };
 
-        enum TooltipType : uint32_t {
+        enum class TooltipType : uint32_t {
             None = 0x0,
             EncString1 = 0x4,
             EncString2 = 0x6,
@@ -470,7 +470,7 @@ namespace GW {
             uint32_t unk2;
             UI::TooltipType type() {
                 // Without sniffing into each render function to determine the source, we have to guess based on the arguments passed.
-                switch (unk0) {
+                switch ((UI::TooltipType)unk0) {
                 case UI::TooltipType::Item:
                     // 0x8 also used for attribute tooltips, title tooltips and more
                     if(payload[1] != 0xff) // NB: Item tooltip has 2 item_id values, second is always 0xff

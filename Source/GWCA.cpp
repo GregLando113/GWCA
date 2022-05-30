@@ -19,6 +19,7 @@
 #include <GWCA/Context/PartyContext.h>
 #include <GWCA/Context/CharContext.h>
 #include <GWCA/Context/GuildContext.h>
+#include <GWCA/Context/ItemContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -141,5 +142,9 @@ namespace GW
     GuildContext* GuildContext::instance() {
         auto* g = GameContext::instance();
         return g ? g->guild : nullptr;
+    }
+    ItemContext* ItemContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->items : nullptr;
     }
 } // namespace GW

@@ -339,11 +339,8 @@ namespace GW {
             }
             if (agent->GetIsItemType()) {
                 const AgentItem* ag = agent->GetAsAgentItem();
-                ItemArray items = Items::GetItemArray();
-                if (!items.valid()) return nullptr;
-                Item* item = items[ag->item_id];
-                if (!item || !item->name_enc) return nullptr;
-                return item->name_enc;
+                Item* item = Items::GetItemById(ag->item_id);
+                return item ? item->name_enc : nullptr;
             }
             return nullptr;
         }

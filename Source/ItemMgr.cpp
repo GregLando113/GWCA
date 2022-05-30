@@ -28,6 +28,7 @@
 
 namespace {
     using namespace GW;
+    using namespace Items;
 
     uintptr_t storage_open_addr;
     enum ItemClickType : uint32_t {
@@ -50,7 +51,7 @@ namespace {
     ItemClick_pt RetItemClick;
     ItemClick_pt ItemClick_Func;
 
-    std::unordered_map<HookEntry *, Items::ItemClickCallback> ItemClick_callbacks;
+    std::unordered_map<HookEntry *, ItemClickCallback> ItemClick_callbacks;
     void __fastcall OnItemClick(uint32_t* bag_id, void *edx, ItemClickParam *param) {
         HookBase::EnterHook();
         if (!(bag_id && param)) {
@@ -61,7 +62,7 @@ namespace {
 
         uint32_t slot = param->slot - 2; // for some reason the slot is offset by 2
         GW::HookStatus status;
-        Bag* bag = Items::GetBag(*bag_id + 1);
+        Bag* bag = GetBag(*bag_id + 1);
         if (bag) {
             for (auto& it : ItemClick_callbacks) {
                 it.second(&status, param->type, slot, bag);
@@ -107,165 +108,6 @@ namespace GW {
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };
-
-    void Items::OpenXunlaiWindow() {
-        Packet::StoC::DataWindow pack;
-        pack.agent = 0;
-        pack.type = 0;
-        pack.data = 3;
-        StoC::EmulatePacket(&pack);
-    }
-
-    void Items::PickUpItem(const Item *item, uint32_t CallTarget /*= 0*/) {
-        CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_ITEM, item->agent_id, CallTarget);
-    }
-
-    void Items::DropItem(const Item *item, uint32_t quantity) {
-        CtoS::SendPacket(0xC, GAME_CMSG_DROP_ITEM, item->item_id, quantity);
-    }
-
-    void Items::EquipItem(const Item *item) {
-        CtoS::SendPacket(0x8, GAME_CMSG_EQUIP_ITEM, item->item_id);
-    }
-
-    void Items::UseItem(const Item *item) {
-        CtoS::SendPacket(0x8, GAME_CMSG_ITEM_USE, item->item_id);
-    }
-
-    Bag **Items::GetBagArray() {
-        return GameContext::instance()->items->inventory->bags;
-    }
-
-    Bag *Items::GetBag(Constants::Bag bag_id) {
-        Bag **bags = GetBagArray();
-        if (!bags) return nullptr;
-        return bags[(unsigned)bag_id];
-    }
-
-    Bag *Items::GetBag(uint32_t bag_id) {
-        if (bag_id >= Constants::BagMax)
-            return nullptr;
-        Bag **bags = GetBagArray();
-        if (!bags) return nullptr;
-        return bags[bag_id];
-    }
-
-    Item *Items::GetItemBySlot(const Bag *bag, uint32_t slot) {
-        if (!bag || slot == 0) return nullptr;
-        if (!bag->items.valid()) return nullptr;
-        if (slot > bag->items.size()) return nullptr;
-        return bag->items[slot - 1];
-    }
-
-    Item *Items::GetItemBySlot(Constants::Bag bag, uint32_t slot) {
-        Bag *bag_ptr = GetBag(bag);
-        return GetItemBySlot(bag_ptr, slot);
-    }
-
-    Item* Items::GetHoveredItem() {
-        UI::TooltipInfo* tooltip = UI::GetCurrentTooltip();
-        if (!(tooltip && (tooltip->type() == UI::TooltipType::Item || tooltip->type() == UI::TooltipType::WeaponSet)))
-            return nullptr;
-        return GetItemById(*(uint32_t*)tooltip->payload);
-    }
-
-    Item *Items::GetItemBySlot(uint32_t bag, uint32_t slot) {
-        if (Constants::BagMax <= bag) return nullptr;
-        return GetItemBySlot((Constants::Bag)bag, slot);
-    }
-
-    Item* Items::GetItemById(uint32_t item_id) {
-        if (!item_id) return nullptr;
-        GW::ItemArray items = GW::Items::GetItemArray();
-        if (!items.valid()) return nullptr;
-        if (item_id >= items.size()) return nullptr;
-        return items[item_id];
-    }
-
-    ItemArray Items::GetItemArray() {
-        return GameContext::instance()->items->item_array;
-    }
-
-    void Items::DropGold(uint32_t Amount /*= 1*/) {
-        CtoS::SendPacket(0x8, GAME_CMSG_DROP_GOLD, Amount);
-    }
-
-    uint32_t Items::GetGoldAmountOnCharacter() {
-        return GameContext::instance()->items->inventory->gold_character;
-    }
-
-    uint32_t Items::GetGoldAmountInStorage() {
-        return GameContext::instance()->items->inventory->gold_storage;
-    }
-
-    static void ChangeGold(uint32_t character_gold, uint32_t storage_gold) {
-        CtoS::SendPacket(0xC, GAME_CMSG_ITEM_CHANGE_GOLD, character_gold, storage_gold);
-    }
-
-    uint32_t Items::DepositGold(uint32_t amount) {
-        uint32_t gold_storage = GetGoldAmountInStorage();
-        uint32_t gold_character = GetGoldAmountOnCharacter();
-        uint32_t will_move = 0;
-        if (amount == 0) {
-            will_move = std::min(1000000 - gold_storage, gold_character);
-        } else {
-            if (gold_storage + amount > 1000000)
-                return 0;
-            if (amount > gold_character)
-                return 0;
-            will_move = amount;
-        }
-        gold_storage += will_move;
-        gold_character -= will_move;
-        ChangeGold(gold_character, gold_storage);
-        return will_move;
-    }
-
-    uint32_t Items::WithdrawGold(uint32_t amount) {
-        uint32_t gold_storage = GetGoldAmountInStorage();
-        uint32_t gold_character = GetGoldAmountOnCharacter();
-        uint32_t will_move = 0;
-        if (amount == 0) {
-            will_move = std::min(gold_storage, 100000 - gold_character);
-        } else {
-            if (gold_character + amount > 100000)
-                return 0;
-            if (amount > gold_storage)
-                return 0;
-            will_move = amount;
-        }
-        gold_storage -= will_move;
-        gold_character += will_move;
-        ChangeGold(gold_character, gold_storage);
-        return will_move;
-    }
-
-    void Items::OpenLockedChest() {
-        CtoS::SendPacket(0x8, GAME_CMSG_OPEN_CHEST, 0x2);
-    }
-
-    void Items::MoveItem(const Item * from, const Bag *bag, uint32_t slot, uint32_t quantity) {
-        if (!from || !bag) return;
-        if (bag->items.size() < (unsigned)slot) return;
-        if (quantity <= 0) quantity = from->quantity;
-        if (quantity > from->quantity) quantity = from->quantity;
-        if (quantity == from->quantity)
-            CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, from->item_id, bag->bag_id, slot);
-        else
-            CtoS::SendPacket(0x14, GAME_CMSG_ITEM_SPLIT_STACK, from->item_id, quantity, bag->bag_id, slot);
-    }
-
-    void Items::MoveItem(const Item *item, Constants::Bag bag_id, uint32_t slot, uint32_t quantity)
-    {
-        MoveItem(item, GetBag(bag_id), slot, quantity);
-    }
-
-    void Items::MoveItem(const Item *from, const Item *to, uint32_t quantity) {
-        if (!from || !to) return;
-        if (!from->bag || !to->bag) return;
-        MoveItem(from, to->bag, to->slot, quantity);
-    }
-
     bool Item::GetIsZcoin() const {
         if (model_file_id == 31202) return true; // Copper
         if (model_file_id == 31203) return true; // Gold
@@ -280,186 +122,353 @@ namespace GW {
         }
         return false;
     }
+    namespace Items {
 
-    int Items::GetMaterialSlot(uint32_t model_id) {
-        switch (model_id) {
-        case 921: return Constants::Bone;
-        case 948: return Constants::IronIngot;
-        case 940: return Constants::TannedHideSquare;
-        case 953: return Constants::Scale;
-        case 954: return Constants::ChitinFragment;
-        case 925: return Constants::BoltofCloth;
-        case 946: return Constants::WoodPlank;
-        case 955: return Constants::GraniteSlab;
-        case 929: return Constants::PileofGlitteringDust;
-        case 934: return Constants::PlantFiber;
-        case 933: return Constants::Feather;
-        // rare
-        case 941: return Constants::FurSquare;
-        case 926: return Constants::BoltofLinen;
-        case 927: return Constants::BoltofDamask;
-        case 928: return Constants::BoltofSilk;
-        case 930: return Constants::GlobofEctoplasm;
-        case 949: return Constants::SteelIngot;
-        case 950: return Constants::DeldrimorSteelIngot;
-        case 923: return Constants::MonstrousClaw;
-        case 931: return Constants::MonstrousEye;
-        case 932: return Constants::MonstrousFang;
-        case 937: return Constants::Ruby;
-        case 938: return Constants::Sapphire;
-        case 935: return Constants::Diamond;
-        case 936: return Constants::OnyxGemstone;
-        case 922: return Constants::LumpofCharcoal;
-        case 945: return Constants::ObsidianShard;
-        case 939: return Constants::TemperedGlassVial;
-        case 942: return Constants::LeatherSquare;
-        case 943: return Constants::ElonianLeatherSquare;
-        case 944: return Constants::VialofInk;
-        case 951: return Constants::RollofParchment;
-        case 952: return Constants::RollofVellum;
-        case 956: return Constants::SpiritwoodPlank;
-        case 6532: return Constants::AmberChunk;
-        case 6533: return Constants::JadeiteShard;
-        };
-        return -1;
-    }
+        void OpenXunlaiWindow() {
+            Packet::StoC::DataWindow pack;
+            pack.agent = 0;
+            pack.type = 0;
+            pack.data = 3;
+            StoC::EmulatePacket(&pack);
+        }
 
-    int Items::GetMaterialSlot(const Item *item) {
-        if (!item) return -1;
-        if (!item->GetIsMaterial()) return -1;
-        return GetMaterialSlot(item->model_id);
-    }
+        void PickUpItem(const Item* item, uint32_t CallTarget /*= 0*/) {
+            CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_ITEM, item->agent_id, CallTarget);
+        }
 
-    bool Items::UseItemByModelId(uint32_t modelid, int bagStart, int bagEnd) {
-        Bag **bags = GetBagArray();
-        if (bags == NULL) return false;
+        void DropItem(const Item* item, uint32_t quantity) {
+            CtoS::SendPacket(0xC, GAME_CMSG_DROP_ITEM, item->item_id, quantity);
+        }
 
-        Bag *bag = NULL;
-        Item *item = NULL;
+        void EquipItem(const Item* item) {
+            CtoS::SendPacket(0x8, GAME_CMSG_EQUIP_ITEM, item->item_id);
+        }
 
-        for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
-            bag = bags[bagIndex];
-            if (bag != NULL) {
-                ItemArray items = bag->items;
-                if (!items.valid()) return false;
-                for (size_t i = 0; i < items.size(); i++) {
-                    item = items[i];
-                    if (item != NULL) {
-                        if (item->model_id == modelid) {
-                            UseItem(item);
-                            return true;
+        void UseItem(const Item* item) {
+            CtoS::SendPacket(0x8, GAME_CMSG_ITEM_USE, item->item_id);
+        }
+
+        Bag** GetBagArray() {
+            return GameContext::instance()->items->inventory->bags;
+        }
+
+        Bag* GetBag(Constants::Bag bag_id) {
+            Bag** bags = GetBagArray();
+            if (!bags) return nullptr;
+            return bags[(unsigned)bag_id];
+        }
+
+        Bag* GetBag(uint32_t bag_id) {
+            if (bag_id >= Constants::BagMax)
+                return nullptr;
+            Bag** bags = GetBagArray();
+            if (!bags) return nullptr;
+            return bags[bag_id];
+        }
+
+        Item* GetItemBySlot(const Bag* bag, uint32_t slot) {
+            if (!bag || slot == 0) return nullptr;
+            if (!bag->items.valid()) return nullptr;
+            if (slot > bag->items.size()) return nullptr;
+            return bag->items[slot - 1];
+        }
+
+        Item* GetItemBySlot(Constants::Bag bag, uint32_t slot) {
+            Bag* bag_ptr = GetBag(bag);
+            return GetItemBySlot(bag_ptr, slot);
+        }
+
+        Item* GetHoveredItem() {
+            UI::TooltipInfo* tooltip = UI::GetCurrentTooltip();
+            if (!(tooltip && (tooltip->type() == UI::TooltipType::Item || tooltip->type() == UI::TooltipType::WeaponSet)))
+                return nullptr;
+            return GetItemById(*(uint32_t*)tooltip->payload);
+        }
+
+        Item* GetItemBySlot(uint32_t bag, uint32_t slot) {
+            if (Constants::BagMax <= bag) return nullptr;
+            return GetItemBySlot((Constants::Bag)bag, slot);
+        }
+
+        Item* GetItemById(uint32_t item_id) {
+            GW::ItemArray* items = item_id ? GetItemArray() : nullptr;
+            return items && item_id < items->size() ? items->at(item_id) : nullptr;
+        }
+
+        ItemArray* GetItemArray() {
+            auto* i = ItemContext::instance();
+            return i && i->item_array.valid() ? &i->item_array : nullptr;
+        }
+        Inventory* GetInventory() {
+            auto* i = ItemContext::instance();
+            return i ? i->inventory : nullptr;
+        }
+
+        void DropGold(uint32_t Amount /*= 1*/) {
+            CtoS::SendPacket(0x8, GAME_CMSG_DROP_GOLD, Amount);
+        }
+
+        uint32_t GetGoldAmountOnCharacter() {
+            auto* i = GetInventory();
+            return i ? i->gold_character : 0;
+        }
+
+        uint32_t GetGoldAmountInStorage() {
+            auto* i = GetInventory();
+            return i ? i->gold_storage : 0;
+        }
+
+        static void ChangeGold(uint32_t character_gold, uint32_t storage_gold) {
+            CtoS::SendPacket(0xC, GAME_CMSG_ITEM_CHANGE_GOLD, character_gold, storage_gold);
+        }
+
+        uint32_t DepositGold(uint32_t amount) {
+            uint32_t gold_storage = GetGoldAmountInStorage();
+            uint32_t gold_character = GetGoldAmountOnCharacter();
+            uint32_t will_move = 0;
+            if (amount == 0) {
+                will_move = std::min(1000000 - gold_storage, gold_character);
+            }
+            else {
+                if (gold_storage + amount > 1000000)
+                    return 0;
+                if (amount > gold_character)
+                    return 0;
+                will_move = amount;
+            }
+            gold_storage += will_move;
+            gold_character -= will_move;
+            ChangeGold(gold_character, gold_storage);
+            return will_move;
+        }
+
+        uint32_t WithdrawGold(uint32_t amount) {
+            uint32_t gold_storage = GetGoldAmountInStorage();
+            uint32_t gold_character = GetGoldAmountOnCharacter();
+            uint32_t will_move = 0;
+            if (amount == 0) {
+                will_move = std::min(gold_storage, 100000 - gold_character);
+            }
+            else {
+                if (gold_character + amount > 100000)
+                    return 0;
+                if (amount > gold_storage)
+                    return 0;
+                will_move = amount;
+            }
+            gold_storage -= will_move;
+            gold_character += will_move;
+            ChangeGold(gold_character, gold_storage);
+            return will_move;
+        }
+
+        void OpenLockedChest() {
+            CtoS::SendPacket(0x8, GAME_CMSG_OPEN_CHEST, 0x2);
+        }
+
+        void MoveItem(const Item* from, const Bag* bag, uint32_t slot, uint32_t quantity) {
+            if (!from || !bag) return;
+            if (bag->items.size() < (unsigned)slot) return;
+            if (quantity <= 0) quantity = from->quantity;
+            if (quantity > from->quantity) quantity = from->quantity;
+            if (quantity == from->quantity)
+                CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, from->item_id, bag->bag_id, slot);
+            else
+                CtoS::SendPacket(0x14, GAME_CMSG_ITEM_SPLIT_STACK, from->item_id, quantity, bag->bag_id, slot);
+        }
+
+        void MoveItem(const Item* item, Constants::Bag bag_id, uint32_t slot, uint32_t quantity)
+        {
+            MoveItem(item, GetBag(bag_id), slot, quantity);
+        }
+
+        void MoveItem(const Item* from, const Item* to, uint32_t quantity) {
+            if (!from || !to) return;
+            if (!from->bag || !to->bag) return;
+            MoveItem(from, to->bag, to->slot, quantity);
+        }
+
+
+        int GetMaterialSlot(uint32_t model_id) {
+            switch (model_id) {
+            case 921: return Constants::Bone;
+            case 948: return Constants::IronIngot;
+            case 940: return Constants::TannedHideSquare;
+            case 953: return Constants::Scale;
+            case 954: return Constants::ChitinFragment;
+            case 925: return Constants::BoltofCloth;
+            case 946: return Constants::WoodPlank;
+            case 955: return Constants::GraniteSlab;
+            case 929: return Constants::PileofGlitteringDust;
+            case 934: return Constants::PlantFiber;
+            case 933: return Constants::Feather;
+                // rare
+            case 941: return Constants::FurSquare;
+            case 926: return Constants::BoltofLinen;
+            case 927: return Constants::BoltofDamask;
+            case 928: return Constants::BoltofSilk;
+            case 930: return Constants::GlobofEctoplasm;
+            case 949: return Constants::SteelIngot;
+            case 950: return Constants::DeldrimorSteelIngot;
+            case 923: return Constants::MonstrousClaw;
+            case 931: return Constants::MonstrousEye;
+            case 932: return Constants::MonstrousFang;
+            case 937: return Constants::Ruby;
+            case 938: return Constants::Sapphire;
+            case 935: return Constants::Diamond;
+            case 936: return Constants::OnyxGemstone;
+            case 922: return Constants::LumpofCharcoal;
+            case 945: return Constants::ObsidianShard;
+            case 939: return Constants::TemperedGlassVial;
+            case 942: return Constants::LeatherSquare;
+            case 943: return Constants::ElonianLeatherSquare;
+            case 944: return Constants::VialofInk;
+            case 951: return Constants::RollofParchment;
+            case 952: return Constants::RollofVellum;
+            case 956: return Constants::SpiritwoodPlank;
+            case 6532: return Constants::AmberChunk;
+            case 6533: return Constants::JadeiteShard;
+            };
+            return -1;
+        }
+
+        int GetMaterialSlot(const Item* item) {
+            if (!item) return -1;
+            if (!item->GetIsMaterial()) return -1;
+            return GetMaterialSlot(item->model_id);
+        }
+
+        bool UseItemByModelId(uint32_t modelid, int bagStart, int bagEnd) {
+            Bag** bags = GetBagArray();
+            if (bags == NULL) return false;
+
+            Bag* bag = NULL;
+            Item* item = NULL;
+
+            for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
+                bag = bags[bagIndex];
+                if (bag != NULL) {
+                    ItemArray& items = bag->items;
+                    if (!items.valid()) return false;
+                    for (size_t i = 0; i < items.size(); i++) {
+                        item = items[i];
+                        if (item != NULL) {
+                            if (item->model_id == modelid) {
+                                UseItem(item);
+                                return true;
+                            }
                         }
                     }
                 }
             }
-        }
 
-        return false;
-    }
-
-    uint32_t Items::CountItemByModelId(uint32_t modelid, int bagStart, int bagEnd) {
-        uint32_t itemcount = 0;
-        Bag **bags = GetBagArray();
-        Bag  *bag = NULL;
-
-        for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
-            bag = bags[bagIndex];
-            if (bag != NULL) {
-                ItemArray items = bag->items;
-                for (size_t i = 0; i < items.size(); i++) {
-                    if (items[i]) {
-                        if (items[i]->model_id == modelid) {
-                            itemcount += items[i]->quantity;
-                        }
-                    }
-                }
-            }
-        }
-
-        return itemcount;
-    }
-
-    Item* Items::GetItemByModelId(uint32_t modelid, int bagStart, int bagEnd) {
-        Bag **bags = GetBagArray();
-        Bag  *bag = NULL;
-
-        for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
-            bag = bags[bagIndex];
-            if (bag != NULL) {
-                ItemArray items = bag->items;
-                for (size_t i = 0; i < items.size(); i++) {
-                    if (items[i]) {
-                        if (items[i]->model_id == modelid) {
-                            return items[i];
-                        }
-                    }
-                }
-            }
-        }
-
-        return NULL;
-    }
-
-    uint32_t Items::GetStoragePage(void) {
-        return UI::GetPreference(UI::Preference::Preference_StorageBagPage);
-    }
-
-    bool Items::GetIsStorageOpen(void) {
-        if (Verify(storage_open_addr))
-            return *(uint32_t*)storage_open_addr != 0;
-        else
             return false;
-    }
+        }
 
-    void Items::RegisterItemClickCallback(
-        HookEntry *entry,
-        ItemClickCallback callback)
-    {
-        ItemClick_callbacks.insert({entry, callback});
-    }
+        uint32_t CountItemByModelId(uint32_t modelid, int bagStart, int bagEnd) {
+            uint32_t itemcount = 0;
+            Bag** bags = GetBagArray();
+            Bag* bag = NULL;
 
-    void Items::RemoveItemClickCallback(
-        HookEntry *entry)
-    {
-        auto it = ItemClick_callbacks.find(entry);
-        if (it != ItemClick_callbacks.end())
-            ItemClick_callbacks.erase(it);
-    }
+            for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
+                bag = bags[bagIndex];
+                if (bag != NULL) {
+                    ItemArray& items = bag->items;
+                    for (size_t i = 0; i < items.size(); i++) {
+                        if (items[i]) {
+                            if (items[i]->model_id == modelid) {
+                                itemcount += items[i]->quantity;
+                            }
+                        }
+                    }
+                }
+            }
 
-    void Items::AsyncGetItemByName(const Item *item, std::wstring& res) {
-        if (!item) return;
-        if (!item || !item->complete_name_enc) return;
-        wchar_t *str = item->complete_name_enc;
-        UI::AsyncDecodeStr(str, &res);
-    }
+            return itemcount;
+        }
 
-    Constants::EquipmentStatus Items::GetCapeStatus() {
-        return (Constants::EquipmentStatus)(GW::GameContext::instance()->world->equipment_status & 0x3);
-    }
-    void Items::SetCapeStatus(Constants::EquipmentStatus s) {
-        if (GetCapeStatus() != s)
-            GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s, 0x3);
-    }
-    Constants::EquipmentStatus Items::GetHelmStatus() {
-        return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0xC) >> 2);
-    }
-    void Items::SetHelmStatus(Constants::EquipmentStatus s) {
-        if (GetHelmStatus() != s)
-            GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 2, 0xC);
-    }
-    Constants::EquipmentStatus Items::GetCostumeBodyStatus() {
-        return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0x30) >> 4);
-    }
-    void Items::SetCostumeBodyStatus(Constants::EquipmentStatus s) {
-        if (GetCostumeBodyStatus() != s)
-            GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 4, 0x30);
-    }
-    Constants::EquipmentStatus Items::GetCostumeHeadpieceStatus() {
-        return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0xC0) >> 6);
-    }
-    void Items::SetCostumeHeadpieceStatus(Constants::EquipmentStatus s) {
-        if (GetCostumeHeadpieceStatus() != s)
-            GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 6, 0xC0);
+        Item* GetItemByModelId(uint32_t modelid, int bagStart, int bagEnd) {
+            Bag** bags = GetBagArray();
+            Bag* bag = NULL;
+
+            for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
+                bag = bags[bagIndex];
+                if (bag != NULL) {
+                    ItemArray& items = bag->items;
+                    for (size_t i = 0; i < items.size(); i++) {
+                        if (items[i]) {
+                            if (items[i]->model_id == modelid) {
+                                return items[i];
+                            }
+                        }
+                    }
+                }
+            }
+
+            return NULL;
+        }
+
+        uint32_t GetStoragePage(void) {
+            return UI::GetPreference(UI::Preference::Preference_StorageBagPage);
+        }
+
+        bool GetIsStorageOpen(void) {
+            if (Verify(storage_open_addr))
+                return *(uint32_t*)storage_open_addr != 0;
+            else
+                return false;
+        }
+
+        void RegisterItemClickCallback(
+            HookEntry* entry,
+            ItemClickCallback callback)
+        {
+            ItemClick_callbacks.insert({ entry, callback });
+        }
+
+        void RemoveItemClickCallback(
+            HookEntry* entry)
+        {
+            auto it = ItemClick_callbacks.find(entry);
+            if (it != ItemClick_callbacks.end())
+                ItemClick_callbacks.erase(it);
+        }
+
+        void AsyncGetItemByName(const Item* item, std::wstring& res) {
+            if (!item) return;
+            if (!item || !item->complete_name_enc) return;
+            wchar_t* str = item->complete_name_enc;
+            UI::AsyncDecodeStr(str, &res);
+        }
+
+        Constants::EquipmentStatus GetCapeStatus() {
+            return (Constants::EquipmentStatus)(GW::GameContext::instance()->world->equipment_status & 0x3);
+        }
+        void SetCapeStatus(Constants::EquipmentStatus s) {
+            if (GetCapeStatus() != s)
+                GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s, 0x3);
+        }
+        Constants::EquipmentStatus GetHelmStatus() {
+            return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0xC) >> 2);
+        }
+        void SetHelmStatus(Constants::EquipmentStatus s) {
+            if (GetHelmStatus() != s)
+                GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 2, 0xC);
+        }
+        Constants::EquipmentStatus GetCostumeBodyStatus() {
+            return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0x30) >> 4);
+        }
+        void SetCostumeBodyStatus(Constants::EquipmentStatus s) {
+            if (GetCostumeBodyStatus() != s)
+                GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 4, 0x30);
+        }
+        Constants::EquipmentStatus GetCostumeHeadpieceStatus() {
+            return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0xC0) >> 6);
+        }
+        void SetCostumeHeadpieceStatus(Constants::EquipmentStatus s) {
+            if (GetCostumeHeadpieceStatus() != s)
+                GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 6, 0xC0);
+        }
     }
 
 } // namespace GW

@@ -21,7 +21,9 @@ namespace GW {
 
     namespace Items {
         // Get full array of items sorted by ItemID.
-        GWCA_API ItemArray GetItemArray();
+        GWCA_API ItemArray* GetItemArray();
+
+        GWCA_API Inventory* GetInventory();
 
         // Get bag array [1-4] = inventory bags, [5]=Equip pack, [6]=Materials storage,
         // [7] = Unclaimed items, [8-16] = storage, [17] = Equipped

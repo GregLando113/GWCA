@@ -60,10 +60,10 @@ namespace GW {
 
         // Returns array of icons (res shrines, quarries, traders, etc) on mission map.
         // Look at MissionMapIcon struct for more info.
-        GWCA_API MissionMapIconArray GetMissionMapIconArray();
+        GWCA_API MissionMapIconArray* GetMissionMapIconArray();
 
         // Returns pointer of collision trapezoid array.
-        GWCA_API PathingMapArray GetPathingMap();
+        GWCA_API PathingMapArray* GetPathingMap();
 
         GWCA_API uint32_t GetFoesKilled();
         GWCA_API uint32_t GetFoesToKill();

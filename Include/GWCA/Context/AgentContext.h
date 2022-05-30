@@ -22,6 +22,9 @@ namespace GW {
     };
 
     struct AgentContext {
+
+        static AgentContext* instance();
+
         /* +h0000 */ Array<void *> h0000;
         /* +h0010 */ uint32_t h0010[5];
         /* +h0024 */ uint32_t h0024; // function

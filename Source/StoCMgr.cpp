@@ -44,7 +44,7 @@ namespace {
         } *gs_codec;
     };
 
-    StoCHandlerArray game_server_handlers;
+    StoCHandlerArray* game_server_handlers;
     StoCHandler *original_functions = nullptr;
 
     // Callbacks are triggered by weighting
@@ -95,23 +95,23 @@ namespace {
             if (Verify(address)) {
                 StoCHandler_Addr = *(uintptr_t*)address;
                 GameServer** addr = reinterpret_cast<GameServer**>(StoCHandler_Addr);
-                game_server_handlers = (*addr)->gs_codec->handlers;
+                game_server_handlers = &(*addr)->gs_codec->handlers;
             }
         }
 
-        original_functions = new StoCHandler[game_server_handlers.size()];
-        packet_entries.resize(game_server_handlers.size());
+        original_functions = new StoCHandler[game_server_handlers->size()];
+        packet_entries.resize(game_server_handlers->size());
     }
 
     void EnableHooks() {
-        for (uint32_t i = 0; i < game_server_handlers.size(); ++i)
-            original_functions[i] = game_server_handlers[i];
+        for (uint32_t i = 0; i < game_server_handlers->size(); ++i)
+            original_functions[i] = game_server_handlers->at(i);
     }
 
     void DisableHooks() {
         if (original_functions == nullptr) return;
-        for (uint32_t i = 0; i < game_server_handlers.size(); ++i)
-            game_server_handlers[i].handler_func = original_functions[i].handler_func;
+        for (uint32_t i = 0; i < game_server_handlers->size(); ++i)
+            game_server_handlers->at(i).handler_func = original_functions[i].handler_func;
         delete[] original_functions;
     }
 
@@ -143,7 +143,7 @@ namespace GW {
             it++;
         }
         packet_entries[header].insert(it, { altitude,entry,callback });
-        game_server_handlers[header].handler_func = StoCHandler_Func;
+        game_server_handlers->at(header).handler_func = StoCHandler_Func;
     }
 
     GWCA_API void StoC::RegisterPostPacketCallback(HookEntry* entry, uint32_t header, PacketCallback callback)

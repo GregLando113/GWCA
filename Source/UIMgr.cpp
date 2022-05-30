@@ -640,12 +640,8 @@ namespace GW {
             LoadSettings_Func(size, data);
     }
 
-    UI::ArrayByte UI::GetSettings() {
-        ArrayByte *GameSettings = (ArrayByte *)GameSettings_Addr;
-        if (Verify(GameSettings))
-            return *GameSettings;
-        else
-            return ArrayByte();
+    UI::ArrayByte* UI::GetSettings() {
+        return (UI::ArrayByte *)GameSettings_Addr;
     }
 
     bool UI::GetIsUIDrawn() {

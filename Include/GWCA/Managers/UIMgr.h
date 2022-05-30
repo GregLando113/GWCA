@@ -497,7 +497,7 @@ namespace GW {
 
         // Call from GameThread to be safe
         GWCA_API void LoadSettings(size_t size, uint8_t *data);
-        GWCA_API ArrayByte GetSettings();
+        GWCA_API ArrayByte* GetSettings();
 
         GWCA_API bool GetIsUIDrawn();
         GWCA_API bool GetIsShiftScreenShot();

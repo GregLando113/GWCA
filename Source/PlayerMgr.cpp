@@ -7,6 +7,7 @@
 
 #include <GWCA/GameContainers/GamePos.h>
 
+#include <GWCA/GameEntities/Quest.h>
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Player.h>
 
@@ -38,10 +39,33 @@ namespace GW {
         void RemoveActiveTitle() {
             CtoS::SendPacket(0x4, GAME_CMSG_TITLE_HIDE);
         }
-        uint32_t GetAmountOfPlayersInInstance() {
+
+        uint32_t GetPlayerAgentId(uint32_t player_id) {
+            auto* player = GetPlayerByID(player_id);
+            return player ? player->agent_id : 0;
+        }
+
+        Quest* GetActiveQuest() {
+            uint32_t quest_id = GetActiveQuestId();
+            auto* log = quest_id ? GetQuestLog() : nullptr;
+            if (!log) return nullptr;
+            for (auto& quest : *log) {
+                if (quest.quest_id == quest_id)
+                    return &quest;
+            }
+            return nullptr;
+        }
+        QuestLog* GetQuestLog() {
             auto* w = WorldContext::instance();
-            // -1 because the 1st array element is nil
-            return w && w->players.valid() ? w->players.size() - 1 : 0;
+            return w && w->quest_log.valid() ? &w->quest_log : nullptr;
+        }
+        uint32_t GetActiveQuestId() {
+            auto* w = WorldContext::instance();
+            return w ? w->active_quest_id : 0;
+        }
+
+        uint32_t GetAmountOfPlayersInInstance() {
+            return Agents::GetAmountOfPlayersInInstance();
         }
         PlayerArray* GetPlayerArray() {
             auto* w = WorldContext::instance();

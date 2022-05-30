@@ -7,6 +7,8 @@ namespace GW {
     typedef uint32_t PlayerNumber;
 
     struct Player;
+    struct Quest;
+    typedef Array<Quest> QuestLog;
     typedef Array<Player> PlayerArray;
 
     namespace Constants {
@@ -22,6 +24,8 @@ namespace GW {
         GWCA_API void SetActiveTitle(Constants::TitleID title_id);
 
         GWCA_API void RemoveActiveTitle();
+
+        GWCA_API uint32_t GetPlayerAgentId(uint32_t player_id);
 
         GWCA_API uint32_t GetAmountOfPlayersInInstance();
 
@@ -39,5 +43,11 @@ namespace GW {
         GWCA_API void ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index = 0);
 
         GWCA_API Player *GetPlayerByName(const wchar_t *name);
+
+        GWCA_API QuestLog* GetQuestLog();
+
+        GWCA_API uint32_t GetActiveQuestId();
+
+        GWCA_API Quest* GetActiveQuest();
     };
 }

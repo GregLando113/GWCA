@@ -28,13 +28,16 @@ namespace GW {
         // Have fun with this ;))))))))))
         GWCA_API void GetDrunkAf(uint32_t intensity, uint32_t tint);
 
-        // Get full array of effects and buffs for player and heroes.
-        GWCA_API AgentEffectsArray* GetPartyEffectArray();
+        // Get full array of effects and buffs for whole party.
+        GWCA_API AgentEffectsArray* GetPartyEffectsArray();
 
-        // Get full array of effects and buffs for player and heroes.
+        // Get full array of effects and buffs for agent.
         GWCA_API AgentEffects* GetAgentEffectsArray(uint32_t agent_id);
 
-        // Get array of effects on the player.
+        // Get full array of effects and buffs for player
+        GWCA_API AgentEffects* GetPlayerEffectsArray();
+
+        // Get array of effects on the agent.
         GWCA_API EffectArray* GetAgentEffects(uint32_t agent_id);
 
         // Get array of buffs on the player.
@@ -48,9 +51,6 @@ namespace GW {
 
         // Drop buffid buff.
         GWCA_API void DropBuff(uint32_t buff_id);
-
-        // Get array of effects on the agent.
-        GWCA_API EffectArray* GetAgentEffects(uint32_t agent_id);
 
         // Gets effect struct of effect on player with SkillID, returns Effect::Nil() if no match.
         GWCA_API Effect * GetPlayerEffectBySkillId(Constants::SkillID skill_id);

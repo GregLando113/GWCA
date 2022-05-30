@@ -101,18 +101,21 @@ namespace GW {
             }
             return nullptr;
         }
-        AgentEffectsArray* GetPartyEffectArray() {
+        AgentEffectsArray* GetPartyEffectsArray() {
             auto* w = WorldContext::instance();
             return w && w->party_effects.valid() ? &w->party_effects : nullptr;
         }
         AgentEffects* GetAgentEffectsArray(uint32_t agent_id) {
-            AgentEffectsArray* agent_effects = GetPartyEffectArray();
+            AgentEffectsArray* agent_effects = GetPartyEffectsArray();
             if (!agent_effects) return nullptr;
             for (auto& agent_effect : *agent_effects) {
                 if (agent_effect.agent_id == agent_id)
                     return &agent_effect;
             }
             return nullptr;
+        }
+        AgentEffects* GetPlayerEffectsArray() {
+            return GetAgentEffectsArray(Agents::GetPlayerId());
         }
         EffectArray* GetAgentEffects(uint32_t agent_id) {
             auto* e = GetAgentEffectsArray(agent_id);

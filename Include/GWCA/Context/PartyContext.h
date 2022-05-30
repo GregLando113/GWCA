@@ -8,6 +8,9 @@ namespace GW {
     struct PartySearch;
 
     struct PartyContext { // total: 0x58/88
+
+        static PartyContext* instance();
+
         /* +h0000 */ uint32_t h0000;
         /* +h0004 */ Array<void *> h0004;
         /* +h0014 */ uint32_t flag;

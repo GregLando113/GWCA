@@ -16,6 +16,9 @@ namespace GW {
     };
 
     struct CharContext { // total: 0x42C
+
+        static CharContext* instance();
+
         /* +h0000 */ Array<void *> h0000;
         /* +h0010 */ uint32_t h0010;
         /* +h0014 */ Array<void *> h0014;

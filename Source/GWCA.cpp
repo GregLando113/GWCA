@@ -13,8 +13,11 @@
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
-#include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PreGameContext.h>
+#include <GWCA/Context/GameContext.h>
+#include <GWCA/Context/WorldContext.h>
+#include <GWCA/Context/PartyContext.h>
+#include <GWCA/Context/CharContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -116,13 +119,22 @@ namespace GW
 
         HookBase::Deinitialize();
     }
-
-    GameContext* GameContext::instance()
-    {
-        return *(GameContext**)((*(uint8_t **)base_ptr) + 0x18);
+    GameContext* GameContext::instance() {
+        return *(GameContext**)((*(uint8_t**)base_ptr) + 0x18);
     }
-    PreGameContext* PreGameContext::instance()
-    {
+    PreGameContext* PreGameContext::instance() {
         return *(PreGameContext**)PreGameContext_addr;
+    }
+    WorldContext* WorldContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->world : nullptr;
+    }
+    PartyContext* PartyContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->party : nullptr;
+    }
+    CharContext* CharContext::instance() {
+        auto* g = GameContext::instance();
+        return g ? g->character : nullptr;
     }
 } // namespace GW

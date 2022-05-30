@@ -57,6 +57,9 @@ namespace GW {
     static_assert(sizeof(ProfessionState) == 0x14);
 
     struct WorldContext {
+
+        static WorldContext* instance();
+
         struct sub1 {
             wchar_t* name;
             //...

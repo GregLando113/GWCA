@@ -16,7 +16,7 @@
 
 namespace GW {
 
-    Module GuildModule {
+    Module GuildModule{
         "GuildModule",  // name
         NULL,           // param
         NULL,           // init_module
@@ -24,36 +24,40 @@ namespace GW {
         NULL,           // exit_module
         NULL,           // remove_hooks
     };
+    namespace GuildMgr {
+        wchar_t* GetPlayerGuildAnnouncer() {
+            auto* g = GuildContext::instance();
+            return g ? g->announcement_author : nullptr;
+        }
 
-    GuildContext *GuildMgr::GetGuildContext() {
-        return GameContext::instance()->guild;
-    }
+        wchar_t* GetPlayerGuildAnnouncement() {
+            auto* g = GuildContext::instance();
+            return g ? g->announcement : nullptr;
+        }
 
-    wchar_t *GuildMgr::GetPlayerGuildAnnouncer() {
-        return GameContext::instance()->guild->announcement_author;
-    }
+        uint32_t GetPlayerGuildIndex() {
+            auto* g = GuildContext::instance();
+            return g ? g->player_guild_index : 0;
+        }
 
-    wchar_t *GuildMgr::GetPlayerGuildAnnouncement() {
-        return GameContext::instance()->guild->announcement;
-    }
+        GuildArray* GetGuildArray() {
+            auto* g = GuildContext::instance();
+            return g && g->guilds.valid() ? &g->guilds : nullptr;
+        }
 
-    uint32_t GuildMgr::GetPlayerGuildIndex() {
-        return GameContext::instance()->guild->player_guild_index;
-    }
+        bool TravelGH() {
+            auto* g = GuildContext::instance();
+            return g ? TravelGH(g->player_gh_key) : false;
 
-    GuildArray GuildMgr::GetGuildArray() {
-        return GameContext::instance()->guild->guilds;
-    }
+        }
 
-    void GuildMgr::TravelGH() {
-        TravelGH(GameContext::instance()->guild->player_gh_key);
-    }
+        bool TravelGH(GHKey key) {
+            UI::SendUIMessage(UI::kGuildHall, &key);
+            return true;
+        }
 
-    void GuildMgr::TravelGH(GHKey key) {
-        UI::SendUIMessage(UI::kGuildHall, &key);
-    }
-
-    void GuildMgr::LeaveGH() {
-        UI::SendUIMessage(UI::kLeaveGuildHall,nullptr);
+        void LeaveGH() {
+            UI::SendUIMessage(UI::kLeaveGuildHall, nullptr);
+        }
     }
 } // namespace GW

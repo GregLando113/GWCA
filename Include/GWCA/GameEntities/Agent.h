@@ -7,6 +7,8 @@
 
 namespace GW {
     typedef uint32_t AgentID;
+    typedef uint32_t PlayerNumber;
+    typedef uint32_t ItemID;
 
     struct Vec3f;
     struct GamePos;
@@ -40,10 +42,10 @@ namespace GW {
         /* +h0004 */ uint32_t h0004;            // always 2 ?
         /* +h0008 */ uint32_t h0008;            // Ptr PlayerModelFile?
         /* +h000C */ uint32_t h000C;            // 
-        /* +h0010 */ uint32_t *reft_hand_ptr;   // Ptr Bow, Hammer, Focus, Daggers, Scythe
-        /* +h0014 */ uint32_t *right_hand_ptr;  // Ptr Sword, Spear, Staff, Daggers, Axe, Zepter, Bundle
+        /* +h0010 */ ItemData* reft_hand_ptr;   // Ptr Bow, Hammer, Focus, Daggers, Scythe
+        /* +h0014 */ ItemData* right_hand_ptr;  // Ptr Sword, Spear, Staff, Daggers, Axe, Zepter, Bundle
         /* +h0018 */ uint32_t h0018;            // 
-        /* +h001C */ uint32_t *shield_ptr;      // Ptr Shield
+        /* +h001C */ ItemData* shield_ptr;      // Ptr Shield
         /* +h0020 */ uint8_t left_hand_map;     // Weapon1     None = 9, Bow = 0, Hammer = 0, Focus = 1, Daggers = 0, Scythe = 0
         /* +h0021 */ uint8_t right_hand_map;    // Weapon2     None = 9, Sword = 0, Spear = 0, Staff = 0, Daggers = 0, Axe = 0, Zepter = 0, Bundle
         /* +h0022 */ uint8_t head_map;          // Head        None = 9, Headpiece Ele = 4
@@ -62,15 +64,15 @@ namespace GW {
         /* +h00A4 */ ItemData costume_head;
             };
         };
-        /* +h00B4 */ uint32_t item_id_weapon;
-        /* +h00B8 */ uint32_t item_id_offhand;
-        /* +h00BC */ uint32_t item_id_chest;
-        /* +h00C0 */ uint32_t item_id_legs;
-        /* +h00C4 */ uint32_t item_id_head;
-        /* +h00C8 */ uint32_t item_id_feet;
-        /* +h00CC */ uint32_t item_id_hands;
-        /* +h00D0 */ uint32_t item_id_costume_body;
-        /* +h00D4 */ uint32_t item_id_costume_head;
+        /* +h00B4 */ ItemID item_id_weapon;
+        /* +h00B8 */ ItemID item_id_offhand;
+        /* +h00BC */ ItemID item_id_chest;
+        /* +h00C0 */ ItemID item_id_legs;
+        /* +h00C4 */ ItemID item_id_head;
+        /* +h00C8 */ ItemID item_id_feet;
+        /* +h00CC */ ItemID item_id_hands;
+        /* +h00D0 */ ItemID item_id_costume_body;
+        /* +h00D4 */ ItemID item_id_costume_head;
     };
 
     struct TagInfo {
@@ -153,8 +155,8 @@ namespace GW {
     };
 
     struct AgentItem : public Agent { // total: 0xD4/212
-        /* +h00C4 */ uint32_t owner;
-        /* +h00C8 */ uint32_t item_id;
+        /* +h00C4 */ AgentID owner;
+        /* +h00C8 */ ItemID item_id;
         /* +h00CC */ uint32_t h00CC;
         /* +h00D0 */ uint32_t extra_type;
     };
@@ -172,7 +174,7 @@ namespace GW {
     static_assert(offsetof(AgentGadget, h00C4) == 0xC4, "struct AgentGadget offsets are incorect");
 
     struct AgentLiving : public Agent { // total: 0x1C0/448
-        /* +h00C4 */ uint32_t owner;
+        /* +h00C4 */ AgentID owner;
         /* +h00C8 */ uint32_t h00C8;
         /* +h00CC */ uint32_t h00CC;
         /* +h00D0 */ uint32_t h00D0;

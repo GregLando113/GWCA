@@ -55,14 +55,18 @@ namespace GW {
         GWCA_API AgentLiving* GetCharacter();
 
         // Get AgentLiving of currently observed player
-        AgentLiving    *GetPlayerAsAgentLiving();
+        GWCA_API AgentLiving    *GetPlayerAsAgentLiving();
 
         // Get AgentLiving of current target
-        AgentLiving    *GetTargetAsAgentLiving();
+        GWCA_API AgentLiving    *GetTargetAsAgentLiving();
+
+        GWCA_API uint32_t GetAmountOfPlayersInInstance();
 
         // Returns array of alternate agent array that can be read beyond compass range.
         // Holds limited info and needs to be explored more.
         GWCA_API MapAgentArray* GetMapAgentArray();
+
+        GWCA_API MapAgent* GetMapAgentByID(uint32_t agent_id);
 
         // === Other Arrays ===
         GWCA_API PlayerArray* GetPlayerArray();

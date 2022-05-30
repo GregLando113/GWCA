@@ -33,6 +33,7 @@
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
+#include <GWCA/Managers/PartyMgr.h>
 
 namespace {
     using namespace GW;
@@ -208,20 +209,29 @@ namespace GW {
                 Move_Func(&pos);
             }
         }
+        uint32_t GetAmountOfPlayersInInstance() {
+            auto* w = WorldContext::instance();
+            // -1 because the 1st array element is nil
+            return w && w->players.valid() ? w->players.size() - 1 : 0;
+        }
 
         MapAgentArray* GetMapAgentArray() {
             auto* w = WorldContext::instance();
             return w ? &w->map_agents : nullptr;
         }
 
+        MapAgent* GetMapAgentByID(uint32_t agent_id) {
+            auto* agents = agent_id ? GetMapAgentArray() : nullptr;
+            return agents && agent_id < agents->size() ? &agents->at(agent_id) : nullptr;
+        }
+
         Agent* GetAgentByID(uint32_t agent_id) {
-            AgentArray* agents = agent_id ? GetAgentArray() : nullptr;
+            auto* agents = agent_id ? GetAgentArray() : nullptr;
             return agents && agent_id < agents->size() ? agents->at(agent_id) : nullptr;
         }
 
         Agent* GetPlayerByID(uint32_t player_id) {
-            Player* p = PlayerMgr::GetPlayerByID(player_id);
-            return p ? GetAgentByID(p->agent_id) : nullptr;
+            return GetAgentByID(PlayerMgr::GetPlayerAgentId(player_id));
         }
 
         AgentLiving* GetCharacter() {
@@ -267,6 +277,10 @@ namespace GW {
         uint32_t GetAgentIdByLoginNumber(uint32_t login_number) {
             auto* player = PlayerMgr::GetPlayerByID(login_number);
             return player ? player->agent_id : 0;
+        }
+
+        uint32_t GetHeroAgentID(uint32_t hero_index) {
+            return PartyMgr::GetHeroAgentID(hero_index);
         }
 
         PlayerArray* GetPlayerArray() {

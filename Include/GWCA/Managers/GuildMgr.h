@@ -19,6 +19,13 @@ namespace GW {
         // Array of guilds, holds basically everything about a guild. Can get structs of all players in outpost ;)
         GWCA_API GuildArray* GetGuildArray();
 
+        Guild* GetPlayerGuild();
+
+        // Get the guild that owns the current Guild Hall that the player is in
+        GWCA_API Guild* GetCurrentGH();
+
+        GWCA_API Guild* GetGuildInfo(uint32_t guild_id);
+
         // Index in guild array of player guild.
         GWCA_API uint32_t GetPlayerGuildIndex();
 

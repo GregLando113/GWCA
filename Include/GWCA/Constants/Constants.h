@@ -317,6 +317,6 @@ namespace GW {
             constexpr float DEFAULT_DIST = 750.f;
         }
 
-        constexpr size_t SkillMax = 0x269;
+        constexpr size_t SkillMax = 0xd69;
     }
 }

@@ -12,6 +12,7 @@
 
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Party.h>
+#include <GWCA/GameEntities/Attribute.h>
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PartyContext.h>
@@ -22,6 +23,7 @@
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
+#include <GWCA/Managers/PlayerMgr.h>
 
 namespace {
     using namespace GW;
@@ -58,7 +60,7 @@ namespace {
             blocked = false;
             break;
         case 0x22:  // Ready state icon clicked
-            PartyMgr::Tick(!PartyMgr::GetIsTicked());
+            PartyMgr::Tick(!PartyMgr::GetIsPlayerTicked());
             blocked = true;
             break;
         case 0x2c:  // Show ready state dropdown
@@ -103,6 +105,17 @@ namespace GW {
             CtoS::SendPacket(0x8, GAME_CMSG_PARTY_READY_STATUS, flag);
         }
 
+        Attribute* GetAgentAttributes(uint32_t agent_id) {
+            auto* w = WorldContext::instance();
+            if (!w && w->attributes.valid())
+                return nullptr;
+            for (auto& agent_attributes : w->attributes) {
+                if (agent_attributes.agent_id == agent_id)
+                    return agent_attributes.attribute;
+            }
+            return nullptr;
+        }
+
         PartyInfo* GetPartyInfo(uint32_t party_id) {
             GW::PartyContext* ctx = GW::PartyContext::instance();
             if (!ctx) return 0;
@@ -116,7 +129,7 @@ namespace GW {
             return g ? g->party : nullptr;
         }
 
-        bool GetIsHardMode() {
+        bool GetIsPartyInHardMode() {
             auto* p = GetPartyContext();
             return p ? p->InHardMode() : false;
         }
@@ -148,7 +161,7 @@ namespace GW {
             return p ? p->IsDefeated() : false;
         }
 
-        void SetIsHardMode(bool flag) {
+        void SetHardMode(bool flag) {
             CtoS::SendPacket(0x8, GAME_CMSG_PARTY_SET_DIFFICULTY, flag);
         }
 
@@ -170,12 +183,12 @@ namespace GW {
             return true;
         }
 
-        bool GetIsTicked(uint32_t player_index) {
+        bool GetIsPlayerTicked(uint32_t player_index) {
             PartyInfo* info = GetPartyInfo();
             if (!(info && info->players.valid())) return false;
             if (player_index == -1) {
                 // Player
-                uint32_t player_id = GW::Agents::GetPlayerId();
+                uint32_t player_id = GW::PlayerMgr::GetPlayerNumber();
                 for (const PlayerPartyMember& player : info->players) {
                     if (player.login_number == player_id)
                         return player.ticked();
@@ -192,7 +205,7 @@ namespace GW {
         bool GetIsLeader() {
             PartyInfo* info = GetPartyInfo();
             if (!(info && info->players.valid())) return false;
-            uint32_t player_id = GW::Agents::GetPlayerId();
+            uint32_t player_id = GW::PlayerMgr::GetPlayerNumber();
             for (const PlayerPartyMember& player : info->players) {
                 if (player.connected())
                     return player.login_number == player_id;

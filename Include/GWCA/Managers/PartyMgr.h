@@ -6,6 +6,8 @@ namespace GW {
     struct GamePos;
     struct PartyInfo;
 
+    struct Attribute;
+
     typedef uint32_t AgentID;
 
     struct Module;
@@ -21,6 +23,8 @@ namespace GW {
         // Set party ready status.
         GWCA_API void Tick(bool flag = true);
 
+        GWCA_API Attribute* GetAgentAttributes(uint32_t agent_id);
+
         GWCA_API PartyInfo *GetPartyInfo(uint32_t party_id = 0);
 
         GWCA_API uint32_t GetPartySize();
@@ -30,9 +34,9 @@ namespace GW {
 
         GWCA_API bool GetIsPartyDefeated();
 
-        GWCA_API void SetIsHardMode(bool flag);
+        GWCA_API void SetHardMode(bool flag);
 
-        GWCA_API bool GetIsHardMode();
+        GWCA_API bool GetIsPartyInHardMode();
 
         GWCA_API bool GetIsHardModeUnlocked();
 
@@ -40,7 +44,7 @@ namespace GW {
         GWCA_API bool GetIsPartyTicked();
 
         // check if selected party member is ticked
-        GWCA_API bool GetIsTicked(uint32_t player_index = -1);
+        GWCA_API bool GetIsPlayerTicked(uint32_t player_index = -1);
 
         // check if the whole party is loaded
         GWCA_API bool GetIsPartyLoaded();
@@ -62,5 +66,7 @@ namespace GW {
 
         GWCA_API void FlagAll(GamePos pos);
         GWCA_API void UnflagAll();
+
+        GWCA_API uint32_t GetHeroAgentID(uint32_t hero_index);
     };
 }

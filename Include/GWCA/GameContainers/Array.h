@@ -54,11 +54,14 @@ namespace GW {
                 }
             }
         }
-
+    private:
+        Array(const Array&);
+        Array& operator=(const Array&);
     public:
         T*       m_buffer;    // +h0000
         uint32_t m_capacity;  // +h0004
         uint32_t m_size;      // +h0008
         uint32_t m_param;     // +h000C
     }; // Size: 0x0010
+
 }

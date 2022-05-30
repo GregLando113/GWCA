@@ -70,75 +70,68 @@ namespace GW {
         NULL,               // enable_hooks
         NULL,               // disable_hooks
     };
+    namespace Effects {
 
-    uint32_t Effects::GetAlcoholLevel() {
-        return alcohol_level;
-    }
+        uint32_t GetAlcoholLevel() {
+            return alcohol_level;
+        }
 
-    void Effects::GetDrunkAf(uint32_t intensity, uint32_t tint) {
-        RetPostProcessEffect(intensity, tint);
-    }
+        void GetDrunkAf(uint32_t intensity, uint32_t tint) {
+            RetPostProcessEffect(intensity, tint);
+        }
 
-    Effect *Effects::GetPlayerEffectById(Constants::SkillID skill_id) {
-        uint32_t id = static_cast<uint32_t>(skill_id);
-        AgentEffectsArray AgEffects = GetPartyEffectArray();
 
-        if (AgEffects.valid()) {
-            EffectArray effects = AgEffects[0].effects;
-            if (effects.valid()) {
-                for (uint32_t i = 0; i < effects.size(); i++) {
-                    if (effects[i].skill_id == id)
-                        return &effects[i];
-                }
+
+        Effect* GetPlayerEffectBySkillId(Constants::SkillID skill_id) {
+            auto* effects = GetPlayerEffects();
+            if (!effects) return nullptr;
+            for (auto& effect : *effects) {
+                if (effect.skill_id == (uint32_t)skill_id)
+                    return &effect;
             }
+            return nullptr;
         }
 
-        return NULL;
-    }
-
-    Buff *Effects::GetPlayerBuffBySkillId(Constants::SkillID skill_id) {
-        uint32_t id = static_cast<uint32_t>(skill_id);
-        AgentEffectsArray agent_effects = GetPartyEffectArray();
-
-        if (agent_effects.valid()) {
-            BuffArray buffs = agent_effects[0].buffs;
-            if (buffs.valid()) {
-                for (uint32_t i = 0; i < buffs.size(); i++) {
-                    if (buffs[i].skill_id == id)
-                        return &buffs[i];
-                }
+        Buff* GetPlayerBuffBySkillId(Constants::SkillID skill_id) {
+            auto* buffs = GetPlayerBuffs();
+            if (!buffs) return nullptr;
+            for (auto& buff : *buffs) {
+                if (buff.skill_id == (uint32_t)skill_id)
+                    return &buff;
             }
+            return nullptr;
         }
-
-        return NULL;
-    }
-
-    EffectArray Effects::GetPlayerEffectArray() {
-        AgentEffectsArray agent_effects = GetPartyEffectArray();
-        if (agent_effects.valid()) {
-            uint32_t agent_id = Agents::GetPlayerId();
-            for (const AgentEffects& effect : agent_effects) {
-                if (effect.agent_id == agent_id)
-                    return effect.effects;
+        AgentEffectsArray* GetPartyEffectArray() {
+            auto* w = WorldContext::instance();
+            return w && w->party_effects.valid() ? &w->party_effects : nullptr;
+        }
+        AgentEffects* GetAgentEffectsArray(uint32_t agent_id) {
+            AgentEffectsArray* agent_effects = GetPartyEffectArray();
+            if (!agent_effects) return nullptr;
+            for (auto& agent_effect : *agent_effects) {
+                if (agent_effect.agent_id == agent_id)
+                    return &agent_effect;
             }
+            return nullptr;
         }
-        return EffectArray();
-    }
-
-    AgentEffectsArray Effects::GetPartyEffectArray() {
-        return GameContext::instance()->world->party_effects;
-    }
-
-    BuffArray Effects::GetPlayerBuffArray() {
-        AgentEffectsArray ageffects = GetPartyEffectArray();
-        if (ageffects.valid()) {
-            return ageffects[0].buffs;
-        } else {
-            return BuffArray();
+        EffectArray* GetAgentEffects(uint32_t agent_id) {
+            auto* e = GetAgentEffectsArray(agent_id);
+            return e && e->effects.valid() ? &e->effects : nullptr;
         }
-    }
+        BuffArray* GetAgentBuffs(uint32_t agent_id) {
+            auto* e = GetAgentEffectsArray(agent_id);
+            return e && e->buffs.valid() ? &e->buffs : nullptr;
+        }
+        EffectArray* GetPlayerEffects() {
+            return GetAgentEffects(Agents::GetPlayerId());
+        }
 
-    void Effects::DropBuff(uint32_t buff_id) {
-        CtoS::SendPacket(0x8, GAME_CMSG_DROP_BUFF, buff_id);
+        BuffArray* GetPlayerBuffs() {
+            return GetAgentBuffs(Agents::GetPlayerId());
+        }
+
+        void DropBuff(uint32_t buff_id) {
+            CtoS::SendPacket(0x8, GAME_CMSG_DROP_BUFF, buff_id);
+        }
     }
 } // namespace GW

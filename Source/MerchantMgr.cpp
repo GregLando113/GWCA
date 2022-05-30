@@ -58,23 +58,30 @@ namespace GW {
         NULL,               // enable_hooks
         NULL,               // disable_hooks
     };
+    namespace Merchant {
 
-    void Merchant::TransactItems(TransactionType type,
-        uint32_t gold_give, TransactionInfo give,
-        uint32_t gold_recv, TransactionInfo recv) {
+        bool TransactItems(TransactionType type,
+            uint32_t gold_give, TransactionInfo give,
+            uint32_t gold_recv, TransactionInfo recv) {
+            if (Verify(TransactItem_Func)) {
+                TransactItem_Func(type, gold_give, give, gold_recv, recv);
+                return true;
+            }
+            return false;
+        }
 
-        if (Verify(TransactItem_Func))
-            TransactItem_Func(type, gold_give, give, gold_recv, recv);
-    }
+        bool RequestQuote(TransactionType type,
+            QuoteInfo give, QuoteInfo recv) {
+            if (Verify(RequestQuote_func)) {
+                RequestQuote_func(type, 0, give, recv);
+                return true;
+            }
+            return false;
+        }
 
-    void Merchant::RequestQuote(TransactionType type,
-        QuoteInfo give, QuoteInfo recv) {
-
-        if (Verify(RequestQuote_func))
-            RequestQuote_func(type, 0, give, recv);
-    }
-
-    MerchItemArray Merchant::GetMerchantItemsArray() {
-        return GameContext::instance()->world->merch_items;
+        MerchItemArray* GetMerchantItemsArray() {
+            auto* w = WorldContext::instance();
+            return w && w->merch_items.valid() ? &w->merch_items : nullptr;
+        }
     }
 } // namespace GW

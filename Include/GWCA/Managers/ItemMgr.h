@@ -8,6 +8,7 @@ namespace GW {
 
     struct Bag;
     struct Item;
+    struct Inventory;
 
     typedef Array<Item *> ItemArray;
 

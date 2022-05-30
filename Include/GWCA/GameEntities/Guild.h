@@ -4,7 +4,6 @@
 
 namespace GW {
     struct GHKey { uint32_t k[4]; };
-
     struct GuildPlayer { // total: 0x174/372
         /* +h0000 */ void* vtable;
         /* +h0004 */ wchar_t *name_ptr; // ptr to invitedname, why? dunno

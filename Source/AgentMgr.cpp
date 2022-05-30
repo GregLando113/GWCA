@@ -302,10 +302,10 @@ namespace GW {
             if (agent->GetIsLivingType()) {
                 const AgentLiving* ag = agent->GetAsAgentLiving();
                 if (ag->login_number) {
-                    PlayerArray players = GameContext::instance()->world->players;
-                    if (!players.valid())
+                    PlayerArray* players = GetPlayerArray();
+                    if (!players)
                         return nullptr;
-                    Player* player = &players[ag->login_number];
+                    Player* player = &players->at(ag->login_number);
                     if (player)
                         return player->name_enc;
                 }
@@ -315,14 +315,12 @@ namespace GW {
                 // If we only use NPCArray, we have a problem because 2 agents can share the same PlayerNumber.
                 // In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
                 // But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
-                Array<AgentInfo> agent_infos = GameContext::instance()->world->agent_infos;
+                Array<AgentInfo>& agent_infos = WorldContext::instance()->agent_infos;
                 if (ag->agent_id >= agent_infos.size()) return nullptr;
                 if (agent_infos[ag->agent_id].name_enc)
                     return agent_infos[ag->agent_id].name_enc;
-                NPCArray npcs = GameContext::instance()->world->npcs;
-                if (!npcs.valid())
-                    return nullptr;
-                return npcs[ag->player_number].name_enc;
+                NPC* npc = GetNPCByID(ag->player_number);
+                return npc ? npc->name_enc : nullptr;
             }
             if (agent->GetIsGadgetType()) {
                 AgentContext* ctx = GameContext::instance()->agent;

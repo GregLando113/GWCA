@@ -107,7 +107,7 @@ namespace GW {
 
         Attribute* GetAgentAttributes(uint32_t agent_id) {
             auto* w = WorldContext::instance();
-            if (!w && w->attributes.valid())
+            if (!(w && w->attributes.valid()))
                 return nullptr;
             for (auto& agent_attributes : w->attributes) {
                 if (agent_attributes.agent_id == agent_id)
@@ -124,13 +124,9 @@ namespace GW {
                 return 0;
             return ctx->parties[party_id];
         }
-        PartyContext* GetPartyContext() {
-            auto* g = GameContext::instance();
-            return g ? g->party : nullptr;
-        }
 
         bool GetIsPartyInHardMode() {
-            auto* p = GetPartyContext();
+            auto* p = PartyContext::instance();
             return p ? p->InHardMode() : false;
         }
         bool GetIsHardModeUnlocked() {
@@ -157,7 +153,7 @@ namespace GW {
         }
 
         bool GetIsPartyDefeated() {
-            auto* p = GetPartyContext();
+            auto* p = PartyContext::instance();
             return p ? p->IsDefeated() : false;
         }
 

@@ -118,6 +118,13 @@ namespace GW {
         }
         LeaveCriticalSection(&mutex);
     }
+    bool GameThread::IsInGameThread()
+    {
+        EnterCriticalSection(&mutex);
+        bool ret = in_gamethread;
+        LeaveCriticalSection(&mutex);
+        return ret;        
+    }
 
     void GameThread::RegisterGameThreadCallback(
         HookEntry *entry,

@@ -23,5 +23,7 @@ namespace GW {
 
         GWCA_API void RemoveGameThreadCallback(
             HookEntry *entry);
+
+        GWCA_API bool IsInGameThread();
     };
 }

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include <GWCA/Utilities/Debug.h>
+
 #include <GWCA/Managers/CtoSMgr.h>
+#include <GWCA/Managers/GameThreadMgr.h>
 
 namespace {
     using namespace GW;
@@ -72,14 +74,27 @@ namespace GW {
         if (it != callbacks.end())
             callbacks.erase(it);
     }
-    void CtoS::SendPacket(uint32_t size, void *buffer) {
-        if (Verify(SendPacket_Func && game_srv_object_addr)) {
-            SendPacket_Func(*(uint32_t *)game_srv_object_addr, size, buffer);
+    bool CtoS::SendPacket(uint32_t size, void *buffer) {
+        if (!(Verify(SendPacket_Func && game_srv_object_addr)))
+            return false;
+        if (GameThread::IsInGameThread()) {
+            // Already in game thread, don't need to worry about buffer lifecycle
+            SendPacket_Func(*(uint32_t*)game_srv_object_addr, size, buffer);
+            return true;
         }
+        // Copy the packet and enqueue in the game thread
+        void* buffer_cpy = malloc(size);
+        GWCA_ASSERT(buffer_cpy != NULL);
+        memcpy(buffer_cpy, buffer, size);
+        GameThread::Enqueue([buffer_cpy, size]() {
+            SendPacket_Func(*(uint32_t*)game_srv_object_addr, size, buffer_cpy);
+            free(buffer_cpy);
+        });
+        return true;
     }
 
-    void CtoS::SendPacket(uint32_t size, ...) {
+    bool CtoS::SendPacket(uint32_t size, ...) {
         uint32_t *pak = &size + 1;
-        SendPacket(size, pak);
+        return SendPacket(size, pak);
     }
 } // namespace GW

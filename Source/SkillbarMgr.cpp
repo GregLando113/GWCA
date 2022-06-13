@@ -560,7 +560,7 @@ namespace GW {
                 return nullptr;
             return GetSkillConstantData(*(uint32_t*)tooltip->payload);
         }
-        bool IsSkillUnlocked(GW::Constants::SkillID skill_id) {
+        bool GetIsSkillUnlocked(GW::Constants::SkillID skill_id) {
             GW::GameContext* g = GW::GameContext::instance();
             GW::WorldContext* w = g->world;
 

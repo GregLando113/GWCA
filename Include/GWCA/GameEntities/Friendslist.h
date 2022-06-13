@@ -3,24 +3,24 @@
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
-    enum FriendType : uint32_t {
-        FriendType_Unknow = 0,
-        FriendType_Friend = 1,
-        FriendType_Ignore = 2,
-        FriendType_Player = 3,
-        FriendType_Trade  = 4,
+    enum class FriendType : uint32_t {
+        Unknow = 0,
+        Friend = 1,
+        Ignore = 2,
+        Player = 3,
+        Trade  = 4,
     };
 
-    enum FriendStatus : uint32_t {
-        FriendStatus_Offline = 0,
-        FriendStatus_Online  = 1,
-        FriendStatus_DND     = 2,
-        FriendStatus_Away    = 3,
+    enum class FriendStatus : uint32_t {
+        Offline = 0,
+        Online  = 1,
+        DND     = 2,
+        Away    = 3,
     };
 
     struct Friend {
-        /* +h0000 */ FriendType type; // 0 = Friend, 1 = Ignore, 2 = Played, 3 = Trade
-        /* +h0004 */ FriendStatus status; // 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
+        /* +h0000 */ FriendType type;
+        /* +h0004 */ FriendStatus status;
         /* +h0008 */ uint8_t uuid[16];
         /* +h0018 */ wchar_t alias[20];
         /* +h002C */ wchar_t charname[20];

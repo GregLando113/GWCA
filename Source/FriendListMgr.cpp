@@ -1,7 +1,5 @@
 #include "stdafx.h"
 
-#include <GWCA/Constants/Constants.h>
-
 #include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
@@ -40,13 +38,13 @@ namespace {
         HookBase::LeaveHook();
     }
 
-    typedef void(__cdecl *SetOnlineStatus_pt)(uint32_t status);
+    typedef void(__cdecl *SetOnlineStatus_pt)(FriendStatus status);
     SetOnlineStatus_pt SetOnlineStatus_Func;
 
     // type:
     //  1 = Friend
     //  2 = Ignore
-    typedef void (__cdecl *AddFriend_pt)(const wchar_t *name, const wchar_t *alias, uint32_t type);
+    typedef void (__cdecl *AddFriend_pt)(const wchar_t *name, const wchar_t *alias, FriendType type);
     AddFriend_pt AddFriend_Func;
 
     typedef void (__cdecl *RemoveFriend_pt)(const uint8_t *uuid, const wchar_t *name, uint32_t arg8);
@@ -111,9 +109,10 @@ namespace GW {
         return (FriendList *)FriendList_Addr;
     }
 
-    void FriendListMgr::SetFriendListStatus(Constants::OnlineStatus status) {
-        if (Verify(SetOnlineStatus_Func))
-            SetOnlineStatus_Func((uint32_t)status);
+    bool FriendListMgr::SetFriendListStatus(FriendStatus status) {
+        if (!SetOnlineStatus_Func) return false;
+        SetOnlineStatus_Func(status);
+        return true;
     }
 
     void FriendListMgr::RegisterFriendStatusCallback(
@@ -131,7 +130,7 @@ namespace GW {
             FriendStatus_callbacks.erase(it);
     }
 
-    Friend *FriendListMgr::GetFriend(wchar_t *alias, wchar_t *playing) {
+    Friend *FriendListMgr::GetFriend(const wchar_t *alias, const wchar_t *playing, FriendType type = FriendType::Friend) {
         if (!(alias || playing)) return NULL;
         FriendList *fl = GetFriendList();
         if (!fl) return NULL;
@@ -139,7 +138,7 @@ namespace GW {
         FriendsListArray &friends = fl->friends;
         for (Friend *it : friends) {
             if (!it) continue;
-            if (it->type != FriendType_Friend) continue;
+            if (it->type != type) continue;
             if (n_friends == 0) break;
             --n_friends;
             if (alias && !wcsncmp(it->alias, alias, 20))
@@ -185,38 +184,38 @@ namespace GW {
         return GetFriendList()->number_of_trade;
     }
 
-    uint32_t FriendListMgr::GetMyStatus() {
+    FriendStatus FriendListMgr::GetMyStatus() {
         FriendList *fl = GetFriendList();
-        if (fl)
-            return fl->player_status;
-        else
-            return 0;
+        return fl ? fl->player_status : FriendStatus::Offline;
     }
 
-    static void InternalAddFriend(uint32_t type, const wchar_t *name, const wchar_t *alias)
+    static bool InternalAddFriend(FriendType type, const wchar_t *name, const wchar_t *alias)
     {
+        if (!AddFriend_Func) return false;
         wchar_t buffer[32];
         if (!alias) {
             wcsncpy(buffer, name, 32);
             alias = buffer;
         }
         AddFriend_Func(name, alias, type);
+        return true;
     }
 
-    void FriendListMgr::AddFriend(const wchar_t *name, const wchar_t *alias)
+    bool FriendListMgr::AddFriend(const wchar_t *name, const wchar_t *alias)
     {
-        InternalAddFriend(1, name, alias);
+        return InternalAddFriend(FriendType::Friend, name, alias);
     }
 
-    void FriendListMgr::AddIgnore(const wchar_t *name, const wchar_t *alias)
+    bool FriendListMgr::AddIgnore(const wchar_t *name, const wchar_t *alias)
     {
-        InternalAddFriend(2, name, alias);
+        return InternalAddFriend(FriendType::Ignore, name, alias);
     }
 
-    void FriendListMgr::RemoveFriend(Friend *_friend)
+    bool FriendListMgr::RemoveFriend(Friend *_friend)
     {
-        if (!_friend)
-            return;
+        if (!(_friend && RemoveFriend_Func))
+            return false;
         RemoveFriend_Func(_friend->uuid, _friend->alias, 0);
+        return true;
     }
 } // namespace GW

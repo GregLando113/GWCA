@@ -14,6 +14,7 @@
 #include <GWCA/GameEntities/Party.h>
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Skill.h>
+#include <GWCA/GameEntities/Attribute.h>
 #include <GWCA/GameEntities/Hero.h>
 
 #include <GWCA/Context/GameContext.h>
@@ -39,6 +40,8 @@ namespace {
     UseSkill_pt RetUseSkill;
 
     uintptr_t skill_array_addr;
+    uintptr_t attribute_array_addr;
+    uint32_t ATTRIBUTE_COUNT = 0;
 
     static const char _Base64ToValue[128] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
@@ -137,6 +140,18 @@ namespace {
                 skill_array_addr = *(uintptr_t*)address;
             // NB: Skill count is *(uint32_t*)(address - 0x20), but not much point in rewriting GetSkillConstantData to accommodate.         
         }
+        {
+            uintptr_t address = GW::Scanner::Find(
+                "\xba\x33\x00\x00\x00\x89\x08\x8d\x40\x04", "x?xxxxxxxx", -4);
+            
+            if (Verify(address)) {
+                attribute_array_addr = *(uintptr_t*)address;
+                ATTRIBUTE_COUNT = *(uint32_t*)(address + 5);
+            }
+            GWCA_INFO("[SCAN] AttributeArray = %p, Count = %d\n", (void*)attribute_array_addr, ATTRIBUTE_COUNT);
+                
+            // NB: Skill count is *(uint32_t*)(address - 0x20), but not much point in rewriting GetSkillConstantData to accommodate.         
+        }
 
         UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
             "\x85\xF6\x74\x5B\x83\xFE\x11\x74", "xxxxxxxx", -0x126);
@@ -166,8 +181,12 @@ namespace GW {
 
 
         Skill* GetSkillConstantData(uint32_t skill_id) {
-            Skill* skill_constants = (Skill*)skill_array_addr;
-            return skill_id < Constants::SkillMax ? &skill_constants[skill_id] : nullptr;
+            Skill* arr = (Skill*)skill_array_addr;
+            return skill_array_addr && skill_id < Constants::SkillMax ? &arr[skill_id] : nullptr;
+        }
+        AttributeInfo* GetAttributeConstantData(uint32_t attribute_id) {
+            AttributeInfo* arr = (AttributeInfo*)attribute_array_addr;
+            return attribute_array_addr && attribute_id < ATTRIBUTE_COUNT ? &arr[attribute_id] : nullptr;
         }
 
         void ChangeSecondary(uint32_t profession, uint32_t hero_index) {
@@ -265,7 +284,6 @@ namespace GW {
         bool DecodeSkillTemplate(SkillTemplate* result, const char* temp)
         {
             const int SKILL_MAX = 3431; // @Cleanup: This should go somewhere else (it could be readed from the client)
-            const int ATTRIBUTE_MAX = 44; // @Cleanup: This should go somewhere else (it could be readed from the client)
 
             int skill_count = 0;
             int attrib_count = 0;
@@ -314,8 +332,8 @@ namespace GW {
             for (int i = 0; i < attrib_count; i++) {
                 int attrib_id = _ReadBits(&it, bits_per_attr);
                 int attrib_val = _ReadBits(&it, 4);
-                if (attrib_id > ATTRIBUTE_MAX) {
-                    GWCA_ERR("Attribute id %d is out of range. (max = %d)\n", attrib_id, ATTRIBUTE_MAX);
+                if (attrib_id >= ATTRIBUTE_COUNT) {
+                    GWCA_ERR("Attribute id %d is out of range. (count = %d)\n", attrib_id, ATTRIBUTE_COUNT);
                     return false;
                 }
                 if (attrib_val > 12) {
@@ -542,7 +560,20 @@ namespace GW {
                 return nullptr;
             return GetSkillConstantData(*(uint32_t*)tooltip->payload);
         }
+        bool IsSkillUnlocked(GW::Constants::SkillID skill_id) {
+            GW::GameContext* g = GW::GameContext::instance();
+            GW::WorldContext* w = g->world;
 
+            auto& array = w->unlocked_character_skills;
+
+            uint32_t index = static_cast<uint32_t>(skill_id);
+            uint32_t real_index = index / 32;
+            if (real_index >= array.size())
+                return false;
+            uint32_t shift = index % 32;
+            uint32_t flag = 1 << shift;
+            return (array[real_index] & flag) != 0;
+        }
         void RegisterUseSkillCallback(
             HookEntry* entry,
             UseSkillCallback callback)

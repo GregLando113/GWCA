@@ -12,6 +12,7 @@ namespace GW {
     }
 
     struct Skill;
+    struct AttributeInfo;
     struct Skillbar;
 
     typedef Array<Skillbar> SkillbarArray;
@@ -46,12 +47,17 @@ namespace GW {
         // Get skill structure of said id, houses pretty much everything you would want to know about the skill.
         GWCA_API Skill* GetSkillConstantData(uint32_t skill_id);
 
+        // Name/Description/Profession etc for an attribute by id
+        GWCA_API AttributeInfo* GetAttributeConstantData(uint32_t attribute_id);
+
         GWCA_API void ChangeSecondary(uint32_t profession, uint32_t hero_index = 0);
 
         // Get array of skillbars, [0] = player [1-7] = heroes.
         GWCA_API SkillbarArray* GetSkillbarArray();
         GWCA_API Skillbar *GetPlayerSkillbar();
         GWCA_API Skill* GetHoveredSkill();
+
+        GWCA_API bool GetIsSkillUnlocked(Constants::SkillID skill_id);
 
         GWCA_API bool DecodeSkillTemplate(SkillTemplate *result, const char *temp);
         GWCA_API bool EncodeSkillTemplate(const SkillTemplate& in, char* result, size_t result_len);

@@ -11,6 +11,16 @@ namespace GW {
         /* +h0010 */ uint32_t increment_points; // Points you will need to increment level.
     };
 
+    struct AttributeInfo {
+        uint32_t attribute_id;
+        uint32_t profession_id;
+        uint32_t name_id;
+        uint32_t desc_id;
+        uint32_t is_pve;
+    };
+    static_assert(sizeof(AttributeInfo) == 0x14);
+
+
     struct PartyAttribute {
         uint32_t agent_id;
         Attribute attribute[49];

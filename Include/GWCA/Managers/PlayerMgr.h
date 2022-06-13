@@ -8,6 +8,7 @@ namespace GW {
 
     struct Player;
     struct Quest;
+    struct Title;
     typedef Array<Quest> QuestLog;
     typedef Array<Player> PlayerArray;
 
@@ -34,7 +35,7 @@ namespace GW {
         // Get the player number of the currently logged in character
         GWCA_API PlayerNumber GetPlayerNumber();
 
-        GWCA_API Player *GetPlayerByID(uint32_t player_id);
+        GWCA_API Player *GetPlayerByID(uint32_t player_id = 0);
 
         GWCA_API wchar_t *GetPlayerName(uint32_t player_id);
 
@@ -49,5 +50,7 @@ namespace GW {
         GWCA_API uint32_t GetActiveQuestId();
 
         GWCA_API Quest* GetActiveQuest();
+
+        GWCA_API Title* GetActiveTitle();
     };
 }

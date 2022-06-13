@@ -10,6 +10,7 @@
 #include <GWCA/GameEntities/Quest.h>
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Player.h>
+#include <GWCA/GameEntities/Title.h>
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
@@ -45,6 +46,21 @@ namespace GW {
             return player ? player->agent_id : 0;
         }
 
+        Title* GetActiveTitle() {
+            auto* player = GetPlayerByID();
+            if (!(player && player->active_title_tier))
+                return nullptr;
+            auto* w = WorldContext::instance();
+            if (!(w && w->titles.valid()))
+                return nullptr;
+            for (auto& title : w->titles) {
+                if (title.current_title_tier_index == player->active_title_tier) {
+                    return &title;
+                }
+            }
+            return nullptr;
+        }
+
         Quest* GetActiveQuest() {
             uint32_t quest_id = GetActiveQuestId();
             auto* log = quest_id ? GetQuestLog() : nullptr;
@@ -77,6 +93,9 @@ namespace GW {
         }
 
         Player* GetPlayerByID(uint32_t player_id) {
+            if (!player_id) {
+                player_id = GetPlayerNumber();
+            }
             auto* players = GetPlayerArray();
             return players && player_id < players->size() ? &players->at(player_id) : nullptr;
         }

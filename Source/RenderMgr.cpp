@@ -44,19 +44,25 @@ namespace {
     GwEndScene_pt RetScreenCapture;
     GwEndScene_pt ScreenCapture_Func;
 
+    CRITICAL_SECTION mutex;
+    bool in_render_loop = false;
+
     typedef bool(__cdecl *GwReset_pt)(gwdx *ctx);
     GwReset_pt RetGwReset;
     GwReset_pt GwReset_Func;
 
     std::function<void (IDirect3DDevice9 *)> render_callback;
     std::function<void (IDirect3DDevice9 *)> reset_callback;
-
     bool __cdecl OnGwEndScene(gwdx *ctx, void *unk) {
         HookBase::EnterHook();
+        EnterCriticalSection(&mutex);
+        in_render_loop = true;
         gwdx_ptr = ctx;
         if (render_callback)
             render_callback(ctx->device);
         bool retval = RetGwEndScene(ctx, unk);
+        in_render_loop = false;
+        LeaveCriticalSection(&mutex);
         HookBase::LeaveHook();
         return retval;
     }
@@ -83,6 +89,7 @@ namespace {
     }
 
     void Init() {
+        InitializeCriticalSection(&mutex);
 
         uintptr_t address = Scanner::Find(
             "\x8B\x75\x08\x83\xFE\x05\x7C\x14\x68\xDB\x02\x00\x00", "xxxxxxxxxxxxx", -0x4);
@@ -118,6 +125,7 @@ namespace {
             HookBase::RemoveHook(ScreenCapture_Func);
         if (GwReset_Func)
             HookBase::RemoveHook(GwReset_Func);
+        DeleteCriticalSection(&mutex);
     }
 }
 
@@ -132,6 +140,12 @@ namespace GW {
         NULL,               // disable_hooks
     };
 
+    bool Render::GetIsInRenderLoop() {
+        EnterCriticalSection(&mutex);
+        bool ret = in_render_loop;
+        LeaveCriticalSection(&mutex);
+        return ret;
+    }
     int Render::GetIsFullscreen() {
         // this is hacky and might be unreliable
         if (gwdx_ptr == nullptr) return -1;

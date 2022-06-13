@@ -3,6 +3,7 @@
 
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
+#include <GWCA/Managers/RenderMgr.h>
 
 namespace {
     using namespace GW;
@@ -77,7 +78,7 @@ namespace GW {
     bool CtoS::SendPacket(uint32_t size, void *buffer) {
         if (!(Verify(SendPacket_Func && game_srv_object_addr)))
             return false;
-        if (GameThread::IsInGameThread()) {
+        if (GameThread::IsInGameThread() || Render::GetIsInRenderLoop()) {
             // Already in game thread, don't need to worry about buffer lifecycle
             SendPacket_Func(*(uint32_t*)game_srv_object_addr, size, buffer);
             return true;

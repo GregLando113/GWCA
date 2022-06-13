@@ -22,7 +22,7 @@ namespace GW {
     uint32_t Title::title_id()  {
         const Array<Title>& titles = GameContext::instance()->world->titles;
         for (uint32_t i = 0; i < titles.size(); i++) {
-            if (&titles[i] == this)
+            if (titles[i].max_title_rank == max_title_rank)
                 return i;
         }
         return -1;

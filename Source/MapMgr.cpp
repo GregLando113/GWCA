@@ -236,6 +236,9 @@ namespace GW {
         }
 
         AreaInfo* GetMapInfo(Constants::MapID map_id) {
+            if (map_id == Constants::MapID::None) {
+                map_id = GetMapID();
+            }
             AreaInfo* infos = (AreaInfo*)area_info_addr;
             return infos ? &infos[(uint32_t)map_id] : nullptr;
         }

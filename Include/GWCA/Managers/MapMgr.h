@@ -68,7 +68,7 @@ namespace GW {
         GWCA_API uint32_t GetFoesKilled();
         GWCA_API uint32_t GetFoesToKill();
 
-        GWCA_API AreaInfo *GetMapInfo(Constants::MapID map_id);
+        GWCA_API AreaInfo *GetMapInfo(Constants::MapID map_id = (Constants::MapID)0);
 
         inline AreaInfo *GetCurrentMapInfo() {
             Constants::MapID map_id = GetMapID();

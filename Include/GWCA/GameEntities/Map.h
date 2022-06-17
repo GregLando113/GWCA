@@ -103,11 +103,15 @@ namespace GW {
         /* +h005C */ uint32_t icon_start_y_dupe;
         /* +h0060 */ uint32_t icon_end_x_dupe;
         /* +h0064 */ uint32_t icon_end_y_dupe;
-        /* +h0068 */ uint32_t h0068;
+        /* +h0068 */ uint32_t file_id;
         /* +h006C */ uint32_t mission_chronology;
         /* +h0070 */ uint32_t ha_map_chronology;
         /* +h0074 */ uint32_t name_id;
         /* +h0078 */ uint32_t description_id;
+
+        inline uint32_t file_id1() { return (((file_id - 1) % 0xff00) + 0x100); }
+        inline uint32_t file_id2() { return (((file_id - 1) / 0xff00) + 0x100); }
+        
 
         inline bool GetHasEnterButton() const { return (flags & 0x100) != 0 || (flags & 0x40000) != 0; }
         inline bool GetIsOnWorldMap()   const { return (flags & 0x20) == 0; }

@@ -187,6 +187,7 @@ namespace GW {
             Preference_ConciseSkillDescriptions = 0x8032,
             Preference_DoNotShowSkillTipsOnEffectMonitor = 0x8033,
             Preference_DoNotShowSkillTipsOnSkillBars = 0x8034,
+            Preference_MuteWhenGuildWarsIsInBackground = 0x8037,
             Preference_AutoTargetFoes = 0x8039,
             Preference_AutoTargetNPCs = 0x803a,
             Preference_AlwaysShowNearbyNamesPvP = 0x803b,

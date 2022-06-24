@@ -157,8 +157,15 @@ namespace GW {
             return p ? p->IsDefeated() : false;
         }
 
-        void SetHardMode(bool flag) {
+        bool SetHardMode(bool flag) {
+            auto* w = WorldContext::instance();
+            if (!w->is_hard_mode_unlocked)
+                return false;
+            auto* p = PartyContext::instance();
+            if (p && p->InHardMode() == flag)
+                return true;
             CtoS::SendPacket(0x8, GAME_CMSG_PARTY_SET_DIFFICULTY, flag);
+            return true;
         }
 
         bool GetIsPartyTicked() {

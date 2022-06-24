@@ -34,7 +34,7 @@ namespace GW {
 
         GWCA_API bool GetIsPartyDefeated();
 
-        GWCA_API void SetHardMode(bool flag);
+        GWCA_API bool SetHardMode(bool flag);
 
         GWCA_API bool GetIsPartyInHardMode();
 

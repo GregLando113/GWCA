@@ -108,7 +108,8 @@ uintptr_t GW::Scanner::Find(const char* pattern, const char* mask, int offset, S
 uintptr_t GW::Scanner::FunctionFromNearCall(uintptr_t call_instruction_address) {
     if (!call_instruction_address)
         return 0;
-    if (((*(uintptr_t*)call_instruction_address) & 0x000000e8) != 0x000000e8)
+    if (((*(uintptr_t*)call_instruction_address) & 0x000000e8) != 0x000000e8
+        && ((*(uintptr_t*)call_instruction_address) & 0x000000e9) != 0x000000e9)
         return 0; // Not a near call instruction
     uintptr_t near_address = *(uintptr_t*)(call_instruction_address + 1);
     return (near_address)+(call_instruction_address + 5);

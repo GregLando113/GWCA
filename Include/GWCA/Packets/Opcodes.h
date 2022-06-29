@@ -126,7 +126,7 @@
 #define GAME_SMSG_HERO_ACCOUNT_NAME                 (0x0031) // 49
 #define GAME_SMSG_MESSAGE_OF_THE_DAY                (0x0033) // 51
 #define GAME_SMSG_AGENT_PINGED                      (0x0034) // 52
-#define GAME_SMSG_AGENT_UPDATE_ATTRIBUTE            (0x003A) // 58
+#define GAME_SMSG_AGENT_UPDATE_ATTRIBUTE            (0x003B) // 59
 #define GAME_SMSG_AGENT_ALLY_DESTROY                (0x003D) // 61
 #define GAME_SMSG_EFFECT_UPKEEP_ADDED               (0x003E) // 62
 #define GAME_SMSG_EFFECT_UPKEEP_REMOVED             (0x003F) // 63

@@ -23,8 +23,9 @@ namespace GW {
 
     struct PartyAttribute {
         uint32_t agent_id;
-        Attribute attribute[49];
+        Attribute attribute[54];
     };
+    static_assert(sizeof(PartyAttribute) == 0x43c);
 
     typedef Array<PartyAttribute> PartyAttributeArray;
 }

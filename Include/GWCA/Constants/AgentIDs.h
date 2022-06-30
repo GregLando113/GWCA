@@ -127,7 +127,7 @@ namespace GW {
                 constexpr int CollectorsEditionVaresh = 314;
                 constexpr int Mallyx = 315;
                 constexpr int Ceratadon = 316;
-                
+
                 // Misc.
                 constexpr int Kanaxai = 317;
                 constexpr int Panda = 318;
@@ -266,7 +266,7 @@ namespace GW {
                 // 2324 ?
                 constexpr int FourHorseman = 2329; // all four share the same id
                 constexpr int MindbladeSpectre = 2330;
-                
+
                 constexpr int DeadCollector = 2332;
                 constexpr int DeadThresher = 2333;
                 constexpr int ColdfireNight = 2334;
@@ -421,6 +421,53 @@ namespace GW {
                     IceImp,
                     NagaShaman
                 };
+            }
+            namespace SummoningStone {
+                constexpr int MercantileMerchant = 467;
+                constexpr int ZaishenArcher = 468;
+                constexpr int ZaishenAvatarOfBalthazar = 469;
+                constexpr int ZaishenChampionOfBalthazar = 470;
+                constexpr int ZaishenPriestOfBalthazar = 471;
+                constexpr int ZaishenFootman = 472;
+                constexpr int ZaishenGuildLord = 473;
+                constexpr int MysteriousCrystalSpider = 490;
+                constexpr int MysteriousSaltsprayDragon = 491;
+                constexpr int MysteriousRestlessCorpse = 492;
+                constexpr int MysteriousSmokePhantom = 493;
+                constexpr int MysteriousSwarmOfBees = 494;
+                constexpr int AutomatonGolem = 512;
+                constexpr int IgneousFireImp = 513;
+                constexpr int JadeiteSiegeTurtle = 514;
+                constexpr int DemonicOni = 515;
+                constexpr int AmberJuggernaut  = 516;
+                constexpr int MysticalGaki = 517;
+                constexpr int GelatinousOoze = 518;
+                constexpr int ChitinousDevourer = 519;
+                constexpr int ArcticKveldulf  = 520;
+                constexpr int FossilizedRaptor = 521;
+                constexpr int MischievousGrentch = 522;
+                constexpr int FrostySnowman = 523;
+                constexpr int GhastlyDreamRider = 524;
+                constexpr int ImperialCripplingSlash = 8990;
+                constexpr int ImperialTripleChop = 8991;
+                constexpr int ImperialBarrage = 8992;
+                constexpr int ImperialQuiveringBlade = 8993;
+                constexpr int TenguHundredBlades = 8994;
+                constexpr int TenguBroadHeadArrow = 8995;
+                constexpr int TenguPalmStrike = 8996;
+                constexpr int TenguLifeSheath = 8997;
+                constexpr int TenguAngchuElementalist = 8998;
+                constexpr int TenguFeveredDreams = 8999;
+                constexpr int TenguSpitefulSpirit = 9000;
+                constexpr int TenguPreservation = 9001;
+                constexpr int TenguPrimalRage = 9002;
+                constexpr int TenguGlassArrows = 9003;
+                constexpr int TenguWayOftheAssassin = 9004;
+                constexpr int TenguPeaceandHarmony = 9005;
+                constexpr int TenguSandstorm = 9006;
+                constexpr int TenguPanic = 9007;
+                constexpr int TenguAuraOftheLich = 9008;
+                constexpr int TenguDefiantWasXinrae = 9009;
             }
 
             constexpr int EbonVanguardAssassin = PolymockSummon::NagaShaman + 2;

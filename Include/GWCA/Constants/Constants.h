@@ -89,7 +89,7 @@ namespace GW {
             Living = 0xDB, Gadget = 0x200, Item = 0x400
         };
 
-        enum class Allegiance {
+        enum class Allegiance : uint8_t {
             Ally_NonAttackable = 0x1, Neutral = 0x2, Enemy = 0x3, Spirit_Pet = 0x4, Minion = 0x5, Npc_Minipet = 0x6
         };
 

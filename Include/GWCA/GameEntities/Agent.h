@@ -9,6 +9,9 @@ namespace GW {
     typedef uint32_t AgentID;
     typedef uint32_t PlayerNumber;
     typedef uint32_t ItemID;
+    namespace Constants {
+        enum class Allegiance : uint8_t;
+    }
 
     struct Vec3f;
     struct GamePos;
@@ -221,7 +224,7 @@ namespace GW {
         /* +h018C */ uint32_t animation_id;     // Id of the current animation
         /* +h0190 */ uint8_t  h0190[32];
         /* +h01B0 */ uint8_t  dagger_status; // 0x1 = used lead attack, 0x2 = used offhand attack, 0x3 = used dual attack
-        /* +h01B1 */ uint8_t  allegiance; // 0x1 = ally/non-attackable, 0x2 = neutral, 0x3 = enemy, 0x4 = spirit/pet, 0x5 = minion, 0x6 = npc/minipet
+        /* +h01B1 */ Constants::Allegiance  allegiance; // 0x1 = ally/non-attackable, 0x2 = neutral, 0x3 = enemy, 0x4 = spirit/pet, 0x5 = minion, 0x6 = npc/minipet
         /* +h01B2 */ uint16_t  weapon_type; // 1=bow, 2=axe, 3=hammer, 4=daggers, 5=scythe, 6=spear, 7=sWORD, 10=wand, 12=staff, 14=staff
         /* +h01B4 */ uint16_t  skill; // 0 = not using a skill. Anything else is the Id of that skill
         /* +h01B6 */ uint16_t  h01B6;

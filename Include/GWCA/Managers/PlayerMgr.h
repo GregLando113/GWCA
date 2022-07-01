@@ -15,6 +15,7 @@ namespace GW {
     namespace Constants {
         enum TitleID : uint32_t;
         enum class Profession;
+        enum class QuestID;
     }
 
     struct Module;
@@ -47,7 +48,7 @@ namespace GW {
 
         GWCA_API QuestLog* GetQuestLog();
 
-        GWCA_API uint32_t GetActiveQuestId();
+        GWCA_API GW::Constants::QuestID GetActiveQuestId();
 
         GWCA_API Quest* GetActiveQuest();
 

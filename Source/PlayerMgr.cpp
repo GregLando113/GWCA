@@ -62,8 +62,8 @@ namespace GW {
         }
 
         Quest* GetActiveQuest() {
-            uint32_t quest_id = GetActiveQuestId();
-            auto* log = quest_id ? GetQuestLog() : nullptr;
+            GW::Constants::QuestID quest_id = GetActiveQuestId();
+            auto* log = quest_id != (GW::Constants::QuestID)0 ? GetQuestLog() : nullptr;
             if (!log) return nullptr;
             for (auto& quest : *log) {
                 if (quest.quest_id == quest_id)
@@ -75,9 +75,9 @@ namespace GW {
             auto* w = WorldContext::instance();
             return w && w->quest_log.valid() ? &w->quest_log : nullptr;
         }
-        uint32_t GetActiveQuestId() {
+        GW::Constants::QuestID GetActiveQuestId() {
             auto* w = WorldContext::instance();
-            return w ? w->active_quest_id : 0;
+            return w ? w->active_quest_id : (GW::Constants::QuestID)0;
         }
 
         uint32_t GetAmountOfPlayersInInstance() {

@@ -35,6 +35,10 @@ namespace GW {
     typedef Array<MissionMapIcon> MissionMapIconArray;
     typedef Array<PartyAttribute> PartyAttributeArray;
 
+    namespace Constants {
+        enum class QuestID;
+    }
+
     struct ControlledMinions {
         uint32_t agent_id;
         uint32_t minion_count;
@@ -89,7 +93,7 @@ namespace GW {
         /* +h04EC */ uint32_t h04EC[7];
         /* +h0508 */ AgentEffectsArray party_effects;
         /* +h0518 */ Array<void *> h0518;
-        /* +h0528 */ uint32_t active_quest_id;
+        /* +h0528 */ GW::Constants::QuestID active_quest_id;
         /* +h052C */ QuestLog quest_log;
         /* +h053C */ uint32_t h053C[10];
         /* +h0564 */ Array<MissionObjective> mission_objectives;

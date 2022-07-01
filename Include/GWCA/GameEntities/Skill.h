@@ -92,7 +92,7 @@ namespace GW {
 
     struct Effect { // total: 0x18/24
         /* +h0000 */ uint32_t skill_id; // skill id of the effect
-        /* +h0004 */ uint32_t effect_type; // 0 = condition/shout, 8 = stance, 11 = maintained enchantment, 14 = enchantment/nature ritual
+        /* +h0004 */ uint32_t attribute_level; // attribute level for the skill used
         /* +h0008 */ uint32_t effect_id; // unique identifier of effect
         /* +h000C */ uint32_t agent_id; // non-zero means maintained enchantment - caster id
         /* +h0010 */ float duration; // non-zero if effect has a duration

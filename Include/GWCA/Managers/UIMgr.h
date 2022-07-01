@@ -96,6 +96,7 @@ namespace GW {
             kEffectAdd              = 0x10000000 | 0x55, // wparam = {agent_id, GW::Effect*}
             kEffectRenew            = 0x10000000 | 0x56, // wparam = GW::Effect*
             kEffectRemove           = 0x10000000 | 0x57, // wparam = effect id
+            kExperienceGained       = 0x10000000 | 0x66, // wparam = experience amount
             kWriteToChatLog         = 0x10000000 | 0x7E,
             kFriendUpdated          = 0x10000000 | 0x89, // wparam = { GW::Friend*, ... }
             kMapLoaded              = 0x10000000 | 0x8A,
@@ -108,6 +109,8 @@ namespace GW {
             kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
             kGuildMemberUpdated     = 0x10000000 | 0xD8, // wparam = { wchar_t* name, uint32_t unk0, uint32_t status }
             kShowHint               = 0x10000000 | 0xDF, // wparam = { uint32_t icon_type, wchar_t* message_enc }
+            kUpdateGoldCharacter    = 0x10000000 | 0xEA, // wparam = { uint32_t unk, uint32_t gold_character }
+            kUpdateGoldStorage      = 0x10000000 | 0xEB, // wparam = { uint32_t unk, uint32_t gold_storage }
             kPvPWindowContent       = 0x10000000 | 0xF8,
             kMapChange              = 0x10000000 | 0x10F, // wparam = map id
             kCheckboxPreference     = 0x10000000 | 0x13F,
@@ -184,6 +187,7 @@ namespace GW {
             Preference_ShowTextInSkillFloaters = 0x8011,
             Preference_InvertMouseControlOfCamera = 0x8016,
             Preference_DisableMouseWalking = 0x8017,
+            Preference_ShowSpendAttributesButton = 0x8031, // The game uses this hacky method of showing the "spend attributes" button next to the exp bar.
             Preference_ConciseSkillDescriptions = 0x8032,
             Preference_DoNotShowSkillTipsOnEffectMonitor = 0x8033,
             Preference_DoNotShowSkillTipsOnSkillBars = 0x8034,

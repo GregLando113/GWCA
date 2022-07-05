@@ -186,8 +186,9 @@ namespace GW {
         /* +h00E4 */ uint32_t h00E4[2];
         /* +h00EC */ float weapon_attack_speed; // The base attack speed in float of last attacks weapon. 1.33 = axe, sWORD, daggers etc.
         /* +h00F0 */ float attack_speed_modifier; // Attack speed modifier of the last attack. 0.67 = 33% increase (1-.33)
+        // NB: h00F4 is actually a composite uint32_t that the game uses to EITHER get the player model info or npc model info
         /* +h00F4 */ uint16_t player_number; // Selfexplanatory. All non-players have identifiers for their type. Two of the same mob = same number
-        /* +h00F6 */ uint16_t h00F6;
+        /* +h00F6 */ uint16_t agent_model_type; // Player = 0x3000, NPC = 0x2000
         /* +h00F8 */ uint32_t transmog_npc_id; // Actually, it's 0x20000000 | npc_id, It's not defined for npc, minipet, etc...
         /* +h00FC */ Equipment** equip;
         /* +h0100 */ uint32_t h0100;
@@ -269,7 +270,7 @@ namespace GW {
         inline bool IsPlayer()             const { return login_number != 0; }
         inline bool IsNPC()                const { return login_number == 0; }
     };
-    static_assert(sizeof(AgentLiving) == 448, "struct AgentLiving has incorect size");
+    static_assert(sizeof(AgentLiving) == 0x1C0, "struct AgentLiving has incorect size");
     static_assert(offsetof(AgentLiving, owner) == 0xC4, "struct AgentLiving offsets are incorect");
 
     AgentItem* Agent::GetAsAgentItem() {

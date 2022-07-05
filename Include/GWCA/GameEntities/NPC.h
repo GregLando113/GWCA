@@ -18,6 +18,9 @@ namespace GW {
         /* +h0024 */ uint32_t *model_files;
         /* +h0028 */ uint32_t files_count; // length of ModelFile
         /* +h002C */ uint32_t files_capacity; // capacity of ModelFile
+
+        inline bool IsHenchman() { return (npc_flags & 0x10) != 0; }
+        inline bool IsHero() { return (npc_flags & 0x20) != 0; }
     };
     static_assert(sizeof(NPC) == 48, "struct NPC has incorect size");
 

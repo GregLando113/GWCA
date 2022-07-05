@@ -35,6 +35,13 @@ namespace GW {
     typedef Array<MissionMapIcon> MissionMapIconArray;
     typedef Array<PartyAttribute> PartyAttributeArray;
 
+    struct PartyAlly {
+        uint32_t agent_id;
+        uint32_t unk;
+        uint32_t composite_id;
+    };
+    static_assert(sizeof(PartyAlly) == 0xc);
+
     namespace Constants {
         enum class QuestID;
     }
@@ -81,7 +88,7 @@ namespace GW {
         /* +h0058 */ uint32_t accumMapInitUnk2;
         /* +h005C */ uint32_t h005C[8];
         /* +h007C */ MapAgentArray map_agents;
-        /* +h008C */ uint32_t h008C[4];
+        /* +h008C */ Array<PartyAlly> party_allies; // List of allies added to the current party
         /* +h009C */ Vec3f all_flag;
         /* +h00A8 */ uint32_t h00A8;
         /* +h00AC */ PartyAttributeArray attributes;

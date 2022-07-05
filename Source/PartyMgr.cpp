@@ -31,6 +31,24 @@ namespace {
     typedef void(__cdecl* UpdatePartyWindow_pt)(void* unk0, void* unk1, void* unk2, void* unk3, void* unk4);
     UpdatePartyWindow_pt RetUpdatePartyWindow;
     UpdatePartyWindow_pt UpdatePartyWindow_Func;
+    // General purpose "void function that does something with this id"
+    typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
+    typedef void(__cdecl* Void_pt)();
+
+    DoAction_pt SetDifficulty_Func;
+    DoAction_pt PartyAcceptInvite_Func;
+    DoAction_pt PartyRejectInvite_Func;
+    DoAction_pt AddHero_Func;
+    DoAction_pt KickHero_Func;
+    DoAction_pt KickPlayer_Func;
+    DoAction_pt SetReadyStatus_Func;
+    Void_pt LeaveParty_Func;
+
+    typedef void(__cdecl* FlagHeroAgent_pt)(uint32_t agent_id,GW::GamePos* pos);
+    FlagHeroAgent_pt FlagHeroAgent_Func;
+
+    typedef void(__cdecl* FlagAll_pt)(GW::GamePos* pos);
+    FlagAll_pt FlagAll_Func;
 
     bool tick_work_as_toggle = false;
 
@@ -79,7 +97,48 @@ namespace {
         if (UpdatePartyWindow_Func) {
             HookBase::CreateHook(UpdatePartyWindow_Func, OnUpdatePartyWindow, (void**)&RetUpdatePartyWindow);
         }
+        DWORD address = Scanner::Find("\x8b\x75\x0c\x83\xc4\x04\x83\x3e\x00\x0f?????\xff\x70\x20","xxxxxxxxxx?????xxx",0x12);
+        SetDifficulty_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
+        // NB: 0x4c4 is an encoded string id
+        address = Scanner::Find("\x83\xc4\x30\x6a\x00\x68\xc4\x04","xxxxxxxx");
+        PartyAcceptInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x11f);
+        AddHero_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x8f);
+
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptbuttons.cpp", "charHero", 0x11);
+        KickHero_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptbuttons.cpp", "m_selection.playerId", 0x13);
+        KickPlayer_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+
+        address += 0x4a;
+        LeaveParty_Func = (Void_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptbuttons.cpp", "m_selection.partyId", 0x13);
+        PartyRejectInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptplayer.cpp", "No valid case for switch variable '\"\"'", 0x27);
+        SetReadyStatus_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::Find("\x8b\x45\xf8\x89\x45\xe8\x8b\x45\xfc\x89\x45\xec\x8d\x45\xe8","xxxxxxxxxxxxxxx", 0x22);
+        FlagAll_Func = (FlagAll_pt)Scanner::FunctionFromNearCall(address);
+
+        address += 0x1b;
+        FlagHeroAgent_Func = (FlagHeroAgent_pt)Scanner::FunctionFromNearCall(address);
+
+#ifdef _DEBUG
+        GWCA_ASSERT(UpdatePartyWindow_Func);
+        GWCA_ASSERT(SetDifficulty_Func);
+        GWCA_ASSERT(PartyAcceptInvite_Func);
+        GWCA_ASSERT(AddHero_Func);
+        GWCA_ASSERT(KickHero_Func);
+        GWCA_ASSERT(KickPlayer_Func);
+        GWCA_ASSERT(LeaveParty_Func);
+        GWCA_ASSERT(PartyRejectInvite_Func);
+        GWCA_ASSERT(SetReadyStatus_Func);
+        GWCA_ASSERT(FlagAll_Func);
+        GWCA_ASSERT(FlagHeroAgent_Func);
+#endif
 
     }
 
@@ -101,8 +160,12 @@ namespace GW {
         NULL,           // disable_hooks
     };
     namespace PartyMgr {
-        void Tick(bool flag) {
-            CtoS::SendPacket(0x8, GAME_CMSG_PARTY_READY_STATUS, flag);
+        bool Tick(bool flag) {
+            // @Robustness: Make sure player isn't already ticked
+            if (!SetReadyStatus_Func)
+                return false;
+            SetReadyStatus_Func(flag);
+            return true;
         }
 
         Attribute* GetAgentAttributes(uint32_t agent_id) {
@@ -118,9 +181,9 @@ namespace GW {
 
         PartyInfo* GetPartyInfo(uint32_t party_id) {
             GW::PartyContext* ctx = GW::PartyContext::instance();
-            if (!ctx) return 0;
+            if (!ctx || !ctx->parties.size()) return 0;
             if (!party_id) return ctx->player_party;
-            if (!ctx->parties.valid() || party_id >= ctx->parties.size())
+            if (party_id >= ctx->parties.size())
                 return 0;
             return ctx->parties[party_id];
         }
@@ -158,13 +221,12 @@ namespace GW {
         }
 
         bool SetHardMode(bool flag) {
-            auto* w = WorldContext::instance();
-            if (!w->is_hard_mode_unlocked)
-                return false;
             auto* p = PartyContext::instance();
-            if (p && p->InHardMode() == flag)
-                return true;
-            CtoS::SendPacket(0x8, GAME_CMSG_PARTY_SET_DIFFICULTY, flag);
+            if (!(SetDifficulty_Func && p))
+                return false;
+            if (p->InHardMode() != flag) {
+                SetDifficulty_Func(flag);
+            }
             return true;
         }
 
@@ -215,61 +277,85 @@ namespace GW {
             }
             return false;
         }
-
-        void RespondToPartyRequest(bool accept) {
-            CtoS::SendPacket(0x8, accept ? GAME_CMSG_PARTY_ACCEPT_INVITE : GAME_CMSG_PARTY_ACCEPT_CANCEL, 1);
+        bool RespondToPartyRequest(uint32_t party_id, bool accept) {
+            // @Robustness: Cycle invitations, make sure the party is found
+            if (accept) {
+                if (!PartyAcceptInvite_Func)
+                    return false;
+                PartyAcceptInvite_Func(party_id);
+            }
+            else {
+                if (!PartyRejectInvite_Func)
+                    return false;
+                PartyRejectInvite_Func(party_id);
+            }
+            return true;
         }
 
-        void AddHero(uint32_t heroid) {
-            CtoS::SendPacket(0x8, GAME_CMSG_HERO_ADD, heroid);
+        bool AddHero(uint32_t heroid) {
+            // @Robustness: Make sure player has hero available
+            if (!AddHero_Func)
+                return false;
+            AddHero_Func(heroid);
+            return true;
         }
 
-        void KickHero(uint32_t heroid) {
-            CtoS::SendPacket(0x8, GAME_CMSG_HERO_KICK, heroid);
+        bool KickHero(uint32_t heroid) {
+            // @Robustness: Make sure player's hero is in party
+            if (!KickHero_Func)
+                return false;
+            KickHero_Func(heroid);
+            return true;
+        }
+        bool KickAllHeroes() {
+            return KickHero(0x26);
+        }
+        bool KickPlayer(uint32_t playerid) {
+            // @Robustness: Make sure player is in party
+            if (!KickPlayer_Func || !GetIsLeader())
+                return false;
+            KickPlayer_Func(playerid);
+            return true;
         }
 
-        void KickAllHeroes() {
-            KickHero(0x26);
+        bool LeaveParty() {
+            if (!LeaveParty_Func)
+                return false;
+            if(GetPartySize())
+                LeaveParty_Func();
+            return true;
         }
 
-        void LeaveParty() {
-            CtoS::SendPacket(0x4, GAME_CMSG_PARTY_LEAVE_GROUP);
+        bool FlagHero(uint32_t hero_index, GamePos pos) {
+            return FlagHeroAgent(Agents::GetHeroAgentID(hero_index), pos);
         }
 
-        void FlagHero(uint32_t hero_index, GamePos pos) {
-            FlagHeroAgent(Agents::GetHeroAgentID(hero_index), pos);
+        bool FlagHeroAgent(AgentID agent_id, GamePos pos) {
+            // @Robustness: Make sure player has control of hero agent
+            if (!FlagHeroAgent_Func)
+                return false;
+            if (agent_id == 0) return false;
+            if (agent_id == Agents::GetPlayerId()) return false;
+            FlagHeroAgent_Func(agent_id, &pos);
+            return true;
         }
 
-        void FlagHeroAgent(AgentID agent_id, GamePos pos) {
-            struct FlagHero { // Flag Hero
-                const uint32_t header = GAME_CMSG_HERO_FLAG_SINGLE;
-                uint32_t id;
-                GamePos pos;
-            };
-            if (agent_id == 0) return;
-            if (agent_id == Agents::GetPlayerId()) return;
-            static FlagHero pak; // TODO
-            pak.id = agent_id;
-            pak.pos = pos;
-            CtoS::SendPacket(&pak);
+        bool FlagAll(GamePos pos) {
+            // @Robustness: Make sure player has H/H and is in explorable
+            if (!FlagAll_Func)
+                return false;
+            FlagAll_Func(&pos);
+            return true;
         }
 
-        void FlagAll(GamePos pos) {
-            struct FlagAll { // Flag All
-                const uint32_t header = GAME_CMSG_HERO_FLAG_ALL;
-                GamePos pos;
-            };
-            static FlagAll pak;
-            pak.pos = pos; // TODO
-            CtoS::SendPacket(&pak);
+        bool UnflagHero(uint32_t hero_index) {
+            // @Robustness: Make sure flag is set
+            return FlagHero(hero_index, GamePos(HUGE_VALF, HUGE_VALF, 0));
         }
 
-        void UnflagHero(uint32_t hero_index) {
-            FlagHero(hero_index, GamePos(HUGE_VALF, HUGE_VALF, 0));
-        }
-
-        void UnflagAll() {
-            FlagAll(GamePos(HUGE_VALF, HUGE_VALF, 0));
+        bool UnflagAll() {
+            // @Robustness: Make sure flag is set
+            return FlagAll(GamePos(HUGE_VALF, HUGE_VALF, 0));
         }
 
         void SetTickToggle(bool enable) {

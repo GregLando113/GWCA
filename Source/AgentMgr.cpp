@@ -1,39 +1,25 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
-#include <GWCA/Constants/Constants.h>
-
-#include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
-#include <GWCA/Utilities/Hooker.h>
-#include <GWCA/Utilities/Macros.h>
-#include <GWCA/Utilities/Scanner.h>
-
-#include <GWCA/GameContainers/GamePos.h>
-
-#include <GWCA/GameEntities/NPC.h>
-#include <GWCA/GameEntities/Item.h>
-#include <GWCA/GameEntities/Agent.h>
-#include <GWCA/GameEntities/Party.h>
-#include <GWCA/GameEntities/Player.h>
-
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/AgentContext.h>
-#include <GWCA/Context/PartyContext.h>
-#include <GWCA/Context/WorldContext.h>
 #include <GWCA/Context/GadgetContext.h>
+#include <GWCA/Context/WorldContext.h>
+#include <GWCA/Context/ItemContext.h>
+
+#include <GWCA/GameEntities/Agent.h>
+#include <GWCA/GameEntities/NPC.h>
+#include <GWCA/GameEntities/Player.h>
+#include <GWCA/GameEntities/Item.h>
 
 #include <GWCA/Managers/Module.h>
-
-#include <GWCA/Managers/UIMgr.h>
-#include <GWCA/Managers/MapMgr.h>
-#include <GWCA/Managers/CtoSMgr.h>
-#include <GWCA/Managers/ItemMgr.h>
-#include <GWCA/Managers/AgentMgr.h>
-#include <GWCA/Managers/MemoryMgr.h>
-#include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
+#include <GWCA/Managers/AgentMgr.h>
+#include <GWCA/Managers/ItemMgr.h>
+#include <GWCA/Managers/UIMgr.h>
+
+#include <GWCA/Utilities/Hooker.h>
+#include <GWCA/Utilities/Scanner.h>
 
 namespace {
     using namespace GW;
@@ -42,8 +28,8 @@ namespace {
     std::unordered_map<HookEntry*, Agents::DialogCallback> OnDialog_callbacks;
 
     typedef void (*SendDialog_pt)(uint32_t dialog_id);
-    SendDialog_pt RetSendDialog;
-    SendDialog_pt SendDialog_Func;
+    SendDialog_pt RetSendDialog = 0;
+    SendDialog_pt SendDialog_Func = 0;
 
     void OnSendDialog(uint32_t dialog_id) {
         HookBase::EnterHook();
@@ -65,13 +51,42 @@ namespace {
     };
 
     typedef void(*ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
-    ChangeTarget_pt ChangeTarget_Func;
+    ChangeTarget_pt ChangeTarget_Func = 0;
 
     typedef void(*MovementChange_pt)(uint32_t type, void* unk1, void* type_ptr);
-    MovementChange_pt MovementChange_Func;
+    MovementChange_pt MovementChange_Func = 0;
+
+    enum class InteractionActionType : uint32_t {
+        Enemy,
+        Player,
+        NPC,
+        Item,
+        Follow,
+        Gadget
+    };
+
+    typedef void(*InteractAgent_pt)(InteractionActionType action_type, uint32_t agent_id, uint32_t check_if_call_target_key_held);
+    InteractAgent_pt InteractAgent_Func = 0;
+
+    typedef void(*InteractPlayer_pt)(uint32_t agent_id);
+    InteractPlayer_pt InteractPlayer_Func = 0;
+    typedef void(*InteractCallableAgent_pt)(uint32_t agent_id, uint32_t call_target);
+    InteractCallableAgent_pt InteractNPC_Func = 0;
+    InteractCallableAgent_pt InteractItem_Func = 0;
+    InteractCallableAgent_pt InteractGadget_Func = 0;
+    InteractCallableAgent_pt InteractEnemy_Func = 0;
+
+    // NB: Theres more target types, and they're in the code, but not used for our context
+    enum class CallTargetType : uint32_t {
+        Following = 0x3,
+        AttackingOrTargetting = 0xA,
+        None = 0xFF
+    };
+    typedef void(*CallTarget_pt)(CallTargetType type, uint32_t agent_id);
+    CallTarget_pt CallTarget_Func = 0;
 
     typedef void(*Move_pt)(GamePos *pos);
-    Move_pt Move_Func;
+    Move_pt Move_Func = 0;
 
     uintptr_t AgentArrayPtr = 0;
     uintptr_t PlayerAgentIdPtr = 0;
@@ -82,66 +97,84 @@ namespace {
     AgentList *AgentListPtr = nullptr;
 
     void Init() {
-        MovementChange_Func = (MovementChange_pt)Scanner::Find(
-            "\x0C\x05\x6F\xFF\xFF\xFF", "xxxxxx", -0x9);
-        GWCA_INFO("[SCAN] MovementChangeFunction = %p\n", MovementChange_Func);
-        if (MovementChange_Func)
-            IsAutoRunningPtr = *reinterpret_cast<uintptr_t*>((uintptr_t)MovementChange_Func + 0x40) - 0x4;
-        GWCA_INFO("[SCAN] IsAutoRunningPtr = %p\n", IsAutoRunningPtr);
+        uintptr_t address = 0;
+        
+        address = Scanner::Find( "\x3B\xDF\x0F\x95", "xxxx", -0x0089);
+        if (address) {
+            ChangeTarget_Func = (ChangeTarget_pt)address;
 
-        //ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
-        //    "\x53\x8B\x5D\x0C\x56\x8B\x75\x08\x85", "xxxxxxxxx", -0x10);
-        ChangeTarget_Func = (ChangeTarget_pt)Scanner::Find(
-            "\x3B\xDF\x0F\x95", "xxxx", -0x0089);
-        GWCA_INFO("[SCAN] ChangeTargetFunction = %p\n", ChangeTarget_Func);
+            TargetAgentIdPtr = *(uintptr_t*)(address + 0x94);
+            if (!Scanner::IsValidPtr(TargetAgentIdPtr))
+                TargetAgentIdPtr = 0;
 
-        if (ChangeTarget_Func) {
-            uintptr_t address = Scanner::Find(
-                "\xFF\x50\x10\x47\x83\xC6\x04\x3B\xFB\x75\xE1","xxxxxxxxxxx", +0xD);
-            AgentArrayPtr = *reinterpret_cast<uintptr_t*>(address);
-
-            TargetAgentIdPtr = *(uintptr_t*)((uintptr_t)ChangeTarget_Func + 0x94);
             MouseOverAgentIdPtr = TargetAgentIdPtr + 0x8;
+            if (!Scanner::IsValidPtr(MouseOverAgentIdPtr))
+                MouseOverAgentIdPtr = 0;
         }
 
-        PlayerAgentIdPtr = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
-        if (PlayerAgentIdPtr) {
-            PlayerAgentIdPtr = *(uintptr_t*)PlayerAgentIdPtr;
-            GWCA_INFO("[SCAN] PlayerAgentIdPtr = %p\n", (void *)PlayerAgentIdPtr);
+        address = Scanner::Find("\xFF\x50\x10\x47\x83\xC6\x04\x3B\xFB\x75\xE1", "xxxxxxxxxxx", +0xD);
+        if (Scanner::IsValidPtr(*(uintptr_t*)address))
+            AgentArrayPtr = *(uintptr_t*)address;
+
+        address = Scanner::Find("\x5D\xE9\x00\x00\x00\x00\x55\x8B\xEC\x53","xx????xxxx", -0xE);
+        if (Scanner::IsValidPtr(*(uintptr_t*)address))
+            PlayerAgentIdPtr = *(uintptr_t*)address;
+
+        address = Scanner::Find("\x0f\xb7\xc0\x0d\x00\x00\x00\x10", "xxxxxxxx", 0x9);
+        SendDialog_Func = (SendDialog_pt)Scanner::FunctionFromNearCall(address);
+        
+        address = Scanner::Find("\xc7\x45\xf0\x98\x3a\x00\x00", "xxxxxxx", 0x41);
+        InteractAgent_Func = (InteractAgent_pt)Scanner::FunctionFromNearCall(address);
+        if (InteractAgent_Func) {
+            address = (uintptr_t)InteractAgent_Func;
+            InteractEnemy_Func = (InteractCallableAgent_pt)Scanner::FunctionFromNearCall(address + 0x73);
+            InteractPlayer_Func = (InteractPlayer_pt)Scanner::FunctionFromNearCall(address + 0xB2);
+            Move_Func = (Move_pt)Scanner::FunctionFromNearCall(address + 0xC7);
+            CallTarget_Func = (CallTarget_pt)Scanner::FunctionFromNearCall(address + 0xD6);
+            InteractNPC_Func = (InteractCallableAgent_pt)Scanner::FunctionFromNearCall(address + 0xE7);
+            InteractItem_Func = (InteractCallableAgent_pt)Scanner::FunctionFromNearCall(address + 0xF8);
+            // NB: What is UI message 0x100001a0 ?
+            InteractGadget_Func = (InteractCallableAgent_pt)Scanner::FunctionFromNearCall(address + 0x120);
         }
 
-        AgentListPtr = (AgentList * )Scanner::Find("\x8D\x0C\x88\xE8\x00\x00\x00\x00\x8B\xC3", "xxxx????xx", 0x3C);
-        if (AgentListPtr) {
-            AgentListPtr = *(AgentList * *)AgentListPtr;
-            GWCA_INFO("[SCAN] AgentListPtr = %p\n", AgentListPtr);
-        }
-
-        uintptr_t address = Scanner::Find(
-            "\xFF\x50\x10\x47\x83\xC6\x04\x3B\xFB\x75\xE1", "xxxxxxxxxxx", +0xD);
-        AgentArrayPtr = *reinterpret_cast<uintptr_t*>(address);
-
-        Move_Func = (Move_pt)Scanner::Find(
-                "\xDF\xE0\xF6\xC4\x41\x7B\x64\x56\xE8", "xxxxxxxxx", -0x48);
-        GWCA_INFO("[SCAN] MoveFunction = %p\n", Move_Func);
-
-        SendDialog_Func = (SendDialog_pt)Scanner::Find(
-            "\x83\xC8\x01\x89\x46\x24\x8B\x46\x28\x83\xE8\x00\x74\x0D", "xxxxxxxxxxxxxx", 0x15);
-        if (SendDialog_Func) {
-            SendDialog_Func = (SendDialog_pt)((uintptr_t)SendDialog_Func + *(uintptr_t*)SendDialog_Func + 4);
-        }
-        GWCA_INFO("[SCAN] DialogFunc = %p\n", SendDialog_Func);
-
-        if (Verify(SendDialog_Func))
+        if (SendDialog_Func)
             HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void **)&RetSendDialog);
+
+        GWCA_INFO("[SCAN] ChangeTargetFunction = %p", ChangeTarget_Func);
+        GWCA_INFO("[SCAN] TargetAgentIdPtr = %p", TargetAgentIdPtr);
+        GWCA_INFO("[SCAN] MouseOverAgentIdPtr = %p", MouseOverAgentIdPtr);
+        GWCA_INFO("[SCAN] AgentArrayPtr = %p", AgentArrayPtr);
+        GWCA_INFO("[SCAN] PlayerAgentIdPtr = %p", PlayerAgentIdPtr);
+
+        GWCA_INFO("[SCAN] SendDialog Function = %p", SendDialog_Func);
+        GWCA_INFO("[SCAN] InteractEnemy Function = %p", InteractEnemy_Func);
+        GWCA_INFO("[SCAN] InteractPlayer Function = %p", InteractPlayer_Func);
+        GWCA_INFO("[SCAN] InteractNPC Function = %p", InteractNPC_Func);
+        GWCA_INFO("[SCAN] InteractItem Function = %p", InteractItem_Func);
+        GWCA_INFO("[SCAN] InteractIGadget Function = %p", InteractGadget_Func);
+        GWCA_INFO("[SCAN] MoveTo Function = %p", Move_Func);
+        GWCA_INFO("[SCAN] CallTarget Function = %p", CallTarget_Func);
+
+#if _DEBUG
+        GWCA_ASSERT(ChangeTarget_Func);
+        GWCA_ASSERT(TargetAgentIdPtr);
+        GWCA_ASSERT(MouseOverAgentIdPtr);
+        GWCA_ASSERT(AgentArrayPtr);
+        GWCA_ASSERT(PlayerAgentIdPtr);
+        GWCA_ASSERT(SendDialog_Func);
+        GWCA_ASSERT(InteractEnemy_Func);
+        GWCA_ASSERT(InteractPlayer_Func);
+        GWCA_ASSERT(Move_Func);
+        GWCA_ASSERT(CallTarget_Func);
+        GWCA_ASSERT(InteractNPC_Func);
+        GWCA_ASSERT(InteractItem_Func);
+        GWCA_ASSERT(InteractGadget_Func);
+#endif
     }
 
     void Exit() {
         if (SendDialog_Func)
             HookBase::RemoveHook(SendDialog_Func);
-    }
-
-    bool IsAutoRunning() {
-        return *(uint32_t*)IsAutoRunningPtr == 1;
     }
 }
 
@@ -160,8 +193,11 @@ namespace GW {
         uint32_t GetLastDialogId() {
             return last_dialog_id;
         }
-        void SendDialog(uint32_t dialog_id) {
-            CtoS::SendPacket(0x8, GAME_CMSG_SEND_DIALOG, dialog_id);
+        bool SendDialog(uint32_t dialog_id) {
+            if (!SendDialog_Func)
+                return false;
+            SendDialog_Func(dialog_id);
+            return true;
         }
 
         AgentArray* GetAgentArray() {
@@ -178,36 +214,30 @@ namespace GW {
             return *(uint32_t*)MouseOverAgentIdPtr;
         }
 
-        void ChangeTarget(AgentID agent_id) {
+        bool ChangeTarget(AgentID agent_id) {
             return ChangeTarget(GetAgentByID(agent_id));
         }
 
-        void ChangeTarget(const Agent* agent) {
-            if (Verify(ChangeTarget_Func) && agent)
-                ChangeTarget_Func(agent->agent_id, 0);
+        bool ChangeTarget(const Agent* agent) {
+            if (!(ChangeTarget_Func && agent))
+                return false;
+            ChangeTarget_Func(agent->agent_id, 0);
+            return true;
         }
 
-        void Move(float x, float y, uint32_t zplane /*= 0*/) {
+        bool Move(float x, float y, uint32_t zplane /*= 0*/) {
             GamePos pos;
             pos.x = x;
             pos.y = y;
             pos.zplane = zplane;
-            Agents::Move(pos);
+            return Move(pos);
         }
 
-        void Move(GamePos pos) {
-            if (Verify(MovementChange_Func) && IsAutoRunning()) {
-                // Kill autorun, queue movement for next frame.
-                uint32_t movement_type = 0xB7; // Autorun
-                uint32_t unk1 = 0;
-                MovementChange_Func(movement_type, &unk1, &movement_type);
-                GameThread::Enqueue([pos]() {
-                    Move_Func((GamePos*)&pos);
-                    });
-            }
-            else {
-                Move_Func(&pos);
-            }
+        bool Move(GamePos pos) {
+            if (!Move_Func)
+                return false;
+            Move_Func(&pos);
+            return true;
         }
         uint32_t GetAmountOfPlayersInInstance() {
             auto* w = WorldContext::instance();
@@ -251,27 +281,45 @@ namespace GW {
             return a ? a->GetAsAgentLiving() : nullptr;
         }
 
-        void GoNPC(const Agent* agent, uint32_t call_target) {
-            CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_LIVING, agent->agent_id, call_target);
+        bool GoNPC(const Agent* agent, uint32_t call_target) {
+            if (!(InteractNPC_Func && agent && agent->GetIsLivingType()))
+                return false;
+            InteractNPC_Func(agent->agent_id, call_target ? 1 : 0);
+            return true;
+        }
+        bool PickUpItem(const Agent* agent, uint32_t call_target) {
+            if (!(InteractItem_Func && agent && agent->GetIsItemType()))
+                return false;
+            InteractItem_Func(agent->agent_id, call_target ? 1 : 0);
+            return true;
         }
 
-        void GoPlayer(const Agent* agent) {
-            CtoS::SendPacket(0x8, GAME_CMSG_INTERACT_PLAYER, agent->agent_id);
+        bool GoPlayer(const Agent* agent, uint32_t call_target) {
+            if (!(InteractPlayer_Func && agent && agent->GetIsLivingType() && agent->GetAsAgentLiving()->IsPlayer()))
+                return false;
+            InteractPlayer_Func(agent->agent_id);
+            if (call_target) {
+                CallTarget_Func(CallTargetType::Following, agent->agent_id);
+            }
+            return true;
         }
 
-        void GoSignpost(const Agent* agent, uint32_t call_target) {
-            CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_GADGET, agent->agent_id, call_target);
+        bool GoSignpost(const Agent* agent, uint32_t call_target) {
+            if (!(InteractGadget_Func && agent && agent->GetIsGadgetType()))
+                return false;
+            InteractGadget_Func(agent->agent_id, call_target ? 1 : 0);
+            return true;
         }
 
-        void CallTarget(const Agent* agent) {
-            CtoS::SendPacket(0xC, GAME_CMSG_TARGET_CALL, 0xA, agent->agent_id);
+        bool CallTarget(const Agent* agent) {
+            if (!(CallTarget_Func && agent))
+                return false;
+            CallTarget_Func(CallTargetType::AttackingOrTargetting, agent->agent_id);
+            return true;
         }
 
         wchar_t* GetPlayerNameByLoginNumber(uint32_t login_number) {
-            PlayerArray& players = GameContext::instance()->world->players;
-            if (login_number >= players.size())
-                return nullptr;
-            return players[login_number].name;
+            return PlayerMgr::GetPlayerName(login_number);
         }
 
         uint32_t GetAgentIdByLoginNumber(uint32_t login_number) {
@@ -303,7 +351,7 @@ namespace GW {
             if (agent) {
                 return GetAgentEncName(agent);
             }
-            GW::AgentInfoArray& agent_infos = GameContext::instance()->world->agent_infos;
+            GW::AgentInfoArray& agent_infos = WorldContext::instance()->agent_infos;
             if (!agent_infos.valid() || agent_id >= agent_infos.size()) {
                 return nullptr;
             }
@@ -337,7 +385,7 @@ namespace GW {
                 return npc ? npc->name_enc : nullptr;
             }
             if (agent->GetIsGadgetType()) {
-                AgentContext* ctx = GameContext::instance()->agent;
+                AgentContext* ctx = AgentContext::instance();
                 GadgetContext* gadget = GameContext::instance()->gadget;
                 if (!ctx || !gadget) return nullptr;
                 auto* GadgetIds = ctx->agent_summary_info[agent->agent_id].extra_info_sub;
@@ -359,10 +407,11 @@ namespace GW {
             return nullptr;
         }
 
-        void AsyncGetAgentName(const Agent* agent, std::wstring& res) {
+        bool AsyncGetAgentName(const Agent* agent, std::wstring& res) {
             wchar_t* str = GetAgentEncName(agent);
-            if (!str) return;
+            if (!str) return false;
             UI::AsyncDecodeStr(str, &res);
+            return true;
         }
 
         void RegisterDialogCallback(

@@ -1,4 +1,5 @@
 #pragma once
+#include <GWCA/GameContainers/Array.h>
 
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
@@ -24,7 +25,7 @@ namespace GW {
     namespace Agents {
         // === Dialogs ===
         // Same as pressing button (id) while talking to an NPC.
-        GWCA_API void SendDialog(uint32_t dialog_id);
+        GWCA_API bool SendDialog(uint32_t dialog_id);
 
         // Returns last dialog id sent to the server. Requires the hook.
         GWCA_API uint32_t GetLastDialogId();
@@ -75,26 +76,29 @@ namespace GW {
         GWCA_API NPC *GetNPCByID(uint32_t npc_id);
 
         // Change targeted agent to (Agent)
-        GWCA_API void ChangeTarget(const Agent *agent);
-        GWCA_API void ChangeTarget(AgentID agent_id);
+        GWCA_API bool ChangeTarget(const Agent *agent);
+        GWCA_API bool ChangeTarget(AgentID agent_id);
 
         // Move to specified coordinates.
         // Note: will do nothing if coordinate is outside the map!
-        GWCA_API void Move(float x, float y, uint32_t zplane = 0);
-        GWCA_API void Move(GamePos pos);
+        GWCA_API bool Move(float x, float y, uint32_t zplane = 0);
+        GWCA_API bool Move(GamePos pos);
 
         // Go to an NPC and begin interaction.
-        GWCA_API void GoNPC(const Agent *agent, uint32_t call_target = 0);
+        GWCA_API bool GoNPC(const Agent *agent, uint32_t call_target = 0);
+
+        // Go to an item
+        GWCA_API bool PickUpItem(const Agent* agent, uint32_t call_target = 0);
 
         // Walk to a player.
-        GWCA_API void GoPlayer(const Agent *agent);
+        GWCA_API bool GoPlayer(const Agent *agent, uint32_t call_target = 0);
 
         // Go to a chest/signpost (yellow nametag) specified by (Agent).
         // Also sets agent as your open chest target.
-        GWCA_API void GoSignpost(const Agent *agent, uint32_t call_target = 0);
+        GWCA_API bool GoSignpost(const Agent *agent, uint32_t call_target = 0);
 
         // Call target of specified agent without interacting with the agent.
-        GWCA_API void CallTarget(const Agent *agent);
+        GWCA_API bool CallTarget(const Agent *agent);
 
         // Returns name of player with selected login_number.
         GWCA_API wchar_t *GetPlayerNameByLoginNumber(uint32_t login_number);
@@ -108,7 +112,7 @@ namespace GW {
         GWCA_API wchar_t* GetAgentEncName(const Agent* agent);
         GWCA_API wchar_t* GetAgentEncName(uint32_t agent_id);
 
-        GWCA_API void AsyncGetAgentName(const Agent *agent, std::wstring& name);
+        GWCA_API bool AsyncGetAgentName(const Agent *agent, std::wstring& name);
 
         typedef HookCallback<uint32_t> DialogCallback;
         GWCA_API void RegisterDialogCallback(

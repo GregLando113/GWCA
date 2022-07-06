@@ -12,7 +12,7 @@ namespace {
         uintptr_t start = 0;
         uintptr_t end = 0;
     };
-    SectionOffset sections[2] = { 0 };
+    SectionOffset sections[3] = { 0 };
 }
 uintptr_t GW::Scanner::FindAssertion(const char* assertion_file, const char* assertion_msg, int offset) {
 #pragma warning( push )
@@ -104,6 +104,9 @@ uintptr_t GW::Scanner::FindInRange(const char* pattern, const char* mask, int of
 uintptr_t GW::Scanner::Find(const char* pattern, const char* mask, int offset, Section section) {
     return FindInRange(pattern, mask, offset, sections[section].start, sections[section].end);
 }
+bool GW::Scanner::IsValidPtr(uintptr_t address, Section section) {
+    return address && address > sections[section].start && address < sections[section].end;
+}
 
 uintptr_t GW::Scanner::FunctionFromNearCall(uintptr_t call_instruction_address) {
     if (!call_instruction_address)
@@ -129,6 +132,8 @@ void GW::Scanner::Initialize(const char* moduleName) {
             section = Section::TEXT;
         else if (memcmp(name, ".rdata", 6) == 0)
             section = Section::RDATA;
+        else if (memcmp(name, ".data", 5) == 0)
+            section = Section::DATA;
         if (section != 0x8) {
             sections[section].start = dllImageBase + pSectionHdr->VirtualAddress;
             sections[section].end = sections[section].start + pSectionHdr->Misc.VirtualSize;

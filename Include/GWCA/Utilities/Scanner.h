@@ -13,7 +13,8 @@ namespace GW {
 
         enum Section : uint8_t {
             TEXT,
-            RDATA
+            RDATA,
+            DATA
         };
 
         // Find reference in GW memory to a specific assertion message
@@ -24,6 +25,9 @@ namespace GW {
 
         // Actual pattern finder.
         uintptr_t Find(const char* pattern, const char* mask = 0, int offset = 0, Section section = Section::TEXT);
+
+        // Check if current address is a valid pointer (usually to a data variable in DATA)
+        bool IsValidPtr(uintptr_t address, Section section = Section::DATA);
 
         // Returns actual address of a function call given via CALL <near call> instruction e.g. *call_instruction_address = 0xE8 ?? ?? ?? 0xFF
         uintptr_t FunctionFromNearCall(uintptr_t call_instruction_address);

@@ -17,6 +17,13 @@ namespace GW {
         enum EquipmentStatus : uint32_t;
     }
 
+    enum EquipmentType : uint32_t {
+        Cape = 0x0, Helm = 0x2, CostumeBody = 0x4, CostumeHeadpiece = 0x6, Unknown = 0xff
+    };
+    enum EquipmentStatus : uint32_t {
+        AlwaysHide, HideInTownsAndOutposts, HideInCombatAreas, AlwaysShow
+    };
+
     struct Module;
     extern Module ItemModule;
 
@@ -43,23 +50,23 @@ namespace GW {
         GWCA_API Item *GetItemById(uint32_t item_id);
 
         // Use given item if usable.
-        GWCA_API void UseItem(const Item *item);
+        GWCA_API bool UseItem(const Item *item);
 
-        // Equip item if equippable.
-        GWCA_API void EquipItem(const Item *item);
+        // Equip item if equippable. Pass agent id of the hero you'd like to put the item on, or 0 for current player
+        GWCA_API bool EquipItem(const Item *item, uint32_t agent_id = 0);
 
         // Drop item if droppable.
-        GWCA_API void DropItem(const Item *item, uint32_t quantity);
+        GWCA_API bool DropItem(const Item *item, uint32_t quantity);
 
         // Pick up selected item off the ground.
-        GWCA_API void PickUpItem(const Item *item, uint32_t call_target = 0);
+        GWCA_API bool PickUpItem(const Item *item, uint32_t call_target = 0);
 
         // Opens the storage window from anywhere.
         // Can only interact with the storage in an outpost with a xunlai chest inside, sorry no exploiting.
         GWCA_API void OpenXunlaiWindow();
 
         // Drop amount gold on ground.
-        GWCA_API void DropGold(uint32_t amount = 1);
+        GWCA_API bool DropGold(uint32_t amount = 1);
 
         // Get amount of gold on character.
         GWCA_API uint32_t GetGoldAmountOnCharacter();
@@ -73,17 +80,14 @@ namespace GW {
         // Withdraw from the storage the given amount of gold. "0" is all you can.
         GWCA_API uint32_t WithdrawGold(uint32_t amount = 0);
 
-        // Open locked chest, raw packet, first send a GoSignpost packet to select chest.
-        GWCA_API void OpenLockedChest();
+        // Open locked chest; requires valid target. use_key = true to use a key if available rather than lockpick
+        GWCA_API bool OpenLockedChest(bool use_key = true);
         
         // Move item to a new position (bag, slot). Used to merge stacks
         // slot start at 0
-        GWCA_API void MoveItem(const Item *from, Constants::Bag bag_id, uint32_t slot, uint32_t quantity = 0);
-        GWCA_API void MoveItem(const Item *item, const Bag *bag, uint32_t slot, uint32_t quantity = 0);
-        GWCA_API void MoveItem(const Item *from, const Item *to, uint32_t quantity = 0);
-
-        // Split a given amount into a new position (bag, slot).
-        // GWCA_API void SplitStack(Item *item, Bag *bag, int slot, int quantity);
+        GWCA_API bool MoveItem(const Item *from, Constants::Bag bag_id, uint32_t slot, uint32_t quantity = 0);
+        GWCA_API bool MoveItem(const Item *item, const Bag *bag, uint32_t slot, uint32_t quantity = 0);
+        GWCA_API bool MoveItem(const Item *from, const Item *to, uint32_t quantity = 0);
 
         // === Complex functions ===
         // Find item in selected bags with said modelid, then use it.
@@ -116,14 +120,7 @@ namespace GW {
 
         GWCA_API void AsyncGetItemByName(const Item *item, std::wstring& name);
 
-        GWCA_API Constants::EquipmentStatus GetCapeStatus();
-        GWCA_API Constants::EquipmentStatus GetHelmStatus();
-        GWCA_API Constants::EquipmentStatus GetCostumeBodyStatus();
-        GWCA_API Constants::EquipmentStatus GetCostumeHeadpieceStatus();
-        GWCA_API void SetCapeStatus(Constants::EquipmentStatus);
-        GWCA_API void SetHelmStatus(Constants::EquipmentStatus);
-        GWCA_API void SetCostumeBodyStatus(Constants::EquipmentStatus);
-        GWCA_API void SetCostumeHeadpieceStatus(Constants::EquipmentStatus);
-
+        GWCA_API EquipmentStatus GetEquipmentVisibility(EquipmentType type);
+        GWCA_API bool SetEquipmentVisibility(EquipmentType type, EquipmentStatus state);
     };
 }

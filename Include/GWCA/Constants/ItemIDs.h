@@ -118,6 +118,9 @@ namespace GW {
 
             // Holiday Drops
             constexpr int LunarToken = 21833;
+
+            constexpr int Lockpick = 22751;
+
         }
     }
 }

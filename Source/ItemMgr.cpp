@@ -1,36 +1,32 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
+#include <GWCA/Constants/ItemIDs.h>
 
-#include <GWCA/Utilities/Debug.h>
+#include <GWCA/Packets/StoC.h>
+
+#include <GWCA/Context/ItemContext.h>
+#include <GWCA/Context/WorldContext.h>
+
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
-#include <GWCA/Utilities/Macros.h>
+#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Scanner.h>
-
-#include <GWCA/GameContainers/GamePos.h>
-#include <GWCA/Packets/StoC.h>
 
 #include <GWCA/GameEntities/Item.h>
 #include <GWCA/GameEntities/Agent.h>
 
-#include <GWCA/Context/GameContext.h>
-#include <GWCA/Context/ItemContext.h>
-#include <GWCA/Context/WorldContext.h>
-
-#include <GWCA/Managers/Module.h>
-
-#include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/ItemMgr.h>
-#include <GWCA/Managers/CtoSMgr.h>
+#include <GWCA/Managers/Module.h>
 #include <GWCA/Managers/StoCMgr.h>
+#include <GWCA/Managers/AgentMgr.h>
+#include <GWCA/Managers/UIMgr.h>
 
 namespace {
     using namespace GW;
     using namespace Items;
 
-    uintptr_t storage_open_addr;
+    uint32_t* storage_open_addr = 0;
     enum ItemClickType : uint32_t {
         ItemClickType_Add           = 2, // (when you load / open chest)
         ItemClickType_Click         = 5,
@@ -48,8 +44,29 @@ namespace {
     };
 
     typedef void (__fastcall *ItemClick_pt)(uint32_t *bag_id, void *edx, ItemClickParam *param);
-    ItemClick_pt RetItemClick;
-    ItemClick_pt ItemClick_Func;
+    ItemClick_pt RetItemClick = 0;
+    ItemClick_pt ItemClick_Func = 0;
+
+    // General purpose "void function that does something with this id"
+    typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
+    DoAction_pt UseItem_Func = 0;
+    DoAction_pt DropGold_Func = 0;
+    DoAction_pt OpenLockedChest_Func = 0;
+
+    typedef void(__cdecl* MoveItem_pt)(uint32_t item_id, uint32_t quantity, uint32_t bag_id, uint32_t slot);
+    MoveItem_pt MoveItem_Func = 0;
+
+    typedef void(__cdecl* EquipItem_pt)(uint32_t item_id, uint32_t agent_id);
+    EquipItem_pt EquipItem_Func = 0;
+
+    typedef void(__cdecl* DropItem_pt)(uint32_t item_id, uint32_t quantity);
+    DropItem_pt DropItem_Func = 0;
+
+    typedef void(__cdecl* ChangeEquipmentVisibility_pt)(uint32_t equipment_state, uint32_t equip_type);
+    ChangeEquipmentVisibility_pt ChangeEquipmentVisibility_Func = 0;
+
+    typedef void(__cdecl* ChangeGold_pt)(uint32_t character_gold, uint32_t storage_gold);
+    ChangeGold_pt ChangeGold_Func = 0;
 
     std::unordered_map<HookEntry *, ItemClickCallback> ItemClick_callbacks;
     void __fastcall OnItemClick(uint32_t* bag_id, void *edx, ItemClickParam *param) {
@@ -76,20 +93,60 @@ namespace {
 
     void Init() {
 
-        {
-            uintptr_t address = Scanner::Find(
-                "\xC7\x00\x0F\x00\x00\x00\x89\x48\x14", "xxxxxxxxx", -0x28);
-            GWCA_INFO("[SCAN] StorageOpen = %p\n", (void*)address);
-            if (Verify(address))
-                storage_open_addr = *(uintptr_t*)address;
-        }
+        DWORD address = 0;
 
-        ItemClick_Func = (ItemClick_pt)Scanner::Find(
-            "\x8B\x48\x08\x83\xEA\x00\x0F\x84", "xxxxxxxx", -0x1C);
-        GWCA_INFO("[SCAN] ItemClick = %p\n", ItemClick_Func);
+        address = Scanner::Find("\xC7\x00\x0F\x00\x00\x00\x89\x48\x14", "xxxxxxxxx", -0x28);
+        if (Scanner::IsValidPtr(*(uintptr_t*)address))
+            storage_open_addr = *(uint32_t**)address;
 
-        if (Verify(ItemClick_Func))
-            HookBase::CreateHook(ItemClick_Func, OnItemClick, (void **)&RetItemClick);
+        ItemClick_Func = (ItemClick_pt)Scanner::Find( "\x8B\x48\x08\x83\xEA\x00\x0F\x84", "xxxxxxxx", -0x1C);
+
+        address = Scanner::Find("\x0f\xb6\x40\x04\x83\xc0\xf8","xxxxxxx",0x1f);
+        UseItem_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::Find("\x83\xc4\x04\x85\xc0\x0f?????\x8d\x45\x0c", "xxxxxx?????xxx");
+        EquipItem_Func = (EquipItem_pt)Scanner::FunctionFromNearCall(address + 0x1e);
+        MoveItem_Func = (MoveItem_pt)Scanner::FunctionFromNearCall(address + 0x6e);
+
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmview.cpp", "param.notifyData", 0x13);
+        DropGold_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::Find("\x83\xc4\x40\x6a\x00\x6a\x19", "xxxxxxx", -0x4e);
+        DropItem_Func = (DropItem_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::Find("\x8b\x42\x04\x51\x23\xc1","xxxxxx",0x7);
+        ChangeEquipmentVisibility_Func = (ChangeEquipmentVisibility_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::Find("\x68\x21\x03\x00\x00\x89\x45\xfc", "xxxxxxxx", 0x3a);
+        ChangeGold_Func = (ChangeGold_pt)Scanner::FunctionFromNearCall(address);
+
+        address = Scanner::Find("\x83\xc9\x01\x89\x4b\x24", "xxxxxx", 0x18);
+        OpenLockedChest_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+
+        GWCA_INFO("[SCAN] StorageOpenPtr = %p", storage_open_addr);
+        GWCA_INFO("[SCAN] OnItemClick Function = %p", ItemClick_Func);
+        GWCA_INFO("[SCAN] UseItem Function = %p", UseItem_Func);
+        GWCA_INFO("[SCAN] EquipItem Function = %p", EquipItem_Func);
+        GWCA_INFO("[SCAN] MoveItem Function = %p", MoveItem_Func);
+        GWCA_INFO("[SCAN] DropGold Function = %p", DropGold_Func);
+        GWCA_INFO("[SCAN] DropItem Function = %p", DropItem_Func);
+        GWCA_INFO("[SCAN] ChangeEquipmentVisibility Function = %p", ChangeEquipmentVisibility_Func);
+        GWCA_INFO("[SCAN] ChangeGold Function = %p", ChangeGold_Func);
+        GWCA_INFO("[SCAN] OpenLockedChest Function = %p", OpenLockedChest_Func);
+#if _DEBUG
+        GWCA_ASSERT(storage_open_addr);
+        GWCA_ASSERT(ItemClick_Func);
+        GWCA_ASSERT(EquipItem_Func);
+        GWCA_ASSERT(UseItem_Func);
+        GWCA_ASSERT(MoveItem_Func);
+        GWCA_ASSERT(DropGold_Func);
+        GWCA_ASSERT(DropItem_Func);
+        GWCA_ASSERT(ChangeEquipmentVisibility_Func);
+        GWCA_ASSERT(ChangeGold_Func);
+        GWCA_ASSERT(OpenLockedChest_Func);
+#endif
+        if (ItemClick_Func)
+            HookBase::CreateHook(ItemClick_Func, OnItemClick, (void**)&RetItemClick);
     }
 
     void Exit() {
@@ -132,38 +189,49 @@ namespace GW {
             StoC::EmulatePacket(&pack);
         }
 
-        void PickUpItem(const Item* item, uint32_t CallTarget /*= 0*/) {
-            CtoS::SendPacket(0xC, GAME_CMSG_INTERACT_ITEM, item->agent_id, CallTarget);
+        bool PickUpItem(const Item* item, uint32_t CallTarget /*= 0*/) {
+            return Agents::PickUpItem(Agents::GetAgentByID(item->agent_id), CallTarget);
         }
 
-        void DropItem(const Item* item, uint32_t quantity) {
-            CtoS::SendPacket(0xC, GAME_CMSG_DROP_ITEM, item->item_id, quantity);
+        bool DropItem(const Item* item, uint32_t quantity) {
+            if (!(DropItem_Func && item))
+                return false;
+            DropItem_Func(item->item_id, quantity);
+            return true;
         }
 
-        void EquipItem(const Item* item) {
-            CtoS::SendPacket(0x8, GAME_CMSG_EQUIP_ITEM, item->item_id);
+        bool EquipItem(const Item* item, uint32_t agent_id) {
+            if (!(item && EquipItem_Func))
+                return false;
+            if (!agent_id)
+                agent_id = Agents::GetPlayerId();
+            if (!agent_id)
+                return false;
+            EquipItem_Func(item->item_id, agent_id);
+            return true;
         }
 
-        void UseItem(const Item* item) {
-            CtoS::SendPacket(0x8, GAME_CMSG_ITEM_USE, item->item_id);
+        bool UseItem(const Item* item) {
+            if (!(UseItem_Func && item))
+                return false;
+            UseItem_Func(item->item_id);
+            return true;
         }
 
         Bag** GetBagArray() {
-            return GameContext::instance()->items->inventory->bags;
+            auto* i = GetInventory();
+            return i ? i->bags : nullptr;
         }
 
         Bag* GetBag(Constants::Bag bag_id) {
+            if ((uint32_t)bag_id >= (uint32_t)Constants::BagMax)
+                return nullptr;
             Bag** bags = GetBagArray();
-            if (!bags) return nullptr;
-            return bags[(unsigned)bag_id];
+            return bags ? bags[(unsigned)bag_id] : nullptr;
         }
 
         Bag* GetBag(uint32_t bag_id) {
-            if (bag_id >= Constants::BagMax)
-                return nullptr;
-            Bag** bags = GetBagArray();
-            if (!bags) return nullptr;
-            return bags[bag_id];
+            return GetBag((Constants::Bag)bag_id);
         }
 
         Item* GetItemBySlot(const Bag* bag, uint32_t slot) {
@@ -175,7 +243,7 @@ namespace GW {
 
         Item* GetItemBySlot(Constants::Bag bag, uint32_t slot) {
             Bag* bag_ptr = GetBag(bag);
-            return GetItemBySlot(bag_ptr, slot);
+            return bag_ptr ? GetItemBySlot(bag_ptr, slot) : nullptr;
         }
 
         Item* GetHoveredItem() {
@@ -204,8 +272,11 @@ namespace GW {
             return i ? i->inventory : nullptr;
         }
 
-        void DropGold(uint32_t Amount /*= 1*/) {
-            CtoS::SendPacket(0x8, GAME_CMSG_DROP_GOLD, Amount);
+        bool DropGold(uint32_t Amount /*= 1*/) {
+            if (!(DropGold_Func && GetGoldAmountOnCharacter() >= Amount))
+                return false;
+            DropGold_Func(Amount);
+            return true;
         }
 
         uint32_t GetGoldAmountOnCharacter() {
@@ -218,8 +289,11 @@ namespace GW {
             return i ? i->gold_storage : 0;
         }
 
-        static void ChangeGold(uint32_t character_gold, uint32_t storage_gold) {
-            CtoS::SendPacket(0xC, GAME_CMSG_ITEM_CHANGE_GOLD, character_gold, storage_gold);
+        bool ChangeGold(uint32_t character_gold, uint32_t storage_gold) {
+            if (!(ChangeGold_Func && (GetGoldAmountInStorage() + GetGoldAmountOnCharacter()) == (character_gold + storage_gold)))
+                return false;
+            ChangeGold_Func(character_gold, storage_gold);
+            return true;
         }
 
         uint32_t DepositGold(uint32_t amount) {
@@ -238,8 +312,7 @@ namespace GW {
             }
             gold_storage += will_move;
             gold_character -= will_move;
-            ChangeGold(gold_character, gold_storage);
-            return will_move;
+            return ChangeGold(gold_character, gold_storage) ? will_move : 0;
         }
 
         uint32_t WithdrawGold(uint32_t amount) {
@@ -258,34 +331,42 @@ namespace GW {
             }
             gold_storage -= will_move;
             gold_character += will_move;
-            ChangeGold(gold_character, gold_storage);
-            return will_move;
+            return ChangeGold(gold_character, gold_storage) ? will_move : 0;
         }
 
-        void OpenLockedChest() {
-            CtoS::SendPacket(0x8, GAME_CMSG_OPEN_CHEST, 0x2);
+        bool OpenLockedChest(bool use_key) {
+            auto* target = Agents::GetTarget();
+            if (!(OpenLockedChest_Func && target && target->GetIsGadgetType()))
+                return false;
+            auto* me = Agents::GetPlayer();
+            if (!(me && GetDistance(me->pos, target->pos) < Constants::Range::Area))
+                return false;
+            if (use_key) {
+                // TODO: Find matching key for chest to allow GWCA to use keys; how does the game know what dialog buttons to show?
+                use_key = false;
+            }
+            if (!use_key && !GetItemByModelId(Constants::ItemID::Lockpick))
+                return false;
+            OpenLockedChest_Func(use_key ? 0x1 : 0x2);
+            return true;
         }
 
-        void MoveItem(const Item* from, const Bag* bag, uint32_t slot, uint32_t quantity) {
-            if (!from || !bag) return;
-            if (bag->items.size() < (unsigned)slot) return;
+        bool MoveItem(const Item* from, const Bag* bag, uint32_t slot, uint32_t quantity) {
+            if (!(MoveItem_Func && from && bag)) return false;
+            if (bag->items.size() < (unsigned)slot) return false;
             if (quantity <= 0) quantity = from->quantity;
             if (quantity > from->quantity) quantity = from->quantity;
-            if (quantity == from->quantity)
-                CtoS::SendPacket(0x10, GAME_CMSG_ITEM_MOVE, from->item_id, bag->bag_id, slot);
-            else
-                CtoS::SendPacket(0x14, GAME_CMSG_ITEM_SPLIT_STACK, from->item_id, quantity, bag->bag_id, slot);
+            MoveItem_Func(from->item_id, quantity, bag->index, slot);
+            return true;
         }
 
-        void MoveItem(const Item* item, Constants::Bag bag_id, uint32_t slot, uint32_t quantity)
+        bool MoveItem(const Item* item, Constants::Bag bag_id, uint32_t slot, uint32_t quantity)
         {
-            MoveItem(item, GetBag(bag_id), slot, quantity);
+            return MoveItem(item, GetBag(bag_id), slot, quantity);
         }
 
-        void MoveItem(const Item* from, const Item* to, uint32_t quantity) {
-            if (!from || !to) return;
-            if (!from->bag || !to->bag) return;
-            MoveItem(from, to->bag, to->slot, quantity);
+        bool MoveItem(const Item* from, const Item* to, uint32_t quantity) {
+            return MoveItem(from, to->bag, to->slot, quantity);
         }
 
 
@@ -339,30 +420,7 @@ namespace GW {
         }
 
         bool UseItemByModelId(uint32_t modelid, int bagStart, int bagEnd) {
-            Bag** bags = GetBagArray();
-            if (bags == NULL) return false;
-
-            Bag* bag = NULL;
-            Item* item = NULL;
-
-            for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
-                bag = bags[bagIndex];
-                if (bag != NULL) {
-                    ItemArray& items = bag->items;
-                    if (!items.valid()) return false;
-                    for (size_t i = 0; i < items.size(); i++) {
-                        item = items[i];
-                        if (item != NULL) {
-                            if (item->model_id == modelid) {
-                                UseItem(item);
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
+            return UseItem(GetItemByModelId(modelid, bagStart, bagEnd));
         }
 
         uint32_t CountItemByModelId(uint32_t modelid, int bagStart, int bagEnd) {
@@ -372,14 +430,10 @@ namespace GW {
 
             for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
                 bag = bags[bagIndex];
-                if (bag != NULL) {
-                    ItemArray& items = bag->items;
-                    for (size_t i = 0; i < items.size(); i++) {
-                        if (items[i]) {
-                            if (items[i]->model_id == modelid) {
-                                itemcount += items[i]->quantity;
-                            }
-                        }
+                if (!(bag && bag->items.valid())) continue;
+                for (GW::Item* item : bag->items) {
+                    if (item && item->model_id == modelid) {
+                        itemcount += item->quantity;
                     }
                 }
             }
@@ -393,14 +447,10 @@ namespace GW {
 
             for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
                 bag = bags[bagIndex];
-                if (bag != NULL) {
-                    ItemArray& items = bag->items;
-                    for (size_t i = 0; i < items.size(); i++) {
-                        if (items[i]) {
-                            if (items[i]->model_id == modelid) {
-                                return items[i];
-                            }
-                        }
+                if (!(bag && bag->items.valid())) continue;
+                for (GW::Item* item : bag->items) {
+                    if (item && item->model_id == modelid) {
+                        return item;
                     }
                 }
             }
@@ -413,10 +463,7 @@ namespace GW {
         }
 
         bool GetIsStorageOpen(void) {
-            if (Verify(storage_open_addr))
-                return *(uint32_t*)storage_open_addr != 0;
-            else
-                return false;
+            return storage_open_addr && *(uint32_t*)storage_open_addr != 0;
         }
 
         void RegisterItemClickCallback(
@@ -441,33 +488,20 @@ namespace GW {
             UI::AsyncDecodeStr(str, &res);
         }
 
-        Constants::EquipmentStatus GetCapeStatus() {
-            return (Constants::EquipmentStatus)(GW::GameContext::instance()->world->equipment_status & 0x3);
+        uint32_t GetEquipmentVisibilityState() {
+            auto* w = WorldContext::instance();
+            return w ? w->equipment_status : 0;
         }
-        void SetCapeStatus(Constants::EquipmentStatus s) {
-            if (GetCapeStatus() != s)
-                GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s, 0x3);
+        EquipmentStatus GetEquipmentVisibility(EquipmentType type) {
+            return (EquipmentStatus)((GetEquipmentVisibilityState() >> type) & 0x3);
         }
-        Constants::EquipmentStatus GetHelmStatus() {
-            return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0xC) >> 2);
-        }
-        void SetHelmStatus(Constants::EquipmentStatus s) {
-            if (GetHelmStatus() != s)
-                GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 2, 0xC);
-        }
-        Constants::EquipmentStatus GetCostumeBodyStatus() {
-            return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0x30) >> 4);
-        }
-        void SetCostumeBodyStatus(Constants::EquipmentStatus s) {
-            if (GetCostumeBodyStatus() != s)
-                GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 4, 0x30);
-        }
-        Constants::EquipmentStatus GetCostumeHeadpieceStatus() {
-            return (Constants::EquipmentStatus)((GW::GameContext::instance()->world->equipment_status & 0xC0) >> 6);
-        }
-        void SetCostumeHeadpieceStatus(Constants::EquipmentStatus s) {
-            if (GetCostumeHeadpieceStatus() != s)
-                GW::CtoS::SendPacket(0xC, GAME_CMSG_EQUIP_VISIBILITY, s << 6, 0xC0);
+        bool SetEquipmentVisibility(EquipmentType type, EquipmentStatus state) {
+            if (GetEquipmentVisibility(type) == state)
+                return true;
+            if (!ChangeEquipmentVisibility_Func)
+                return false;
+            ChangeEquipmentVisibility_Func(state << type, 0x3 << type);
+            return true;
         }
     }
 

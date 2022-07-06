@@ -20,7 +20,7 @@ namespace {
     using namespace GW;
 
     typedef void (__cdecl *TransactItem_pt)(
-        uint32_t type,
+        Merchant::TransactionType type,
         uint32_t gold_give,
         Merchant::TransactionInfo give,
         uint32_t gold_recv,
@@ -28,7 +28,7 @@ namespace {
     );
 
     typedef void (__cdecl *RequestQuote_pt)(
-        uint32_t type,
+        Merchant::TransactionType type,
         uint32_t unknown,
         Merchant::QuoteInfo give,
         Merchant::QuoteInfo recv
@@ -38,13 +38,17 @@ namespace {
     RequestQuote_pt RequestQuote_func;
 
     void Init() {
-        TransactItem_Func = (TransactItem_pt )Scanner::Find(
-            "\x85\xFF\x74\x1D\x8B\x4D\x14\xEB\x08", "xxxxxxxxx", -0x7F);
-        GWCA_INFO("[SCAN] TransactItem = %p\n", TransactItem_Func);
+        TransactItem_Func = (TransactItem_pt )Scanner::Find("\x85\xFF\x74\x1D\x8B\x4D\x14\xEB\x08", "xxxxxxxxx", -0x7F);
+        RequestQuote_func = (RequestQuote_pt )Scanner::Find("\x8B\x75\x20\x83\xFE\x10\x76\x14", "xxxxxxxx", -0x35);
+        
 
-        RequestQuote_func = (RequestQuote_pt )Scanner::Find(
-            "\x8B\x75\x20\x83\xFE\x10\x76\x14", "xxxxxxxx", -0x35);
-        GWCA_INFO("[SCAN] RequestQuote = %p\n", RequestQuote_func);
+        GWCA_INFO("[SCAN] TransactItem Function = %p", TransactItem_Func);
+        GWCA_INFO("[SCAN] RequestQuote Function = %p", RequestQuote_func);
+
+#if _DEBUG
+        GWCA_ASSERT(TransactItem_Func);
+        GWCA_ASSERT(RequestQuote_func);
+#endif
     }
 }
 

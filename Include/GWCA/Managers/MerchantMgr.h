@@ -25,7 +25,7 @@ namespace GW {
             uint32_t *item_ids = nullptr;
         };
 
-        enum TransactionType : uint32_t {
+        enum class TransactionType : uint32_t {
             MerchantBuy = 0x1,
             CollectorBuy,
             CrafterBuy,

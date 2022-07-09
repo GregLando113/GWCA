@@ -16,7 +16,6 @@
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/MapMgr.h>
 
-#include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/GuildMgr.h>
 
 namespace GW {

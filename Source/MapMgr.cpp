@@ -19,19 +19,17 @@
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/AgentContext.h>
 #include <GWCA/Context/WorldContext.h>
+#include <GWCA/Context/PartyContext.h>
 
 #include <GWCA/Managers/Module.h>
-
+#include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/MapMgr.h>
-#include <GWCA/Managers/CtoSMgr.h>
 
 namespace {
     using namespace GW;
 
-    uintptr_t map_id_addr;
-    uintptr_t map_info_addr;
-    uintptr_t area_info_addr;
-    uintptr_t instance_type_addr;
+    uint32_t* region_id_addr = 0;
+    AreaInfo* area_info_addr = 0;
 
     typedef float(__cdecl* QueryAltitude_pt)(
         const GamePos* point,
@@ -40,42 +38,84 @@ namespace {
         Vec3f* unk);
     QueryAltitude_pt QueryAltitude_Func;
 
+    typedef void(__cdecl* SkipCinematic_pt)();
+    SkipCinematic_pt SkipCinematic_Func = 0;
+
+    enum class EnterMissionArena : uint32_t {
+        
+        DAlessioArena = 0x13E,
+        AmnoonArena = 0x13F,
+        FortKoga = 0x140,
+        HeroesCrypt = 0x141,
+        ShiverpeakArena = 0x142,
+        
+        CurrentMap = 0x36d
+    };
+    enum class EnterMissionFoe : uint32_t {
+        None = 0x0,
+        IllusionaryWeaponry = 0x32,
+        IWillAvengeYouWarriors = 0x33,
+        ObsidianSpikeElementalists = 0x34,
+        DegenerationTeam = 0x37,
+        SmitingMonks = 0x39,
+        VictoryIsMineTrappers = 0x3c
+    };
+
+
+    UI::UIInteractionCallback PartyWindowUICallback_Func = 0;
+
+    struct MapDimensions {
+        uint32_t unk;
+        uint32_t start_x;
+        uint32_t start_y;
+        uint32_t end_x;
+        uint32_t end_y;
+        uint32_t unk1;
+    };
+
+    struct InstanceInfo {
+        MapDimensions* terrain_info1;
+        GW::Constants::InstanceType instance_type;
+        AreaInfo* current_map_info;
+        uint32_t terrain_count;
+        MapDimensions* terrain_info2;
+    } *InstanceInfoPtr = 0;
+
     void Init() {
-        {
-            uintptr_t address = GW::Scanner::Find("\x8B\xF0\xEB\x03\x8B\x75\x0C\x3B", "xxxxxxxx", +0xA);
-            GWCA_INFO("[SCAN] map_info_addr = %p\n", (void *)address);
-            if (Verify(address))
-                map_info_addr = *(uintptr_t *)(address);
-        }
 
-        {
-            uintptr_t address = Scanner::Find(
-                "\x6B\xC6\x7C\x5E\x05", "xxxxx", 5);
-            GWCA_INFO("[SCAN] area_info_addr = %p\n", (void *)address);
-            area_info_addr = *(uintptr_t *)address;
-        }
+        DWORD address = 0;
+        SkipCinematic_Func = (SkipCinematic_pt)Scanner::Find("\x8b\x40\x30\x83\x78\x04\x00", "xxxxxxx", -0x5);
 
-        {
-            uintptr_t address = Scanner::Find("\xE8\x00\x00\x00\x00\x6A\x3D\x57\xE8", "x????xxxx", -4);
-            GWCA_INFO("[SCAN] map_id_addr = %p\n", (void *)address);
-            if (Verify(address))
-                map_id_addr = *(uintptr_t *)address;
-        }
+        address = GW::Scanner::Find("\x6a\x54\x8d\x46\x24\x89\x08", "xxxxxxx", -0x4);
+        if(address && Scanner::IsValidPtr(*(uintptr_t*)(address)))
+            region_id_addr = *(uint32_t**)(address);
 
-        {
-            uintptr_t address = Scanner::Find(
-                "\x6A\x2C\x50\xE8\x00\x00\x00\x00\x83\xC4\x08\xC7", "xxxx????xxxx", +0x17);
-            GWCA_INFO("[SCAN] instance_type_addr = %p\n", (void *)address);
-            if (Verify(address))
-                instance_type_addr = *(uintptr_t *)address;
-        }
-        {
-            uintptr_t address = Scanner::Find(
-                "\x8b\x58\x14\xff\x73\x78\xe8\x28\xbc\x02\x00\x83\xc4\x04\x85\xc0", "xxxxxxx????xxxxx", -0xd);
-            GWCA_INFO("[SCAN] QueryAltitude_Func = %p\n", (void*)address);
-            if (Verify(address))
-                QueryAltitude_Func = (QueryAltitude_pt)address;
-        }
+        address = Scanner::Find("\x6B\xC6\x7C\x5E\x05", "xxxxx", 5);
+        if (address && Scanner::IsValidPtr(*(uintptr_t*)address,Scanner::Section::RDATA))
+            area_info_addr = *(AreaInfo**)(address);
+
+        address = Scanner::Find("\x6A\x2C\x50\xE8\x00\x00\x00\x00\x83\xC4\x08\xC7", "xxxx????xxxx", +0xd);
+        if (address && Scanner::IsValidPtr(*(uintptr_t*)(address)))
+            InstanceInfoPtr = *(InstanceInfo**)(address);
+
+        address = Scanner::Find("\x8b\x58\x14\xff\x73\x78\xe8\x28\xbc\x02\x00\x83\xc4\x04\x85\xc0", "xxxxxxx????xxxxx", -0xd);
+        if (Verify(address))
+            QueryAltitude_Func = (QueryAltitude_pt)address;
+
+        PartyWindowUICallback_Func = (UI::UIInteractionCallback)Scanner::Find("\x8b\xc1\x3d\x35\x00\x00\x10", "xxxxxxx", -0x15);
+
+        GWCA_INFO("[SCAN] RegionId address = %p", region_id_addr);
+        GWCA_INFO("[SCAN] AreaInfo address = %p", area_info_addr);
+        GWCA_INFO("[SCAN] InstanceInfoPtr address = %p", InstanceInfoPtr);
+        GWCA_INFO("[SCAN] QueryAltitude Function = %p", QueryAltitude_Func);
+        GWCA_INFO("[SCAN] EnterChallengeMission Function = %p", QueryAltitude_Func);
+#if _DEBUG
+        GWCA_ASSERT(region_id_addr);
+        GWCA_ASSERT(area_info_addr);
+        GWCA_ASSERT(InstanceInfoPtr);
+        GWCA_ASSERT(QueryAltitude_Func);
+        GWCA_ASSERT(PartyWindowUICallback_Func);
+#endif
     }
 }
 
@@ -104,27 +144,18 @@ namespace GW {
 
         void Travel(Constants::MapID map_id,
             int district, int region, int language) {
-
-            struct ZoneMap {
-                uint32_t header = GAME_CMSG_PARTY_TRAVEL;
-                uint32_t mapid;
+            struct MapStruct {
+                GW::Constants::MapID map_id;
                 int region;
-                int district;
                 int language;
-                uint32_t unk;
+                uint32_t district;
             };
-
-            if (GetInstanceType() == Constants::InstanceType::Loading)
-                return;
-
-            ZoneMap pak;
-            pak.mapid = static_cast<uint32_t>(map_id);
-            pak.district = district;
-            pak.region = region;
-            pak.language = language;
-            pak.unk = 0;
-
-            CtoS::SendPacket<ZoneMap>(&pak);
+            MapStruct t;
+            t.map_id = map_id;
+            t.district = district;
+            t.region = region;
+            t.language = language;
+            UI::SendUIMessage(UI::kTravel, &t);
         }
 
         void Travel(Constants::MapID map_id, Constants::District district, int district_number) {
@@ -177,11 +208,12 @@ namespace GW {
         }
 
         Constants::MapID GetMapID() {
-            return (Constants::MapID)(*(uint32_t*)map_id_addr);
+            auto* c = CharContext::instance();
+            return c ? (Constants::MapID)c->current_map_id : Constants::MapID::None;
         }
 
         int GetRegion() {
-            return *(int32_t*)(map_info_addr + 0x10);
+            return region_id_addr ? *region_id_addr : 0;
         }
 
         bool GetIsMapUnlocked(Constants::MapID map_id) {
@@ -198,7 +230,8 @@ namespace GW {
         }
 
         int GetLanguage() {
-            return *(int32_t*)(map_info_addr + 0xC);
+            auto* c = CharContext::instance();
+            return c ? c->language : 0;
         }
 
         bool GetIsObserving() {
@@ -212,7 +245,7 @@ namespace GW {
         }
 
         Constants::InstanceType GetInstanceType() {
-            return *(Constants::InstanceType*)instance_type_addr;
+            return InstanceInfoPtr ? InstanceInfoPtr->instance_type : Constants::InstanceType::Loading;
         }
 
         MissionMapIconArray* GetMissionMapIconArray() {
@@ -239,8 +272,7 @@ namespace GW {
             if (map_id == Constants::MapID::None) {
                 map_id = GetMapID();
             }
-            AreaInfo* infos = (AreaInfo*)area_info_addr;
-            return infos ? &infos[(uint32_t)map_id] : nullptr;
+            return area_info_addr ? &area_info_addr[(uint32_t)map_id] : nullptr;
         }
 
         bool GetIsInCinematic(void) {
@@ -248,12 +280,24 @@ namespace GW {
             return g && g->cinematic ? g->cinematic->h0004 != 0 : false;
         }
 
-        void SkipCinematic(void) {
-            CtoS::SendPacket(4, GAME_CMSG_SKIP_CINEMATIC);
+        bool SkipCinematic(void) {
+            if (!SkipCinematic_Func)
+                return false;
+            SkipCinematic_Func();
+            return true;
         }
 
-        void EnterChallenge() {
-            CtoS::SendPacket(8, GAME_CMSG_PARTY_ENTER_CHALLENGE, 0);
+        bool EnterChallenge() {
+            // @Robustess: Make sure player is in a map that has a mission available.
+            // @Enhancement: Allow zaishen challenge map and zaishen challenge team to be chosen
+            auto p = PartyContext::instance();
+            UI::InteractionMessage dummy_context(0x48);
+            struct {
+                EnterMissionArena map = EnterMissionArena::CurrentMap;
+                EnterMissionFoe foe = EnterMissionFoe::None;
+            } wParam;
+            PartyWindowUICallback_Func(&dummy_context, &wParam, 0);
+            return true;
         }
     }
 } // namespace GW

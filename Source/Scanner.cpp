@@ -115,7 +115,8 @@ uintptr_t GW::Scanner::FunctionFromNearCall(uintptr_t call_instruction_address) 
         && ((*(uintptr_t*)call_instruction_address) & 0x000000e9) != 0x000000e9)
         return 0; // Not a near call instruction
     uintptr_t near_address = *(uintptr_t*)(call_instruction_address + 1);
-    return (near_address)+(call_instruction_address + 5);
+    uintptr_t function_address = (near_address)+(call_instruction_address + 5);
+    return IsValidPtr(function_address, Section::TEXT) ? function_address : 0;
 }
 
 void GW::Scanner::Initialize(const char* moduleName) {

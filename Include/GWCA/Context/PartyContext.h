@@ -28,5 +28,6 @@ namespace GW {
         
         bool InHardMode() const { return (flag & 0x10) > 0; }
         bool IsDefeated() const { return (flag & 0x20) > 0; }
+        bool IsPartyLeader() const { return (flag >> 0x7) & 1; }
     };
 }

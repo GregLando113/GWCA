@@ -52,7 +52,7 @@ namespace GW {
         // returns if the player agent is leader
         GWCA_API bool GetIsLeader();
 
-        // Accept or reject a party invitation
+        // Accept or reject a party invitation via party window
         GWCA_API bool RespondToPartyRequest(uint32_t party_id, bool accept);
 
         GWCA_API bool LeaveParty();
@@ -61,6 +61,11 @@ namespace GW {
         GWCA_API bool AddHero(uint32_t heroid);
         GWCA_API bool KickHero(uint32_t heroid);
         GWCA_API bool KickAllHeroes();
+        GWCA_API bool AddHenchman(uint32_t agent_id);
+        GWCA_API bool KickHenchman(uint32_t agent_id);
+        GWCA_API bool InvitePlayer(uint32_t player_id);
+        GWCA_API bool InvitePlayer(wchar_t* player_name);
+        GWCA_API bool KickPlayer(uint32_t player_id);
 
         // hero flagging
         GWCA_API bool FlagHero(uint32_t hero_index, GamePos pos);
@@ -71,5 +76,12 @@ namespace GW {
         GWCA_API bool UnflagAll();
 
         GWCA_API uint32_t GetHeroAgentID(uint32_t hero_index);
+
+        // Advertise your party in party search window
+        GWCA_API bool SearchParty(uint32_t search_type, wchar_t* advertisement = nullptr);
+        // Cancel party advertisement
+        GWCA_API bool SearchPartyCancel();
+        // Accept or reject a party invitation via party search window
+        GWCA_API bool SearchPartyReply(bool accept);
     };
 }

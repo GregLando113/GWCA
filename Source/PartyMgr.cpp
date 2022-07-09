@@ -13,6 +13,7 @@
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Party.h>
 #include <GWCA/GameEntities/Attribute.h>
+#include <GWCA/GameEntities/Player.h>
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PartyContext.h>
@@ -22,129 +23,153 @@
 
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
+#include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
+#include <GWCA/Managers/ChatMgr.h>
 
 namespace {
     using namespace GW;
 
-    typedef void(__cdecl* UpdatePartyWindow_pt)(void* unk0, void* unk1, void* unk2, void* unk3, void* unk4);
-    UpdatePartyWindow_pt RetUpdatePartyWindow;
-    UpdatePartyWindow_pt UpdatePartyWindow_Func;
-    // General purpose "void function that does something with this id"
-    typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
-    typedef void(__cdecl* Void_pt)();
+    UI::UIInteractionCallback TickButtonUICallback = 0;
+    UI::UIInteractionCallback TickButtonUICallback_Ret = 0;
 
-    DoAction_pt SetDifficulty_Func;
-    DoAction_pt PartyAcceptInvite_Func;
-    DoAction_pt PartyRejectInvite_Func;
-    DoAction_pt AddHero_Func;
-    DoAction_pt KickHero_Func;
-    DoAction_pt KickPlayer_Func;
-    DoAction_pt SetReadyStatus_Func;
-    Void_pt LeaveParty_Func;
+    typedef void(__cdecl* PartySearchSeek_pt)(uint32_t search_type, wchar_t* advertisement, uint32_t unk);
+    PartySearchSeek_pt PartySearchSeek_Func = 0;
+
+    typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
+    DoAction_pt PartySearchRequestJoin_Func = 0;
+    DoAction_pt PartySearchRequestReply_Func = 0;
+    
+    DoAction_pt AddHero_Func = 0;
+    DoAction_pt AddHenchman_Func = 0;
+    DoAction_pt KickHero_Func = 0;
+    DoAction_pt KickHenchman_Func = 0;
+
+    DoAction_pt SetReadyStatus_Func = 0;
+    DoAction_pt SetDifficulty_Func = 0;
+    DoAction_pt PartyAcceptInvite_Func = 0;
+    DoAction_pt PartyRejectInvite_Func = 0;
+    DoAction_pt KickPlayer_Func = 0;
+
+    typedef void(__cdecl* Void_pt)();
+    Void_pt LeaveParty_Func = 0;
+    Void_pt PartySearchCancel_Func = 0;
 
     typedef void(__cdecl* FlagHeroAgent_pt)(uint32_t agent_id,GW::GamePos* pos);
-    FlagHeroAgent_pt FlagHeroAgent_Func;
+    FlagHeroAgent_pt FlagHeroAgent_Func = 0;
 
     typedef void(__cdecl* FlagAll_pt)(GW::GamePos* pos);
-    FlagAll_pt FlagAll_Func;
+    FlagAll_pt FlagAll_Func = 0;
 
     bool tick_work_as_toggle = false;
 
-    void __cdecl OnUpdatePartyWindow(void* unk0, void* unk1, void* unk2, void* unk3, void* unk4) {
+    UI::UIInteractionCallback OnTickButtonUICallback(UI::InteractionMessage* message, void* wParam, void* lParam) {
         HookBase::EnterHook();
-        if (!tick_work_as_toggle) {
-            RetUpdatePartyWindow(unk0, unk1, unk2, unk3, unk4);
-            HookBase::LeaveHook();
-            return;
-        }
-        uint32_t action = (uint32_t)unk4;
-        bool blocked = action < 0x100; // Don't block pointers
-        switch (action) {
-        case 0x0:
-        case 0x1:   // Updating icon
-        case 0x8:   // Updating icon
-        case 0xA:   // Show ready state icon (map load)
-        case 0x13:  // Adding heroes
-        case 0x14:  // Mouse move
-        case 0x15:  // Mouse move
-        case 0x23:  // Hover tooltip
-        case 0x29:  // Hover tooltip
-        case 0x33:  // Show ready state icon (map load)
-        case 0x30:  // Show ready state icon (map load)
-        case 0x34:  // Adding heroes
-        case 0x2a:  // Ready state icon hover
-            blocked = false;
-            break;
+        bool blocked = false;
+        if (!tick_work_as_toggle)
+            goto finish;
+        switch (message->message_id) {
         case 0x22:  // Ready state icon clicked
             PartyMgr::Tick(!PartyMgr::GetIsPlayerTicked());
             blocked = true;
             break;
         case 0x2c:  // Show ready state dropdown
             blocked = true;
+            break;
         }
-        if (!blocked)
-            RetUpdatePartyWindow(unk0, unk1, unk2, unk3, unk4);
+    finish:
+        if (!blocked) {
+            TickButtonUICallback_Ret(message, wParam, lParam);
+        }
         HookBase::LeaveHook();
+        return 0;
     }
 
     void Init() {
         // This function runs every time an update is made to the party window
-        UpdatePartyWindow_Func = (UpdatePartyWindow_pt)Scanner::Find(
-            "\x4D\x08\x83\xEC\x10\x8B\x41\x04\x56\x83\xF8\x04", "xxxxxxxxxxxx", -0x4);
-        GWCA_INFO("[SCAN] PartyWindowUpdate_Func = %p\n", UpdatePartyWindow_Func);
-        if (UpdatePartyWindow_Func) {
-            HookBase::CreateHook(UpdatePartyWindow_Func, OnUpdatePartyWindow, (void**)&RetUpdatePartyWindow);
+        TickButtonUICallback = (UI::UIInteractionCallback)Scanner::Find("\x4D\x08\x83\xEC\x10\x8B\x41\x04\x56\x83\xF8\x04", "xxxxxxxxxxxx", -0x4);
+        if (TickButtonUICallback) {
+            HookBase::CreateHook(TickButtonUICallback, OnTickButtonUICallback, (void**)&TickButtonUICallback_Ret);
         }
         DWORD address = Scanner::Find("\x8b\x75\x0c\x83\xc4\x04\x83\x3e\x00\x0f?????\xff\x70\x20","xxxxxxxxxx?????xxx",0x12);
         SetDifficulty_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
-        // NB: 0x4c4 is an encoded string id
-        address = Scanner::Find("\x83\xc4\x30\x6a\x00\x68\xc4\x04","xxxxxxxx");
-        PartyAcceptInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x11f);
-        AddHero_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x8f);
+        PartySearchSeek_Func = (PartySearchSeek_pt)Scanner::Find("\x8b\x78\x4c\x8d\x8f\x9c\x00\x00\x00", "xxxxxxxxx", -0xc);
 
-        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptbuttons.cpp", "charHero", 0x11);
-        KickHero_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+        // Party Search Window Button Callback functions
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptsearch.cpp", "m_activeList == LIST_HEROES", -0xd5);
+        PartySearchRequestJoin_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x60);
+        PartySearchRequestReply_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x150);
+        PartySearchCancel_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0x45f);
+        AddHero_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x100);
+        AddHenchman_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xb0);
+        KickHero_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x23b);
+        KickHenchman_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x22a);
 
-        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptbuttons.cpp", "m_selection.playerId", 0x13);
-        KickPlayer_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
-
-        address += 0x4a;
-        LeaveParty_Func = (Void_pt)Scanner::FunctionFromNearCall(address);
-
-        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptbuttons.cpp", "m_selection.partyId", 0x13);
-        PartyRejectInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+        // Party Window Button Callback functions
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptbuttons.cpp", "m_selection.agentId", -0x5e);
+        KickPlayer_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x132);
+        LeaveParty_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0x17c);
 
         address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptplayer.cpp", "No valid case for switch variable '\"\"'", 0x27);
         SetReadyStatus_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
-        address = Scanner::Find("\x8b\x45\xf8\x89\x45\xe8\x8b\x45\xfc\x89\x45\xec\x8d\x45\xe8","xxxxxxxxxxxxxxx", 0x22);
-        FlagAll_Func = (FlagAll_pt)Scanner::FunctionFromNearCall(address);
+        address = Scanner::Find("\x8d\x45\x10\x50\x56\x6a\x4d\x57","xxxxxxxx");
+        FlagHeroAgent_Func = (FlagHeroAgent_pt)Scanner::FunctionFromNearCall(address + 0x4e);
+        FlagAll_Func = (FlagAll_pt)Scanner::FunctionFromNearCall(address + 0x7c);
 
-        address += 0x1b;
-        FlagHeroAgent_Func = (FlagHeroAgent_pt)Scanner::FunctionFromNearCall(address);
+        address = Scanner::Find("\x6a\x00\x68\x00\x02\x02\x00\xff\x77\x04", "xxxxxxxxxx"); // 5589
+        PartyRejectInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xb6);
+        PartyAcceptInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xcf);
 
+
+        GWCA_INFO("[SCAN] TickButtonUICallback Function = %p", TickButtonUICallback);
+
+        GWCA_INFO("[SCAN] SetDifficulty_Func = %p", SetDifficulty_Func);
+
+        GWCA_INFO("[SCAN] PartySearchSeek_Func = %p", PartySearchSeek_Func);
+
+        GWCA_INFO("[SCAN] PartySearchRequestJoin_Func = %p", PartySearchRequestJoin_Func);
+        GWCA_INFO("[SCAN] PartySearchRequestReply_Func = %p", PartySearchRequestReply_Func);
+        GWCA_INFO("[SCAN] PartySearchCancel_Func = %p", PartySearchCancel_Func);
+        GWCA_INFO("[SCAN] AddHero_Func = %p", AddHero_Func);
+        GWCA_INFO("[SCAN] AddHenchman_Func = %p", AddHenchman_Func);
+        GWCA_INFO("[SCAN] KickHero_Func = %p", KickHero_Func);
+        GWCA_INFO("[SCAN] KickHenchman_Func = %p", KickHenchman_Func);
+
+        GWCA_INFO("[SCAN] KickPlayer_Func = %p", KickPlayer_Func);
+        GWCA_INFO("[SCAN] LeaveParty_Func = %p", LeaveParty_Func);
+        GWCA_INFO("[SCAN] SetReadyStatus_Func = %p", SetReadyStatus_Func);
+        GWCA_INFO("[SCAN] FlagHeroAgent_Func = %p", FlagHeroAgent_Func);
+        GWCA_INFO("[SCAN] FlagAll_Func = %p", FlagAll_Func);
+        GWCA_INFO("[SCAN] PartyRejectInvite_Func = %p", PartyRejectInvite_Func);
+        GWCA_INFO("[SCAN] PartyAcceptInvite_Func = %p", PartyAcceptInvite_Func);
+        
 #ifdef _DEBUG
-        GWCA_ASSERT(UpdatePartyWindow_Func);
+        GWCA_ASSERT(TickButtonUICallback);
         GWCA_ASSERT(SetDifficulty_Func);
-        GWCA_ASSERT(PartyAcceptInvite_Func);
+        GWCA_ASSERT(PartySearchRequestJoin_Func);
+        GWCA_ASSERT(PartySearchRequestReply_Func);
+        GWCA_ASSERT(PartySearchCancel_Func);
         GWCA_ASSERT(AddHero_Func);
+        GWCA_ASSERT(AddHenchman_Func);
         GWCA_ASSERT(KickHero_Func);
+        GWCA_ASSERT(KickHenchman_Func);
         GWCA_ASSERT(KickPlayer_Func);
         GWCA_ASSERT(LeaveParty_Func);
-        GWCA_ASSERT(PartyRejectInvite_Func);
         GWCA_ASSERT(SetReadyStatus_Func);
-        GWCA_ASSERT(FlagAll_Func);
         GWCA_ASSERT(FlagHeroAgent_Func);
+        GWCA_ASSERT(FlagAll_Func);
+        GWCA_ASSERT(PartyRejectInvite_Func);
+        GWCA_ASSERT(PartyAcceptInvite_Func);
 #endif
 
     }
 
     void Exit() {
-        if (UpdatePartyWindow_Func)
-            HookBase::RemoveHook(UpdatePartyWindow_Func);
+        if (TickButtonUICallback)
+            HookBase::RemoveHook(TickButtonUICallback);
 
     }
 }
@@ -310,12 +335,38 @@ namespace GW {
         bool KickAllHeroes() {
             return KickHero(0x26);
         }
+        bool AddHenchman(uint32_t agent_id) {
+            // @Robustness: Make sure agent is valid henchman
+            return AddHenchman_Func ? AddHenchman_Func(agent_id), true : false;
+        }
+
+        bool KickHenchman(uint32_t agent_id) {
+            // @Robustness: Make sure player's hero is in party
+            return KickHenchman_Func ? KickHenchman_Func(agent_id), true : false;
+        }
         bool KickPlayer(uint32_t playerid) {
             // @Robustness: Make sure player is in party
             if (!KickPlayer_Func || !GetIsLeader())
                 return false;
             KickPlayer_Func(playerid);
             return true;
+        }
+        bool InvitePlayer(wchar_t* player_name) {
+            // There is a specific CtoS packet for this, but just use chat command instead
+            if (!(player_name && player_name[0]))
+                return false;
+            wchar_t buf[32];
+            int len = swprintf(buf, 32, L"invite %s", player_name);
+            if (len < 0)
+                return false;
+            Chat::SendChat('/', buf);
+        };
+        bool InvitePlayer(uint32_t player_id) {
+            // There is a specific CtoS packet for this, but just use chat command instead
+            auto player = PlayerMgr::GetPlayerByID(player_id);
+            if (!(player && player->name))
+                return false;
+            return InvitePlayer(player->name);
         }
 
         bool LeaveParty() {
@@ -342,10 +393,7 @@ namespace GW {
 
         bool FlagAll(GamePos pos) {
             // @Robustness: Make sure player has H/H and is in explorable
-            if (!FlagAll_Func)
-                return false;
-            FlagAll_Func(&pos);
-            return true;
+            return FlagAll_Func ? FlagAll_Func(&pos), true : false;
         }
 
         bool UnflagHero(uint32_t hero_index) {
@@ -370,6 +418,21 @@ namespace GW {
                 return 0;
             HeroPartyMemberArray& heroes = party->heroes;
             return heroes.valid() && hero_index < heroes.size() ? heroes[hero_index].agent_id : 0;
+        }
+
+        bool SearchParty(uint32_t search_type, wchar_t* advertisement) {
+            if (!PartySearchSeek_Func)
+                return false;
+            if (!advertisement)
+                advertisement = L"";
+            PartySearchSeek_Func(search_type, advertisement, 0);
+            return true;
+        }
+        bool SearchPartyCancel() {
+            return PartySearchCancel_Func ? PartySearchCancel_Func(), true : false;
+        }
+        bool SearchPartyReply(bool accept) {
+            return PartySearchRequestReply_Func ? PartySearchRequestReply_Func(accept ? 1 : 0), true : false;
         }
     }
 

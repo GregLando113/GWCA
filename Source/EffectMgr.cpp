@@ -23,7 +23,6 @@
 
 #include <GWCA/Managers/Module.h>
 
-#include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/StoCMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/EffectMgr.h>
@@ -35,8 +34,11 @@ namespace {
     uint32_t alcohol_level = 0;
     // post processing effects hook
     typedef void(__cdecl *PostProcessEffect_pt)(uint32_t intensity, uint32_t tint);
-    PostProcessEffect_pt RetPostProcessEffect;
-    PostProcessEffect_pt PostProcessEffect_Func;
+    PostProcessEffect_pt RetPostProcessEffect = 0;
+    PostProcessEffect_pt PostProcessEffect_Func = 0;
+
+    typedef void(__cdecl* DropBuff_pt)(uint32_t buff_id);
+    DropBuff_pt DropBuff_Func = 0;
 
     void __cdecl OnPostProcessEffect(uint32_t intensity, uint32_t tint) {
         HookBase::EnterHook();
@@ -45,13 +47,24 @@ namespace {
         HookBase::LeaveHook();
     }
 
+
+
     void Init() {
-        PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find(
-            "\xD9\x5D\x0C\xD9\x45\x0C\x8D\x45\xF8", "xxxxxxxxx", -0x1C);
+        PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find("\xD9\x5D\x0C\xD9\x45\x0C\x8D\x45\xF8", "xxxxxxxxx", -0x1C);
         GWCA_INFO("[SCAN] PostProcessEffect = %p\n", PostProcessEffect_Func);
+
+        DWORD address = Scanner::Find("\xf6\x40\x04\x01\x74\x10", "xxxxxx", 0x9);
+        DropBuff_Func = (DropBuff_pt)Scanner::FunctionFromNearCall(address);
 
         if (Verify(PostProcessEffect_Func))
             HookBase::CreateHook(PostProcessEffect_Func, OnPostProcessEffect, (void **)&RetPostProcessEffect);
+
+        GWCA_INFO("[SCAN] PostProcessEffect Function = %p", PostProcessEffect_Func);
+        GWCA_INFO("[SCAN] DropBuff Function = %p", DropBuff_Func);
+#if _DEBUG
+        GWCA_ASSERT(PostProcessEffect_Func);
+        GWCA_ASSERT(DropBuff_Func);
+#endif
     }
 
     void Exit() {
@@ -133,8 +146,11 @@ namespace GW {
             return GetAgentBuffs(Agents::GetPlayerId());
         }
 
-        void DropBuff(uint32_t buff_id) {
-            CtoS::SendPacket(0x8, GAME_CMSG_DROP_BUFF, buff_id);
+        bool DropBuff(uint32_t buff_id) {
+            if (!DropBuff_Func)
+                return false;
+            DropBuff_Func(buff_id);
+            return true;
         }
     }
 } // namespace GW

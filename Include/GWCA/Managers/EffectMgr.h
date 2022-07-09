@@ -50,7 +50,7 @@ namespace GW {
         GWCA_API BuffArray* GetPlayerBuffs();
 
         // Drop buffid buff.
-        GWCA_API void DropBuff(uint32_t buff_id);
+        GWCA_API bool DropBuff(uint32_t buff_id);
 
         // Gets effect struct of effect on player with SkillID, returns Effect::Nil() if no match.
         GWCA_API Effect * GetPlayerEffectBySkillId(Constants::SkillID skill_id);

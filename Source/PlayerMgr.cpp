@@ -4,6 +4,7 @@
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Export.h>
+#include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/GamePos.h>
 
@@ -18,27 +19,52 @@
 
 #include <GWCA/Managers/Module.h>
 
-#include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
+#include <GWCA/Managers/SkillbarMgr.h>
+
+namespace {
+    using namespace GW;
+
+    typedef void(__cdecl* Void_pt)();
+    Void_pt RemoveActiveTitle_Func = 0;
+
+    typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
+    DoAction_pt SetActiveTitle_Func = 0;
+
+    void Init() {
+        DWORD address = 0;
+
+        address = Scanner::Find("\x8b\x4e\x08\x6a\x00\x68\x00\x83\x01\x00", "xxxxxxxxxx", -0x31); // UI::UIInteractionCallback for title list
+        RemoveActiveTitle_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0x1d6);
+        SetActiveTitle_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x1c8);
+
+        GWCA_INFO("[SCAN] RemoveActiveTitle_Func = %p", RemoveActiveTitle_Func);
+        GWCA_INFO("[SCAN] SetActiveTitle_Func = %p", SetActiveTitle_Func);
+#ifdef _DEBUG
+        GWCA_ASSERT(RemoveActiveTitle_Func);
+        GWCA_ASSERT(SetActiveTitle_Func);
+#endif
+    }
+}
 
 namespace GW {
 
     Module PlayerModule = {
         "PlayerModule",     // name
         NULL,               // param
-        NULL,               // init_module
+        Init,               // init_module
         NULL,               // exit_module
         NULL,               // exit_module
         NULL,               // remove_hooks
     };
     namespace PlayerMgr {
-        void SetActiveTitle(Constants::TitleID title_id) {
-            CtoS::SendPacket(0x8, GAME_CMSG_TITLE_DISPLAY, (uint32_t)title_id);
+        bool SetActiveTitle(Constants::TitleID title_id) {
+            return SetActiveTitle_Func ? SetActiveTitle_Func((uint32_t)title_id), true : false;
         }
 
-        void RemoveActiveTitle() {
-            CtoS::SendPacket(0x4, GAME_CMSG_TITLE_HIDE);
+        bool RemoveActiveTitle() {
+            return RemoveActiveTitle_Func ? RemoveActiveTitle_Func(), true : false;
         }
 
         uint32_t GetPlayerAgentId(uint32_t player_id) {
@@ -46,14 +72,26 @@ namespace GW {
             return player ? player->agent_id : 0;
         }
 
+        GW::TitleArray* GetTitleArray() {
+            auto w = WorldContext::instance();
+            return (w && w->titles.valid()) ? &w->titles : nullptr;
+        }
+
+        Title* GetTitleTrack(Constants::TitleID title_id) {
+            auto a = GetTitleArray();
+            if (!(a && a->size() > (uint32_t)title_id))
+                return nullptr;
+            return &a->at((uint32_t)title_id);
+        }
+
         Title* GetActiveTitle() {
             auto* player = GetPlayerByID();
             if (!(player && player->active_title_tier))
                 return nullptr;
-            auto* w = WorldContext::instance();
-            if (!(w && w->titles.valid()))
+            auto a = GetTitleArray();
+            if (!a) 
                 return nullptr;
-            for (auto& title : w->titles) {
+            for (auto& title : *a) {
                 if (title.current_title_tier_index == player->active_title_tier) {
                     return &title;
                 }
@@ -110,8 +148,8 @@ namespace GW {
             return p ? wcsncpy(p->name_enc + 2, replace_name, 20) : nullptr;
         }
 
-        void ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index) {
-            CtoS::SendPacket(12, GAME_CMSG_CHANGE_SECOND_PROFESSION, Agents::GetHeroAgentID(hero_index), prof);
+        bool ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index) {
+            return SkillbarMgr::ChangeSecondProfession(prof, hero_index);
         }
 
         static int wcsncasecmp(const wchar_t* s1, const wchar_t* s2, size_t n)

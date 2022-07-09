@@ -13,7 +13,7 @@ namespace GW {
     typedef Array<Player> PlayerArray;
 
     namespace Constants {
-        enum TitleID : uint32_t;
+        enum class TitleID : uint32_t;
         enum class Profession;
         enum class QuestID;
     }
@@ -23,9 +23,9 @@ namespace GW {
 
     namespace PlayerMgr {
 
-        GWCA_API void SetActiveTitle(Constants::TitleID title_id);
+        GWCA_API bool SetActiveTitle(Constants::TitleID title_id);
 
-        GWCA_API void RemoveActiveTitle();
+        GWCA_API bool RemoveActiveTitle();
 
         GWCA_API uint32_t GetPlayerAgentId(uint32_t player_id);
 
@@ -42,7 +42,7 @@ namespace GW {
 
         GWCA_API wchar_t* SetPlayerName(uint32_t player_id, const wchar_t *replace_name);
 
-        GWCA_API void ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index = 0);
+        GWCA_API bool ChangeSecondProfession(Constants::Profession prof, uint32_t hero_index = 0);
 
         GWCA_API Player *GetPlayerByName(const wchar_t *name);
 
@@ -51,6 +51,9 @@ namespace GW {
         GWCA_API GW::Constants::QuestID GetActiveQuestId();
 
         GWCA_API Quest* GetActiveQuest();
+
+        // Get the current progress of a title by id. If the title has no progress, this function will return nullptr
+        GWCA_API Title* GetTitleTrack(Constants::TitleID title_id);
 
         GWCA_API Title* GetActiveTitle();
     };

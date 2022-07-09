@@ -25,7 +25,6 @@
 #include <GWCA/Managers/MapMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
-#include <GWCA/Managers/PlayerMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/SkillbarMgr.h>
 #include <GWCA/Managers/UIMgr.h>
@@ -186,7 +185,7 @@ namespace GW {
             return attribute_array_addr && (uint32_t)attribute_id < ATTRIBUTE_COUNT ? &attribute_array_addr[(uint32_t)attribute_id] : nullptr;
         }
 
-        bool ChangeSecondary(Constants::Profession profession, uint32_t hero_index) {
+        bool ChangeSecondProfession(Constants::Profession profession, uint32_t hero_index) {
             if (!ChangeSecondary_Func)
                 return false;
             AgentID agent_id = Agents::GetHeroAgentID(hero_index);
@@ -412,7 +411,7 @@ namespace GW {
                 return false;
             // @Enhancement: Check if we already bought this secondary profession.
             if (me->secondary != (BYTE)skill_template.secondary)
-                ChangeSecondary(skill_template.secondary);
+                ChangeSecondProfession(skill_template.secondary);
             // @Robustness: That cast is not very good :(
             LoadSkillbar(skill_template.skills, _countof(skill_template.skills));
             SetAttributes(skill_template.attributes, _countof(skill_template.attributes));
@@ -469,7 +468,7 @@ namespace GW {
                 return false;
             }
             if (existing_hero->secondary != static_cast<uint32_t>(skill_template.secondary)) {
-                PlayerMgr::ChangeSecondProfession(skill_template.secondary, hero_index);
+                ChangeSecondProfession(skill_template.secondary, hero_index);
             }
 
             // @Robustness: That cast is not very good :(

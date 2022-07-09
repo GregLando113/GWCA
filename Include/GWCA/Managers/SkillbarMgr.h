@@ -50,7 +50,7 @@ namespace GW {
         // Name/Description/Profession etc for an attribute by id
         GWCA_API AttributeInfo* GetAttributeConstantData(Constants::Attribute attribute_id);
 
-        GWCA_API bool ChangeSecondary(Constants::Profession profession, uint32_t hero_index = 0);
+        GWCA_API bool ChangeSecondProfession(Constants::Profession profession, uint32_t hero_index = 0);
 
         // Get array of skillbars, [0] = player [1-7] = heroes.
         GWCA_API SkillbarArray* GetSkillbarArray();

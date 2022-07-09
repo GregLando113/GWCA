@@ -170,7 +170,7 @@ namespace GW {
             Fight, Guard, AvoidCombat
         };
 
-        enum TitleID : uint32_t {
+        enum class TitleID : uint32_t {
             Hero, TyrianCarto, CanthanCarto, Gladiator, Champion, Kurzick,
             Luxon, Drunkard, 
             Deprecated_SkillHunter, // Pre hard mode update version

@@ -12,8 +12,8 @@ namespace GW {
     };
 
     struct AttributeInfo {
-        uint32_t attribute_id;
         uint32_t profession_id;
+        uint32_t attribute_id;
         uint32_t name_id;
         uint32_t desc_id;
         uint32_t is_pve;

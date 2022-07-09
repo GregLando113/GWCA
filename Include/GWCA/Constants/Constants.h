@@ -54,7 +54,7 @@ namespace GW {
             }
         }
 
-        enum class Attribute {
+        enum class Attribute : uint32_t {
             FastCasting, IllusionMagic, DominationMagic, InspirationMagic,      // mesmer
             BloodMagic, DeathMagic, SoulReaping, Curses,                        // necro
             AirMagic, EarthMagic, FireMagic, WaterMagic, EnergyStorage,         // ele

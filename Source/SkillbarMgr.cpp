@@ -23,24 +23,20 @@
 #include <GWCA/Managers/Module.h>
 
 #include <GWCA/Managers/MapMgr.h>
-#include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
 #include <GWCA/Managers/PlayerMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/SkillbarMgr.h>
 #include <GWCA/Managers/UIMgr.h>
+#include <GWCA/Managers/GameThreadMgr.h>
 
 namespace {
     using namespace GW;
     using namespace SkillbarMgr;
 
-    typedef void(__cdecl* UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
-    UseSkill_pt UseSkill_Func;
-    UseSkill_pt RetUseSkill;
-
-    uintptr_t skill_array_addr;
-    uintptr_t attribute_array_addr;
+    Skill* skill_array_addr = 0;
+    AttributeInfo* attribute_array_addr = 0;
     uint32_t ATTRIBUTE_COUNT = 0;
 
     static const char _Base64ToValue[128] = {
@@ -73,49 +69,40 @@ namespace {
     }
 
     Constants::Profession GetAttributeProfession(Constants::Attribute attribute, bool* is_primary_attribute) {
-        if (attribute <= Constants::Attribute::InspirationMagic) {
-            *is_primary_attribute = attribute == Constants::Attribute::FastCasting;
-            return Constants::Profession::Mesmer;
+
+        auto info = GetAttributeConstantData(attribute);
+        if (!info)
+            return Constants::Profession::None;
+        switch (attribute) {
+        case Constants::Attribute::FastCasting:
+        case Constants::Attribute::SoulReaping:
+        case Constants::Attribute::EnergyStorage:
+        case Constants::Attribute::DivineFavor:
+        case Constants::Attribute::Strength:
+        case Constants::Attribute::Expertise:
+        case Constants::Attribute::CriticalStrikes:
+        case Constants::Attribute::SpawningPower:
+        case Constants::Attribute::Leadership:
+        case Constants::Attribute::Mysticism:
+            *is_primary_attribute = true;
+            break;
+        default:
+            *is_primary_attribute = false;
+            break;
         }
-        if (attribute <= Constants::Attribute::Curses) {
-            *is_primary_attribute = attribute == Constants::Attribute::SoulReaping;
-            return Constants::Profession::Necromancer;
-        }
-        if (attribute <= Constants::Attribute::EnergyStorage) {
-            *is_primary_attribute = attribute == Constants::Attribute::EnergyStorage;
-            return Constants::Profession::Elementalist;
-        }
-        if (attribute <= Constants::Attribute::DivineFavor) {
-            *is_primary_attribute = attribute == Constants::Attribute::DivineFavor;
-            return Constants::Profession::Monk;
-        }
-        if (attribute <= Constants::Attribute::Tactics) {
-            *is_primary_attribute = attribute == Constants::Attribute::Strength;
-            return Constants::Profession::Warrior;
-        }
-        if (attribute <= Constants::Attribute::Marksmanship) {
-            *is_primary_attribute = attribute == Constants::Attribute::Expertise;
-            return Constants::Profession::Ranger;
-        }
-        if (attribute <= Constants::Attribute::ShadowArts || attribute == Constants::Attribute::CriticalStrikes) {
-            *is_primary_attribute = attribute == Constants::Attribute::CriticalStrikes;
-            return Constants::Profession::Assassin;
-        }
-        if (attribute <= Constants::Attribute::ChannelingMagic || attribute == Constants::Attribute::SpawningPower) {
-            *is_primary_attribute = attribute == Constants::Attribute::SpawningPower;
-            return Constants::Profession::Ritualist;
-        }
-        if (attribute <= Constants::Attribute::Leadership) {
-            *is_primary_attribute = attribute == Constants::Attribute::Leadership;
-            return Constants::Profession::Paragon;
-        }
-        if (attribute <= Constants::Attribute::Mysticism) {
-            *is_primary_attribute = attribute == Constants::Attribute::Mysticism;
-            return Constants::Profession::Dervish;
-        }
-        return Constants::Profession::None;
+        return (Constants::Profession)info->profession_id;
     }
 
+    typedef void(__cdecl* UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
+    UseSkill_pt UseSkill_Func = 0;
+    UseSkill_pt RetUseSkill = 0;
+
+    typedef void(__cdecl* LoadSkills_pt)(uint32_t agent_id, uint32_t skill_ids_count, uint32_t* skill_ids);
+    LoadSkills_pt LoadSkills_Func = 0;
+    typedef void(__cdecl* LoadAttributes_pt)(uint32_t agent_id, uint32_t attribute_count, uint32_t* attribute_ids, uint32_t* attribute_values);
+    LoadAttributes_pt LoadAttributes_Func = 0;
+    typedef void(__cdecl* ChangeSecondary_pt)(uint32_t agent_id, uint32_t profession);
+    ChangeSecondary_pt ChangeSecondary_Func = 0;
 
     std::unordered_map<HookEntry*, UseSkillCallback> OnUseSkill_Callbacks;
     static void __cdecl OnUseSkill(uint32_t agent_id, uint32_t slot, uint32_t target, uint32_t call_target)
@@ -132,32 +119,43 @@ namespace {
     }
 
     static void Init() {
-        {
-            uintptr_t address = GW::Scanner::Find(
-                "\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
-            GWCA_INFO("[SCAN] SkillArray = %p\n", (void*)address);
-            if (Verify(address))
-                skill_array_addr = *(uintptr_t*)address;
-            // NB: Skill count is *(uint32_t*)(address - 0x20), but not much point in rewriting GetSkillConstantData to accommodate.         
-        }
-        {
-            uintptr_t address = GW::Scanner::Find(
-                "\xba\x33\x00\x00\x00\x89\x08\x8d\x40\x04", "x?xxxxxxxx", -4);
-            
-            if (Verify(address)) {
-                attribute_array_addr = *(uintptr_t*)address;
-                ATTRIBUTE_COUNT = *(uint32_t*)(address + 5);
-            }
-            GWCA_INFO("[SCAN] AttributeArray = %p, Count = %d\n", (void*)attribute_array_addr, ATTRIBUTE_COUNT);
-                
-            // NB: Skill count is *(uint32_t*)(address - 0x20), but not much point in rewriting GetSkillConstantData to accommodate.         
+
+        DWORD address = 0;
+        address = GW::Scanner::Find("\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
+        if(Scanner::IsValidPtr(*(uintptr_t*)address,Scanner::RDATA))
+            skill_array_addr = *(Skill**)address;
+
+        address = GW::Scanner::Find("\xba\x33\x00\x00\x00\x89\x08\x8d\x40\x04", "x?xxxxxxxx", -4);
+        if (Scanner::IsValidPtr(*(uintptr_t*)address, Scanner::RDATA)) {
+            attribute_array_addr = *(AttributeInfo**)address;
+            ATTRIBUTE_COUNT = *(uint32_t*)(address + 5);
         }
 
-        UseSkill_Func = (UseSkill_pt)GW::Scanner::Find(
-            "\x85\xF6\x74\x5B\x83\xFE\x11\x74", "xxxxxxxx", -0x126);
+        UseSkill_Func = (UseSkill_pt)GW::Scanner::Find( "\x85\xF6\x74\x5B\x83\xFE\x11\x74", "xxxxxxxx", -0x126);
+
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\templates\\templateshelpers.cpp", "targetPrimaryProf == templateData.profPrimary");
+        ChangeSecondary_Func = (ChangeSecondary_pt)Scanner::FunctionFromNearCall(address + 0x20);
+        LoadAttributes_Func = (LoadAttributes_pt)Scanner::FunctionFromNearCall(address + 0x34);
+        LoadSkills_Func = (LoadSkills_pt)Scanner::FunctionFromNearCall(address + 0x40);
 
         if (Verify(UseSkill_Func))
             HookBase::CreateHook(UseSkill_Func, OnUseSkill, (void**)&RetUseSkill);
+
+        GWCA_INFO("[SCAN] SkillArray = %p", skill_array_addr);
+        GWCA_INFO("[SCAN] AttributeArray = %p, Count = %d", attribute_array_addr, ATTRIBUTE_COUNT);
+        GWCA_INFO("[SCAN] UseSkill_Func = %p", UseSkill_Func);
+        GWCA_INFO("[SCAN] ChangeSecondary_Func = %p", ChangeSecondary_Func);
+        GWCA_INFO("[SCAN] LoadAttributes_Func = %p", LoadAttributes_Func);
+        GWCA_INFO("[SCAN] LoadSkills_Func = %p", LoadSkills_Func);
+#ifdef _DEBUG
+        GWCA_ASSERT(skill_array_addr);
+        GWCA_ASSERT(attribute_array_addr);
+        GWCA_ASSERT(UseSkill_Func);
+        GWCA_ASSERT(ChangeSecondary_Func);
+        GWCA_ASSERT(LoadAttributes_Func);
+        GWCA_ASSERT(LoadSkills_Func);
+#endif
+
     }
 
     static void Exit() {
@@ -184,26 +182,33 @@ namespace GW {
             Skill* arr = (Skill*)skill_array_addr;
             return skill_array_addr && skill_id < Constants::SkillMax ? &arr[skill_id] : nullptr;
         }
-        AttributeInfo* GetAttributeConstantData(uint32_t attribute_id) {
-            AttributeInfo* arr = (AttributeInfo*)attribute_array_addr;
-            return attribute_array_addr && attribute_id < ATTRIBUTE_COUNT ? &arr[attribute_id] : nullptr;
+        AttributeInfo* GetAttributeConstantData(Constants::Attribute attribute_id) {
+            return attribute_array_addr && (uint32_t)attribute_id < ATTRIBUTE_COUNT ? &attribute_array_addr[(uint32_t)attribute_id] : nullptr;
         }
 
-        void ChangeSecondary(uint32_t profession, uint32_t hero_index) {
+        bool ChangeSecondary(Constants::Profession profession, uint32_t hero_index) {
+            if (!ChangeSecondary_Func)
+                return false;
             AgentID agent_id = Agents::GetHeroAgentID(hero_index);
-            CtoS::SendPacket(0xC, GAME_CMSG_CHANGE_SECOND_PROFESSION, agent_id, profession);
+            ChangeSecondary_Func(agent_id, (uint32_t)profession);
+            return true;
         }
 
-        void LoadSkillbar(uint32_t* skills, size_t n_skills, uint32_t hero_index) {
+        bool LoadSkillbar(uint32_t* skills, size_t n_skills, uint32_t hero_index) {
+            if (!LoadSkills_Func)
+                return false;
             uint32_t skill_ids[8] = { 0 };
-            memcpy(skill_ids, skills, n_skills * sizeof(uint32_t));
+            memcpy(skill_ids, skills, sizeof(skill_ids));
             AgentID agent_id = Agents::GetHeroAgentID(hero_index);
-            CtoS::SendPacket(0x2C, GAME_CMSG_SKILLBAR_LOAD, agent_id, 0x8,
-                skill_ids[0], skill_ids[1], skill_ids[2], skill_ids[3], skill_ids[4],
-                skill_ids[5], skill_ids[6], skill_ids[7]);
+            // NB: GW Client sends UI Message 0x1000005e (update skillbar skills message) without waiting for a server response!
+            // This is a bug in the client, but because this affects rendering we have to enqueue the call
+            GameThread::Enqueue([&]() {
+                LoadSkills_Func(agent_id, _countof(skill_ids), skill_ids);
+                });
+            return true;
         }
 
-        void LoadSkillbar(Constants::SkillID* skills, size_t n_skills, uint32_t hero_index) {
+        bool LoadSkillbar(Constants::SkillID* skills, size_t n_skills, uint32_t hero_index) {
             uint32_t skill_ids[8];
             GWCA_ASSERT(n_skills <= _countof(skill_ids));
             for (size_t i = 0; i < n_skills; i++)
@@ -407,7 +412,7 @@ namespace GW {
                 return false;
             // @Enhancement: Check if we already bought this secondary profession.
             if (me->secondary != (BYTE)skill_template.secondary)
-                PlayerMgr::ChangeSecondProfession(skill_template.secondary);
+                ChangeSecondary(skill_template.secondary);
             // @Robustness: That cast is not very good :(
             LoadSkillbar(skill_template.skills, _countof(skill_template.skills));
             SetAttributes(skill_template.attributes, _countof(skill_template.attributes));
@@ -473,36 +478,16 @@ namespace GW {
             return true;
         }
 
-        void SetAttributes(uint32_t attribute_count,
+        bool SetAttributes(uint32_t attribute_count,
             uint32_t* attribute_ids, uint32_t* attribute_values, uint32_t hero_index) {
-
-            struct tSetAttributes {
-                uint32_t header;
-                AgentID  agent_id;
-                uint32_t attribute_count1;
-                uint32_t attribute_ids[16];
-                uint32_t attribute_count2;
-                uint32_t attribute_values[16];
-            };
-
-            tSetAttributes set_attributes_buffer = { 0 };
-
+            if (!LoadAttributes_Func)
+                return false;
             AgentID agent_id = Agents::GetHeroAgentID(hero_index);
-
-            set_attributes_buffer.header = GAME_CMSG_ATTRIBUTE_LOAD;
-            set_attributes_buffer.agent_id = agent_id;
-            set_attributes_buffer.attribute_count1 = attribute_count;
-            set_attributes_buffer.attribute_count2 = attribute_count;
-
-            for (uint32_t i = 0; i < attribute_count; ++i) {
-                set_attributes_buffer.attribute_ids[i] = attribute_ids[i];
-                set_attributes_buffer.attribute_values[i] = attribute_values[i];
-            }
-
-            CtoS::SendPacket<tSetAttributes>(&set_attributes_buffer);
+            LoadAttributes_Func(agent_id, attribute_count, attribute_ids, attribute_values);
+            return true;
         }
 
-        void SetAttributes(Attribute* attributes, size_t n_attributes, uint32_t hero_index) {
+        bool SetAttributes(Attribute* attributes, size_t n_attributes, uint32_t hero_index) {
             uint32_t count;
             uint32_t attribute_ids[16];
             uint32_t attribute_values[16];
@@ -517,14 +502,18 @@ namespace GW {
             return SetAttributes(count, attribute_ids, attribute_values, hero_index);
         }
 
-        void UseSkill(uint32_t slot, uint32_t target, uint32_t call_target) {
-            if (Verify(UseSkill_Func)) {
-                UseSkill_Func(Agents::GetPlayerId(), slot, target, call_target);
-            }
+        bool UseSkill(uint32_t slot, uint32_t target, uint32_t call_target) {
+            if (!UseSkill_Func)
+                return false;
+            UseSkill_Func(Agents::GetPlayerId(), slot, target, call_target);
+            return true;
         }
 
-        void UseSkillByID(uint32_t skill_id, uint32_t target, uint32_t call_target) {
-            CtoS::SendPacket(0x14, GAME_CMSG_USE_SKILL, skill_id, 0, target, call_target);
+        bool UseSkillByID(uint32_t skill_id, uint32_t target, uint32_t call_target) {
+            int slot = GetSkillSlot((Constants::SkillID)skill_id);
+            if (slot == -1)
+                return false;
+            return UseSkill(slot, target, call_target);
         }
 
         int GetSkillSlot(Constants::SkillID skill_id) {

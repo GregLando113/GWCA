@@ -359,7 +359,8 @@ namespace GW {
             int len = swprintf(buf, 32, L"invite %s", player_name);
             if (len < 0)
                 return false;
-            Chat::SendChat('/', buf);
+            Chat::SendChat('/', buf); // TODO: SendChat to be bool, return result.
+            return true;
         };
         bool InvitePlayer(uint32_t player_id) {
             // There is a specific CtoS packet for this, but just use chat command instead

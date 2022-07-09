@@ -34,6 +34,18 @@ namespace GW {
             // ...
         };
 
+        struct InteractionMessage {
+            InteractionMessage(uint32_t _message_id) : message_id(_message_id) {
+                action_type = 0xF;
+                wParam = (void**)&wParam; // Naughty, but not got this mapped yet and needed to pass checks
+            }
+            uint32_t action_type;
+            uint32_t message_id; // Same as UIMessage from UIMgr, but includes things like mouse move, click etc
+            void** wParam;
+        };
+
+        typedef void(__cdecl* UIInteractionCallback)(InteractionMessage* message, void* wParam, void* lParam);
+
         struct AgentNameTagInfo {
             /* +h0000 */ uint32_t agent_id;
             /* +h0004 */ uint32_t h0002;

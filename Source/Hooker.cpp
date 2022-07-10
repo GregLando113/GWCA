@@ -53,6 +53,8 @@ void GW::HookBase::DisableHooks(void *target)
 
 void GW::HookBase::CreateHook(void *target, void *detour, void **trampoline)
 {
+    if (!target)
+        return;
     MH_CreateHook(target, detour, trampoline);
 }
 

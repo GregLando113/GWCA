@@ -16,7 +16,7 @@ namespace GW {
         /* +h0024 */ uint32_t weapon_req;
         /* +h0028 */ uint8_t profession;
         /* +h0029 */ uint8_t attribute;
-        /* +h002A */ uint8_t h002A[2];
+        /* +h002A */ uint16_t title;
         /* +h002C */ uint32_t skill_id_pvp;
         /* +h0030 */ uint8_t combo;
         /* +h0031 */ uint8_t target;

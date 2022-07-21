@@ -95,11 +95,17 @@ namespace {
     typedef void(__cdecl* UseSkill_pt)(uint32_t, uint32_t, uint32_t, uint32_t);
     UseSkill_pt UseSkill_Func = 0;
     UseSkill_pt RetUseSkill = 0;
+    //typedef HookCallback<uint32_t, uint32_t, uint32_t, uint32_t> UseSkillCallback;
 
     typedef void(__cdecl* LoadSkills_pt)(uint32_t agent_id, uint32_t skill_ids_count, uint32_t* skill_ids);
     LoadSkills_pt LoadSkills_Func = 0;
+    LoadSkills_pt RetLoadSkills = 0;
+    std::vector<UseSkillCallback> LoadSkills_Callbacks;
+
+
     typedef void(__cdecl* LoadAttributes_pt)(uint32_t agent_id, uint32_t attribute_count, uint32_t* attribute_ids, uint32_t* attribute_values);
     LoadAttributes_pt LoadAttributes_Func = 0;
+
     typedef void(__cdecl* ChangeSecondary_pt)(uint32_t agent_id, uint32_t profession);
     ChangeSecondary_pt ChangeSecondary_Func = 0;
 
@@ -137,8 +143,7 @@ namespace {
         LoadAttributes_Func = (LoadAttributes_pt)Scanner::FunctionFromNearCall(address + 0x34);
         LoadSkills_Func = (LoadSkills_pt)Scanner::FunctionFromNearCall(address + 0x40);
 
-        if (Verify(UseSkill_Func))
-            HookBase::CreateHook(UseSkill_Func, OnUseSkill, (void**)&RetUseSkill);
+        HookBase::CreateHook(UseSkill_Func, OnUseSkill, (void**)&RetUseSkill);
 
         GWCA_INFO("[SCAN] SkillArray = %p", skill_array_addr);
         GWCA_INFO("[SCAN] AttributeArray = %p, Count = %d", attribute_array_addr, ATTRIBUTE_COUNT);
@@ -177,9 +182,9 @@ namespace GW {
     namespace SkillbarMgr {
 
 
-        Skill* GetSkillConstantData(uint32_t skill_id) {
+        Skill* GetSkillConstantData(Constants::SkillID skill_id) {
             Skill* arr = (Skill*)skill_array_addr;
-            return skill_array_addr && skill_id < Constants::SkillMax ? &arr[skill_id] : nullptr;
+            return skill_array_addr ? &arr[(uint32_t)skill_id] : nullptr;
         }
         AttributeInfo* GetAttributeConstantData(Constants::Attribute attribute_id) {
             return attribute_array_addr && (uint32_t)attribute_id < ATTRIBUTE_COUNT ? &attribute_array_addr[(uint32_t)attribute_id] : nullptr;
@@ -196,13 +201,16 @@ namespace GW {
         bool LoadSkillbar(uint32_t* skills, size_t n_skills, uint32_t hero_index) {
             if (!LoadSkills_Func)
                 return false;
-            uint32_t skill_ids[8] = { 0 };
-            memcpy(skill_ids, skills, sizeof(skill_ids));
+            const size_t bytes = n_skills * sizeof(uint32_t);
+            uint32_t* skill_ids = (uint32_t*)malloc(bytes);
+            memset(skill_ids, 0, bytes);
+            memcpy(skill_ids, skills, bytes);
             AgentID agent_id = Agents::GetHeroAgentID(hero_index);
             // NB: GW Client sends UI Message 0x1000005e (update skillbar skills message) without waiting for a server response!
             // This is a bug in the client, but because this affects rendering we have to enqueue the call
-            GameThread::Enqueue([&]() {
-                LoadSkills_Func(agent_id, _countof(skill_ids), skill_ids);
+            GameThread::Enqueue([agent_id, n_skills, skill_ids]() {
+                LoadSkills_Func(agent_id, n_skills, skill_ids);
+                free(skill_ids);
                 });
             return true;
         }
@@ -373,7 +381,7 @@ namespace GW {
                     GWCA_ERR("Skill id %d is out of range. (max = %d)\n", skill_id, SKILL_MAX);
                     return false;
                 }
-                Skill* s = GetSkillConstantData(skill_id);
+                Skill* s = GetSkillConstantData((GW::Constants::SkillID)skill_id);
                 if (!s) {
                     GWCA_ERR("Failed to get info for skill ID %d\n", skill_id);
                     return false;
@@ -516,11 +524,10 @@ namespace GW {
         }
 
         int GetSkillSlot(Constants::SkillID skill_id) {
-            uint32_t id = static_cast<uint32_t>(skill_id);
             Skillbar* bar = GetPlayerSkillbar();
             if (!bar || !bar->IsValid()) return -1;
             for (int i = 0; i < 8; ++i) {
-                if (bar->skills[i].skill_id == id) {
+                if (bar->skills[i].skill_id == skill_id) {
                     return i;
                 }
             }
@@ -546,7 +553,7 @@ namespace GW {
             UI::TooltipInfo* tooltip = UI::GetCurrentTooltip();
             if (!(tooltip && tooltip->type() == UI::TooltipType::Skill))
                 return nullptr;
-            return GetSkillConstantData(*(uint32_t*)tooltip->payload);
+            return GetSkillConstantData(*(GW::Constants::SkillID*)tooltip->payload);
         }
         bool GetIsSkillUnlocked(GW::Constants::SkillID skill_id) {
             GW::GameContext* g = GW::GameContext::instance();

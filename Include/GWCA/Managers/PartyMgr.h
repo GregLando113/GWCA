@@ -7,6 +7,7 @@ namespace GW {
     struct PartyInfo;
 
     struct Attribute;
+    enum class HeroBehavior;
 
     typedef uint32_t AgentID;
 
@@ -74,6 +75,7 @@ namespace GW {
 
         GWCA_API bool FlagAll(GamePos pos);
         GWCA_API bool UnflagAll();
+        GWCA_API bool SetHeroBehavior(uint32_t agent_id, HeroBehavior behavior);
 
         GWCA_API uint32_t GetHeroAgentID(uint32_t hero_index);
 

@@ -14,6 +14,7 @@
 #include <GWCA/GameEntities/Party.h>
 #include <GWCA/GameEntities/Attribute.h>
 #include <GWCA/GameEntities/Player.h>
+#include <GWCA/GameEntities/Hero.h>
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PartyContext.h>
@@ -61,6 +62,8 @@ namespace {
 
     typedef void(__cdecl* FlagAll_pt)(GW::GamePos* pos);
     FlagAll_pt FlagAll_Func = 0;
+    typedef void(__cdecl* SetHeroBehavior_pt)(uint32_t agent_id, HeroBehavior behavior);
+    SetHeroBehavior_pt SetHeroBehavior_Func = 0;
 
     bool tick_work_as_toggle = false;
 
@@ -119,10 +122,11 @@ namespace {
         FlagHeroAgent_Func = (FlagHeroAgent_pt)Scanner::FunctionFromNearCall(address + 0x4e);
         FlagAll_Func = (FlagAll_pt)Scanner::FunctionFromNearCall(address + 0x7c);
 
-        address = Scanner::Find("\x6a\x00\x68\x00\x02\x02\x00\xff\x77\x04", "xxxxxxxxxx"); // 5589
+        SetHeroBehavior_Func = (SetHeroBehavior_pt)Scanner::FindAssertion("p:\\code\\gw\\char\\cli\\chcliapi.cpp", "mode < CHAR_AI_MODES",-0xe);
+
+        address = Scanner::Find("\x6a\x00\x68\x00\x02\x02\x00\xff\x77\x04", "xxxxxxxxxx");
         PartyRejectInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xb6);
         PartyAcceptInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xcf);
-
 
         GWCA_INFO("[SCAN] TickButtonUICallback Function = %p", TickButtonUICallback);
 
@@ -143,8 +147,10 @@ namespace {
         GWCA_INFO("[SCAN] SetReadyStatus_Func = %p", SetReadyStatus_Func);
         GWCA_INFO("[SCAN] FlagHeroAgent_Func = %p", FlagHeroAgent_Func);
         GWCA_INFO("[SCAN] FlagAll_Func = %p", FlagAll_Func);
+        GWCA_INFO("[SCAN] SetHeroBehavior_Func = %p", SetHeroBehavior_Func);
         GWCA_INFO("[SCAN] PartyRejectInvite_Func = %p", PartyRejectInvite_Func);
         GWCA_INFO("[SCAN] PartyAcceptInvite_Func = %p", PartyAcceptInvite_Func);
+
         
 #ifdef _DEBUG
         GWCA_ASSERT(TickButtonUICallback);
@@ -163,6 +169,7 @@ namespace {
         GWCA_ASSERT(FlagAll_Func);
         GWCA_ASSERT(PartyRejectInvite_Func);
         GWCA_ASSERT(PartyAcceptInvite_Func);
+        GWCA_ASSERT(SetHeroBehavior_Func);
 #endif
 
     }
@@ -405,6 +412,21 @@ namespace GW {
         bool UnflagAll() {
             // @Robustness: Make sure flag is set
             return FlagAll(GamePos(HUGE_VALF, HUGE_VALF, 0));
+        }
+
+        bool SetHeroBehavior(uint32_t agent_id, HeroBehavior behavior) {
+            auto w = WorldContext::instance();
+            if (!(w && SetHeroBehavior_Func && w->hero_flags.size()))
+                return false;
+            auto& flags = w->hero_flags;
+            for (auto& flag : flags) {
+                if (flag.agent_id == agent_id) {
+                    if (flag.hero_behavior != behavior)
+                        SetHeroBehavior_Func(agent_id, behavior);
+                    return true;
+                }
+            }
+            return false;
         }
 
         void SetTickToggle(bool enable) {

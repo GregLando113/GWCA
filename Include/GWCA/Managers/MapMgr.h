@@ -79,5 +79,6 @@ namespace GW {
         GWCA_API bool SkipCinematic(void);
 
         GWCA_API bool EnterChallenge();
+        GWCA_API bool CancelEnterChallenge();
     };
 }

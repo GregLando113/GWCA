@@ -99,7 +99,7 @@ namespace GW {
             auto* effects = GetPlayerEffects();
             if (!effects) return nullptr;
             for (auto& effect : *effects) {
-                if (effect.skill_id == (uint32_t)skill_id)
+                if (effect.skill_id == skill_id)
                     return &effect;
             }
             return nullptr;
@@ -109,7 +109,7 @@ namespace GW {
             auto* buffs = GetPlayerBuffs();
             if (!buffs) return nullptr;
             for (auto& buff : *buffs) {
-                if (buff.skill_id == (uint32_t)skill_id)
+                if (buff.skill_id == skill_id)
                     return &buff;
             }
             return nullptr;

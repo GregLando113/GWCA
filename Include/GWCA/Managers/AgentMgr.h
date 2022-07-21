@@ -22,6 +22,15 @@ namespace GW {
     struct Module;
     extern Module AgentModule;
 
+    // NB: Theres more target types, and they're in the code, but not used for our context
+    enum class CallTargetType : uint32_t {
+        Following = 0x3,
+        Morale = 0x7,
+        AttackingOrTargetting = 0xA,
+        None = 0xFF
+    };
+
+
     namespace Agents {
         // === Dialogs ===
         // Same as pressing button (id) while talking to an NPC.
@@ -98,7 +107,7 @@ namespace GW {
         GWCA_API bool GoSignpost(const Agent *agent, uint32_t call_target = 0);
 
         // Call target of specified agent without interacting with the agent.
-        GWCA_API bool CallTarget(const Agent *agent);
+        GWCA_API bool CallTarget(const Agent *agent, CallTargetType type = CallTargetType::AttackingOrTargetting);
 
         // Returns name of player with selected login_number.
         GWCA_API wchar_t *GetPlayerNameByLoginNumber(uint32_t login_number);

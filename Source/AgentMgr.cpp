@@ -76,12 +76,6 @@ namespace {
     InteractCallableAgent_pt InteractGadget_Func = 0;
     InteractCallableAgent_pt InteractEnemy_Func = 0;
 
-    // NB: Theres more target types, and they're in the code, but not used for our context
-    enum class CallTargetType : uint32_t {
-        Following = 0x3,
-        AttackingOrTargetting = 0xA,
-        None = 0xFF
-    };
     typedef void(*CallTarget_pt)(CallTargetType type, uint32_t agent_id);
     CallTarget_pt CallTarget_Func = 0;
 
@@ -311,10 +305,10 @@ namespace GW {
             return true;
         }
 
-        bool CallTarget(const Agent* agent) {
+        bool CallTarget(const Agent* agent, CallTargetType type) {
             if (!(CallTarget_Func && agent))
                 return false;
-            CallTarget_Func(CallTargetType::AttackingOrTargetting, agent->agent_id);
+            CallTarget_Func(type, agent->agent_id);
             return true;
         }
 

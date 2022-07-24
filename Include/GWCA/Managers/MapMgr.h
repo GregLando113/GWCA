@@ -53,9 +53,9 @@ namespace GW {
         GWCA_API Constants::InstanceType GetInstanceType();
 
         // Travel to specified outpost.
-        GWCA_API void Travel(Constants::MapID map_id,
+        GWCA_API bool Travel(Constants::MapID map_id,
             int district = 0, int region = 0, int language = 0);
-        GWCA_API void Travel(Constants::MapID map_id,
+        GWCA_API bool Travel(Constants::MapID map_id,
             Constants::District district, int district_number = 0);
 
         // Returns array of icons (res shrines, quarries, traders, etc) on mission map.

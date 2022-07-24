@@ -56,5 +56,8 @@ namespace GW {
         GWCA_API Title* GetTitleTrack(Constants::TitleID title_id);
 
         GWCA_API Title* GetActiveTitle();
+
+        // Donate 5000 faction points to Luxon (1) or Kurzick (0). Must be talking to faction NPC.
+        GWCA_API bool DepositFaction(uint32_t allegiance);
     };
 }

@@ -7,6 +7,7 @@
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
+#include <GWCA/Utilities/Hooker.h>
 
 #include <GWCA/GameContainers/GamePos.h>
 
@@ -25,6 +26,7 @@
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/MapMgr.h>
 
+
 namespace {
     using namespace GW;
 
@@ -40,6 +42,16 @@ namespace {
 
     typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
     DoAction_pt EnterChallengeMission_Func = 0;
+    DoAction_pt EnterChallengeMission_Ret = 0;
+    HookEntry EnterChallengeMission_Entry;
+
+    void OnEnterChallengeMission_Hook(uint32_t identifier) {
+        GW::UI::SendUIMessage(UI::UIMessage::kSendEnterMission, (void*)identifier);
+    }
+    void OnEnterChallengeMission_UIMessage(GW::HookStatus* status, UI::UIMessage, void* wparam, void*) {
+        if (!status->blocked && EnterChallengeMission_Ret)
+            EnterChallengeMission_Ret((uint32_t)wparam);
+    }
 
     typedef void(__cdecl* Void_pt)();
     Void_pt SkipCinematic_Func = 0;
@@ -108,6 +120,11 @@ namespace {
         address = Scanner::Find("\xa9\x00\x00\x10\x00\x74\x3a", "xxxxxxx");
         CancelEnterChallengeMission_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0x19);
         EnterChallengeMission_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x51);
+        if (EnterChallengeMission_Func) {
+            GW::HookBase::CreateHook(EnterChallengeMission_Func, OnEnterChallengeMission_Hook, (void**)&EnterChallengeMission_Ret);
+            UI::RegisterUIMessageCallback(&EnterChallengeMission_Entry, UI::UIMessage::kSendEnterMission, OnEnterChallengeMission_UIMessage, 0x1);
+        }
+
 
         GWCA_INFO("[SCAN] RegionId address = %p", region_id_addr);
         GWCA_INFO("[SCAN] AreaInfo address = %p", area_info_addr);
@@ -149,7 +166,7 @@ namespace GW {
             return g && g->map != nullptr;
         }
 
-        void Travel(Constants::MapID map_id,
+        bool Travel(Constants::MapID map_id,
             int district, int region, int language) {
             struct MapStruct {
                 GW::Constants::MapID map_id;
@@ -162,51 +179,39 @@ namespace GW {
             t.district = district;
             t.region = region;
             t.language = language;
-            UI::SendUIMessage(UI::kTravel, &t);
+            return UI::SendUIMessage(UI::UIMessage::kTravel, &t);
         }
 
-        void Travel(Constants::MapID map_id, Constants::District district, int district_number) {
+        bool Travel(Constants::MapID map_id, Constants::District district, int district_number) {
             switch (district) {
             case Constants::District::Current:
-                Travel(map_id, district_number, GetRegion(), GetLanguage());
-                break;
+                return Travel(map_id, district_number, GetRegion(), GetLanguage());
             case Constants::District::International:
-                Travel(map_id, district_number, Constants::Region::International, 0);
-                break;
+                return Travel(map_id, district_number, Constants::Region::International, 0);
             case Constants::District::American:
-                Travel(map_id, district_number, Constants::Region::America, 0);
-                break;
+                return Travel(map_id, district_number, Constants::Region::America, 0);
             case Constants::District::EuropeEnglish:
-                Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::English);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::English);
             case Constants::District::EuropeFrench:
-                Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::French);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::French);
             case Constants::District::EuropeGerman:
-                Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::German);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::German);
             case Constants::District::EuropeItalian:
-                Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Italian);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Italian);
             case Constants::District::EuropeSpanish:
-                Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Spanish);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Spanish);
             case Constants::District::EuropePolish:
-                Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Polish);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Polish);
             case Constants::District::EuropeRussian:
-                Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Russian);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Europe, Constants::EuropeLanguage::Russian);
             case Constants::District::AsiaKorean:
-                Travel(map_id, district_number, Constants::Region::Korea, 0);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Korea, 0);
             case Constants::District::AsiaChinese:
-                Travel(map_id, district_number, Constants::Region::China, 0);
-                break;
+                return Travel(map_id, district_number, Constants::Region::China, 0);
             case Constants::District::AsiaJapanese:
-                Travel(map_id, district_number, Constants::Region::Japan, 0);
-                break;
+                return Travel(map_id, district_number, Constants::Region::Japan, 0);
             }
+            return false;
         }
 
         uint32_t GetInstanceTime() {
@@ -292,7 +297,7 @@ namespace GW {
         }
 
         bool EnterChallenge() {
-            return EnterChallengeMission_Func ? EnterChallengeMission_Func(0x36d), true : false;
+            return UI::SendUIMessage(UI::UIMessage::kSendEnterMission, (void*)0x36d);
         }
 
         bool CancelEnterChallenge() {

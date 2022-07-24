@@ -763,7 +763,7 @@ namespace GW {
             GWCA_ASSERT(swprintf(param.message, len, format, sender_encoded, message_encoded) >= 0);
         }
         add_next_message_to_chat_log = !transient;
-        UI::SendUIMessage(UI::kWriteToChatLog, &param);
+        UI::SendUIMessage(UI::UIMessage::kWriteToChatLog, &param);
         add_next_message_to_chat_log = true;
         if (delete_message)
             delete[] param.message;

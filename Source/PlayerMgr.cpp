@@ -32,6 +32,9 @@ namespace {
     typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
     DoAction_pt SetActiveTitle_Func = 0;
 
+    typedef void(__cdecl* DepositFaction_pt)(uint32_t always_0, uint32_t allegiance, uint32_t amount);
+    DepositFaction_pt DepositFaction_Func;
+
     void Init() {
         DWORD address = 0;
 
@@ -39,11 +42,16 @@ namespace {
         RemoveActiveTitle_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0x1d6);
         SetActiveTitle_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x1c8);
 
+        address = Scanner::Find("\x68\x88\x13\x00\x00\xff\x76\x0c\x6a\x00", "xxxxxxxxxx", 0xa); // UI::UIInteractionCallback for entering player name for faction donation
+        DepositFaction_Func = (DepositFaction_pt)Scanner::FunctionFromNearCall(address);
+
         GWCA_INFO("[SCAN] RemoveActiveTitle_Func = %p", RemoveActiveTitle_Func);
         GWCA_INFO("[SCAN] SetActiveTitle_Func = %p", SetActiveTitle_Func);
+        GWCA_INFO("[SCAN] DepositFaction_Func = %p", DepositFaction_Func);
 #ifdef _DEBUG
         GWCA_ASSERT(RemoveActiveTitle_Func);
         GWCA_ASSERT(SetActiveTitle_Func);
+        GWCA_ASSERT(DepositFaction_Func);
 #endif
     }
 }
@@ -174,6 +182,10 @@ namespace GW {
                     return &player;
             }
             return nullptr;
+        }
+        
+        bool DepositFaction(uint32_t allegiance) {
+            return DepositFaction_Func ? DepositFaction_Func(0, allegiance, 5000), true : false;
         }
     }
 

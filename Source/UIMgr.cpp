@@ -25,7 +25,7 @@
 namespace {
     using namespace GW;
 
-    typedef void (__cdecl *SendUIMessage_pt)(uint32_t msgid, void *wParam, void *lParam);
+    typedef void (__cdecl *SendUIMessage_pt)(UI::UIMessage msgid, void *wParam, void *lParam);
     SendUIMessage_pt SendUIMessage_Func = 0;
     SendUIMessage_pt RetSendUIMessage = 0;
 
@@ -104,12 +104,9 @@ namespace {
     UI::WindowPosition* window_positions_array = 0;
     UI::FloatingWindow* floating_windows_array = 0;
 
-    static void OnOpenTemplate(HookStatus *hook_status, uint32_t msgid, void *wParam, void *lParam)
+    static void OnOpenTemplate_UIMessage(HookStatus *hook_status, UI::UIMessage msgid, void *wParam, void *)
     {
-        UNREFERENCED_PARAMETER(lParam);
-
-        if (msgid != UI::kOpenTemplate)
-            return;
+        GWCA_ASSERT(msgid == UI::UIMessage::kOpenTemplate && wParam);
         UI::ChatTemplate *info = static_cast<UI::ChatTemplate *>(wParam);
         if (!(open_links && info && info->code.valid() && info->name))
             return;
@@ -124,7 +121,7 @@ namespace {
         HookEntry* entry;
         UI::UIMessageCallback callback;
     };
-    std::vector<CallbackEntry> UIMessage_callbacks;
+    std::map<UI::UIMessage,std::vector<CallbackEntry>> UIMessage_callbacks;
 
     // Callbacks are triggered by weighting
     struct OnTooltipEntry {
@@ -134,138 +131,10 @@ namespace {
     };
     std::vector<OnTooltipEntry> Tooltip_callbacks;
 
-    static void __cdecl OnSendUIMessage(uint32_t msgid, void *wParam, void *lParam)
+    static void __cdecl OnSendUIMessage(UI::UIMessage msgid, void *wParam, void *lParam)
     {
         HookBase::EnterHook();
-        HookStatus status;
-        auto it = UIMessage_callbacks.begin();
-
-        // Pre callbacks
-        while (it != UIMessage_callbacks.end()) {
-            if (it->altitude > 0)
-                break;
-            it->callback(&status, msgid, wParam, lParam);
-            ++status.altitude;
-            it++;
-        }
-
-        if (!status.blocked)
-            RetSendUIMessage(msgid, wParam, lParam);
-
-        // Post callbacks
-        while (it != UIMessage_callbacks.end()) {
-            it->callback(&status, msgid, wParam, lParam);
-            ++status.altitude;
-            it++;
-        }
-        HookBase::LeaveHook();
-    }
-
-    struct OnDecodeString {
-        int altitude;
-        HookEntry* entry;
-        UI::DecodeStrCallback callback;
-    };
-    std::vector<OnDecodeString> DecodeStr_callbacks;
-
-    static void __cdecl OnStringDecoded(void* _param, wchar_t* decoded) {
-        HookBase::EnterHook();
-        HookStatus status;
-        UI::DecodingString* param = (UI::DecodingString*)_param;
-        param->decoded = decoded;
-        auto it = DecodeStr_callbacks.begin();
-        while (it != DecodeStr_callbacks.end()) {
-            if (it->altitude <= 0) {
-                it++;
-                continue;
-            }
-            ++status.altitude;
-            it->callback(&status, param);
-            it++;
-        }
-        if (!status.blocked) {
-            // TODO: Ask devs why this callback sometimes fails even though calling conventions/args are theoretically the same
-            ((DecodeStr_Callback)param->original_callback)(param->original_param, decoded);
-        }
-            
-        while (it != DecodeStr_callbacks.end()) {
-            it->callback(&status, param);
-            ++status.altitude;
-            it++;
-        }
-        delete param;
-        HookBase::LeaveHook();
-    }
-
-    static uint32_t __fastcall OnAsyncDecodeStr(void* ecx, void* edx, wchar_t* encoded_str, DecodeStr_Callback cb, void* wParam) {
-        HookBase::EnterHook();
-        HookStatus status;
-        //uint32_t ret = 0;
-
-        if (cb != OnStringDecoded) {
-            UI::DecodingString* newParam = new UI::DecodingString();
-            newParam->encoded = encoded_str;
-            newParam->original_callback = cb;
-            newParam->original_param = wParam;
-            newParam->ecx = ecx;
-            newParam->edx = edx;
-            cb = OnStringDecoded;
-            wParam = newParam;
-        }
-        HookBase::LeaveHook();
-        return RetAsyncDecodeStr(ecx,edx,encoded_str, cb, wParam);
-    }
-
-    static void __cdecl OnSetTooltip(UI::TooltipInfo** tooltip) {
-        HookBase::EnterHook();
-        bool changed = tooltip != *CurrentTooltipPtr;
-        RetSetTooltip(tooltip);
-        if (!changed) {
-            HookBase::LeaveHook();
-            return;
-        }
-        HookStatus status;
-        auto it = Tooltip_callbacks.begin();
-        // Pre callbacks
-        while (it != Tooltip_callbacks.end()) {
-            if (it->altitude > 0)
-                break;
-            it->callback(&status, *tooltip);
-            ++status.altitude;
-            it++;
-        }
-
-        if (!status.blocked)
-            RetSetTooltip(tooltip);
-
-        // Post callbacks
-        while (it != Tooltip_callbacks.end()) {
-            it->callback(&status, *tooltip);
-            ++status.altitude;
-            it++;
-        }
-        HookBase::LeaveHook();
-    }
-
-    // Add in visibility to the window array to allow GWCA to provide this into when querying
-    static void __cdecl OnToggleFloatingWindow(uint32_t unk, uint32_t floating_window_id, uint32_t visible, void* unk1, void* unk2, void* unk3) {
-        HookBase::EnterHook();
-        
-        UI::FloatingWindow& window = floating_windows_array[floating_window_id];
-        // Patch to trigger window visibility for floating windows that aren't normally logged.
-        // NB: Some floating windows don't have a mapping to s_window array, so we catch that by checking the index
-        if (!window.save_preference && window.window_id < UI::WindowID::WindowID_Count && window_positions_array) {
-            if (visible == 1)
-                window_positions_array[window.window_id].state |= 0x1;
-            else
-                window_positions_array[window.window_id].state ^= 0x1;
-        }
-        RetSetFloatingWindowVisible(unk, floating_window_id, visible, unk1, unk2, unk3);
-        HookBase::LeaveHook();
-    }
-    static void __cdecl OnSetTickboxPreference(uint32_t preference_index, uint32_t value, uint32_t unk0) {
-        HookBase::EnterHook();
-        RetSetTickboxPref(preference_index, value, unk0);
+        UI::SendUIMessage(msgid, wParam, lParam);
         HookBase::LeaveHook();
     }
 
@@ -462,17 +331,9 @@ namespace {
 
         if (Verify(SendUIMessage_Func))
             HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
-        if (Verify(SetTooltip_Func))
-            HookBase::CreateHook(SetTooltip_Func, OnSetTooltip, (void**)&RetSetTooltip);
-        if(Verify(SetTickboxPref_Func))
-            HookBase::CreateHook(SetTickboxPref_Func, OnSetTickboxPreference, (void**)&RetSetTickboxPref);
         if (Verify(DoAction_Func))
             HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
-        if (Verify(AsyncDecodeStringPtr)) {
-            // TODO: Re-enable this hook once the crashing is sorted.
-            //HookBase::CreateHook(AsyncDecodeStringPtr, OnAsyncDecodeStr, (void**)&RetAsyncDecodeStr);
-        }
-        UI::RegisterUIMessageCallback(&open_template_hook, OnOpenTemplate);
+        UI::RegisterUIMessageCallback(&open_template_hook, UI::UIMessage::kOpenTemplate, OnOpenTemplate_UIMessage);
     }
 
     void Exit()
@@ -560,17 +421,43 @@ namespace GW {
     float UI::WindowPosition::right(float multiplier) const {
         return xAxis(multiplier).y;
     }
-    void UI::SendUIMessage(unsigned message, unsigned int wParam, int lParam)
-    {
-        if (Verify(SendUIMessage_Func))
-            SendUIMessage_Func(message, (void *)wParam, (void *)lParam);
-    }
 
-
-    void UI::SendUIMessage(unsigned message, void *wParam, void *lParam)
+    bool UI::SendUIMessage(UIMessage msgid, void *wParam, void *lParam)
     {
-        if (Verify(RetSendUIMessage))
-            OnSendUIMessage(message, (void *)wParam, (void *)lParam);
+        auto forward_call = [msgid, wParam, lParam]() {
+            if (!RetSendUIMessage)
+                return false;
+            HookBase::EnterHook();
+            RetSendUIMessage(msgid, wParam, lParam);
+            HookBase::LeaveHook();
+            return true;
+        };
+        HookStatus status;
+        auto found = UIMessage_callbacks.find(msgid);
+        if (found == UIMessage_callbacks.end()) {
+            return forward_call();
+        }
+
+        auto it = found->second.begin();
+        auto end = found->second.end();
+        // Pre callbacks
+        while (it != end) {
+            if (it->altitude > 0)
+                break;
+            it->callback(&status, msgid, wParam, lParam);
+            ++status.altitude;
+            it++;
+        }
+
+        bool result = !status.blocked && forward_call();
+
+        // Post callbacks
+        while (it != end) {
+            it->callback(&status, msgid, wParam, lParam);
+            ++status.altitude;
+            it++;
+        }
+        return result;
     }
     bool UI::Keydown(ControlAction key) {
         uintptr_t ecx = GetActionContext();
@@ -751,7 +638,7 @@ namespace GW {
         } else if(pref & 0x8000) {
             // Checkbox values
             if ((value == 1 || value == 0) && preferences_array2[pref ^ 0x8000] != value)
-                OnSetTickboxPreference(pref ^ 0x8000, value, 0);
+                SetTickboxPref_Func(pref ^ 0x8000, value, 0);
             return;
         }
         // Set in-game volume
@@ -797,70 +684,38 @@ namespace GW {
 
     void UI::RegisterUIMessageCallback(
         HookEntry *entry,
+        UIMessage message_id,
         UIMessageCallback callback,
         int altitude)
     {
-        auto it = UIMessage_callbacks.begin();
-        while (it != UIMessage_callbacks.end()) {
+        auto found = UIMessage_callbacks.find(message_id);
+        if (found == UIMessage_callbacks.end()) {
+            UIMessage_callbacks[message_id] = std::vector<CallbackEntry>();
+        }
+        auto it = UIMessage_callbacks[message_id].begin();
+        while (it != UIMessage_callbacks[message_id].end()) {
             if (it->altitude > altitude)
                 break;
             it++;
         }
-        UIMessage_callbacks.insert(it, { altitude,entry,callback });
+        UIMessage_callbacks[message_id].insert(it, { altitude,entry,callback });
     }
 
     void UI::RemoveUIMessageCallback(
         HookEntry *entry)
     {
-        auto it = UIMessage_callbacks.begin();
-        while (it != UIMessage_callbacks.end()) {
-            if (it->entry == entry) {
-                UIMessage_callbacks.erase(it);
-                break;
+        for (auto& it : UIMessage_callbacks) {
+            auto it2 = it.second.begin();
+            while (it2 != it.second.end()) {
+                if (it2->entry == entry) {
+                    it.second.erase(it2);
+                    return;
+                }
+                it2++;
             }
-            it++;
         }
-    }
-    void UI::RegisterTooltipCallback(
-        HookEntry* entry,
-        TooltipCallback callback,
-        int altitude)
-    {
-        Tooltip_callbacks.push_back({ altitude, entry, callback });
     }
 
-    void UI::RemoveTooltipCallback(
-        HookEntry* entry)
-    {
-        auto it = Tooltip_callbacks.begin();
-        while (it != Tooltip_callbacks.end()) {
-            if (it->entry == entry) {
-                Tooltip_callbacks.erase(it);
-                break;
-            }
-            it++;
-        }
-    }
-    void UI::RegisterDecodeStringCallback(
-        HookEntry* entry,
-        DecodeStrCallback callback,
-        int altitude)
-    {
-        DecodeStr_callbacks.push_back({ altitude, entry, callback });
-    }
-
-    void UI::RemoveDecodeStringCallback(
-        HookEntry* entry)
-    {
-        auto it = DecodeStr_callbacks.begin();
-        while (it != DecodeStr_callbacks.end()) {
-            if (it->entry == entry) {
-                DecodeStr_callbacks.erase(it);
-                break;
-            }
-            it++;
-        }
-    }
     UI::TooltipInfo* UI::GetCurrentTooltip() {
         return CurrentTooltipPtr && *CurrentTooltipPtr ? **CurrentTooltipPtr : 0;
     }

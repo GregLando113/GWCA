@@ -122,13 +122,5 @@ namespace GW {
         GWCA_API wchar_t* GetAgentEncName(uint32_t agent_id);
 
         GWCA_API bool AsyncGetAgentName(const Agent *agent, std::wstring& name);
-
-        typedef HookCallback<uint32_t> DialogCallback;
-        GWCA_API void RegisterDialogCallback(
-            HookEntry* entry,
-            DialogCallback callback);
-
-        GWCA_API void RemoveDialogCallback(
-            HookEntry* entry);
     };
 }

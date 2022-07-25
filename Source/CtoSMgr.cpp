@@ -5,6 +5,8 @@
 #include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/RenderMgr.h>
 
+#define GWCA_CTOS_DISABLED 1;
+
 namespace {
     using namespace GW;
 
@@ -34,6 +36,9 @@ namespace {
     
 
     void Init() {
+#ifdef GWCA_CTOS_DISABLED
+        return;
+#endif
         SendPacket_Func = (SendPacket_pt)Scanner::FindAssertion("p:\\code\\net\\msg\\msgconn.cpp","bytes >= sizeof(dword)", -0x67);
         GWCA_INFO("[SCAN] SendPacket = %p\n", SendPacket_Func);
         if (Verify(SendPacket_Func))
@@ -52,6 +57,7 @@ namespace {
     }
 }
 
+
 namespace GW {
 
     Module CtoSModule = {
@@ -67,6 +73,9 @@ namespace GW {
         uint32_t header,
         PacketCallback callback)
     {
+#ifdef GWCA_CTOS_DISABLED
+        return;
+#endif
         packets_callbacks[header].insert({ entry, callback });
     }
     void CtoS::RemoveCallback(uint32_t header, HookEntry* entry) {
@@ -76,6 +85,9 @@ namespace GW {
             callbacks.erase(it);
     }
     bool CtoS::SendPacket(uint32_t size, void *buffer) {
+#ifdef GWCA_CTOS_DISABLED
+        return false;
+#endif
         if (!(Verify(SendPacket_Func && game_srv_object_addr)))
             return false;
         if (GameThread::IsInGameThread() || Render::GetIsInRenderLoop()) {

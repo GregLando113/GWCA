@@ -78,6 +78,8 @@ namespace GW {
         GWCA_API bool SetHeroBehavior(uint32_t agent_id, HeroBehavior behavior);
 
         GWCA_API uint32_t GetHeroAgentID(uint32_t hero_index);
+        GWCA_API uint32_t GetAgentHeroID(uint32_t agent_id);
+        
 
         // Advertise your party in party search window
         GWCA_API bool SearchParty(uint32_t search_type, wchar_t* advertisement = nullptr);

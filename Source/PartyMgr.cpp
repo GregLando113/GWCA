@@ -432,7 +432,7 @@ namespace GW {
         void SetTickToggle(bool enable) {
             tick_work_as_toggle = enable;
         }
-        AgentID GetHeroAgentID(uint32_t hero_index) {
+        uint32_t GetHeroAgentID(uint32_t hero_index) {
             if (hero_index == 0)
                 return Agents::GetPlayerId();
             hero_index--;
@@ -441,6 +441,20 @@ namespace GW {
                 return 0;
             HeroPartyMemberArray& heroes = party->heroes;
             return heroes.valid() && hero_index < heroes.size() ? heroes[hero_index].agent_id : 0;
+        }
+        uint32_t GetAgentHeroID(AgentID agent_id) {
+            if (agent_id == (AgentID)0)
+                return 0;
+            PartyInfo* party = GetPartyInfo();
+            if (!party)
+                return 0;
+            HeroPartyMemberArray& heroes = party->heroes;
+            for (size_t i = 0; i < heroes.size(); i++) {
+                auto& hero = heroes[i];
+                if (hero.agent_id == agent_id)
+                    return i + 1;
+            }
+            return 0;
         }
 
         bool SearchParty(uint32_t search_type, wchar_t* advertisement) {

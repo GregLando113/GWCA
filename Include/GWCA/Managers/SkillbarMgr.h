@@ -64,7 +64,6 @@ namespace GW {
 
         // @Remark:
         // `skill_ids` must contains at least 8 elements
-        GWCA_API bool LoadSkillbar(uint32_t *skills, size_t n_skills, uint32_t hero_index = 0);
         GWCA_API bool LoadSkillbar(Constants::SkillID *skills, size_t n_skills, uint32_t hero_index = 0);
 
         GWCA_API bool LoadSkillTemplate(const char *temp);

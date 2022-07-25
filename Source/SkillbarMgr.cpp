@@ -97,12 +97,30 @@ namespace {
     UseSkill_pt RetUseSkill = 0;
     //typedef HookCallback<uint32_t, uint32_t, uint32_t, uint32_t> UseSkillCallback;
 
+    HookEntry OnLoadSkillbar_HookEntry;
     typedef void(__cdecl* LoadSkills_pt)(uint32_t agent_id, uint32_t skill_ids_count, uint32_t* skill_ids);
     LoadSkills_pt LoadSkills_Func = 0;
     LoadSkills_pt RetLoadSkills = 0;
-    std::vector<UseSkillCallback> LoadSkills_Callbacks;
-
-
+    struct OnLoadSkillbar_UIMessage_Packet {
+        uint32_t agent_id;
+        uint32_t skill_ids[8] = { 0 };
+    };
+    void OnLoadSkillbar(uint32_t agent_id, uint32_t skill_ids_count, uint32_t* skill_ids) {
+        GW::Hook::EnterHook();
+        OnLoadSkillbar_UIMessage_Packet pack;
+        pack.agent_id = agent_id;
+        memcpy(pack.skill_ids, skill_ids, skill_ids_count * sizeof(*skill_ids));
+        // Pass this through UI, we'll pick it up in OnLoadSkillbar_UIMessage. Ensure tmp_skill_ids is an array of at least 8 skill ids.
+        UI::SendUIMessage(UI::UIMessage::kSendLoadSkillbar, &pack);
+        GW::Hook::LeaveHook();
+    };
+    void OnLoadSkillbar_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendLoadSkillbar && wparam);
+        if (!status->blocked && RetLoadSkills) {
+            OnLoadSkillbar_UIMessage_Packet* pack = (OnLoadSkillbar_UIMessage_Packet*)wparam;
+            RetLoadSkills(pack->agent_id, _countof(pack->skill_ids), pack->skill_ids);
+        }
+    }
     typedef void(__cdecl* LoadAttributes_pt)(uint32_t agent_id, uint32_t attribute_count, uint32_t* attribute_ids, uint32_t* attribute_values);
     LoadAttributes_pt LoadAttributes_Func = 0;
 
@@ -142,6 +160,11 @@ namespace {
         ChangeSecondary_Func = (ChangeSecondary_pt)Scanner::FunctionFromNearCall(address + 0x20);
         LoadAttributes_Func = (LoadAttributes_pt)Scanner::FunctionFromNearCall(address + 0x34);
         LoadSkills_Func = (LoadSkills_pt)Scanner::FunctionFromNearCall(address + 0x40);
+
+        if (LoadSkills_Func) {
+            HookBase::CreateHook(LoadSkills_Func, OnLoadSkillbar, (void**)&RetLoadSkills);
+            UI::RegisterUIMessageCallback(&OnLoadSkillbar_HookEntry, UI::UIMessage::kSendLoadSkillbar, OnLoadSkillbar_UIMessage, 0x1);
+        }
 
         HookBase::CreateHook(UseSkill_Func, OnUseSkill, (void**)&RetUseSkill);
 
@@ -198,7 +221,7 @@ namespace GW {
             return true;
         }
 
-        bool LoadSkillbar(uint32_t* skills, size_t n_skills, uint32_t hero_index) {
+        bool LoadSkillbar(Constants::SkillID* skills, size_t n_skills, uint32_t hero_index) {
             if (!LoadSkills_Func)
                 return false;
             const size_t bytes = n_skills * sizeof(uint32_t);
@@ -213,14 +236,6 @@ namespace GW {
                 free(skill_ids);
                 });
             return true;
-        }
-
-        bool LoadSkillbar(Constants::SkillID* skills, size_t n_skills, uint32_t hero_index) {
-            uint32_t skill_ids[8];
-            GWCA_ASSERT(n_skills <= _countof(skill_ids));
-            for (size_t i = 0; i < n_skills; i++)
-                skill_ids[i] = static_cast<uint32_t>(skills[i]);
-            return LoadSkillbar(skill_ids, n_skills, hero_index);
         }
         bool EncodeSkillTemplate(const SkillTemplate& in, char* build_code_result, size_t build_code_result_len)
         {

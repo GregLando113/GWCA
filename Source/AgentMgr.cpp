@@ -25,7 +25,6 @@ namespace {
     using namespace GW;
 
     uint32_t last_dialog_id = 0;
-    std::vector<uint32_t> available_dialog_ids;
 
     HookEntry OnSendDialog_HookEntry;
     typedef void (*SendDialog_pt)(uint32_t dialog_id);
@@ -38,21 +37,15 @@ namespace {
         UI::SendUIMessage(UI::UIMessage::kSendDialog, (void*)dialog_id);
         GW::Hook::LeaveHook();
     };
-
-    void OnDialogBody_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
-        GWCA_ASSERT(message_id == UI::UIMessage::kDialogBody && wparam);
-        if (!status->blocked && RetSendDialog) {
-            last_dialog_id = (uint32_t)wparam;
-            available_dialog_ids.clear();
-            RetSendDialog(last_dialog_id);
-        }
-    }
     void OnSendDialog_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
         GWCA_ASSERT(message_id == UI::UIMessage::kSendDialog && wparam);
-        if (!status->blocked && RetSendDialog) {
+        if (!status->blocked) {
             last_dialog_id = (uint32_t)wparam;
-            available_dialog_ids.clear();
             RetSendDialog(last_dialog_id);
+        }
+        else {
+            // NB: The Dialog UI interface requires the function call to return
+            RetSendDialog(0);
         }
     }
 

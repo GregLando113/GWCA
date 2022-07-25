@@ -254,7 +254,7 @@ namespace GW {
 
         bool SetHardMode(bool flag) {
             auto* p = PartyContext::instance();
-            if (!(SetDifficulty_Func && p))
+            if (!(SetDifficulty_Func && p && p->player_party))
                 return false;
             if (p->InHardMode() != flag) {
                 SetDifficulty_Func(flag);

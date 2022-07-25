@@ -110,11 +110,12 @@ namespace GW {
             kChangeTarget               = 0x10000000 | 0x20, // wparam = ChangeTargetUIMsg*
             kAgentStartCasting          = 0x10000000 | 0x27, // wparam = { uint32_t agent_id, uint32_t skill_id }
             kShowXunlaiChest            = 0x10000000 | 0x40,
-
+            kMinionCountUpdated         = 0x10000000 | 0x46,
             kMoraleChange               = 0x10000000 | 0x47, // wparam = {agent id, morale percent }
             kEffectAdd                  = 0x10000000 | 0x55, // wparam = {agent_id, GW::Effect*}
             kEffectRenew                = 0x10000000 | 0x56, // wparam = GW::Effect*
             kEffectRemove               = 0x10000000 | 0x57, // wparam = effect id
+            kUpdateSkillbar             = 0x10000000 | 0x5E, // wparam ={ uint32_t agent_id , ... }
             kExperienceGained           = 0x10000000 | 0x66, // wparam = experience amount
             kWriteToChatLog             = 0x10000000 | 0x7E,
             kPlayerChatMessage          = 0x10000000 | 0x81, // wparam = { uint32_t channel, wchar_t* message, uint32_t player_number }
@@ -139,7 +140,7 @@ namespace GW {
             kQuestAdded                 = 0x10000000 | 0x149, // wparam = { quest_id, ... }
             kCurrentQuestChanged        = 0x10000000 | 0x14C, // wparam = { quest_id, ... }
             kObjectiveComplete          = 0x10000000 | 0x156, // wparam = { objective_id, ... }
-            kDestroyUIObject            = 0x10000000 | 0x170, // Undocumented
+            kCheckUIState               = 0x10000000 | 0x170, // Undocumented
             kGuildHall                  = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
             kLeaveGuildHall             = 0x10000000 | 0x179,
             kTravel                     = 0x10000000 | 0x17A,
@@ -153,6 +154,7 @@ namespace GW {
             // GWCA Client to Server commands. Only added the ones that are used for hooks, everything else goes straight into GW
             kSendDialog                 = 0x30000000 | 0x1, // wparam = dialog_id
             kSendEnterMission           = 0x30000000 | 0x2, // wparam = arena_id 
+            kSendLoadSkillbar           = 0x30000000 | 0x3  // wparam = { uint32_t agent_id, uint32_t* skill_ids }
         };
 
         enum Preference : uint32_t {
@@ -565,25 +567,6 @@ namespace GW {
 
         GWCA_API void RemoveUIMessageCallback(
             HookEntry *entry);
-
-        typedef HookCallback<TooltipInfo*> TooltipCallback;
-        GWCA_API void RegisterTooltipCallback(
-            HookEntry* entry,
-            TooltipCallback callback,
-            int altitude = -0x8000);
-
-        GWCA_API void RemoveTooltipCallback(
-            HookEntry* entry);
-
-        // Return nullptr to block the string from being decoded, or override with a new string
-        typedef std::function<wchar_t*(HookStatus*, DecodingString*)> DecodeStrCallback;
-        GWCA_API void RegisterDecodeStringCallback(
-            HookEntry* entry,
-            DecodeStrCallback callback,
-            int altitude = -0x8000);
-
-        GWCA_API void RemoveDecodeStringCallback(
-            HookEntry* entry);
 
         GWCA_API TooltipInfo* GetCurrentTooltip();
 

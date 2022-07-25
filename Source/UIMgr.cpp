@@ -123,14 +123,6 @@ namespace {
     };
     std::map<UI::UIMessage,std::vector<CallbackEntry>> UIMessage_callbacks;
 
-    // Callbacks are triggered by weighting
-    struct OnTooltipEntry {
-        int altitude;
-        HookEntry* entry;
-        UI::TooltipCallback callback;
-    };
-    std::vector<OnTooltipEntry> Tooltip_callbacks;
-
     static void __cdecl OnSendUIMessage(UI::UIMessage msgid, void *wParam, void *lParam)
     {
         HookBase::EnterHook();

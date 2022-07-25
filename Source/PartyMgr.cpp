@@ -56,6 +56,7 @@ namespace {
     typedef void(__cdecl* Void_pt)();
     Void_pt LeaveParty_Func = 0;
     Void_pt PartySearchCancel_Func = 0;
+    Void_pt ReturnToOutpost_Func = 0;
 
     typedef void(__cdecl* FlagHeroAgent_pt)(uint32_t agent_id,GW::GamePos* pos);
     FlagHeroAgent_pt FlagHeroAgent_Func = 0;
@@ -128,6 +129,11 @@ namespace {
         PartyRejectInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xb6);
         PartyAcceptInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xcf);
 
+        address = Scanner::Find("\x8b\x46\x10\x25\xa7\x00\x00\x00\x3c\xa0", "xxxxxxxxxx", 0x12);
+        ReturnToOutpost_Func = (Void_pt)Scanner::FunctionFromNearCall(address);
+
+        GWCA_INFO("[SCAN] ReturnToOutpost_Func = %p", ReturnToOutpost_Func);
+
         GWCA_INFO("[SCAN] TickButtonUICallback Function = %p", TickButtonUICallback);
 
         GWCA_INFO("[SCAN] SetDifficulty_Func = %p", SetDifficulty_Func);
@@ -170,6 +176,7 @@ namespace {
         GWCA_ASSERT(PartyRejectInvite_Func);
         GWCA_ASSERT(PartyAcceptInvite_Func);
         GWCA_ASSERT(SetHeroBehavior_Func);
+        GWCA_ASSERT(ReturnToOutpost_Func);
 #endif
 
     }
@@ -218,6 +225,13 @@ namespace GW {
             if (party_id >= ctx->parties.size())
                 return 0;
             return ctx->parties[party_id];
+        }
+
+        bool ReturnToOutpost() {
+            if (!(ReturnToOutpost_Func && GetIsPartyDefeated() && GetIsLeader()))
+                return false;
+            ReturnToOutpost_Func();
+            return true;
         }
 
         bool GetIsPartyInHardMode() {

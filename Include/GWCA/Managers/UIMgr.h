@@ -154,7 +154,8 @@ namespace GW {
             // GWCA Client to Server commands. Only added the ones that are used for hooks, everything else goes straight into GW
             kSendDialog                 = 0x30000000 | 0x1, // wparam = dialog_id
             kSendEnterMission           = 0x30000000 | 0x2, // wparam = arena_id 
-            kSendLoadSkillbar           = 0x30000000 | 0x3  // wparam = { uint32_t agent_id, uint32_t* skill_ids }
+            kSendLoadSkillbar           = 0x30000000 | 0x3,  // wparam = { uint32_t agent_id, uint32_t* skill_ids }
+            kSendPingWeaponSet          = 0x30000000 | 0x4  // wparam = { uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id }
         };
 
         enum Preference : uint32_t {

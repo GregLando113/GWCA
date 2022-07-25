@@ -37,6 +37,9 @@ namespace GW {
 
         GWCA_API bool SetHardMode(bool flag);
 
+        // When defeated, tell the client to return to outpost.
+        GWCA_API bool ReturnToOutpost();
+
         GWCA_API bool GetIsPartyInHardMode();
 
         GWCA_API bool GetIsHardModeUnlocked();

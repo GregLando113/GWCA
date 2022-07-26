@@ -6,6 +6,8 @@
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
+#include <GWCA/Utilities/Hook.h>
+#include <GWCA/Utilities/Hooker.h>
 
 #include <GWCA/GameContainers/GamePos.h>
 
@@ -15,10 +17,20 @@
 
 #include <GWCA/Managers/Module.h>
 #include <GWCA/Managers/MerchantMgr.h>
+#include <GWCA/Managers/UIMgr.h>
 
 namespace {
     using namespace GW;
 
+    struct TransactItemStruct {
+        Merchant::TransactionType type;
+        uint32_t gold_give;
+        Merchant::TransactionInfo give;
+        uint32_t gold_recv;
+        Merchant::TransactionInfo recv;
+    };
+
+    HookEntry OnTransactItemEntry;
     typedef void (__cdecl *TransactItem_pt)(
         Merchant::TransactionType type,
         uint32_t gold_give,
@@ -26,16 +38,61 @@ namespace {
         uint32_t gold_recv,
         Merchant::TransactionInfo recv
     );
+    TransactItem_pt TransactItem_Func = 0;
+    TransactItem_pt TransactItem_Ret = 0;
 
+    void OnTransactItem(Merchant::TransactionType type,
+        uint32_t gold_give,
+        Merchant::TransactionInfo give,
+        uint32_t gold_recv,
+        Merchant::TransactionInfo recv) {
+        Hook::EnterHook();
+        TransactItemStruct packet = { type, gold_give, give, gold_recv, recv };
+        UI::SendUIMessage(UI::UIMessage::kSendMerchantTransactItem, (void*)&packet);
+        Hook::LeaveHook();
+    };
+    void OnTransactItem_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendMerchantTransactItem && wparam);
+        if (!status->blocked) {
+            TransactItemStruct* packet = (TransactItemStruct*)wparam;
+            TransactItem_Ret(packet->type, packet->gold_give, packet->give, packet->gold_recv, packet->recv);
+        }
+    }
+
+    struct RequestQuoteStruct {
+        Merchant::TransactionType type;
+        uint32_t unknown;
+        Merchant::QuoteInfo give;
+        Merchant::QuoteInfo recv;
+    };
+
+    HookEntry OnRequestQuoteItemEntry;
     typedef void (__cdecl *RequestQuote_pt)(
         Merchant::TransactionType type,
         uint32_t unknown,
         Merchant::QuoteInfo give,
         Merchant::QuoteInfo recv
     );
-
-    TransactItem_pt TransactItem_Func;
     RequestQuote_pt RequestQuote_func;
+    RequestQuote_pt RequestQuote_Ret;
+
+    void OnRequestQuote(Merchant::TransactionType type,
+        uint32_t unknown,
+        Merchant::QuoteInfo give,
+        Merchant::QuoteInfo recv) {
+        Hook::EnterHook();
+        RequestQuoteStruct packet = { type, unknown, give, recv };
+        UI::SendUIMessage(UI::UIMessage::kSendMerchantRequestQuote, (void*)&packet);
+        Hook::LeaveHook();
+    };
+    void OnRequestQuote_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendMerchantRequestQuote && wparam);
+        if (!status->blocked) {
+            RequestQuoteStruct* packet = (RequestQuoteStruct*)wparam;
+            RequestQuote_Ret(packet->type, packet->unknown, packet->give, packet->recv);
+        }
+    }
+
 
     void Init() {
         TransactItem_Func = (TransactItem_pt )Scanner::Find("\x85\xFF\x74\x1D\x8B\x4D\x14\xEB\x08", "xxxxxxxxx", -0x7F);
@@ -49,6 +106,14 @@ namespace {
         GWCA_ASSERT(TransactItem_Func);
         GWCA_ASSERT(RequestQuote_func);
 #endif
+        if (TransactItem_Func) {
+            HookBase::CreateHook(TransactItem_Func, OnTransactItem, (void**)&TransactItem_Ret);
+            UI::RegisterUIMessageCallback(&OnTransactItemEntry, UI::UIMessage::kSendMerchantTransactItem, OnTransactItem_UIMessage, 0x1);
+        }
+        if (RequestQuote_func) {
+            HookBase::CreateHook(RequestQuote_func, OnRequestQuote, (void**)&RequestQuote_Ret);
+            UI::RegisterUIMessageCallback(&OnRequestQuoteItemEntry, UI::UIMessage::kSendMerchantRequestQuote, OnRequestQuote_UIMessage, 0x1);
+        }
     }
 }
 

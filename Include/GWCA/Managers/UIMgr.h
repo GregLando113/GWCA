@@ -152,10 +152,14 @@ namespace GW {
             kOpenTemplate               = 0x10000000 | 0x1B9,
 
             // GWCA Client to Server commands. Only added the ones that are used for hooks, everything else goes straight into GW
-            kSendDialog                 = 0x30000000 | 0x1, // wparam = dialog_id
-            kSendEnterMission           = 0x30000000 | 0x2, // wparam = arena_id 
+            kSendDialog                 = 0x30000000 | 0x1,  // wparam = dialog_id
+            kSendEnterMission           = 0x30000000 | 0x2,  // wparam = arena_id 
             kSendLoadSkillbar           = 0x30000000 | 0x3,  // wparam = { uint32_t agent_id, uint32_t* skill_ids }
-            kSendPingWeaponSet          = 0x30000000 | 0x4  // wparam = { uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id }
+            kSendPingWeaponSet          = 0x30000000 | 0x4,  // wparam = { uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id }
+            kSendMoveItem               = 0x30000000 | 0x5,  // wparam = { uint32_t item_id, uint32_t quantity, uint32_t bag_id, uint32_t slot }
+            kSendMerchantRequestQuote   = 0x30000000 | 0x6,  // wparam = { Merchant::TransactionType type,uint32_t gold_give,Merchant::TransactionInfo give,uint32_t gold_recv,Merchant::TransactionInfo recv }
+            kSendMerchantTransactItem   = 0x30000000 | 0x7,  // wparam = { Merchant::TransactionType type, uint32_t unknown, Merchant::QuoteInfo give, Merchant::QuoteInfo recv }
+            kSendUseItem                = 0x30000000 | 0x8,  // wparam = uint32_t item_id
         };
 
         enum Preference : uint32_t {

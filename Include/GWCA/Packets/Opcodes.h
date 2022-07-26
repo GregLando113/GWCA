@@ -58,6 +58,7 @@
 #define GAME_CMSG_SKIP_CINEMATIC                    (0x0061) // 97
 #define GAME_CMSG_SEND_CHAT_MESSAGE                 (0x0062) // 98
 #define GAME_CMSG_ITEM_DESTROY                      (0x0067) // 103
+#define GAME_CMSG_ITEM_APPLY_DYE					(0x0068) // 104
 #define GAME_CMSG_ITEM_IDENTIFY                     (0x006A) // 106
 #define GAME_CMSG_TOME_UNLOCK_SKILL                 (0x006B) // 107
 #define GAME_CMSG_ITEM_MOVE                         (0x0070) // 112

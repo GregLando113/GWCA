@@ -49,9 +49,35 @@ namespace {
 
     // General purpose "void function that does something with this id"
     typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
-    DoAction_pt UseItem_Func = 0;
+    
     DoAction_pt DropGold_Func = 0;
     DoAction_pt OpenLockedChest_Func = 0;
+
+    typedef void(__cdecl* Void_pt)();
+    Void_pt SalvageSessionCancel_Func = 0;
+    Void_pt SalvageSessionComplete_Func = 0;
+    Void_pt SalvageMaterials_Func = 0;
+
+    typedef void(__cdecl* SalvageStart_pt)(uint32_t salvage_kit_id, uint32_t salvage_session_id, uint32_t item_id);
+    SalvageStart_pt SalvageStart_Func = 0;
+
+    typedef void(__cdecl* IdentifyItem_pt)(uint32_t identification_kit_id, uint32_t item_id);
+    IdentifyItem_pt IdentifyItem_Func = 0;
+
+    HookEntry OnUseItem_Entry;
+    DoAction_pt UseItem_Func = 0;
+    DoAction_pt UseItem_Ret = 0;
+    void OnUseItem(uint32_t item_id) {
+        GW::Hook::EnterHook();
+        UI::SendUIMessage(UI::UIMessage::kSendUseItem, (void*)item_id);
+        GW::Hook::LeaveHook();
+    };
+    void OnUseItem_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendUseItem && wparam);
+        if (!status->blocked) {
+            UseItem_Ret((uint32_t)wparam);
+        }
+    }
 
     HookEntry OnPingWeaponSet_Entry;
     typedef void(__cdecl* PingWeaponSet_pt)(uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id);
@@ -73,9 +99,23 @@ namespace {
         }
     }
 
-
+    HookEntry OnMoveItem_Entry;
     typedef void(__cdecl* MoveItem_pt)(uint32_t item_id, uint32_t quantity, uint32_t bag_id, uint32_t slot);
     MoveItem_pt MoveItem_Func = 0;
+    MoveItem_pt MoveItem_Ret = 0;
+    void OnMoveItem(uint32_t item_id, uint32_t quantity, uint32_t bag_id, uint32_t slot) {
+        GW::Hook::EnterHook();
+        uint32_t pack[] = { item_id,quantity,bag_id, slot };
+        UI::SendUIMessage(UI::UIMessage::kSendMoveItem, (void*)pack);
+        GW::Hook::LeaveHook();
+    };
+    void OnMoveItem_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendMoveItem && wparam);
+        uint32_t* pack = (uint32_t*)wparam;
+        if (!status->blocked) {
+            MoveItem_Ret(pack[0], pack[1], pack[2], pack[3]);
+        }
+    }
 
     typedef void(__cdecl* EquipItem_pt)(uint32_t item_id, uint32_t agent_id);
     EquipItem_pt EquipItem_Func = 0;
@@ -129,8 +169,17 @@ namespace {
         EquipItem_Func = (EquipItem_pt)Scanner::FunctionFromNearCall(address + 0x1e);
         MoveItem_Func = (MoveItem_pt)Scanner::FunctionFromNearCall(address + 0x6e);
 
-        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmview.cpp", "param.notifyData", 0x13);
-        DropGold_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmview.cpp", "param.notifyData");
+        DropGold_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x13);
+
+        SalvageSessionCancel_Func = (Void_pt)Scanner::FunctionFromNearCall(address - 0x22);
+        SalvageSessionComplete_Func = (Void_pt)Scanner::FunctionFromNearCall(address - 0x37);
+        SalvageMaterials_Func = (Void_pt)Scanner::FunctionFromNearCall(address - 0x4b);
+
+        address = Scanner::Find("\x6a\x00\x50\x68\x00\x01\x00\x10", "xxxxxxxx");
+        SalvageStart_Func = (SalvageStart_pt)Scanner::FunctionFromNearCall(address + 0x22);
+
+        IdentifyItem_Func = (IdentifyItem_pt)Scanner::FunctionFromNearCall(address + 0x4a);
 
         address = Scanner::Find("\x83\xc4\x40\x6a\x00\x6a\x19", "xxxxxxx", -0x4e);
         DropItem_Func = (DropItem_pt)Scanner::FunctionFromNearCall(address);
@@ -146,10 +195,6 @@ namespace {
 
         address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmweaponbar.cpp", "slotIndex < ITEM_PLAYER_EQUIP_SETS", 0x128);
         PingWeaponSet_Func = (PingWeaponSet_pt)Scanner::FunctionFromNearCall(address);
-        if (PingWeaponSet_Func) {
-            HookBase::CreateHook(PingWeaponSet_Func, OnPingWeaponSet, (void**)&PingWeaponSet_Ret);
-            UI::RegisterUIMessageCallback(&OnPingWeaponSet_Entry, UI::UIMessage::kSendPingWeaponSet, OnPingWeaponSet_UIMessage, 0x1);
-        }
 
         GWCA_INFO("[SCAN] StorageOpenPtr = %p", storage_open_addr);
         GWCA_INFO("[SCAN] OnItemClick Function = %p", ItemClick_Func);
@@ -162,6 +207,10 @@ namespace {
         GWCA_INFO("[SCAN] ChangeGold Function = %p", ChangeGold_Func);
         GWCA_INFO("[SCAN] OpenLockedChest Function = %p", OpenLockedChest_Func);
         GWCA_INFO("[SCAN] PingWeaponSet_Func = %p", PingWeaponSet_Func);
+        GWCA_INFO("[SCAN] SalvageSessionCancel_Func = %p", SalvageSessionCancel_Func);
+        GWCA_INFO("[SCAN] SalvageSessionComplete_Func = %p", SalvageSessionComplete_Func);
+        GWCA_INFO("[SCAN] SalvageMaterials_Func = %p", SalvageMaterials_Func);
+        GWCA_INFO("[SCAN] SalvageStart_Func = %p", SalvageStart_Func);
 #if _DEBUG
         GWCA_ASSERT(storage_open_addr);
         GWCA_ASSERT(ItemClick_Func);
@@ -174,9 +223,25 @@ namespace {
         GWCA_ASSERT(ChangeGold_Func);
         GWCA_ASSERT(OpenLockedChest_Func);
         GWCA_ASSERT(PingWeaponSet_Func);
+        GWCA_ASSERT(SalvageSessionCancel_Func);
+        GWCA_ASSERT(SalvageSessionComplete_Func);
+        GWCA_ASSERT(SalvageMaterials_Func);
+        GWCA_ASSERT(SalvageStart_Func);
 #endif
         if (ItemClick_Func)
             HookBase::CreateHook(ItemClick_Func, OnItemClick, (void**)&RetItemClick);
+        if (PingWeaponSet_Func) {
+            HookBase::CreateHook(PingWeaponSet_Func, OnPingWeaponSet, (void**)&PingWeaponSet_Ret);
+            UI::RegisterUIMessageCallback(&OnPingWeaponSet_Entry, UI::UIMessage::kSendPingWeaponSet, OnPingWeaponSet_UIMessage, 0x1);
+        }
+        if (MoveItem_Func) {
+            HookBase::CreateHook(MoveItem_Func, OnMoveItem, (void**)&MoveItem_Ret);
+            UI::RegisterUIMessageCallback(&OnMoveItem_Entry, UI::UIMessage::kSendMoveItem, OnMoveItem_UIMessage, 0x1);
+        }
+        if (UseItem_Func) {
+            HookBase::CreateHook(UseItem_Func, OnUseItem, (void**)&UseItem_Ret);
+            UI::RegisterUIMessageCallback(&OnUseItem_Entry, UI::UIMessage::kSendUseItem, OnUseItem_UIMessage, 0x1);
+        }
     }
 
     void Exit() {
@@ -314,6 +379,26 @@ namespace GW {
                 return false;
             DropGold_Func(Amount);
             return true;
+        }
+
+        bool SalvageSessionCancel() {
+            return SalvageSessionCancel_Func ? SalvageSessionCancel_Func(), true : false;
+        }
+
+        bool SalvageSessionDone() {
+            return SalvageSessionComplete_Func ? SalvageSessionComplete_Func(), true : false;
+        }
+
+        bool SalvageMaterials() {
+            return SalvageMaterials_Func ? SalvageMaterials_Func(), true : false;
+        }
+
+        bool SalvageStart(uint32_t salvage_kit_id, uint32_t item_id) {
+            return SalvageStart_Func ? SalvageStart_Func(salvage_kit_id, WorldContext::instance()->salvage_session_id, item_id), true : false;
+        }
+
+        bool IdentifyItem(uint32_t identification_kit_id, uint32_t item_id) {
+            return IdentifyItem_Func ? IdentifyItem_Func(identification_kit_id, item_id), true : false;
         }
 
         uint32_t GetGoldAmountOnCharacter() {

@@ -71,6 +71,21 @@ namespace GW {
         // Drop amount gold on ground.
         GWCA_API bool DropGold(uint32_t amount = 1);
 
+        // Begin the salvage process for an item
+        GWCA_API bool SalvageStart(uint32_t salvage_kit_id, uint32_t item_id);
+
+        // Identify an item
+        GWCA_API bool IdentifyItem(uint32_t identification_kit_id, uint32_t item_id);
+
+        // Cancel the current salvage session
+        GWCA_API bool SalvageSessionCancel();
+
+        // Acknowledge that the salvage session is complete
+        GWCA_API bool SalvageSessionDone();
+
+        // Choose to salvage materials from a prompted item.
+        GWCA_API bool SalvageMaterials();
+
         // Get amount of gold on character.
         GWCA_API uint32_t GetGoldAmountOnCharacter();
 

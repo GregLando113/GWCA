@@ -3,11 +3,16 @@
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
+    namespace Constants {
+        enum class SkillID;
+        enum class SkillType;
+    }
+
     struct Skill { // total : 0xA0/160
-        /* +h0000 */ uint32_t skill_id;
+        /* +h0000 */ GW::Constants::SkillID skill_id;
         /* +h0004 */ uint32_t h0004;
         /* +h0008 */ uint32_t campaign;
-        /* +h000C */ uint32_t type;
+        /* +h000C */ GW::Constants::SkillType type;
         /* +h0010 */ uint32_t special;
         /* +h0014 */ uint32_t combo_req;
         /* +h0018 */ uint32_t effect1;
@@ -17,7 +22,7 @@ namespace GW {
         /* +h0028 */ uint8_t profession;
         /* +h0029 */ uint8_t attribute;
         /* +h002A */ uint16_t title;
-        /* +h002C */ uint32_t skill_id_pvp;
+        /* +h002C */ GW::Constants::SkillID skill_id_pvp;
         /* +h0030 */ uint8_t combo;
         /* +h0031 */ uint8_t target;
         /* +h0032 */ uint8_t h0032;
@@ -67,7 +72,7 @@ namespace GW {
         /* +h0000 */ uint32_t adrenaline_a;
         /* +h0004 */ uint32_t adrenaline_b;
         /* +h0008 */ uint32_t recharge;
-        /* +h000C */ uint32_t skill_id; // see GWConst::SkillIds
+        /* +h000C */ Constants::SkillID skill_id; // see GWConst::SkillIds
         /* +h0010 */ uint32_t event;
 
         uint32_t GetRecharge() const; // returns recharge time remaining in milliseconds, or 0 if recharged
@@ -91,7 +96,7 @@ namespace GW {
     typedef Array<Skillbar> SkillbarArray;
 
     struct Effect { // total: 0x18/24
-        /* +h0000 */ uint32_t skill_id; // skill id of the effect
+        /* +h0000 */ GW::Constants::SkillID skill_id; // skill id of the effect
         /* +h0004 */ uint32_t attribute_level; // attribute level for the skill used
         /* +h0008 */ uint32_t effect_id; // unique identifier of effect
         /* +h000C */ uint32_t agent_id; // non-zero means maintained enchantment - caster id
@@ -104,7 +109,7 @@ namespace GW {
     static_assert(sizeof(Effect) == 24, "struct Effect has incorect size");
 
     struct Buff { // total: 0x10/16
-        /* +h0000 */ uint32_t skill_id; // skill id of the buff
+        /* +h0000 */ GW::Constants::SkillID skill_id; // skill id of the buff
         /* +h0004 */ uint32_t h0004;
         /* +h0008 */ uint32_t buff_id; // id of buff in the buff array
         /* +h000C */ uint32_t target_agent_id; // agent id of the target (0 if no target)

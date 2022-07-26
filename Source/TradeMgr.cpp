@@ -126,8 +126,7 @@ namespace GW {
     };
 
     bool Trade::OpenTradeWindow(uint32_t agent_id) { 
-        UI::SendUIMessage(0x100001a0, agent_id);
-        return true;
+        return UI::SendUIMessage(GW::UI::UIMessage::kInitiateTrade, (void*)agent_id);
     }
 
     bool Trade::AcceptTrade() {

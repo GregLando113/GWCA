@@ -39,6 +39,6 @@ namespace GW {
 
         GWCA_API bool TravelGH(GHKey key);
 
-        GWCA_API void LeaveGH();
+        GWCA_API bool LeaveGH();
     };
 }

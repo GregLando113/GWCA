@@ -5,11 +5,17 @@
 namespace GW {
     typedef uint32_t AgentID;
 
+    enum class HeroBehavior {
+        Attack,
+        Guard,
+        Avoid
+    };
+
     struct HeroFlag { // total: 0x20/36
         /* +h0000 */ uint32_t hero_id;
         /* +h0004 */ AgentID  agent_id;
         /* +h0008 */ uint32_t level;
-        /* +h000C */ uint32_t hero_behavior;
+        /* +h000C */ HeroBehavior hero_behavior;
         /* +h0010 */ Vec2f flag;
         /* +h0018 */ uint32_t h0018;
         /* +h001C */ AgentID locked_target_id;

@@ -25,30 +25,29 @@ namespace {
     using namespace GW;
 
     uint32_t last_dialog_id = 0;
-    std::unordered_map<HookEntry*, Agents::DialogCallback> OnDialog_callbacks;
 
+    HookEntry OnSendDialog_HookEntry;
     typedef void (*SendDialog_pt)(uint32_t dialog_id);
     SendDialog_pt RetSendDialog = 0;
     SendDialog_pt SendDialog_Func = 0;
 
     void OnSendDialog(uint32_t dialog_id) {
-        HookBase::EnterHook();
-
-        HookStatus status;
-        for (auto& it : OnDialog_callbacks) {
-            it.second(&status, dialog_id);
-            ++status.altitude;
-        }
-
-        if (status.blocked) {
-            RetSendDialog(0);
-        } else {
-            last_dialog_id = dialog_id;
-            RetSendDialog(dialog_id);
-        }
-
-        HookBase::LeaveHook();
+        GW::Hook::EnterHook();
+        // Pass this through UI, we'll pick it up in OnSendDialog_UIMessage
+        UI::SendUIMessage(UI::UIMessage::kSendDialog, (void*)dialog_id);
+        GW::Hook::LeaveHook();
     };
+    void OnSendDialog_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendDialog && wparam);
+        if (!status->blocked) {
+            last_dialog_id = (uint32_t)wparam;
+            RetSendDialog(last_dialog_id);
+        }
+        else {
+            // NB: The Dialog UI interface requires the function call to return
+            RetSendDialog(0);
+        }
+    }
 
     typedef void(*ChangeTarget_pt)(uint32_t agent_id, uint32_t unk1);
     ChangeTarget_pt ChangeTarget_Func = 0;
@@ -76,12 +75,6 @@ namespace {
     InteractCallableAgent_pt InteractGadget_Func = 0;
     InteractCallableAgent_pt InteractEnemy_Func = 0;
 
-    // NB: Theres more target types, and they're in the code, but not used for our context
-    enum class CallTargetType : uint32_t {
-        Following = 0x3,
-        AttackingOrTargetting = 0xA,
-        None = 0xFF
-    };
     typedef void(*CallTarget_pt)(CallTargetType type, uint32_t agent_id);
     CallTarget_pt CallTarget_Func = 0;
 
@@ -137,8 +130,11 @@ namespace {
             InteractGadget_Func = (InteractCallableAgent_pt)Scanner::FunctionFromNearCall(address + 0x120);
         }
 
-        if (SendDialog_Func)
-            HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void **)&RetSendDialog);
+        if (SendDialog_Func) {
+            HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void**)&RetSendDialog);
+            UI::RegisterUIMessageCallback(&OnSendDialog_HookEntry, UI::UIMessage::kSendDialog, OnSendDialog_UIMessage, 0x1);
+        }
+            
 
         GWCA_INFO("[SCAN] ChangeTargetFunction = %p", ChangeTarget_Func);
         GWCA_INFO("[SCAN] TargetAgentIdPtr = %p", TargetAgentIdPtr);
@@ -170,6 +166,9 @@ namespace {
         GWCA_ASSERT(InteractItem_Func);
         GWCA_ASSERT(InteractGadget_Func);
 #endif
+
+        
+
     }
 
     void Exit() {
@@ -194,10 +193,7 @@ namespace GW {
             return last_dialog_id;
         }
         bool SendDialog(uint32_t dialog_id) {
-            if (!SendDialog_Func)
-                return false;
-            SendDialog_Func(dialog_id);
-            return true;
+            return UI::SendUIMessage(UI::UIMessage::kSendDialog, (void*)dialog_id);
         }
 
         AgentArray* GetAgentArray() {
@@ -311,10 +307,10 @@ namespace GW {
             return true;
         }
 
-        bool CallTarget(const Agent* agent) {
+        bool CallTarget(const Agent* agent, CallTargetType type) {
             if (!(CallTarget_Func && agent))
                 return false;
-            CallTarget_Func(CallTargetType::AttackingOrTargetting, agent->agent_id);
+            CallTarget_Func(type, agent->agent_id);
             return true;
         }
 
@@ -412,21 +408,6 @@ namespace GW {
             if (!str) return false;
             UI::AsyncDecodeStr(str, &res);
             return true;
-        }
-
-        void RegisterDialogCallback(
-            HookEntry* entry,
-            DialogCallback callback)
-        {
-            OnDialog_callbacks.insert({ entry, callback });
-        }
-
-        void RemoveDialogCallback(
-            HookEntry* entry)
-        {
-            auto it = OnDialog_callbacks.find(entry);
-            if (it != OnDialog_callbacks.end())
-                OnDialog_callbacks.erase(it);
         }
     }
 } // namespace GW

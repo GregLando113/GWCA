@@ -293,6 +293,16 @@ namespace GW {
             };
             const uint32_t Packet<AgentUnk2>::STATIC_HEADER = GAME_SMSG_NPC_UPDATE_WEAPONS;
 
+            struct MercenaryHeroInfo : Packet<MercenaryHeroInfo> {
+                uint32_t hero_id;
+                uint32_t level;
+                uint32_t primary;
+                uint32_t secondary;
+                uint32_t unknown[15]; // Appearance etc
+                wchar_t name[20];
+            };
+            const uint32_t Packet<MercenaryHeroInfo>::STATIC_HEADER = GAME_SMSG_MERCENARY_INFO;
+
             struct DialogButton : Packet<DialogButton> {
                 uint32_t button_icon; // byte
                 wchar_t message[128];
@@ -375,7 +385,7 @@ namespace GW {
 
             struct AgentName : Packet<AgentName> {
                 uint32_t agent_id;
-                wchar_t name_enc[8];
+                wchar_t name_enc[40];
             };
             const uint32_t Packet<AgentName>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_NPC_NAME;
 
@@ -642,6 +652,25 @@ namespace GW {
                 uint32_t unk5; // byte
             };
             const uint32_t Packet<GuildGeneral>::STATIC_HEADER = GAME_SMSG_GUILD_GENERAL_INFO;
+
+            struct GuildPlayerInfo : Packet<GuildPlayerInfo> {
+                wchar_t invited_name[20];
+                wchar_t current_name[20];
+                wchar_t invited_by[20];
+                wchar_t context_info[64];
+                uint32_t unk; // Something to do with promoted date?
+                uint32_t minutes_since_login;
+                uint32_t join_date; // This is seconds, but since when? 1471089600 ?
+                uint32_t status;
+                uint32_t member_type;
+            };
+            const uint32_t Packet<GuildPlayerInfo>::STATIC_HEADER = GAME_SMSG_GUILD_PLAYER_INFO;
+
+            struct ItemCustomisedForPlayer : Packet<ItemCustomisedForPlayer> {
+                uint32_t item_id;
+                wchar_t player_name[32];
+            };
+            const uint32_t Packet<ItemCustomisedForPlayer>::STATIC_HEADER = GAME_SMSG_ITEM_UPDATE_NAME;
 
             // Gold added to inventory
             struct CharacterAddGold : Packet<CharacterAddGold> {

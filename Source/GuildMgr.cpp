@@ -75,12 +75,11 @@ namespace GW {
         }
 
         bool TravelGH(GHKey key) {
-            UI::SendUIMessage(UI::kGuildHall, &key);
-            return true;
+            return UI::SendUIMessage(UI::UIMessage::kGuildHall, &key);
         }
 
-        void LeaveGH() {
-            UI::SendUIMessage(UI::kLeaveGuildHall, nullptr);
+        bool LeaveGH() {
+            return UI::SendUIMessage(UI::UIMessage::kLeaveGuildHall);
         }
     }
 } // namespace GW

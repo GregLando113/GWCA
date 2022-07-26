@@ -53,6 +53,27 @@ namespace {
     DoAction_pt DropGold_Func = 0;
     DoAction_pt OpenLockedChest_Func = 0;
 
+    HookEntry OnPingWeaponSet_Entry;
+    typedef void(__cdecl* PingWeaponSet_pt)(uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id);
+    PingWeaponSet_pt PingWeaponSet_Func = 0;
+    PingWeaponSet_pt PingWeaponSet_Ret = 0;
+
+    void OnPingWeaponSet(uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id) {
+        GW::Hook::EnterHook();
+        uint32_t pack[3] = { agent_id,weapon_item_id,offhand_item_id };
+        // Pass this through UI, we'll pick it up in OnSendDialog_UIMessage
+        UI::SendUIMessage(UI::UIMessage::kSendPingWeaponSet, (void*)&pack);
+        GW::Hook::LeaveHook();
+    };
+    void OnPingWeaponSet_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendPingWeaponSet && wparam);
+        uint32_t* pack = (uint32_t*)wparam;
+        if (!status->blocked) {
+            PingWeaponSet_Ret(pack[0], pack[1], pack[2]);
+        }
+    }
+
+
     typedef void(__cdecl* MoveItem_pt)(uint32_t item_id, uint32_t quantity, uint32_t bag_id, uint32_t slot);
     MoveItem_pt MoveItem_Func = 0;
 
@@ -123,6 +144,13 @@ namespace {
         address = Scanner::Find("\x83\xc9\x01\x89\x4b\x24", "xxxxxx", 0x18);
         OpenLockedChest_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmweaponbar.cpp", "slotIndex < ITEM_PLAYER_EQUIP_SETS", 0x128);
+        PingWeaponSet_Func = (PingWeaponSet_pt)Scanner::FunctionFromNearCall(address);
+        if (PingWeaponSet_Func) {
+            HookBase::CreateHook(PingWeaponSet_Func, OnPingWeaponSet, (void**)&PingWeaponSet_Ret);
+            UI::RegisterUIMessageCallback(&OnPingWeaponSet_Entry, UI::UIMessage::kSendPingWeaponSet, OnPingWeaponSet_UIMessage, 0x1);
+        }
+
         GWCA_INFO("[SCAN] StorageOpenPtr = %p", storage_open_addr);
         GWCA_INFO("[SCAN] OnItemClick Function = %p", ItemClick_Func);
         GWCA_INFO("[SCAN] UseItem Function = %p", UseItem_Func);
@@ -133,6 +161,7 @@ namespace {
         GWCA_INFO("[SCAN] ChangeEquipmentVisibility Function = %p", ChangeEquipmentVisibility_Func);
         GWCA_INFO("[SCAN] ChangeGold Function = %p", ChangeGold_Func);
         GWCA_INFO("[SCAN] OpenLockedChest Function = %p", OpenLockedChest_Func);
+        GWCA_INFO("[SCAN] PingWeaponSet_Func = %p", PingWeaponSet_Func);
 #if _DEBUG
         GWCA_ASSERT(storage_open_addr);
         GWCA_ASSERT(ItemClick_Func);
@@ -144,6 +173,7 @@ namespace {
         GWCA_ASSERT(ChangeEquipmentVisibility_Func);
         GWCA_ASSERT(ChangeGold_Func);
         GWCA_ASSERT(OpenLockedChest_Func);
+        GWCA_ASSERT(PingWeaponSet_Func);
 #endif
         if (ItemClick_Func)
             HookBase::CreateHook(ItemClick_Func, OnItemClick, (void**)&RetItemClick);
@@ -197,6 +227,13 @@ namespace GW {
             if (!(DropItem_Func && item))
                 return false;
             DropItem_Func(item->item_id, quantity);
+            return true;
+        }
+
+        bool PingWeaponSet(uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id) {
+            if (!(PingWeaponSet_Func && agent_id))
+                return false;
+            PingWeaponSet_Func(agent_id,weapon_item_id,offhand_item_id);
             return true;
         }
 

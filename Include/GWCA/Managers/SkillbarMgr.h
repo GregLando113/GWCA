@@ -45,7 +45,7 @@ namespace GW {
         GWCA_API bool UseSkillByID(uint32_t skill_id, uint32_t target = 0, uint32_t call_target = 0);
 
         // Get skill structure of said id, houses pretty much everything you would want to know about the skill.
-        GWCA_API Skill* GetSkillConstantData(uint32_t skill_id);
+        GWCA_API Skill* GetSkillConstantData(Constants::SkillID skill_id);
 
         // Name/Description/Profession etc for an attribute by id
         GWCA_API AttributeInfo* GetAttributeConstantData(Constants::Attribute attribute_id);
@@ -64,7 +64,6 @@ namespace GW {
 
         // @Remark:
         // `skill_ids` must contains at least 8 elements
-        GWCA_API bool LoadSkillbar(uint32_t *skills, size_t n_skills, uint32_t hero_index = 0);
         GWCA_API bool LoadSkillbar(Constants::SkillID *skills, size_t n_skills, uint32_t hero_index = 0);
 
         GWCA_API bool LoadSkillTemplate(const char *temp);

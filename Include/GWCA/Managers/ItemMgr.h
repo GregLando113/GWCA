@@ -58,6 +58,9 @@ namespace GW {
         // Drop item if droppable.
         GWCA_API bool DropItem(const Item *item, uint32_t quantity);
 
+        // Ping weapon/offhand for an agent
+        GWCA_API bool PingWeaponSet(uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id);
+
         // Pick up selected item off the ground.
         GWCA_API bool PickUpItem(const Item *item, uint32_t call_target = 0);
 

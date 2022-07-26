@@ -87,6 +87,12 @@ namespace GW {
             uint32_t agent_id;
             wchar_t* message_enc;
         };
+        struct DialogButtonInfo {
+            uint32_t button_icon; // byte
+            wchar_t* message;
+            uint32_t dialog_id;
+            uint32_t skill_id; // Default 0xFFFFFFF
+        };
         
         struct DecodingString {
             std::wstring encoded;
@@ -97,49 +103,59 @@ namespace GW {
             void* edx;
         };
 
-        enum UIMessage : uint32_t {
-            kShowAgentNameTag       = 0x10000000 | 0x19, // wparam = AgentNameTagInfo*
-            kHideAgentNameTag       = 0x10000000 | 0x1A,
-            kSetAgentNameTagAttribs = 0x10000000 | 0x1B, // wparam = AgentNameTagInfo*
-            kChangeTarget           = 0x10000000 | 0x20, // wparam = ChangeTargetUIMsg*
-            kShowXunlaiChest        = 0x10000000 | 0x40,
+        enum class UIMessage : uint32_t {
+            kShowAgentNameTag           = 0x10000000 | 0x19, // wparam = AgentNameTagInfo*
+            kHideAgentNameTag           = 0x10000000 | 0x1A,
+            kSetAgentNameTagAttribs     = 0x10000000 | 0x1B, // wparam = AgentNameTagInfo*
+            kChangeTarget               = 0x10000000 | 0x20, // wparam = ChangeTargetUIMsg*
+            kAgentStartCasting          = 0x10000000 | 0x27, // wparam = { uint32_t agent_id, uint32_t skill_id }
+            kShowXunlaiChest            = 0x10000000 | 0x40,
+            kMinionCountUpdated         = 0x10000000 | 0x46,
+            kMoraleChange               = 0x10000000 | 0x47, // wparam = {agent id, morale percent }
+            kEffectAdd                  = 0x10000000 | 0x55, // wparam = {agent_id, GW::Effect*}
+            kEffectRenew                = 0x10000000 | 0x56, // wparam = GW::Effect*
+            kEffectRemove               = 0x10000000 | 0x57, // wparam = effect id
+            kUpdateSkillbar             = 0x10000000 | 0x5E, // wparam ={ uint32_t agent_id , ... }
+            kExperienceGained           = 0x10000000 | 0x66, // wparam = experience amount
+            kWriteToChatLog             = 0x10000000 | 0x7E,
+            kPlayerChatMessage          = 0x10000000 | 0x81, // wparam = { uint32_t channel, wchar_t* message, uint32_t player_number }
+            kFriendUpdated              = 0x10000000 | 0x89, // wparam = { GW::Friend*, ... }
+            kMapLoaded                  = 0x10000000 | 0x8A,
+            kOpenWhisper                = 0x10000000 | 0x90, // wparam = wchar* name
+            kLogout                     = 0x10000000 | 0x9b, // wparam = { bool unknown, bool character_select } 
+            kDialogBody                 = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
+            kDialogButton               = 0x10000000 | 0xA1, // wparam = DialogButtonInfo*
+            kQuotedItemPrice            = 0x10000000 | 0xBB, // wparam = { uint32_t item_id, uint32_t price }
+            kStartMapLoad               = 0x10000000 | 0xC0, // wparam = { uint32_t map_id, ...}
+            kWorldMapUpdated            = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
+            kGuildMemberUpdated         = 0x10000000 | 0xD8, // wparam = { GuildPlayer::name_ptr }
+            kShowHint                   = 0x10000000 | 0xDF, // wparam = { uint32_t icon_type, wchar_t* message_enc }
+            kUpdateGoldCharacter        = 0x10000000 | 0xEA, // wparam = { uint32_t unk, uint32_t gold_character }
+            kUpdateGoldStorage          = 0x10000000 | 0xEB, // wparam = { uint32_t unk, uint32_t gold_storage }
+            kPvPWindowContent           = 0x10000000 | 0xF8,
+            kMapChange                  = 0x10000000 | 0x10F, // wparam = map id
+            kCheckboxPreference         = 0x10000000 | 0x13F,
+            kPreferenceChanged          = 0x10000000 | 0x140,
+            kUIPositionChanged          = 0x10000000 | 0x141,
+            kQuestAdded                 = 0x10000000 | 0x149, // wparam = { quest_id, ... }
+            kCurrentQuestChanged        = 0x10000000 | 0x14C, // wparam = { quest_id, ... }
+            kObjectiveComplete          = 0x10000000 | 0x156, // wparam = { objective_id, ... }
+            kCheckUIState               = 0x10000000 | 0x170, // Undocumented
+            kGuildHall                  = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
+            kLeaveGuildHall             = 0x10000000 | 0x179,
+            kTravel                     = 0x10000000 | 0x17A,
+            kOpenWikiUrl                = 0x10000000 | 0x17B, // wparam = url
+            kHideHeroPanel              = 0x10000000 | 0x197, // wparam = hero_id
+            kShowHeroPanel              = 0x10000000 | 0x198, // wparam = hero_id
+            kMoveItem                   = 0x10000000 | 0x19e, // wparam = { item_id, to_bag, to_slot, bool prompt }
+            kInitiateTrade              = 0x10000000 | 0x1A0,
+            kOpenTemplate               = 0x10000000 | 0x1B9,
 
-            kMoraleChange           = 0x10000000 | 0x47, // wparam = {agent id, morale percent }
-            kEffectAdd              = 0x10000000 | 0x55, // wparam = {agent_id, GW::Effect*}
-            kEffectRenew            = 0x10000000 | 0x56, // wparam = GW::Effect*
-            kEffectRemove           = 0x10000000 | 0x57, // wparam = effect id
-            kExperienceGained       = 0x10000000 | 0x66, // wparam = experience amount
-            kWriteToChatLog         = 0x10000000 | 0x7E,
-            kFriendUpdated          = 0x10000000 | 0x89, // wparam = { GW::Friend*, ... }
-            kMapLoaded              = 0x10000000 | 0x8A,
-            kOpenWhisper            = 0x10000000 | 0x90, // wparam = wchar* name
-            kLogout                 = 0x10000000 | 0x9b, // wparam = { bool unknown, bool character_select } 
-            kDialogBody             = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
-            kDialogButton           = 0x10000000 | 0xA1, // wparam = button info, undocumented atm
-            kQuotedItemPrice        = 0x10000000 | 0xBB, // wparam = { uint32_t item_id, uint32_t price }
-            kStartMapLoad           = 0x10000000 | 0xC0, // wparam = { uint32_t map_id, ...}
-            kWorldMapUpdated        = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated
-            kGuildMemberUpdated     = 0x10000000 | 0xD8, // wparam = { wchar_t* name, uint32_t unk0, uint32_t status }
-            kShowHint               = 0x10000000 | 0xDF, // wparam = { uint32_t icon_type, wchar_t* message_enc }
-            kUpdateGoldCharacter    = 0x10000000 | 0xEA, // wparam = { uint32_t unk, uint32_t gold_character }
-            kUpdateGoldStorage      = 0x10000000 | 0xEB, // wparam = { uint32_t unk, uint32_t gold_storage }
-            kPvPWindowContent       = 0x10000000 | 0xF8,
-            kMapChange              = 0x10000000 | 0x10F, // wparam = map id
-            kCheckboxPreference     = 0x10000000 | 0x13F,
-            kPreferenceChanged      = 0x10000000 | 0x140,
-            kUIPositionChanged      = 0x10000000 | 0x141,
-            kQuestAdded             = 0x10000000 | 0x149, // wparam = { quest_id, ... }
-            kCurrentQuestChanged    = 0x10000000 | 0x14C, // wparam = { quest_id, ... }
-            kObjectiveComplete      = 0x10000000 | 0x156, // wparam = { objective_id, ... }
-            kDestroyUIObject        = 0x10000000 | 0x170, // Undocumented
-            kGuildHall              = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
-            kLeaveGuildHall         = 0x10000000 | 0x179,
-            kTravel                 = 0x10000000 | 0x17A,
-            kOpenWikiUrl            = 0x10000000 | 0x17B, // wparam = url
-            kHideHeroPanel          = 0x10000000 | 0x197, // wparam = hero_id
-            kShowHeroPanel          = 0x10000000 | 0x198, // wparam = hero_id
-            kMoveItem               = 0x10000000 | 0x19e, // wparam = { item_id, to_bag, to_slot, bool prompt }
-            kOpenTemplate           = 0x10000000 | 0x1B9,
+            // GWCA Client to Server commands. Only added the ones that are used for hooks, everything else goes straight into GW
+            kSendDialog                 = 0x30000000 | 0x1, // wparam = dialog_id
+            kSendEnterMission           = 0x30000000 | 0x2, // wparam = arena_id 
+            kSendLoadSkillbar           = 0x30000000 | 0x3,  // wparam = { uint32_t agent_id, uint32_t* skill_ids }
+            kSendPingWeaponSet          = 0x30000000 | 0x4  // wparam = { uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id }
         };
 
         enum Preference : uint32_t {
@@ -499,8 +515,7 @@ namespace GW {
         };
 
         // SendMessage for Guild Wars UI messages, most UI interactions will use this.
-        GWCA_API void SendUIMessage(unsigned message, unsigned int wParam = 0, int lParam = 0);
-        GWCA_API void SendUIMessage(unsigned message, void* wParam = nullptr, void* lParam = nullptr);
+        GWCA_API bool SendUIMessage(UI::UIMessage message, void* wParam = nullptr, void* lParam = nullptr);
 
         GWCA_API bool Keydown(ControlAction key);
         GWCA_API bool Keyup(ControlAction key);
@@ -544,34 +559,17 @@ namespace GW {
         GWCA_API void RemoveKeyupCallback(
             HookEntry* entry);
 
-        typedef HookCallback<uint32_t, void *, void *> UIMessageCallback;
+        typedef HookCallback<UIMessage, void *, void *> UIMessageCallback;
         GWCA_API void RegisterUIMessageCallback(
             HookEntry *entry,
+            UIMessage message_id,
             UIMessageCallback callback,
             int altitude = -0x8000);
 
         GWCA_API void RemoveUIMessageCallback(
             HookEntry *entry);
 
-        typedef HookCallback<TooltipInfo*> TooltipCallback;
-        GWCA_API void RegisterTooltipCallback(
-            HookEntry* entry,
-            TooltipCallback callback,
-            int altitude = -0x8000);
-
-        GWCA_API void RemoveTooltipCallback(
-            HookEntry* entry);
-
-        // Return nullptr to block the string from being decoded, or override with a new string
-        typedef std::function<wchar_t*(HookStatus*, DecodingString*)> DecodeStrCallback;
-        GWCA_API void RegisterDecodeStringCallback(
-            HookEntry* entry,
-            DecodeStrCallback callback,
-            int altitude = -0x8000);
-
-        GWCA_API void RemoveDecodeStringCallback(
-            HookEntry* entry);
-
         GWCA_API TooltipInfo* GetCurrentTooltip();
+
     }
 }

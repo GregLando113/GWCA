@@ -144,7 +144,7 @@ namespace GW {
             kGuildHall                  = 0x10000000 | 0x177, // wparam = gh key (uint32_t[4])
             kLeaveGuildHall             = 0x10000000 | 0x179,
             kTravel                     = 0x10000000 | 0x17A,
-            kOpenWikiUrl                = 0x10000000 | 0x17B, // wparam = url
+            kOpenWikiUrl                = 0x10000000 | 0x17B, // wparam = char* url
             kHideHeroPanel              = 0x10000000 | 0x197, // wparam = hero_id
             kShowHeroPanel              = 0x10000000 | 0x198, // wparam = hero_id
             kMoveItem                   = 0x10000000 | 0x19e, // wparam = { item_id, to_bag, to_slot, bool prompt }

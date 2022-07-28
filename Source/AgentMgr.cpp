@@ -38,14 +38,14 @@ namespace {
         GW::Hook::LeaveHook();
     };
     void OnSendDialog_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
-        GWCA_ASSERT(message_id == UI::UIMessage::kSendDialog && wparam);
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendDialog);
         if (!status->blocked) {
             last_dialog_id = (uint32_t)wparam;
             RetSendDialog(last_dialog_id);
         }
         else {
             // NB: The Dialog UI interface requires the function call to return
-            RetSendDialog(0);
+            //RetSendDialog(0);
         }
     }
 

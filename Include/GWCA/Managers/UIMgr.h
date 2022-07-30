@@ -14,7 +14,7 @@ namespace GW {
         typedef GW::Array<unsigned char> ArrayByte;
 
         struct ChatTemplate {
-            uint32_t        unk0;
+            uint32_t        agent_id;
             uint32_t        type; // 0 = build, 1 = equipement
             Array<wchar_t>  code;
             wchar_t        *name;
@@ -149,7 +149,7 @@ namespace GW {
             kShowHeroPanel              = 0x10000000 | 0x198, // wparam = hero_id
             kMoveItem                   = 0x10000000 | 0x19e, // wparam = { item_id, to_bag, to_slot, bool prompt }
             kInitiateTrade              = 0x10000000 | 0x1A0,
-            kOpenTemplate               = 0x10000000 | 0x1B9,
+            kOpenTemplate               = 0x10000000 | 0x1B9, // wparam = GW::UI::ChatTemplate*
 
             // GWCA Client to Server commands. Only added the ones that are used for hooks, everything else goes straight into GW
             kSendDialog                 = 0x30000000 | 0x1,  // wparam = dialog_id

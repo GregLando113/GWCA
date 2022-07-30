@@ -258,7 +258,7 @@ namespace GW {
             int bits_per_attr = 4;
             int attrib_count = 0;
             for (const Attribute& attribute : in.attributes) {
-                if (attribute.attribute == Constants::Attribute::None) {
+                if (attribute.attribute == Constants::Attribute::None || attribute.points == 0) {
                     continue;
                 }
                 int tmp = (int)log2((int)attribute.attribute) + 1;
@@ -270,7 +270,8 @@ namespace GW {
             offset += _WriteBits(attrib_count, &bitStr[offset], 4);
             offset += _WriteBits(bits_per_attr - 4, &bitStr[offset], 4);
             for (const Attribute& attribute : in.attributes) {
-                if (attribute.attribute != GW::Constants::Attribute::None) {
+                if (attribute.attribute != GW::Constants::Attribute::None
+                    && attribute.points != 0) {
                     offset += _WriteBits((int)attribute.attribute, &bitStr[offset], bits_per_attr);
                     offset += _WriteBits((int)attribute.points, &bitStr[offset], 4);
                 }

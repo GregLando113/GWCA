@@ -522,7 +522,13 @@ namespace GW {
                 uint32_t unk1;
             };
             const uint32_t Packet<TransactionDone>::STATIC_HEADER = GAME_SMSG_TRANSACTION_DONE;
-
+            struct UpdateSkillbarSkill : Packet<UpdateSkillbarSkill> {
+                uint32_t agent_id;
+                uint32_t skill_slot;
+                uint32_t skill_id;
+            };
+            const uint32_t Packet<UpdateSkillbarSkill>::STATIC_HEADER = GAME_SMSG_SKILLBAR_UPDATE_SKILL;
+            
             // Used to duplicate skills in skill window i.e. more than 1 signet of capture. Packet is received after map is loaded
             struct UpdateSkillCountAfterMapLoad : Packet<UpdateSkillCountAfterMapLoad> {
                 uint32_t skill_id;

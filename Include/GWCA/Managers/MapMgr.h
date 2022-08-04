@@ -18,8 +18,15 @@ namespace GW {
         enum class MapID;
         enum class District;
         enum class InstanceType;
+        
     }
 
+    enum class RegionType : uint32_t;
+    struct MapTypeInstanceInfo {
+        uint32_t request_instance_map_type; // Used for auth server
+        bool some_boolean_flag; // Maybe "is_redirect" ?
+        RegionType map_region_type;
+    };
     struct Module;
     extern Module MapModule;
 
@@ -36,6 +43,9 @@ namespace GW {
 
         // Get current region you are in.
         GWCA_API int GetRegion();
+
+        // Can be used to get the instance type for auth server request
+        GWCA_API MapTypeInstanceInfo* GetMapTypeInstanceInfo(RegionType map_type);
 
         // Get current language you are in.
         GWCA_API int GetLanguage();

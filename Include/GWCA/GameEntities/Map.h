@@ -19,29 +19,29 @@ namespace GW {
 
     typedef Array<MissionMapIcon> MissionMapIconArray;
 
-    enum RegionType : uint32_t {
-        RegionType_AllianceBattle,
-        RegionType_Arena,
-        RegionType_ExplorableZone,
-        RegionType_GuildBattleArea,
-        RegionType_GuildHall,
-        RegionType_MissionOutpost,
-        RegionType_CooperativeMission,
-        RegionType_CompetitiveMission,
-        RegionType_EliteMission,
-        RegionType_Challenge,
-        RegionType_Outpost,
-        RegionType_ZaishenBattle,
-        RegionType_HeroesAscent,
-        RegionType_City,
-        RegionType_MissionArea,
-        RegionType_HeroBattleOutpost,
-        RegionType_HeroBattleArea,
-        RegionType_EotnMission,
-        RegionType_Dungeon,
-        RegionType_Marketplace,
-        RegionType_Unknown,
-        RegionType_DevRegion
+    enum class RegionType : uint32_t {
+        AllianceBattle,
+        Arena,
+        ExplorableZone,
+        GuildBattleArea,
+        GuildHall,
+        MissionOutpost,
+        CooperativeMission,
+        CompetitiveMission,
+        EliteMission,
+        Challenge,
+        Outpost,
+        ZaishenBattle,
+        HeroesAscent,
+        City,
+        MissionArea,
+        HeroBattleOutpost,
+        HeroBattleArea,
+        EotnMission,
+        Dungeon,
+        Marketplace,
+        Unknown,
+        DevRegion
     };
 
     enum Region : uint32_t {

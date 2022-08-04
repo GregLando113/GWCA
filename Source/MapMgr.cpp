@@ -88,6 +88,9 @@ namespace {
         uint32_t unk1;
     };
 
+    MapTypeInstanceInfo* map_type_instance_infos = 0;
+    uint32_t map_type_instance_infos_size = 0;
+
     struct InstanceInfo {
         MapDimensions* terrain_info1;
         GW::Constants::InstanceType instance_type;
@@ -125,7 +128,14 @@ namespace {
             UI::RegisterUIMessageCallback(&EnterChallengeMission_Entry, UI::UIMessage::kSendEnterMission, OnEnterChallengeMission_UIMessage, 0x1);
         }
 
+        address = Scanner::Find("\x83\xc0\x0c\x41\x3d\x68\x01\x00\x00", "xxxxxxxxx");
+        if (address) {
+            map_type_instance_infos = *(MapTypeInstanceInfo**)(address + 0x19);
+            map_type_instance_infos_size = (*(uint32_t*)(address + 5)) / sizeof(MapTypeInstanceInfo);
+        }
+        
 
+        GWCA_INFO("[SCAN] map_type_instance_infos address = %p, size = %d", map_type_instance_infos, map_type_instance_infos_size);
         GWCA_INFO("[SCAN] RegionId address = %p", region_id_addr);
         GWCA_INFO("[SCAN] AreaInfo address = %p", area_info_addr);
         GWCA_INFO("[SCAN] InstanceInfoPtr address = %p", InstanceInfoPtr);
@@ -133,6 +143,7 @@ namespace {
         GWCA_INFO("[SCAN] EnterChallengeMission_Func = %p", EnterChallengeMission_Func);
         GWCA_INFO("[SCAN] CancelEnterChallengeMission_Func = %p", CancelEnterChallengeMission_Func);
 #if _DEBUG
+        GWCA_ASSERT(map_type_instance_infos);
         GWCA_ASSERT(region_id_addr);
         GWCA_ASSERT(area_info_addr);
         GWCA_ASSERT(InstanceInfoPtr);
@@ -303,5 +314,14 @@ namespace GW {
         bool CancelEnterChallenge() {
             return CancelEnterChallengeMission_Func ? CancelEnterChallengeMission_Func(), true : false;
         }
+        MapTypeInstanceInfo* GetMapTypeInstanceInfo(RegionType map_region_type) {
+            for (size_t i = 0; i < map_type_instance_infos_size; i++) {
+                if (map_type_instance_infos[i].map_region_type == map_region_type) {
+                    return &map_type_instance_infos[i];
+                }
+            }
+            return nullptr;
+        }
+
     }
 } // namespace GW

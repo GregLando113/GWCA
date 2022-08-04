@@ -54,7 +54,7 @@ namespace GW {
 
         Guild* GetCurrentGH() {
             AreaInfo* m = Map::GetCurrentMapInfo();
-            if (!m || m->type != GW::RegionType::RegionType_GuildHall) return nullptr;
+            if (!m || m->type != GW::RegionType::GuildHall) return nullptr;
             GW::Array<GW::Guild*>* guilds = GW::GuildMgr::GetGuildArray();
             if (!guilds) return nullptr;
             for (auto* guild : *guilds) {

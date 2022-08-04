@@ -185,7 +185,8 @@ namespace GW {
             LegendaryCarto, LegendaryGuardian, LegendarySkillHunter,
             LegendaryVanquisher, Sweets, GuardianTyria, GuardianCantha,
             GuardianElona, Asuran, Deldrimor, Vanguard, Norn, MasterOfTheNorth,
-            Party, Zaishen, TreasureHunter, Wisdom, Codex
+            Party, Zaishen, TreasureHunter, Wisdom, Codex,
+            None = 0xff
         };
 
         enum class Tick { NOT_READY, READY };

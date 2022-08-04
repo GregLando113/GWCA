@@ -24,7 +24,7 @@ namespace GW {
     enum class RegionType : uint32_t;
     struct MapTypeInstanceInfo {
         uint32_t request_instance_map_type; // Used for auth server
-        bool some_boolean_flag; // Maybe "is_redirect" ?
+        bool is_outpost;
         RegionType map_region_type;
     };
     struct Module;

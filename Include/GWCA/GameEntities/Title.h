@@ -5,6 +5,9 @@
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
+    namespace Constants {
+        enum class TitleID : uint32_t;
+    }
     struct Title { // total: 0x28/40
         /* +h0000 */ uint32_t props;
         /* +h0004 */ uint32_t current_points;
@@ -21,7 +24,7 @@ namespace GW {
         inline bool has_tiers() { return (props & 3) == 2; };
 
         uint32_t name_id();
-        uint32_t title_id();
+        Constants::TitleID title_id();
 
     };
     static_assert(sizeof(Title) == 40, "struct Title has incorect size");

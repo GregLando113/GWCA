@@ -315,8 +315,12 @@ namespace GW {
             return CancelEnterChallengeMission_Func ? CancelEnterChallengeMission_Func(), true : false;
         }
         MapTypeInstanceInfo* GetMapTypeInstanceInfo(RegionType map_region_type) {
+            bool is_outpost = !(map_region_type == RegionType::ExplorableZone
+                || map_region_type == RegionType::MissionArea
+                || map_region_type == RegionType::Dungeon);
             for (size_t i = 0; i < map_type_instance_infos_size; i++) {
-                if (map_type_instance_infos[i].map_region_type == map_region_type) {
+                if (map_type_instance_infos[i].map_region_type == map_region_type
+                    && map_type_instance_infos[i].is_outpost == is_outpost) {
                     return &map_type_instance_infos[i];
                 }
             }

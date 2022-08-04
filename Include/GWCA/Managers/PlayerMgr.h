@@ -9,6 +9,7 @@ namespace GW {
     struct Player;
     struct Quest;
     struct Title;
+    struct TitleClientData;
     typedef Array<Quest> QuestLog;
     typedef Array<Player> PlayerArray;
 
@@ -56,6 +57,8 @@ namespace GW {
         GWCA_API Title* GetTitleTrack(Constants::TitleID title_id);
 
         GWCA_API Title* GetActiveTitle();
+
+        GWCA_API TitleClientData* GetTitleData(Constants::TitleID title_id);
 
         // Donate 5000 faction points to Luxon (1) or Kurzick (0). Must be talking to faction NPC.
         GWCA_API bool DepositFaction(uint32_t allegiance);

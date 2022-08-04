@@ -35,6 +35,8 @@ namespace {
     typedef void(__cdecl* DepositFaction_pt)(uint32_t always_0, uint32_t allegiance, uint32_t amount);
     DepositFaction_pt DepositFaction_Func;
 
+    GW::TitleClientData* title_data = 0;
+
     void Init() {
         DWORD address = 0;
 
@@ -45,6 +47,9 @@ namespace {
         address = Scanner::Find("\x68\x88\x13\x00\x00\xff\x76\x0c\x6a\x00", "xxxxxxxxxx", 0xa); // UI::UIInteractionCallback for entering player name for faction donation
         DepositFaction_Func = (DepositFaction_pt)Scanner::FunctionFromNearCall(address);
 
+        title_data = *(TitleClientData**)Scanner::FindAssertion("p:\\code\\gw\\const\\consttitle.cpp", "index < arrsize(s_titleClientData)", 0x12);
+
+        GWCA_INFO("[SCAN] title_data = %p", title_data);
         GWCA_INFO("[SCAN] RemoveActiveTitle_Func = %p", RemoveActiveTitle_Func);
         GWCA_INFO("[SCAN] SetActiveTitle_Func = %p", SetActiveTitle_Func);
         GWCA_INFO("[SCAN] DepositFaction_Func = %p", DepositFaction_Func);
@@ -90,6 +95,10 @@ namespace GW {
             if (!(a && a->size() > (uint32_t)title_id))
                 return nullptr;
             return &a->at((uint32_t)title_id);
+        }
+
+        TitleClientData* GetTitleData(Constants::TitleID title_id) {
+            return title_data ? &title_data[(uint32_t)title_id] : nullptr;
         }
 
         Title* GetActiveTitle() {

@@ -72,20 +72,26 @@ namespace {
         }
     }
 
-    void Exit()
-    {
-        GameThread::ClearCalls();
-        DeleteCriticalSection(&mutex);
-    }
+
 
     void EnableHooks()
     {
+        EnterCriticalSection(&mutex);
         *g__thingy = (uintptr_t)gameLoopHook;
+        LeaveCriticalSection(&mutex);
     }
 
     void DisableHooks()
     {
+        EnterCriticalSection(&mutex);
         *g__thingy = (uintptr_t)g__thingyret;
+        LeaveCriticalSection(&mutex);
+    }
+    void Exit()
+    {
+        DisableHooks();
+        GameThread::ClearCalls();
+        DeleteCriticalSection(&mutex);
     }
 }
 

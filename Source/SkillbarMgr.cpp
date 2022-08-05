@@ -188,6 +188,8 @@ namespace {
     static void Exit() {
         if(UseSkill_Func)
             HookBase::RemoveHook(UseSkill_Func);
+        if (LoadSkills_Func)
+            HookBase::RemoveHook(LoadSkills_Func);
     }
 
 

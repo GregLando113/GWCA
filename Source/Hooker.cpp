@@ -53,12 +53,12 @@ void GW::HookBase::DisableHooks(void *target)
 
 void GW::HookBase::CreateHook(void *target, void *detour, void **trampoline)
 {
-    if (!target)
-        return;
-    MH_CreateHook(target, detour, trampoline);
+    if (target)
+        MH_CreateHook(target, detour, trampoline);
 }
 
 void GW::HookBase::RemoveHook(void *target)
 {
-    MH_RemoveHook(target);
+    if(target)
+        MH_RemoveHook(target);
 }

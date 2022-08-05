@@ -115,6 +115,7 @@ namespace GW
 
     void Terminate()
     {
+        DisableHooks();
         for (Module *module : modules) {
             if (module->exit_module)
                 module->exit_module();

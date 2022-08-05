@@ -247,6 +247,12 @@ namespace {
     void Exit() {
         if (ItemClick_Func)
             HookBase::RemoveHook(ItemClick_Func);
+        if (PingWeaponSet_Func)
+            HookBase::RemoveHook(PingWeaponSet_Func);
+        if (MoveItem_Func)
+            HookBase::RemoveHook(MoveItem_Func);
+        if (UseItem_Func)
+            HookBase::RemoveHook(UseItem_Func);
     }
 }
 

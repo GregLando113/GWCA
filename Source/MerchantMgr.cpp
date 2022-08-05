@@ -115,6 +115,12 @@ namespace {
             UI::RegisterUIMessageCallback(&OnRequestQuoteItemEntry, UI::UIMessage::kSendMerchantRequestQuote, OnRequestQuote_UIMessage, 0x1);
         }
     }
+    void Exit() {
+        if (TransactItem_Func)
+            HookBase::RemoveHook(TransactItem_Func);
+        if (RequestQuote_func)
+            HookBase::RemoveHook(RequestQuote_func);
+    }
 }
 
 namespace GW {
@@ -123,7 +129,7 @@ namespace GW {
         "MerchantModule",   // name
         NULL,               // param
         ::Init,             // init_module
-        NULL,               // exit_module
+        ::Exit,               // exit_module
         NULL,               // enable_hooks
         NULL,               // disable_hooks
     };

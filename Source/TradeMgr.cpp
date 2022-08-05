@@ -114,13 +114,17 @@ namespace {
         GWCA_ASSERT(TradeCancel_Func);
 #endif
     }
+    void Exit() {
+        HookBase::RemoveHook(OfferTradeItem_Func);
+        HookBase::RemoveHook(UpdateTradeCart_Func);
+    }
 }
 namespace GW {
     Module TradeModule = {
         "TradeModule",  // name
         NULL,           // param
         ::Init,           // init_module
-        NULL,           // exit_module
+        ::Exit,           // exit_module
         NULL,           // enable_hooks
         NULL,           // disable_hooks
     };

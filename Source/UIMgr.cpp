@@ -331,18 +331,12 @@ namespace {
     void Exit()
     {
         UI::RemoveUIMessageCallback(&open_template_hook);
-        if (AsyncDecodeStringPtr)
-            HookBase::RemoveHook(AsyncDecodeStringPtr);
-        if (DoAction_Func)
-            HookBase::RemoveHook(DoAction_Func);
-        if (SetTickboxPref_Func)
-            HookBase::RemoveHook(SetTickboxPref_Func);
-        if (SetTooltip_Func)
-            HookBase::RemoveHook(SetTooltip_Func);
-        if (SendUIMessage_Func)
-            HookBase::RemoveHook(SendUIMessage_Func);
-        if(SetTickboxPref_Func) 
-            HookBase::RemoveHook(SetTickboxPref_Func);
+        HookBase::RemoveHook(AsyncDecodeStringPtr);
+        HookBase::RemoveHook(DoAction_Func);
+        HookBase::RemoveHook(SetTickboxPref_Func);
+        HookBase::RemoveHook(SetTooltip_Func);
+        HookBase::RemoveHook(SendUIMessage_Func);
+        HookBase::RemoveHook(SetTickboxPref_Func);
     }
 }
 

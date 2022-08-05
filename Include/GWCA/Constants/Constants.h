@@ -256,13 +256,13 @@ namespace GW {
         };
 
         namespace DialogID {
-            constexpr int UwTeleVale = 138;
             constexpr int UwTelePlanes = 139;
             constexpr int UwTeleWastes = 140;
             constexpr int UwTeleLab = 141;
             constexpr int UwTeleMnt = 142;
             constexpr int UwTelePits = 143;
             constexpr int UwTelePools = 144;
+            constexpr int UwTeleVale = 145;
 
             constexpr int FowCraftArmor = 127;
 

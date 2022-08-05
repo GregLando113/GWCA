@@ -23,9 +23,6 @@ namespace GW {
         inline bool is_percentage_based() { return (props & 1) != 0; };
         inline bool has_tiers() { return (props & 3) == 2; };
 
-        uint32_t name_id();
-        Constants::TitleID title_id();
-
     };
     static_assert(sizeof(Title) == 40, "struct Title has incorect size");
 

@@ -101,19 +101,24 @@ namespace GW {
             return title_data ? &title_data[(uint32_t)title_id] : nullptr;
         }
 
-        Title* GetActiveTitle() {
+        Constants::TitleID GetActiveTitleId() {
             auto* player = GetPlayerByID();
             if (!(player && player->active_title_tier))
-                return nullptr;
+                return Constants::TitleID::None;
             auto a = GetTitleArray();
-            if (!a) 
-                return nullptr;
-            for (auto& title : *a) {
-                if (title.current_title_tier_index == player->active_title_tier) {
-                    return &title;
+            if (!a)
+                return Constants::TitleID::None;
+            auto& titles = *a;
+            for (size_t title_id = 0; title_id < titles.size();title_id++) {
+                if (titles[title_id].current_title_tier_index == player->active_title_tier) {
+                    return (Constants::TitleID)title_id;
                 }
             }
-            return nullptr;
+            return Constants::TitleID::None;
+        }
+
+        Title* GetActiveTitle() {
+            return GetTitleTrack(GetActiveTitleId());
         }
 
         Quest* GetActiveQuest() {

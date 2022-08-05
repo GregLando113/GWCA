@@ -56,6 +56,8 @@ namespace GW {
         // Get the current progress of a title by id. If the title has no progress, this function will return nullptr
         GWCA_API Title* GetTitleTrack(Constants::TitleID title_id);
 
+        GWCA_API Constants::TitleID GetActiveTitleId();
+
         GWCA_API Title* GetActiveTitle();
 
         GWCA_API TitleClientData* GetTitleData(Constants::TitleID title_id);

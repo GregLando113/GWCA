@@ -113,6 +113,7 @@ namespace {
         for (uint32_t i = 0; i < game_server_handlers->size(); ++i)
             game_server_handlers->at(i).handler_func = original_functions[i].handler_func;
         delete[] original_functions;
+        original_functions = nullptr;
     }
 
 

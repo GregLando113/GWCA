@@ -13,6 +13,8 @@ namespace GW {
     namespace UI {
         typedef GW::Array<unsigned char> ArrayByte;
 
+        typedef void(__cdecl* DecodeStr_Callback)(void* param, wchar_t* s);
+
         struct ChatTemplate {
             uint32_t        agent_id;
             uint32_t        type; // 0 = build, 1 = equipement
@@ -541,6 +543,7 @@ namespace GW {
 
         GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, wchar_t *buffer, size_t size);
         GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, char    *buffer, size_t size);
+        GWCA_API void AsyncDecodeStr(const wchar_t* enc_str, DecodeStr_Callback callback, void* callback_param = 0, uint32_t language_id = -1);
         GWCA_API void AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id = -1);
 
         GWCA_API bool UInt32ToEncStr(uint32_t value, wchar_t *buffer, size_t count);

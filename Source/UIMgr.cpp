@@ -78,9 +78,9 @@ namespace {
     typedef void (__cdecl *LoadSettings_pt)(uint32_t size, uint8_t *data);
     LoadSettings_pt LoadSettings_Func = 0;
 
-    typedef void(__cdecl* DecodeStr_Callback)(void* param, wchar_t* s);
-    typedef void(__cdecl* ValidateAsyncDecodeStr_pt)(const wchar_t* s, DecodeStr_Callback cb, void* wParam);
-    typedef uint32_t(__fastcall* DoAsyncDecodeStr_pt)(void* ecx, void* edx, wchar_t* encoded_str, DecodeStr_Callback cb, void* wParam);
+    
+    typedef void(__cdecl* ValidateAsyncDecodeStr_pt)(const wchar_t* s, GW::UI::DecodeStr_Callback cb, void* wParam);
+    typedef uint32_t(__fastcall* DoAsyncDecodeStr_pt)(void* ecx, void* edx, wchar_t* encoded_str, GW::UI::DecodeStr_Callback cb, void* wParam);
     ValidateAsyncDecodeStr_pt ValidateAsyncDecodeStr = 0;
     // NB: This is a __thiscall, but the function that calls it is a __cdecl - we can't hook it because theres not enough room but would be nice.
     DoAsyncDecodeStr_pt AsyncDecodeStringPtr = 0;
@@ -558,6 +558,18 @@ namespace GW {
         abuf->buffer = buffer;
         abuf->size = size;
         ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_char, abuf);
+    }
+
+    void UI::AsyncDecodeStr(const wchar_t* enc_str, DecodeStr_Callback callback, void* callback_param, uint32_t language_id) {
+        if (!ValidateAsyncDecodeStr)
+            return;
+        auto& textParser = GameContext::instance()->text_parser;
+        uint32_t prev_language_id = textParser->language_id;
+        if (language_id != -1) {
+            textParser->language_id = language_id;
+        }
+        ValidateAsyncDecodeStr((wchar_t*)enc_str, callback, callback_param);
+        textParser->language_id = prev_language_id;
     }
 
     void UI::AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id) {

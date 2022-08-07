@@ -77,7 +77,7 @@ namespace GW {
         } *sub1; // 0x0
 
         /* +h0004 */ Array<wchar_t> message_buff;
-        /* +h0014 */ uint32_t h0014[4];
+        /* +h0014 */ Array<wchar_t> dialog_buff;
         /* +h0024 */ MerchItemArray merch_items;
         /* +h0034 */ MerchItemArray merch_items2;
         /* +h0044 */ uint32_t accumMapInitUnk0;

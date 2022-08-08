@@ -12,7 +12,10 @@ fields is given as comments
 feel free to fill packets, and you can also add a suffix to
 the packet name, e.g. P391 -> P391_InstanceLoadMap
 */
+
 namespace GW {
+    typedef uint32_t AgentID;
+    typedef uint32_t ItemID;
     namespace Packet {
         namespace StoC {
             struct PacketBase {
@@ -671,6 +674,13 @@ namespace GW {
                 uint32_t member_type;
             };
             const uint32_t Packet<GuildPlayerInfo>::STATIC_HEADER = GAME_SMSG_GUILD_PLAYER_INFO;
+
+            struct ItemUpdateOwner : Packet<ItemUpdateOwner> {
+                GW::ItemID  item_id;
+                GW::AgentID owner_agent_id;
+                float       seconds_reserved;
+            };
+            unsigned const Packet<ItemUpdateOwner>::STATIC_HEADER = GAME_SMSG_ITEM_UPDATE_OWNER;
 
             struct ItemCustomisedForPlayer : Packet<ItemCustomisedForPlayer> {
                 uint32_t item_id;

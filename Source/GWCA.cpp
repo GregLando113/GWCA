@@ -43,6 +43,7 @@
 #include <GWCA/Managers/SkillbarMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/FriendListMgr.h>
+#include <GWCA/Managers/PreGameMgr.h>
 
 namespace GW
 {
@@ -70,6 +71,7 @@ namespace GW
         modules.push_back(&SkillbarModule);
         modules.push_back(&GameThreadModule);
         modules.push_back(&FriendListModule);
+        modules.push_back(&PreGameModule);
 
         if (MemoryMgr::Scan()) {
 

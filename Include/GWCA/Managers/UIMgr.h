@@ -105,11 +105,6 @@ namespace GW {
             void* edx;
         };
 
-        struct LogoutParam {
-            uint32_t unk1_hex1;
-            uint32_t character_select; // 0 or 1
-        };
-
         enum class UIMessage : uint32_t {
             kShowAgentNameTag           = 0x10000000 | 0x19, // wparam = AgentNameTagInfo*
             kHideAgentNameTag           = 0x10000000 | 0x1A,
@@ -129,7 +124,7 @@ namespace GW {
             kFriendUpdated              = 0x10000000 | 0x89, // wparam = { GW::Friend*, ... }
             kMapLoaded                  = 0x10000000 | 0x8A,
             kOpenWhisper                = 0x10000000 | 0x90, // wparam = wchar* name
-            kLogout                     = 0x10000000 | 0x9b, // wparam = LogoutParam*
+            kLogout                     = 0x10000000 | 0x9b, // wparam = { bool unknown, bool character_select } 
             kDialogBody                 = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
             kDialogButton               = 0x10000000 | 0xA1, // wparam = DialogButtonInfo*
             kQuotedItemPrice            = 0x10000000 | 0xBB, // wparam = { uint32_t item_id, uint32_t price }

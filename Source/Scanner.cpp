@@ -149,36 +149,3 @@ void GW::Scanner::Initialize(uintptr_t start, size_t size) {
     sections[Section::TEXT].start = start;
     sections[Section::TEXT].end = start + size;
 }
-
-uint8_t* GW::Scanner::FindOnMemoryPage(uint8_t* page_ptr, size_t page_size, uint8_t* value_ptr, size_t value_size)
-{
-    auto last_ptr = page_ptr + page_size - value_size;
-
-    for (auto curr_ptr = page_ptr; curr_ptr <= last_ptr; curr_ptr++)
-    {
-        if (curr_ptr[0] != value_ptr[0] || curr_ptr == value_ptr) continue;
-
-        auto remaining_size = page_ptr + page_size - curr_ptr;
-        if (remaining_size < value_size) break;
-
-        auto found_value = memcmp(curr_ptr, value_ptr, value_size) == 0;
-        if (found_value) return curr_ptr;
-    }
-
-    return nullptr;
-}
-
-uint8_t* GW::Scanner::FindOnMemoryPages(MemoryPageFilter filter, uint8_t* value_ptr, size_t value_size)
-{
-    MEMORY_BASIC_INFORMATION info;
-
-    for (uint8_t* page_ptr = nullptr; VirtualQuery(page_ptr, &info, sizeof(info)) != 0; page_ptr += info.RegionSize)
-    {
-        if (info.State != filter.state || info.Type != filter.type || info.Protect != filter.protection) continue;
-
-        auto found_ptr = FindOnMemoryPage(page_ptr, info.RegionSize, value_ptr, value_size);
-        if (found_ptr) return found_ptr;
-    }
-
-    return nullptr;
-}

@@ -31,19 +31,5 @@ namespace GW {
 
         // Returns actual address of a function call given via CALL <near call> instruction e.g. *call_instruction_address = 0xE8 ?? ?? ?? 0xFF
         uintptr_t FunctionFromNearCall(uintptr_t call_instruction_address);
-
-        struct MemoryPageFilter {
-            uint32_t state;
-            uint32_t type;
-            uint32_t protection;
-        };
-
-        // Searches a specific memory page and finds the address to the first occurrence of the specified bytes
-        uint8_t* FindOnMemoryPage(uint8_t* page_ptr, size_t page_size, uint8_t* value_ptr, size_t value_size);
-
-        // Searches all memory pages and finds the address to the first occurrence of the specified bytes
-        uint8_t* FindOnMemoryPages(MemoryPageFilter filter, uint8_t* value_ptr, size_t value_size);
-
     }
-
 }

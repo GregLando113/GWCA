@@ -280,13 +280,13 @@ namespace GW {
         bool GoNPC(const Agent* agent, uint32_t call_target) {
             if (!(InteractNPC_Func && agent && agent->GetIsLivingType()))
                 return false;
-            InteractNPC_Func(agent->agent_id, call_target ? 1 : 0);
+            InteractNPC_Func(agent->agent_id, call_target ? 1U : 0U);
             return true;
         }
         bool PickUpItem(const Agent* agent, uint32_t call_target) {
             if (!(InteractItem_Func && agent && agent->GetIsItemType()))
                 return false;
-            InteractItem_Func(agent->agent_id, call_target ? 1 : 0);
+            InteractItem_Func(agent->agent_id, call_target ? 1U : 0U);
             return true;
         }
 
@@ -303,7 +303,7 @@ namespace GW {
         bool GoSignpost(const Agent* agent, uint32_t call_target) {
             if (!(InteractGadget_Func && agent && agent->GetIsGadgetType()))
                 return false;
-            InteractGadget_Func(agent->agent_id, call_target ? 1 : 0);
+            InteractGadget_Func(agent->agent_id, call_target ? 1U : 0U);
             return true;
         }
 

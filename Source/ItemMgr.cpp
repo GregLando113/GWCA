@@ -475,7 +475,7 @@ namespace GW {
             }
             if (!use_key && !GetItemByModelId(Constants::ItemID::Lockpick))
                 return false;
-            OpenLockedChest_Func(use_key ? 0x1 : 0x2);
+            OpenLockedChest_Func(use_key ? 0x1U : 0x2U);
             return true;
         }
 
@@ -621,14 +621,14 @@ namespace GW {
             return w ? w->equipment_status : 0;
         }
         EquipmentStatus GetEquipmentVisibility(EquipmentType type) {
-            return (EquipmentStatus)((GetEquipmentVisibilityState() >> type) & 0x3);
+            return (EquipmentStatus)((GetEquipmentVisibilityState() >> (uint32_t)type) & 0x3);
         }
         bool SetEquipmentVisibility(EquipmentType type, EquipmentStatus state) {
             if (GetEquipmentVisibility(type) == state)
                 return true;
             if (!ChangeEquipmentVisibility_Func)
                 return false;
-            ChangeEquipmentVisibility_Func(state << type, 0x3 << type);
+            ChangeEquipmentVisibility_Func((uint32_t)((uint32_t)state << (uint32_t)type), (uint32_t)(0x3 << (uint32_t)type));
             return true;
         }
     }

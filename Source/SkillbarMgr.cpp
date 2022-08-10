@@ -228,6 +228,8 @@ namespace GW {
                 return false;
             const size_t bytes = n_skills * sizeof(uint32_t);
             uint32_t* skill_ids = (uint32_t*)malloc(bytes);
+            if (skill_ids == 0)
+                return false;
             memset(skill_ids, 0, bytes);
             memcpy(skill_ids, skills, bytes);
             AgentID agent_id = Agents::GetHeroAgentID(hero_index);
@@ -251,12 +253,11 @@ namespace GW {
 
             // Professions
             int bits_per_prof = 4; // Professions go up to 10 - more than 4 bits would be 16 - how could this ever be more than 4 bits?
-            offset += _WriteBits((bits_per_prof - 4) * 0.5, &bitStr[offset], 2); // 2 Bits - A code controlling the number of encoded bits per profession id
+            offset += _WriteBits((int)((bits_per_prof - 4) * 0.5), &bitStr[offset], 2); // 2 Bits - A code controlling the number of encoded bits per profession id
             offset += _WriteBits((int)in.primary, &bitStr[offset], bits_per_prof);
             offset += _WriteBits((int)in.secondary, &bitStr[offset], bits_per_prof);
 
             // Attributes
-            int attributes_count_offset = offset;
             int bits_per_attr = 4;
             int attrib_count = 0;
             for (const Attribute& attribute : in.attributes) {
@@ -292,10 +293,8 @@ namespace GW {
                 offset += _WriteBits((int)skill, &bitStr[offset], bits_per_skill);
             }
 
-            size_t out_offset = 0;
-            size_t read_offset = 0;
             char* it = bitStr;
-            int r = offset % 6;
+            size_t r = offset % 6;
             for (size_t i = 0; i < r; i++) {
                 bitStr[offset++] = 0;
             }
@@ -306,7 +305,7 @@ namespace GW {
             }
             for (size_t i = 0; i < needed_length; i++) {
                 int value = _ReadBits(&it, 6);
-                build_code_result[i] = _Base64Table[value];
+                build_code_result[i] = (char)_Base64Table[value];
             }
             build_code_result[needed_length] = 0;
             return true;
@@ -360,7 +359,7 @@ namespace GW {
             int bits_per_attr = _ReadBits(&it, 4) + 4;
             bool is_primary_attribute = false;
             for (int i = 0; i < attrib_count; i++) {
-                int attrib_id = _ReadBits(&it, bits_per_attr);
+                uint32_t attrib_id = (uint32_t)_ReadBits(&it, bits_per_attr);
                 int attrib_val = _ReadBits(&it, 4);
                 if (attrib_id >= ATTRIBUTE_COUNT) {
                     GWCA_ERR("Attribute id %d is out of range. (count = %d)\n", attrib_id, ATTRIBUTE_COUNT);
@@ -538,7 +537,7 @@ namespace GW {
             int slot = GetSkillSlot((Constants::SkillID)skill_id);
             if (slot == -1)
                 return false;
-            return UseSkill(slot, target, call_target);
+            return UseSkill((uint32_t)slot, target, call_target);
         }
 
         int GetSkillSlot(Constants::SkillID skill_id) {
@@ -584,7 +583,7 @@ namespace GW {
             if (real_index >= array.size())
                 return false;
             uint32_t shift = index % 32;
-            uint32_t flag = 1 << shift;
+            uint32_t flag = 1U << shift;
             return (array[real_index] & flag) != 0;
         }
         void RegisterUseSkillCallback(

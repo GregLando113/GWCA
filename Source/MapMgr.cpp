@@ -30,7 +30,7 @@
 namespace {
     using namespace GW;
 
-    uint32_t* region_id_addr = 0;
+    int* region_id_addr = 0;
     AreaInfo* area_info_addr = 0;
 
     typedef float(__cdecl* QueryAltitude_pt)(
@@ -106,7 +106,7 @@ namespace {
 
         address = GW::Scanner::Find("\x6a\x54\x8d\x46\x24\x89\x08", "xxxxxxx", -0x4);
         if(address && Scanner::IsValidPtr(*(uintptr_t*)(address)))
-            region_id_addr = *(uint32_t**)(address);
+            region_id_addr = *(int**)(address);
 
         address = Scanner::Find("\x6B\xC6\x7C\x5E\x05", "xxxxx", 5);
         if (address && Scanner::IsValidPtr(*(uintptr_t*)address,Scanner::Section::RDATA))
@@ -187,7 +187,7 @@ namespace GW {
                 GW::Constants::MapID map_id;
                 int region;
                 int language;
-                uint32_t district;
+                int district;
             };
             MapStruct t;
             t.map_id = map_id;

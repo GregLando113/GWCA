@@ -14,13 +14,12 @@ namespace GW {
 
     namespace Constants {
         enum class Bag;
-        enum EquipmentStatus : uint32_t;
     }
 
-    enum EquipmentType : uint32_t {
+    enum class EquipmentType : uint32_t {
         Cape = 0x0, Helm = 0x2, CostumeBody = 0x4, CostumeHeadpiece = 0x6, Unknown = 0xff
     };
-    enum EquipmentStatus : uint32_t {
+    enum class EquipmentStatus : uint32_t {
         AlwaysHide, HideInTownsAndOutposts, HideInCombatAreas, AlwaysShow
     };
 

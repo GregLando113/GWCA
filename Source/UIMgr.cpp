@@ -642,22 +642,24 @@ namespace GW {
         // Set in-game volume
         switch (pref) {
         case GW::UI::Preference::Preference_EffectsVolume:
-            if(SetVolume_Func) SetVolume_Func(0, (float)(value / 100.f));
+            if(SetVolume_Func) SetVolume_Func(0, (float)((float)value / 100.f));
             break;
         case GW::UI::Preference::Preference_DialogVolume:
-            if (SetVolume_Func) SetVolume_Func(4, (float)(value / 100.f));
+            if (SetVolume_Func) SetVolume_Func(4, (float)((float)value / 100.f));
             break;
         case GW::UI::Preference::Preference_BackgroundVolume:
-            if (SetVolume_Func) SetVolume_Func(1, (float)(value / 100.f));
+            if (SetVolume_Func) SetVolume_Func(1, (float)((float)value / 100.f));
             break;
         case GW::UI::Preference::Preference_MusicVolume:
-            if (SetVolume_Func) SetVolume_Func(3, (float)(value / 100.f));
+            if (SetVolume_Func) SetVolume_Func(3, (float)((float)value / 100.f));
             break;
         case GW::UI::Preference::Preference_UIVolume:
-            if (SetVolume_Func) SetVolume_Func(2, (float)(value / 100.f));
+            if (SetVolume_Func) SetVolume_Func(2, (float)((float)value / 100.f));
             break;
         case GW::UI::Preference::Preference_MasterVolume:
-            if(SetMasterVolume_Func) SetMasterVolume_Func((float)(value / 100.f));
+            if(SetMasterVolume_Func) SetMasterVolume_Func((float)((float)value / 100.f));
+            break;
+        default:
             break;
         }
     }

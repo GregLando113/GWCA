@@ -38,7 +38,7 @@ namespace GW {
         /* +h01B8 */ uint32_t token2; // player id
         /* +h01BC */ uint32_t h01BC[25];
         /* +h0220 */ uint32_t district_number;
-        /* +h0224 */ uint32_t language;
+        /* +h0224 */ int language;
         /* +h0228 */ uint32_t observe_map_id;
         /* +h022C */ uint32_t current_map_id;
         /* +h0230 */ uint32_t observe_map_type;

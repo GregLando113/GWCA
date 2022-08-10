@@ -47,7 +47,8 @@ bool GW::MemoryMgr::Scan() {
     }
 
     uintptr_t addr = Scanner::Find("\x6A\x00\x68\x00\x00\x01\x00\x89", "xxxxxxxx", 0x42);
-    if (addr && (addr = Scanner::FunctionFromNearCall(addr))) {
+    addr = Scanner::FunctionFromNearCall(addr);
+    if (addr) {
         GetGWVersion = (uint32_t(_cdecl *)(void))addr;
         GWCA_INFO("[SCAN] GetGWVersion = %08X, %d\n", GetGWVersion, GetGWVersion());
     }

@@ -483,7 +483,7 @@ namespace GW {
             return PartySearchCancel_Func ? PartySearchCancel_Func(), true : false;
         }
         bool SearchPartyReply(bool accept) {
-            return PartySearchRequestReply_Func ? PartySearchRequestReply_Func(accept ? 1 : 0), true : false;
+            return PartySearchRequestReply_Func ? PartySearchRequestReply_Func(accept ? 1U : 0U), true : false;
         }
     }
 

@@ -515,6 +515,8 @@ namespace GW {
                     if(payload[1] != 0xff) // NB: Item tooltip has 2 item_id values, second is always 0xff
                         return UI::TooltipType::None;
                     break;
+                default:
+                    break;
                 }
                 return static_cast<UI::TooltipType>(unk0);
             }

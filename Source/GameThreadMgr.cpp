@@ -142,7 +142,7 @@ namespace GW {
     bool GameThread::IsInGameThread()
     {
         if (!initialised)
-            return;
+            return false;
         EnterCriticalSection(&mutex);
         bool ret = in_gamethread;
         LeaveCriticalSection(&mutex);

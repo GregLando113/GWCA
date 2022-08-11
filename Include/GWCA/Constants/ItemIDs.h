@@ -121,6 +121,68 @@ namespace GW {
 
             constexpr int Lockpick = 22751;
 
+            constexpr int IdentificationKit = 2989;
+            constexpr int IdentificationKit_Superior = 5899;
+            constexpr int SalvageKit = 2992;
+            constexpr int SalvageKit_Expert = 2991;
+            constexpr int SalvageKit_Superior = 5900;
+
+            // Alcohol
+            constexpr int BattleIsleIcedTea = 36682;
+            constexpr int BottleOfJuniberryGin = 19172;
+            constexpr int BottleOfVabbianWine = 19173;
+            constexpr int ZehtukasJug = 19171;
+
+            // DP
+            constexpr int FourLeafClover = 22191; // party-wide
+            constexpr int OathOfPurity = 30206;   // party-wide
+            constexpr int PeppermintCandyCane = 6370;
+            constexpr int RefinedJelly = 19039;
+            constexpr int ShiningBladeRations = 35127;
+            constexpr int WintergreenCandyCane = 21488;
+
+            // Morale
+            constexpr int ElixirOfValor = 21227; // party-wide
+            constexpr int Honeycomb = 26784;     // party-wide
+            constexpr int PumpkinCookie = 28433;
+            constexpr int RainbowCandyCane = 21489;      // party-wide
+            constexpr int SealOfTheDragonEmpire = 30211; // party-wide
+
+            // Summons
+            constexpr int GakiSummon = 30960;
+            constexpr int TurtleSummon = 30966;
+
+            // Summons x3
+            constexpr int TenguSummon = 30209;
+            constexpr int ImperialGuardSummon = 30210;
+            constexpr int WarhornSummon = 35126;
+
+            // Tonics
+            constexpr int ELGwen = 36442;
+            constexpr int ELMiku = 36451;
+            constexpr int ELMargo = 36456;
+            constexpr int ELZenmai = 36493;
+
+            // Other Consumables
+            constexpr int ArmbraceOfTruth = 21127;
+            constexpr int PhantomKey = 5882;
+            constexpr int ResScroll = 26501;
+
+            // Weapons
+            constexpr int DSR = 32823;
+            constexpr int EternalBlade = 1045;
+            constexpr int VoltaicSpear = 2071;
+            constexpr int CrystallineSword = 399;
+
+            // Minis
+            constexpr int MiniDhuum = 32822;
+
+            // Bundles
+            constexpr int UnholyText = 2619;
+
+            // Money
+            constexpr int GoldCoin = 2510;
+            constexpr int GoldCoins = 2511;
         }
     }
 }

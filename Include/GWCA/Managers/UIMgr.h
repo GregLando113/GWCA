@@ -118,6 +118,7 @@ namespace GW {
             kEffectRenew                = 0x10000000 | 0x56, // wparam = GW::Effect*
             kEffectRemove               = 0x10000000 | 0x57, // wparam = effect id
             kUpdateSkillbar             = 0x10000000 | 0x5E, // wparam ={ uint32_t agent_id , ... }
+            kSkillActivated             = 0x10000000 | 0x5b, // wparam ={ uint32_t agent_id , uint32_t skill_id }
             kExperienceGained           = 0x10000000 | 0x66, // wparam = experience amount
             kWriteToChatLog             = 0x10000000 | 0x7E,
             kPlayerChatMessage          = 0x10000000 | 0x81, // wparam = { uint32_t channel, wchar_t* message, uint32_t player_number }

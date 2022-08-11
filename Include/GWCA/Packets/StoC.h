@@ -99,22 +99,22 @@ namespace GW {
             struct TradeStart : Packet<TradeStart> {
                 uint32_t player_number;
             };
-            const uint32_t Packet<TradeStart>::STATIC_HEADER = GAME_SMSG_TRADE_REQUEST;
+            constexpr uint32_t Packet<TradeStart>::STATIC_HEADER = GAME_SMSG_TRADE_REQUEST;
 
             struct TradeCancel : Packet<TradeCancel> {
                 uint32_t player_number;
             };
-            const uint32_t Packet<TradeCancel>::STATIC_HEADER = GAME_SMSG_TRADE_TERMINATE;
+            constexpr uint32_t Packet<TradeCancel>::STATIC_HEADER = GAME_SMSG_TRADE_TERMINATE;
 
             struct Ping : Packet<Ping> {
                 uint32_t ping;
             };
-            const uint32_t Packet<Ping>::STATIC_HEADER = GAME_SMSG_PING_REQUEST;
+            constexpr uint32_t Packet<Ping>::STATIC_HEADER = GAME_SMSG_PING_REQUEST;
 
             struct InstanceTimer : Packet<InstanceTimer> {
                 uint32_t instance_time;
             };
-            const uint32_t Packet<InstanceTimer>::STATIC_HEADER = GAME_SMSG_AGENT_INSTANCE_TIMER;
+            constexpr uint32_t Packet<InstanceTimer>::STATIC_HEADER = GAME_SMSG_AGENT_INSTANCE_TIMER;
 
             // Called when the client needs to add an agent to memory (i.e. agent appeared within compass range)
             struct AgentAdd : Packet<AgentAdd> {
@@ -137,37 +137,37 @@ namespace GW {
                 Vec2f unk12; // inf, inf
                 uint32_t unk13;
             };
-            const uint32_t Packet<AgentAdd>::STATIC_HEADER = GAME_SMSG_AGENT_SPAWNED;
+            constexpr uint32_t Packet<AgentAdd>::STATIC_HEADER = GAME_SMSG_AGENT_SPAWNED;
 
             // Called when the client needs to remove an agent from memory (e.g. out of range)
             struct AgentRemove : Packet<AgentRemove> {
                 uint32_t agent_id;
             };
-            const uint32_t Packet<AgentRemove>::STATIC_HEADER = GAME_SMSG_AGENT_DESPAWNED;
+            constexpr uint32_t Packet<AgentRemove>::STATIC_HEADER = GAME_SMSG_AGENT_DESPAWNED;
 
             struct AgentSetPlayer : Packet<AgentSetPlayer> {
                 uint32_t unk1;
                 uint32_t unk2;
             };
-            const uint32_t Packet<AgentSetPlayer>::STATIC_HEADER = GAME_SMSG_AGENT_SET_PLAYER;
+            constexpr uint32_t Packet<AgentSetPlayer>::STATIC_HEADER = GAME_SMSG_AGENT_SET_PLAYER;
 
             struct AgentUpdateAllegiance : Packet<AgentUpdateAllegiance> {
                 uint32_t agent_id;
                 uint32_t allegiance_bits; // more than just allegiance, determines things that change.
             };
-            const uint32_t Packet<AgentUpdateAllegiance>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_ALLEGIANCE;
+            constexpr uint32_t Packet<AgentUpdateAllegiance>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_ALLEGIANCE;
 
             // creates the "ping" on an enemy when some player targets it
             struct AgentPinged : Packet<AgentPinged> {
                 uint32_t Player; // who sent the message
                 uint32_t agent_id; // target agent
             };
-            const uint32_t Packet<AgentPinged>::STATIC_HEADER = GAME_SMSG_AGENT_PINGED;
+            constexpr uint32_t Packet<AgentPinged>::STATIC_HEADER = GAME_SMSG_AGENT_PINGED;
 
             struct PartyRemoveAlly : Packet<PartyRemoveAlly> {
                 uint32_t agent_id; // target agent
             };
-            const uint32_t Packet<PartyRemoveAlly>::STATIC_HEADER = GAME_SMSG_AGENT_ALLY_DESTROY;
+            constexpr uint32_t Packet<PartyRemoveAlly>::STATIC_HEADER = GAME_SMSG_AGENT_ALLY_DESTROY;
 
             // prety much a bond from someone else / hero bond
             struct AddExternalBond : Packet<AddExternalBond> {
@@ -177,7 +177,7 @@ namespace GW {
                 uint32_t effect_type;
                 uint32_t effect_id;
             };
-            const uint32_t Packet<AddExternalBond>::STATIC_HEADER = GAME_SMSG_EFFECT_UPKEEP_APPLIED;
+            constexpr uint32_t Packet<AddExternalBond>::STATIC_HEADER = GAME_SMSG_EFFECT_UPKEEP_APPLIED;
 
             struct AddEffect : Packet<AddEffect> {
                 uint32_t agent_id;
@@ -186,14 +186,14 @@ namespace GW {
                 uint32_t effect_id;
                 uint32_t timestamp;
             };
-            const uint32_t Packet<AddEffect>::STATIC_HEADER = GAME_SMSG_EFFECT_APPLIED;
+            constexpr uint32_t Packet<AddEffect>::STATIC_HEADER = GAME_SMSG_EFFECT_APPLIED;
 
             // Display Cape (?)
             struct DisplayCape : Packet<DisplayCape> {
                 uint32_t agent_id;
                 uint8_t unk0;
             };
-            const uint32_t Packet<DisplayCape>::STATIC_HEADER = GAME_SMSG_AGENT_DISPLAY_CAPE;
+            constexpr uint32_t Packet<DisplayCape>::STATIC_HEADER = GAME_SMSG_AGENT_DISPLAY_CAPE;
 
             struct NpcGeneralStats : Packet<NpcGeneralStats> {
                 uint32_t npc_id;
@@ -206,7 +206,7 @@ namespace GW {
                 uint32_t level;
                 wchar_t name[8];
             };
-            const uint32_t Packet<NpcGeneralStats>::STATIC_HEADER = GAME_SMSG_NPC_UPDATE_PROPERTIES;
+            constexpr uint32_t Packet<NpcGeneralStats>::STATIC_HEADER = GAME_SMSG_NPC_UPDATE_PROPERTIES;
 
             // NPC model file (?)
             struct NPCModelFile : Packet<NPCModelFile> {
@@ -214,7 +214,7 @@ namespace GW {
                 uint32_t count;
                 uint32_t data[8];
             };
-            const uint32_t Packet<NPCModelFile>::STATIC_HEADER = GAME_SMSG_NPC_UPDATE_MODEL;
+            constexpr uint32_t Packet<NPCModelFile>::STATIC_HEADER = GAME_SMSG_NPC_UPDATE_MODEL;
 
             struct PlayerJoinInstance : Packet<PlayerJoinInstance> {
                 uint32_t player_number;
@@ -225,25 +225,25 @@ namespace GW {
                 uint32_t file_id2; // dword
                 wchar_t player_name[32];
             };
-            const uint32_t Packet<PlayerJoinInstance>::STATIC_HEADER = GAME_SMSG_AGENT_CREATE_PLAYER;
+            constexpr uint32_t Packet<PlayerJoinInstance>::STATIC_HEADER = GAME_SMSG_AGENT_CREATE_PLAYER;
 
             struct PlayerLeaveInstance : Packet<PlayerLeaveInstance> {
                 uint32_t player_number;
             };
-            const uint32_t Packet<PlayerLeaveInstance>::STATIC_HEADER = GAME_SMSG_AGENT_DESTROY_PLAYER;
+            constexpr uint32_t Packet<PlayerLeaveInstance>::STATIC_HEADER = GAME_SMSG_AGENT_DESTROY_PLAYER;
 
             // Define chat message
             struct MessageCore : Packet<MessageCore> {
                 wchar_t message[122]; // prefixType="int16"
             };
-            const uint32_t Packet<MessageCore>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_CORE;
+            constexpr uint32_t Packet<MessageCore>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_CORE;
 
             // Deliver chat message (no owner)
             struct MessageServer : Packet<MessageServer> {
                 uint32_t id; // some kind of ID of the affected target
                 uint32_t channel; // enum ChatChannel above.
             };
-            const uint32_t Packet<MessageServer>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_SERVER;
+            constexpr uint32_t Packet<MessageServer>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_SERVER;
 
             // Deliver chat message (sender is an NPC)
             struct MessageNPC : Packet<MessageNPC> {
@@ -251,7 +251,7 @@ namespace GW {
                 uint32_t channel; // enum ChatChannel above.
                 wchar_t sender_name[8];
             };
-            const uint32_t Packet<MessageNPC>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_NPC;
+            constexpr uint32_t Packet<MessageNPC>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_NPC;
 
             // Deliver chat message (player sender in guild or alliance chat)
             struct MessageGlobal : Packet<MessageGlobal> {
@@ -259,42 +259,42 @@ namespace GW {
                 wchar_t sender_name[32]; // full in-game name
                 wchar_t sender_guild[6]; // guild tag for alliance chat, empty for guild chat
             };
-            const uint32_t Packet<MessageGlobal>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_GLOBAL;
+            constexpr uint32_t Packet<MessageGlobal>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_GLOBAL;
 
             // Deliver chat message (player sender in the instance)
             struct MessageLocal : Packet<MessageLocal> {
                 uint32_t player_number; // PlayerNumber of the sender
                 uint32_t channel; // enum ChatChannel above.
             };
-            const uint32_t Packet<MessageLocal>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_LOCAL;
+            constexpr uint32_t Packet<MessageLocal>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_LOCAL;
 
             // Alcohol Post Process Effect
             struct PostProcess : Packet<PostProcess> {
                 uint32_t level;
                 uint32_t tint;
             };
-            const uint32_t Packet<PostProcess>::STATIC_HEADER = GAME_SMSG_POST_PROCESS;
+            constexpr uint32_t Packet<PostProcess>::STATIC_HEADER = GAME_SMSG_POST_PROCESS;
 
             struct DungeonReward : Packet<DungeonReward> {
                 uint32_t experience;
                 uint32_t gold;
                 uint32_t skill_points;
             };
-            const uint32_t Packet<DungeonReward>::STATIC_HEADER = GAME_SMSG_DUNGEON_REWARD;
+            constexpr uint32_t Packet<DungeonReward>::STATIC_HEADER = GAME_SMSG_DUNGEON_REWARD;
 
             struct ScreenShake : Packet<ScreenShake> {
                 uint32_t unk1;
                 uint32_t unk2;
                 uint32_t agent_id;
             };
-            const uint32_t Packet<ScreenShake>::STATIC_HEADER = GAME_SMSG_SCREEN_SHAKE;
+            constexpr uint32_t Packet<ScreenShake>::STATIC_HEADER = GAME_SMSG_SCREEN_SHAKE;
 
             struct AgentUnk2 : Packet<AgentUnk2> {
                 uint32_t agent_id;
                 uint32_t unk1; // 1 = minipet, 2 = Ally?, 3 = summon
                 uint32_t unk2; // always 0
             };
-            const uint32_t Packet<AgentUnk2>::STATIC_HEADER = GAME_SMSG_NPC_UPDATE_WEAPONS;
+            constexpr uint32_t Packet<AgentUnk2>::STATIC_HEADER = GAME_SMSG_NPC_UPDATE_WEAPONS;
 
             struct MercenaryHeroInfo : Packet<MercenaryHeroInfo> {
                 uint32_t hero_id;
@@ -304,7 +304,7 @@ namespace GW {
                 uint32_t unknown[15]; // Appearance etc
                 wchar_t name[20];
             };
-            const uint32_t Packet<MercenaryHeroInfo>::STATIC_HEADER = GAME_SMSG_MERCENARY_INFO;
+            constexpr uint32_t Packet<MercenaryHeroInfo>::STATIC_HEADER = GAME_SMSG_MERCENARY_INFO;
 
             struct DialogButton : Packet<DialogButton> {
                 uint32_t button_icon; // byte
@@ -312,40 +312,40 @@ namespace GW {
                 uint32_t dialog_id;
                 uint32_t skill_id; // Default 0xFFFFFFF
             };
-            const uint32_t Packet<DialogButton>::STATIC_HEADER = GAME_SMSG_DIALOG_BUTTON;
+            constexpr uint32_t Packet<DialogButton>::STATIC_HEADER = GAME_SMSG_DIALOG_BUTTON;
 
             struct DialogBody : Packet<DialogBody> {
                 wchar_t message[122];
             };
-            const uint32_t Packet<DialogBody>::STATIC_HEADER = GAME_SMSG_DIALOG_BODY;
+            constexpr uint32_t Packet<DialogBody>::STATIC_HEADER = GAME_SMSG_DIALOG_BODY;
 
             struct DialogSender : Packet<DialogSender> {
                 uint32_t agent_id;
             };
-            const uint32_t Packet<DialogSender>::STATIC_HEADER = GAME_SMSG_DIALOG_SENDER;
+            constexpr uint32_t Packet<DialogSender>::STATIC_HEADER = GAME_SMSG_DIALOG_SENDER;
 
             struct DataWindow : Packet<DataWindow> {
                 uint32_t agent;
                 uint32_t type; // 0=storage, 1=tournament, 2=records, 3=stylist
                 uint32_t data;
             };
-            const uint32_t Packet<DataWindow>::STATIC_HEADER = GAME_SMSG_WINDOW_OPEN;
+            constexpr uint32_t Packet<DataWindow>::STATIC_HEADER = GAME_SMSG_WINDOW_OPEN;
 
             struct WindowItems : Packet<WindowItems> {
                 uint32_t count;
                 uint32_t item_ids[16];
             };
-            const uint32_t Packet<WindowItems>::STATIC_HEADER = GAME_SMSG_WINDOW_ADD_ITEMS;
+            constexpr uint32_t Packet<WindowItems>::STATIC_HEADER = GAME_SMSG_WINDOW_ADD_ITEMS;
 
             struct WindowItemsEnd : Packet<WindowItemsEnd> {
                 uint32_t unk1;
             };
-            const uint32_t Packet<WindowItemsEnd>::STATIC_HEADER = GAME_SMSG_WINDOW_ITEMS_END;
+            constexpr uint32_t Packet<WindowItemsEnd>::STATIC_HEADER = GAME_SMSG_WINDOW_ITEMS_END;
 
             struct ItemStreamEnd : Packet<ItemStreamEnd> { // AKA ItemPricesEnd
                 uint32_t unk1;
             };
-            const uint32_t Packet<ItemStreamEnd>::STATIC_HEADER = GAME_SMSG_WINDOW_ITEM_STREAM_END;
+            constexpr uint32_t Packet<ItemStreamEnd>::STATIC_HEADER = GAME_SMSG_WINDOW_ITEM_STREAM_END;
 
             // Pings and drawing in compass
             struct CompassEvent : Packet<CompassEvent> {
@@ -358,7 +358,7 @@ namespace GW {
                 } points[8];
                 // there *might* be another 8 uint32_ts, but they look like noise and they are not relayed by the server to other players
             };
-            const uint32_t Packet<CompassEvent>::STATIC_HEADER = GAME_SMSG_COMPASS_DRAWING;
+            constexpr uint32_t Packet<CompassEvent>::STATIC_HEADER = GAME_SMSG_COMPASS_DRAWING;
 
             struct MapsUnlocked : Packet<MapsUnlocked> {
                 uint32_t missions_bonus_length;
@@ -372,25 +372,25 @@ namespace GW {
                 uint32_t unlocked_map_length;
                 uint32_t unlocked_map[32];
             };
-            const uint32_t Packet<MapsUnlocked>::STATIC_HEADER = GAME_SMSG_MAPS_UNLOCKED;
+            constexpr uint32_t Packet<MapsUnlocked>::STATIC_HEADER = GAME_SMSG_MAPS_UNLOCKED;
 
             struct CartographyData : Packet<CartographyData> {
                 uint32_t data_length;
                 uint32_t data[64];
             };
-            const uint32_t Packet<CartographyData>::STATIC_HEADER = GAME_SMSG_CARTOGRAPHY_DATA;
+            constexpr uint32_t Packet<CartographyData>::STATIC_HEADER = GAME_SMSG_CARTOGRAPHY_DATA;
 
             struct AgentScale : Packet<AgentScale> {
                 uint32_t agent_id;
                 uint32_t scale;
             };
-            const uint32_t Packet<AgentScale>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_SCALE;
+            constexpr uint32_t Packet<AgentScale>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_SCALE;
 
             struct AgentName : Packet<AgentName> {
                 uint32_t agent_id;
                 wchar_t name_enc[40];
             };
-            const uint32_t Packet<AgentName>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_NPC_NAME;
+            constexpr uint32_t Packet<AgentName>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_NPC_NAME;
 
             struct DisplayDialogue : Packet<DisplayDialogue> {
                 uint32_t agent_id;
@@ -398,7 +398,7 @@ namespace GW {
                 uint32_t type;
                 wchar_t message[122];
             };
-            const uint32_t Packet<DisplayDialogue>::STATIC_HEADER = GAME_SMSG_AGENT_DISPLAY_DIALOG;
+            constexpr uint32_t Packet<DisplayDialogue>::STATIC_HEADER = GAME_SMSG_AGENT_DISPLAY_DIALOG;
 
             // agent animation lock (and probably something else)
             struct GenericValue : Packet<GenericValue> {
@@ -406,7 +406,7 @@ namespace GW {
                 uint32_t agent_id;
                 uint32_t value;
             };
-            const uint32_t Packet<GenericValue>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_INT;
+            constexpr uint32_t Packet<GenericValue>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_INT;
 
             // Update Target Generic Value
             struct GenericValueTarget : Packet<GenericValueTarget> {
@@ -415,7 +415,7 @@ namespace GW {
                 uint32_t caster; // agent id
                 uint32_t value;
             };
-            const uint32_t Packet<GenericValueTarget>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_INT_TARGET;
+            constexpr uint32_t Packet<GenericValueTarget>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_INT_TARGET;
 
             // Update Target Generic Value
             struct PlayEffect : Packet<PlayEffect> {
@@ -426,7 +426,7 @@ namespace GW {
                 uint32_t data5;
                 uint32_t data6;
             };
-            const uint32_t Packet<PlayEffect>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_PLAY_EFFECT;
+            constexpr uint32_t Packet<PlayEffect>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_PLAY_EFFECT;
 
             // Update Target Generic Value
             struct GenericFloat : Packet<GenericFloat> {
@@ -434,7 +434,7 @@ namespace GW {
                 uint32_t agent_id;
                 float value;
             };
-            const uint32_t Packet<GenericFloat>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_FLOAT;
+            constexpr uint32_t Packet<GenericFloat>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_FLOAT;
 
             // damage or healing done packet, but also has other purposes.
             // to be investigated further.
@@ -448,7 +448,7 @@ namespace GW {
                 uint32_t cause_id;     // agent id of who caused the change
                 float value;           // value, often in percentage (e.g. %hp)
             };
-            const uint32_t Packet<GenericModifier>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_FLOAT_TARGET;
+            constexpr uint32_t Packet<GenericModifier>::STATIC_HEADER = GAME_SMSG_AGENT_ATTR_UPDATE_FLOAT_TARGET;
 
             // Projectile launched from an agent
             // Can be from a martial weapon (spear, bow), or projectile-launching skill
@@ -462,89 +462,89 @@ namespace GW {
                 uint32_t unk4;          // dword: 1 ?
                 uint32_t is_attack;     // byte
             };
-            const uint32_t Packet<AgentProjectileLaunched>::STATIC_HEADER = GAME_SMSG_AGENT_PROJECTILE_LAUNCHED;
+            constexpr uint32_t Packet<AgentProjectileLaunched>::STATIC_HEADER = GAME_SMSG_AGENT_PROJECTILE_LAUNCHED;
 
             // agent text above head
             struct SpeechBubble : Packet<SpeechBubble> {
                 uint32_t agent_id;
                 wchar_t message[122];
             };
-            const uint32_t Packet<SpeechBubble>::STATIC_HEADER = GAME_SMSG_SPEECH_BUBBLE;
+            constexpr uint32_t Packet<SpeechBubble>::STATIC_HEADER = GAME_SMSG_SPEECH_BUBBLE;
 
             struct PartyAllyAdd : Packet<PartyAllyAdd> { // When an NPC is added as an ally to your party.
                 uint32_t agent_id;
                 uint32_t allegiance_bits;
                 uint32_t agent_type; // Bitwise field. 0x20000000 = NPC | PlayerNumber, 0x30000000 = Player | PlayerNumber, 0x00000000 = Signpost
             };
-            const uint32_t Packet<PartyAllyAdd>::STATIC_HEADER = GAME_SMSG_AGENT_CREATE_NPC;
+            constexpr uint32_t Packet<PartyAllyAdd>::STATIC_HEADER = GAME_SMSG_AGENT_CREATE_NPC;
 
             // agent change model
             struct AgentModel : Packet<AgentModel> {
                 uint32_t agent_id;
                 uint32_t model_id;
             };
-            const uint32_t Packet<AgentModel>::STATIC_HEADER = GAME_SMSG_UPDATE_AGENT_MODEL;
+            constexpr uint32_t Packet<AgentModel>::STATIC_HEADER = GAME_SMSG_UPDATE_AGENT_MODEL;
 
             // Changes the number above the player's head when leading a party
             struct PartyUpdateSize : Packet<PartyUpdateSize> {
                 uint32_t player_id;
                 uint32_t size;
             };
-            const uint32_t Packet<PartyUpdateSize>::STATIC_HEADER = GAME_SMSG_UPDATE_AGENT_PARTYSIZE;
+            constexpr uint32_t Packet<PartyUpdateSize>::STATIC_HEADER = GAME_SMSG_UPDATE_AGENT_PARTYSIZE;
 
             struct ObjectiveAdd : Packet<ObjectiveAdd> {
                 uint32_t objective_id;
                 uint32_t type;
                 wchar_t name[128];
             };
-            const uint32_t Packet<ObjectiveAdd>::STATIC_HEADER = GAME_SMSG_MISSION_OBJECTIVE_ADD;
+            constexpr uint32_t Packet<ObjectiveAdd>::STATIC_HEADER = GAME_SMSG_MISSION_OBJECTIVE_ADD;
 
             struct ObjectiveDone : Packet<ObjectiveDone> {
                 uint32_t objective_id;
             };
-            const uint32_t Packet<ObjectiveDone>::STATIC_HEADER = GAME_SMSG_MISSION_OBJECTIVE_COMPLETE;
+            constexpr uint32_t Packet<ObjectiveDone>::STATIC_HEADER = GAME_SMSG_MISSION_OBJECTIVE_COMPLETE;
 
             struct ObjectiveUpdateName : Packet<ObjectiveUpdateName> {
                 uint32_t objective_id;
                 wchar_t objective_name[128];
             };
-            const uint32_t Packet<ObjectiveUpdateName>::STATIC_HEADER = GAME_SMSG_MISSION_OBJECTIVE_UPDATE_STRING;
+            constexpr uint32_t Packet<ObjectiveUpdateName>::STATIC_HEADER = GAME_SMSG_MISSION_OBJECTIVE_UPDATE_STRING;
 
             struct OpenMerchantWindow : Packet<OpenMerchantWindow> {
                 uint32_t type;
                 uint32_t unk;
             };
-            const uint32_t Packet<OpenMerchantWindow>::STATIC_HEADER = GAME_SMSG_WINDOW_MERCHANT;
+            constexpr uint32_t Packet<OpenMerchantWindow>::STATIC_HEADER = GAME_SMSG_WINDOW_MERCHANT;
 
             struct WindowOwner : Packet<WindowOwner> {
                 uint32_t agent_id;
             };
-            const uint32_t Packet<WindowOwner>::STATIC_HEADER = GAME_SMSG_WINDOW_OWNER;
+            constexpr uint32_t Packet<WindowOwner>::STATIC_HEADER = GAME_SMSG_WINDOW_OWNER;
 
             struct TransactionDone : Packet<TransactionDone> {
                 uint32_t unk1;
             };
-            const uint32_t Packet<TransactionDone>::STATIC_HEADER = GAME_SMSG_TRANSACTION_DONE;
+            constexpr uint32_t Packet<TransactionDone>::STATIC_HEADER = GAME_SMSG_TRANSACTION_DONE;
             struct UpdateSkillbarSkill : Packet<UpdateSkillbarSkill> {
                 uint32_t agent_id;
                 uint32_t skill_slot;
                 uint32_t skill_id;
             };
-            const uint32_t Packet<UpdateSkillbarSkill>::STATIC_HEADER = GAME_SMSG_SKILLBAR_UPDATE_SKILL;
+            constexpr uint32_t Packet<UpdateSkillbarSkill>::STATIC_HEADER = GAME_SMSG_SKILLBAR_UPDATE_SKILL;
             
             // Used to duplicate skills in skill window i.e. more than 1 signet of capture. Packet is received after map is loaded
             struct UpdateSkillCountAfterMapLoad : Packet<UpdateSkillCountAfterMapLoad> {
                 uint32_t skill_id;
                 uint32_t count;
             };
-            const uint32_t Packet<UpdateSkillCountAfterMapLoad>::STATIC_HEADER = GAME_SMSG_SKILL_UPDATE_SKILL_COUNT_1;
+            constexpr uint32_t Packet<UpdateSkillCountAfterMapLoad>::STATIC_HEADER = GAME_SMSG_SKILL_UPDATE_SKILL_COUNT_1;
 
             // Used to duplicate skills in skill window i.e. more than 1 signet of capture. Packet is received during initial character load
             struct UpdateSkillCountPreMapLoad : Packet<UpdateSkillCountPreMapLoad> {
                 uint32_t skill_id;
                 uint32_t count;
             };
-            const uint32_t Packet<UpdateSkillCountPreMapLoad>::STATIC_HEADER = GAME_SMSG_SKILL_UPDATE_SKILL_COUNT_2;
+            constexpr uint32_t Packet<UpdateSkillCountPreMapLoad>::STATIC_HEADER = GAME_SMSG_SKILL_UPDATE_SKILL_COUNT_2;
 
             // Skill Activate (begin casting)
             struct SkillActivate : Packet<SkillActivate> {
@@ -552,7 +552,7 @@ namespace GW {
                 uint32_t skill_id;
                 uint32_t skill_instance;
             };
-            const uint32_t Packet<SkillActivate>::STATIC_HEADER = GAME_SMSG_SKILL_ACTIVATE;
+            constexpr uint32_t Packet<SkillActivate>::STATIC_HEADER = GAME_SMSG_SKILL_ACTIVATE;
 
             struct SkillRecharge : Packet<SkillRecharge> {
                 uint32_t agent_id;
@@ -560,49 +560,49 @@ namespace GW {
                 uint32_t skill_instance;
                 uint32_t recharge;
             };
-            const uint32_t Packet<SkillRecharge>::STATIC_HEADER = GAME_SMSG_SKILL_RECHARGE;
+            constexpr uint32_t Packet<SkillRecharge>::STATIC_HEADER = GAME_SMSG_SKILL_RECHARGE;
 
             // update agent state
             struct AgentState : Packet<AgentState> {
                 uint32_t agent_id;
                 uint32_t state; // bitmap of agent states (0 neutral, 2 condition, 16 dead, 128 enchanted, 1024 degen?, 2048 hexed, 8192 sitting, etc)
             };
-            const uint32_t Packet<AgentState>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_EFFECTS;
+            constexpr uint32_t Packet<AgentState>::STATIC_HEADER = GAME_SMSG_AGENT_UPDATE_EFFECTS;
 
             struct MapLoaded : Packet<MapLoaded> {
                 // uint32_t
             };
-            const uint32_t Packet<MapLoaded>::STATIC_HEADER = GAME_SMSG_INSTANCE_LOADED;
+            constexpr uint32_t Packet<MapLoaded>::STATIC_HEADER = GAME_SMSG_INSTANCE_LOADED;
 
             struct QuotedItemPrice : Packet<QuotedItemPrice> {
                 uint32_t itemid;
                 uint32_t price;
             };
-            const uint32_t Packet<QuotedItemPrice>::STATIC_HEADER = GAME_SMSG_ITEM_PRICE_QUOTE;
+            constexpr uint32_t Packet<QuotedItemPrice>::STATIC_HEADER = GAME_SMSG_ITEM_PRICE_QUOTE;
 
             struct WindowPrices : Packet<WindowPrices> {
                 uint32_t count;
                 uint32_t item_ids[16];
             };
-            const uint32_t Packet<WindowPrices>::STATIC_HEADER = GAME_SMSG_ITEM_PRICES;
+            constexpr uint32_t Packet<WindowPrices>::STATIC_HEADER = GAME_SMSG_ITEM_PRICES;
 
             struct VanquishProgress : Packet<VanquishProgress> {
                 uint32_t foes_killed;
                 uint32_t foes_remaining;
             };
-            const uint32_t Packet<VanquishProgress>::STATIC_HEADER = GAME_SMSG_VANQUISH_PROGRESS;
+            constexpr uint32_t Packet<VanquishProgress>::STATIC_HEADER = GAME_SMSG_VANQUISH_PROGRESS;
 
             struct VanquishComplete : Packet<VanquishComplete> {
                 uint32_t map_id;
                 uint32_t experience;
                 uint32_t gold;
             };
-            const uint32_t Packet<VanquishComplete>::STATIC_HEADER = GAME_SMSG_VANQUISH_COMPLETE;
+            constexpr uint32_t Packet<VanquishComplete>::STATIC_HEADER = GAME_SMSG_VANQUISH_COMPLETE;
 
             struct CinematicPlay : Packet<CinematicPlay> {
                 uint32_t play;
             };
-            const uint32_t Packet<CinematicPlay>::STATIC_HEADER = GAME_SMSG_CINEMATIC_START;
+            constexpr uint32_t Packet<CinematicPlay>::STATIC_HEADER = GAME_SMSG_CINEMATIC_START;
 
             // e.g. map doors start opening or closing. AKA "update object animation"
             struct ManipulateMapObject : Packet<ManipulateMapObject> {
@@ -610,7 +610,7 @@ namespace GW {
                 uint32_t animation_type; // (3 = door closing, 9 = ???, 16 = door opening)
                 uint32_t animation_stage; // (2 = start, 3 = stop)
             };
-            const uint32_t Packet<ManipulateMapObject>::STATIC_HEADER = GAME_SMSG_MANIPULATE_MAP_OBJECT;
+            constexpr uint32_t Packet<ManipulateMapObject>::STATIC_HEADER = GAME_SMSG_MANIPULATE_MAP_OBJECT;
 
             // e.g. map doors stop opening or closing. "update object state"
             struct ManipulateMapObject2 : Packet<ManipulateMapObject2> {
@@ -618,7 +618,7 @@ namespace GW {
                 uint32_t unk1; // 
                 uint32_t state; // Open = 1, Closed = 0
             };
-            const uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = GAME_SMSG_MANIPULATE_MAP_OBJECT2;
+            constexpr uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = GAME_SMSG_MANIPULATE_MAP_OBJECT2;
 
             struct TownAllianceObject : Packet<TownAllianceObject> {
                 uint32_t map_id;
@@ -635,7 +635,7 @@ namespace GW {
                 uint32_t cape_emblem;
                 uint32_t cape_trim;
             };
-            const uint32_t Packet<TownAllianceObject>::STATIC_HEADER = GAME_SMSG_TOWN_ALLIANCE_OBJECT;
+            constexpr uint32_t Packet<TownAllianceObject>::STATIC_HEADER = GAME_SMSG_TOWN_ALLIANCE_OBJECT;
 
             // Info about any guilds applicable to current outpost.
             // NOTE: When entering a guild hall, that guild will always be the first added (local_id = 1).
@@ -660,7 +660,7 @@ namespace GW {
                 uint32_t allegiance;
                 uint32_t unk5; // byte
             };
-            const uint32_t Packet<GuildGeneral>::STATIC_HEADER = GAME_SMSG_GUILD_GENERAL_INFO;
+            constexpr uint32_t Packet<GuildGeneral>::STATIC_HEADER = GAME_SMSG_GUILD_GENERAL_INFO;
 
             struct GuildPlayerInfo : Packet<GuildPlayerInfo> {
                 wchar_t invited_name[20];
@@ -673,40 +673,40 @@ namespace GW {
                 uint32_t status;
                 uint32_t member_type;
             };
-            const uint32_t Packet<GuildPlayerInfo>::STATIC_HEADER = GAME_SMSG_GUILD_PLAYER_INFO;
+            constexpr uint32_t Packet<GuildPlayerInfo>::STATIC_HEADER = GAME_SMSG_GUILD_PLAYER_INFO;
 
             struct ItemUpdateOwner : Packet<ItemUpdateOwner> {
                 GW::ItemID  item_id;
                 GW::AgentID owner_agent_id;
                 float       seconds_reserved;
             };
-            unsigned const Packet<ItemUpdateOwner>::STATIC_HEADER = GAME_SMSG_ITEM_UPDATE_OWNER;
+            constexpr uint32_t Packet<ItemUpdateOwner>::STATIC_HEADER = GAME_SMSG_ITEM_UPDATE_OWNER;
 
             struct ItemCustomisedForPlayer : Packet<ItemCustomisedForPlayer> {
                 uint32_t item_id;
                 wchar_t player_name[32];
             };
-            const uint32_t Packet<ItemCustomisedForPlayer>::STATIC_HEADER = GAME_SMSG_ITEM_UPDATE_NAME;
+            constexpr uint32_t Packet<ItemCustomisedForPlayer>::STATIC_HEADER = GAME_SMSG_ITEM_UPDATE_NAME;
 
             // Gold added to inventory
             struct CharacterAddGold : Packet<CharacterAddGold> {
                 uint32_t unk;
                 uint32_t gold;
             };
-            const uint32_t Packet<CharacterAddGold>::STATIC_HEADER = GAME_SMSG_GOLD_CHARACTER_ADD;
+            constexpr uint32_t Packet<CharacterAddGold>::STATIC_HEADER = GAME_SMSG_GOLD_CHARACTER_ADD;
 
             struct SalvageConsumeItem : Packet<SalvageConsumeItem> {
                 uint32_t salvage_session_id;
                 uint32_t item_id;
             };
-            const uint32_t Packet<SalvageConsumeItem>::STATIC_HEADER = GAME_SMSG_ITEM_REMOVE;
+            constexpr uint32_t Packet<SalvageConsumeItem>::STATIC_HEADER = GAME_SMSG_ITEM_REMOVE;
 
             // Gold removed from inventory
             struct CharacterRemoveGold : Packet<CharacterRemoveGold> {
                 uint32_t unk; // some kind of id? but neither agentid nor playerid
                 uint32_t gold;
             };
-            const uint32_t Packet<CharacterRemoveGold>::STATIC_HEADER = GAME_SMSG_GOLD_CHARACTER_REMOVE;
+            constexpr uint32_t Packet<CharacterRemoveGold>::STATIC_HEADER = GAME_SMSG_GOLD_CHARACTER_REMOVE;
 
             struct ItemGeneral : Packet<ItemGeneral> {
                 uint32_t item_id;
@@ -724,7 +724,7 @@ namespace GW {
                 uint32_t mod_struct_size;
                 uint32_t* mod_struct;
             };
-            const uint32_t Packet<ItemGeneral>::STATIC_HEADER = GAME_SMSG_ITEM_GENERAL_INFO;
+            constexpr uint32_t Packet<ItemGeneral>::STATIC_HEADER = GAME_SMSG_ITEM_GENERAL_INFO;
 
             struct SalvageSession : Packet<SalvageSession> {
                 uint32_t salvage_session_id;
@@ -732,23 +732,23 @@ namespace GW {
                 uint32_t salvagable_count;
                 uint32_t salvagable_item_ids[3];
             };
-            const uint32_t Packet<SalvageSession>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_START;
+            constexpr uint32_t Packet<SalvageSession>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_START;
 
             struct SalvageSessionCancel : Packet<SalvageSessionCancel> {
             };
-            const uint32_t Packet<SalvageSessionCancel>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_CANCEL;
+            constexpr uint32_t Packet<SalvageSessionCancel>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_CANCEL;
 
             struct SalvageSessionDone : Packet<SalvageSessionDone> {
             };
-            const uint32_t Packet<SalvageSessionDone>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_DONE;
+            constexpr uint32_t Packet<SalvageSessionDone>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_DONE;
 
             struct SalvageSessionItemKept : Packet<SalvageSessionItemKept> {
             };
-            const uint32_t Packet<SalvageSessionItemKept>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_ITEM_KEPT;
+            constexpr uint32_t Packet<SalvageSessionItemKept>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_ITEM_KEPT;
 
             struct SalvageSessionSuccess : Packet<SalvageSessionSuccess> {
             };
-            const uint32_t Packet<SalvageSessionSuccess>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_SUCCESS;
+            constexpr uint32_t Packet<SalvageSessionSuccess>::STATIC_HEADER = GAME_SMSG_ITEM_SALVAGE_SESSION_SUCCESS;
 
             // JumboMessage represents a message strewn across the center of the screen in big red or green characters.
             // Things like moral boosts, flag captures, victory, defeat...
@@ -766,7 +766,7 @@ namespace GW {
                 uint8_t unk2;
                 uint8_t unk3[8];
             };
-            const uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = GAME_SMSG_INSTANCE_LOAD_SPAWN_POINT;
+            constexpr uint32_t Packet<InstanceLoadFile>::STATIC_HEADER = GAME_SMSG_INSTANCE_LOAD_SPAWN_POINT;
 
             struct InstanceLoadInfo : Packet<InstanceLoadInfo> {
                 uint32_t agent_id;
@@ -776,7 +776,7 @@ namespace GW {
                 uint32_t language;
                 uint32_t is_observer;
             };
-            const uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = GAME_SMSG_INSTANCE_LOAD_INFO;
+            constexpr uint32_t Packet<InstanceLoadInfo>::STATIC_HEADER = GAME_SMSG_INSTANCE_LOAD_INFO;
 
             struct CreateMissionProgress : Packet<CreateMissionProgress> {
                 uint8_t id;
@@ -788,7 +788,7 @@ namespace GW {
                 float   filled;       // 0 ... 1
                 uint8_t color[4];     // RGBA, not including border
             };
-            const uint32_t Packet<CreateMissionProgress>::STATIC_HEADER = GAME_SMSG_CREATE_MISSION_PROGRESS;
+            constexpr uint32_t Packet<CreateMissionProgress>::STATIC_HEADER = GAME_SMSG_CREATE_MISSION_PROGRESS;
 
             struct UpdateMissionProgress : Packet<UpdateMissionProgress> {
                 uint8_t id;
@@ -798,7 +798,7 @@ namespace GW {
                 float   filled;       // 0 ... 1
                 uint8_t color[4];     // RGBA, not including border
             };
-            const uint32_t Packet<UpdateMissionProgress>::STATIC_HEADER = GAME_SMSG_UPDATE_MISSION_PROGRESS;
+            constexpr uint32_t Packet<UpdateMissionProgress>::STATIC_HEADER = GAME_SMSG_UPDATE_MISSION_PROGRESS;
 
             struct GameSrvTransfer : Packet<GameSrvTransfer> {
                 uint8_t host[24]; // ip of the game server
@@ -808,17 +808,17 @@ namespace GW {
                 uint32_t is_explorable; // uint8_t
                 uint32_t token2; // player id
             };
-            const uint32_t Packet<GameSrvTransfer>::STATIC_HEADER = GAME_SMSG_TRANSFER_GAME_SERVER_INFO;
+            constexpr uint32_t Packet<GameSrvTransfer>::STATIC_HEADER = GAME_SMSG_TRANSFER_GAME_SERVER_INFO;
 
             struct DoACompleteZone : Packet<DoACompleteZone> {
                 wchar_t message[122];
             };
-            const uint32_t Packet<DoACompleteZone>::STATIC_HEADER = GAME_SMSG_DOA_COMPLETE_ZONE;
+            constexpr uint32_t Packet<DoACompleteZone>::STATIC_HEADER = GAME_SMSG_DOA_COMPLETE_ZONE;
 
             struct ErrorMessage : Packet<ErrorMessage> {
                 uint32_t message_id;
             };
-            const uint32_t Packet<ErrorMessage>::STATIC_HEADER = GAME_SMSG_INSTANCE_TRAVEL_TIMER;
+            constexpr uint32_t Packet<ErrorMessage>::STATIC_HEADER = GAME_SMSG_INSTANCE_TRAVEL_TIMER;
 
             /* Party Invites */
             struct PartyHenchmanAdd : Packet<PartyHenchmanAdd> {
@@ -828,13 +828,13 @@ namespace GW {
                 uint32_t profession;
                 uint32_t level;
             };
-            const uint32_t Packet<PartyHenchmanAdd>::STATIC_HEADER = GAME_SMSG_PARTY_HENCHMAN_ADD;
+            constexpr uint32_t Packet<PartyHenchmanAdd>::STATIC_HEADER = GAME_SMSG_PARTY_HENCHMAN_ADD;
 
             struct PartyHenchmanRemove : Packet<PartyHenchmanRemove> {
                 uint32_t party_id;
                 uint32_t agent_id;
             };
-            const uint32_t Packet<PartyHenchmanRemove>::STATIC_HEADER = GAME_SMSG_PARTY_HENCHMAN_REMOVE;
+            constexpr uint32_t Packet<PartyHenchmanRemove>::STATIC_HEADER = GAME_SMSG_PARTY_HENCHMAN_REMOVE;
 
             struct PartyHeroAdd : Packet<PartyHeroAdd> {
                 uint32_t party_id;
@@ -843,50 +843,50 @@ namespace GW {
                 uint32_t hero_id;
                 uint32_t level;
             };
-            const uint32_t Packet<PartyHeroAdd>::STATIC_HEADER = GAME_SMSG_PARTY_HERO_ADD;
+            constexpr uint32_t Packet<PartyHeroAdd>::STATIC_HEADER = GAME_SMSG_PARTY_HERO_ADD;
 
             struct PartyHeroRemove : Packet<PartyHeroRemove> {
                 uint32_t party_id;
                 uint32_t owner_player_number;
                 uint32_t agent_id;
             };
-            const uint32_t Packet<PartyHeroRemove>::STATIC_HEADER = GAME_SMSG_PARTY_HERO_REMOVE;
+            constexpr uint32_t Packet<PartyHeroRemove>::STATIC_HEADER = GAME_SMSG_PARTY_HERO_REMOVE;
 
 
             // Invite sent to another party
             struct PartyInviteSent_Create : Packet<PartyInviteSent_Create> {
                 uint32_t target_party_id;
             };
-            const uint32_t Packet<PartyInviteSent_Create>::STATIC_HEADER = GAME_SMSG_PARTY_INVITE_ADD;
+            constexpr uint32_t Packet<PartyInviteSent_Create>::STATIC_HEADER = GAME_SMSG_PARTY_INVITE_ADD;
             // Invite received from another party
             struct PartyInviteReceived_Create : Packet<PartyInviteReceived_Create> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteReceived_Create>::STATIC_HEADER = GAME_SMSG_PARTY_JOIN_REQUEST;
+            constexpr uint32_t Packet<PartyInviteReceived_Create>::STATIC_HEADER = GAME_SMSG_PARTY_JOIN_REQUEST;
 
             // Remove a sent party invite. Invitation has been cancelled.
             struct PartyInviteSent_Cancel : Packet<PartyInviteSent_Cancel> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteSent_Cancel>::STATIC_HEADER = GAME_SMSG_PARTY_INVITE_CANCEL;
+            constexpr uint32_t Packet<PartyInviteSent_Cancel>::STATIC_HEADER = GAME_SMSG_PARTY_INVITE_CANCEL;
 
             // Remove a received party invite. Invitation has been cancelled.
             struct PartyInviteReceived_Cancel : Packet<PartyInviteReceived_Cancel> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteReceived_Cancel>::STATIC_HEADER = GAME_SMSG_PARTY_REQUEST_CANCEL;
+            constexpr uint32_t Packet<PartyInviteReceived_Cancel>::STATIC_HEADER = GAME_SMSG_PARTY_REQUEST_CANCEL;
 
             // Remove a received party invite. Invitation has been either accepted or rejected (we dont know atm)
             struct PartyInviteSent_Response : Packet<PartyInviteSent_Response> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteSent_Response>::STATIC_HEADER = GAME_SMSG_PARTY_REQUEST_RESPONSE;
+            constexpr uint32_t Packet<PartyInviteSent_Response>::STATIC_HEADER = GAME_SMSG_PARTY_REQUEST_RESPONSE;
 
             // Remove a sent party invite. Invitation has been either accepted or rejected (we dont know atm)
             struct PartyInviteReceived_Response : Packet<PartyInviteReceived_Response> {
                 uint32_t target_party_id; // word
             };
-            const uint32_t Packet<PartyInviteReceived_Response>::STATIC_HEADER = GAME_SMSG_PARTY_INVITE_RESPONSE;
+            constexpr uint32_t Packet<PartyInviteReceived_Response>::STATIC_HEADER = GAME_SMSG_PARTY_INVITE_RESPONSE;
 
             // A player in a party has been updated or added. Not necessarily yours.
             struct PartyPlayerAdd : Packet<PartyPlayerAdd> {
@@ -894,20 +894,20 @@ namespace GW {
                 uint32_t player_id;
                 uint32_t state; // 3 = Invited
             };
-            const uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = GAME_SMSG_PARTY_PLAYER_ADD;
+            constexpr uint32_t Packet<PartyPlayerAdd>::STATIC_HEADER = GAME_SMSG_PARTY_PLAYER_ADD;
             // Player has left party. Not necessarily yours.
             struct PartyPlayerRemove : Packet<PartyPlayerRemove> {
                 uint32_t party_id;
                 uint32_t player_id;
             };
-            const uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = GAME_SMSG_PARTY_PLAYER_REMOVE;
+            constexpr uint32_t Packet<PartyPlayerRemove>::STATIC_HEADER = GAME_SMSG_PARTY_PLAYER_REMOVE;
             // Player in party has toggled ready. Not necessarily yours.
             struct PartyPlayerReady : Packet<PartyPlayerReady> {
                 uint32_t party_id;
                 uint32_t player_id;
                 uint32_t is_ready;
             };
-            const uint32_t Packet<PartyPlayerReady>::STATIC_HEADER = GAME_SMSG_PARTY_PLAYER_READY;
+            constexpr uint32_t Packet<PartyPlayerReady>::STATIC_HEADER = GAME_SMSG_PARTY_PLAYER_READY;
 
             // When a new party is created:
             // 1.   PartyPlayerStreamStart packet is sent
@@ -918,22 +918,117 @@ namespace GW {
             struct PartyPlayerStreamStart : Packet<PartyPlayerStreamStart> {
                 uint32_t party_id; // word
             };
-            const uint32_t Packet<PartyPlayerStreamStart>::STATIC_HEADER = GAME_SMSG_PARTY_CREATE;
+            constexpr uint32_t Packet<PartyPlayerStreamStart>::STATIC_HEADER = GAME_SMSG_PARTY_CREATE;
             struct PartyPlayerStreamEnd : Packet<PartyPlayerStreamEnd> {
                 uint32_t party_id; // word
             };
-            const uint32_t Packet<PartyPlayerStreamEnd>::STATIC_HEADER = GAME_SMSG_PARTY_MEMBER_STREAM_END;
+            constexpr uint32_t Packet<PartyPlayerStreamEnd>::STATIC_HEADER = GAME_SMSG_PARTY_MEMBER_STREAM_END;
 
             struct PartyDefeated : Packet<PartyDefeated> {
             };
-            const uint32_t Packet<PartyDefeated>::STATIC_HEADER = GAME_SMSG_PARTY_DEFEATED;
+            constexpr uint32_t Packet<PartyDefeated>::STATIC_HEADER = GAME_SMSG_PARTY_DEFEATED;
 
             struct PartyLock : Packet<PartyLock> { // Sent when party window is locked/unlocked e.g. pending mission entry
                 uint32_t unk1; // 2 = locked?
                 uint32_t unk2; // 1 = locked?
                 wchar_t unk3[8];
             };
-            const uint32_t Packet<PartyLock>::STATIC_HEADER = GAME_SMSG_PARTY_LOCK;
+            constexpr uint32_t Packet<PartyLock>::STATIC_HEADER = GAME_SMSG_PARTY_LOCK;
+
+            struct CapeVisibility : Packet<CapeVisibility> {
+                uint32_t agent_id;
+                uint32_t visible; // 0 or 1
+
+                constexpr CapeVisibility(uint32_t id, uint32_t visible)
+                    : Packet{STATIC_HEADER}
+                    , agent_id{id}
+                    , visible{visible} {}
+            };
+            constexpr uint32_t Packet<CapeVisibility>::STATIC_HEADER = GAME_SMSG_AGENT_DISPLAY_CAPE;
+
+            struct InstanceLoadStart : Packet<InstanceLoadStart> {
+                uint32_t unk1;
+                uint32_t unk2;
+                uint32_t unk3;
+                uint32_t unk4;
+            };
+            constexpr uint32_t Packet<InstanceLoadStart>::STATIC_HEADER = GAME_SMSG_INSTANCE_LOAD_HEAD;
+
+            struct ItemGeneral_FirstID : Packet<ItemGeneral_FirstID> {
+                uint32_t item_id;
+                uint32_t model_file_id;
+                uint32_t type;
+                uint32_t unk1;
+                uint32_t extra_id;
+                uint32_t materials;
+                uint32_t unk2;
+                uint32_t interaction;
+                uint32_t price;
+                uint32_t model_id;
+                uint32_t quantity;
+                wchar_t enc_name[64];
+                uint32_t mod_struct_size;
+                uint32_t mod_struct[64];
+            };
+            constexpr uint32_t Packet<ItemGeneral_FirstID>::STATIC_HEADER = GAME_SMSG_ITEM_GENERAL_INFO;
+
+            struct ItemGeneral_ReuseID : ItemGeneral_FirstID {};
+            constexpr uint32_t Packet<ItemGeneral_ReuseID>::STATIC_HEADER = GAME_SMSG_ITEM_REUSE_ID;
+
+            struct PlayerIsPartyLeader : Packet<PlayerIsPartyLeader> {
+                uint32_t is_leader; // bool
+            };
+            constexpr uint32_t Packet<PlayerIsPartyLeader>::STATIC_HEADER = GAME_SMSG_PARTY_YOU_ARE_LEADER;
+
+            struct RemoveEffect : Packet<RemoveEffect> {
+                GW::AgentID agent_id;
+                unsigned effect_id; // not GW::SkillID
+            };
+            constexpr uint32_t Packet<RemoveEffect>::STATIC_HEADER = GAME_SMSG_EFFECT_REMOVED;
+
+            struct SkillRecharged : Packet<SkillRecharged> {
+                uint32_t agent_id;
+                uint32_t skill_id;
+                uint32_t skill_instance;
+            };
+            constexpr uint32_t Packet<SkillRecharged>::STATIC_HEADER = GAME_SMSG_SKILL_RECHARGED;
+
+            // Corrected version of GuildGeneral
+            struct UpdateGuildInfo : Packet<UpdateGuildInfo> {
+                uint32_t guild_id;
+                uint32_t gh_key[4];
+                wchar_t  guild_name[32];
+                wchar_t  guild_tag[6]; // client accepts only 4 + \0
+                uint32_t guild_features;
+                uint32_t territory;
+                uint32_t cape_background_color; // & 0xF0 = hue, & 0x0F = brightness
+                uint32_t cape_detail_color;     // & 0xF0 = hue, & 0x0F = brightness
+                uint32_t cape_emblem_color;     // & 0xF0 = hue, & 0x0F = brightness
+                uint32_t cape_shape;            // 0 -   8
+                uint32_t cape_detail;           // 0 -  31
+                uint32_t cape_emblem;           // 0 - 173
+                uint32_t cape_trim;             // 0 -  13
+                uint32_t faction;
+                uint32_t factions_count;
+                uint32_t qualifier_points;
+                uint32_t rating;
+                uint32_t rank;
+                uint32_t unk;
+            };
+            constexpr uint32_t Packet<UpdateGuildInfo>::STATIC_HEADER = GAME_SMSG_GUILD_GENERAL_INFO;
+
+            struct UpdateItemOwner : Packet<UpdateItemOwner> {
+                GW::ItemID item_id;
+                GW::AgentID owner_agent_id;
+                float seconds_reserved;
+            };
+            constexpr uint32_t Packet<UpdateItemOwner>::STATIC_HEADER = GAME_SMSG_ITEM_UPDATE_OWNER;
+
+            struct UpdateTitle : Packet<UpdateTitle> {
+                uint32_t title_id;
+                uint32_t new_value;
+            };
+            constexpr uint32_t Packet<UpdateTitle>::STATIC_HEADER = GAME_SMSG_TITLE_UDPATE;
         }
     }
 }

@@ -218,6 +218,7 @@
 #define GAME_SMSG_INSTANCE_LOADED                   (0x00F1) // 241
 #define GAME_SMSG_TITLE_RANK_DATA                   (0x00F2) // 242
 #define GAME_SMSG_TITLE_RANK_DISPLAY                (0x00F3) // 243
+#define GAME_SMSG_TITLE_UDPATE			            (0x00F4) // 244
 #define GAME_SMSG_TITLE_TRACK_INFO                  (0x00F5) // 245
 #define GAME_SMSG_ITEM_PRICE_QUOTE                  (0x00F6) // 246
 #define GAME_SMSG_ITEM_PRICES                       (0x00F8) // 248
@@ -264,6 +265,7 @@
 #define GAME_SMSG_GOLD_STORAGE_REMOVE               (0x014F) // 335
 #define GAME_SMSG_TOME_SHOW_SKILLS                  (0x0153) // 339
 #define GAME_SMSG_ITEM_GENERAL_INFO                 (0x0160) // 352
+#define GAME_SMSG_ITEM_REUSE_ID                     (0x0161) // 353
 #define GAME_SMSG_ITEM_SALVAGE_SESSION_START        (0x0162) // 354
 #define GAME_SMSG_ITEM_SALVAGE_SESSION_CANCEL       (0x0163) // 355
 #define GAME_SMSG_ITEM_SALVAGE_SESSION_DONE         (0x0164) // 356

@@ -62,6 +62,9 @@ namespace {
     DoAction_pt DoAction_Func = 0;
     DoAction_pt RetDoAction = 0;
 
+    typedef void(__cdecl* DrawOnCompass_pt)(uint32_t session_id, uint32_t pt_count, uint32_t* pts);
+    DrawOnCompass_pt DrawOnCompass_Func = 0;
+
     struct KeypressPacket {
         uint32_t key = 0;
         uint32_t unk1 = 0x4000;
@@ -320,6 +323,8 @@ namespace {
 
         SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);
         GWCA_INFO("[SCAN] SetMasterVolume_Func = %08X\n", SetMasterVolume_Func);
+        
+        DrawOnCompass_Func = (DrawOnCompass_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\char\\charmsg.cpp", "knotCount <= arrsize(message.knotData)",-0x2e);
 
         if (Verify(SendUIMessage_Func))
             HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
@@ -490,22 +495,19 @@ namespace GW {
             });
         return true;
     }
-    void UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
+    bool UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
     {
-        struct P037 {                   // Used to send pings and drawings in the minimap. Related to StoC::P133
-            uint32_t header;
-            uint32_t session_id;     // unique for every player and shape. changes for every ping or shape.
-            uint32_t pt_count;           // number of points in the following array
-            CompassPoint pts[8]; // in world coordinates divided by 100
-            uint32_t unk[8];
-        };
-        P037 pack = {0};
-        pack.header = GAME_CMSG_DRAW_MAP;
-        pack.session_id = session_id;
-        pack.pt_count = pt_count;
-        for (unsigned i = 0; i < pt_count; ++i)
-            pack.pts[i] = pts[i];
-        CtoS::SendPacket(&pack);
+        if (!DrawOnCompass_Func)
+            return false;
+        uint32_t* pts_conv = (uint32_t*)malloc(pt_count * sizeof(uint32_t) * 2);
+        // Legacy code was to pass short* for coordinates direct to CtoS. New hook needs them in int* coordinates, fill with 0xf
+        for (unsigned i = 0; i < pt_count; i++) {
+            pts_conv[i * 2] = pts[i].x | 0xffff0000;
+            pts_conv[i * 2 + 1] = pts[i].y | 0xffff0000;
+        }
+        DrawOnCompass_Func(session_id, pt_count, pts_conv);
+        delete pts_conv;
+        return true;
     }
 
     void UI::LoadSettings(size_t size, uint8_t *data) {

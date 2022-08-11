@@ -19,8 +19,10 @@ namespace {
     bool render_state = false;
 
     typedef void(__cdecl *Render_t)(void*);
-    uintptr_t *g__thingy;
-    Render_t g__thingyret;
+    uintptr_t *g__thingy = 0;
+    Render_t g__thingyret = 0;
+
+    bool initialised = false;
 
     bool in_gamethread = false;
 
@@ -29,6 +31,8 @@ namespace {
 
     void CallFunctions()
     {
+        if (!initialised)
+            return;
         EnterCriticalSection(&mutex);
         in_gamethread = true;
         if (!singleshot_callbacks.empty()) {
@@ -60,7 +64,7 @@ namespace {
 
         uintptr_t address = Scanner::Find(
             "\x2B\xCE\x8B\x15\x00\x00\x00\x00\xF7\xD9\x1B\xC9", "xxxx????xxxx", +4);
-        GWCA_INFO("[SCAN] BasePointerLocation = %p\n", (void *)address);
+        GWCA_INFO("[SCAN] BasePointerLocation = %p", (void *)address);
 
         if (Verify(address)) {
             address = *(uintptr_t *)(address);
@@ -70,12 +74,15 @@ namespace {
             g__thingy = (uintptr_t *)(address + 4);
             g__thingyret = (Render_t)*g__thingy;
         }
+        initialised = true;
     }
 
 
 
     void EnableHooks()
     {
+        if (!initialised)
+            return;
         EnterCriticalSection(&mutex);
         *g__thingy = (uintptr_t)gameLoopHook;
         LeaveCriticalSection(&mutex);
@@ -83,12 +90,16 @@ namespace {
 
     void DisableHooks()
     {
+        if (!initialised)
+            return;
         EnterCriticalSection(&mutex);
         *g__thingy = (uintptr_t)g__thingyret;
         LeaveCriticalSection(&mutex);
     }
     void Exit()
     {
+        if (!initialised)
+            return;
         DisableHooks();
         GameThread::ClearCalls();
         DeleteCriticalSection(&mutex);
@@ -107,6 +118,8 @@ namespace GW {
 
     void GameThread::ClearCalls()
     {
+        if (!initialised)
+            return;
         EnterCriticalSection(&mutex);
         singleshot_callbacks.clear();
         GameThread_callbacks.clear();
@@ -115,6 +128,8 @@ namespace GW {
 
     void GameThread::Enqueue(std::function<void()> f)
     {
+        if (!initialised)
+            return;
         EnterCriticalSection(&mutex);
         if (in_gamethread) {
             f();
@@ -126,6 +141,8 @@ namespace GW {
     }
     bool GameThread::IsInGameThread()
     {
+        if (!initialised)
+            return;
         EnterCriticalSection(&mutex);
         bool ret = in_gamethread;
         LeaveCriticalSection(&mutex);

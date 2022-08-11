@@ -196,97 +196,65 @@ namespace {
         uintptr_t FrameCache_addr = Scanner::Find("\x68\x00\x10\x00\x00\x8B\x1C\x98\x8D", "xxxxxxxxx", -4);
         if (Verify(FrameCache_addr))
             s_FrameCache = *(GW::Array<uintptr_t>**)FrameCache_addr;
-        GWCA_INFO("[SCAN] FrameCache_addr = %p\n", FrameCache_addr);
 
         address = Scanner::Find("\x81\x0D\xFF\xFF\xFF\xFF\x00\x00\x08\x00", "xx????xxxx", 2);
         if (Verify(address))
             WorldMapState_Addr = *(uintptr_t*)address;
-        GWCA_INFO("[SCAN] WorldMapState_Addr = %p\n", WorldMapState_Addr);
 
         DoAction_Func = (DoAction_pt)Scanner::Find("\x8B\x75\x08\x57\x8B\xF9\x83\xFE\x09\x75", "xxxxxxxxxx", -0x4);
-        GWCA_INFO("[SCAN] DoAction = %p\n", DoAction_Func);
 
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\x5D\xC3\x89\x45\x08\x5D\xE9", "x????xxxxxxx", -0x1A);
-        GWCA_INFO("[SCAN] SendUIMessage = %p\n", SendUIMessage_Func);
 
         LoadSettings_Func = (LoadSettings_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\xFF\x75\x0C\xFF\x75\x08\x6A\x00", "x????xxxxxxxx", -0x1E);
-        GWCA_INFO("[SCAN] LoadSettings = %p\n", LoadSettings_Func);
 
-        {
-            address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
-            GWCA_INFO("[SCAN] GameSettings = %p\n", (void *)address);
-            if (Verify(address))
-                GameSettings_Addr = *(uintptr_t *)address;
-        }
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uiroot.cpp", "!s_count++", -0xD);
+        if (Verify(address))
+            ui_drawn_addr = *(uintptr_t*)address - 0x10;
 
-        {
-            address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uiroot.cpp", "!s_count++", -0xD);
-            if (Verify(address))
-                ui_drawn_addr = *(uintptr_t *)address - 0x10;
-            GWCA_INFO("[SCAN] ui_drawn_addr = %p\n", (void*)ui_drawn_addr);
-        }
-
-        {
-            address = Scanner::Find(
-                "\x75\x19\x6A\x00\xC7\x05\x00\x00\x00\x00\x01\x00", "xxxxxx????xx", +6);
-            GWCA_INFO("[SCAN] shift_screen_addr = %p\n", (void *)address);
+        address = Scanner::Find(
+            "\x75\x19\x6A\x00\xC7\x05\x00\x00\x00\x00\x01\x00", "xxxxxx????xx", +6);
+        if (Verify(address))
             shift_screen_addr = *(uintptr_t *)address;
+
+        address = GW::Scanner::Find("\x75\xF6\x33\xF6\x39\x34\x9D", "xxxxxxx", +7);
+        if (Verify(address)) {
+            address = *(uintptr_t *)address;
+            preferences_array = reinterpret_cast<uint32_t *>(address);
         }
 
-        {
-            address = GW::Scanner::Find("\x75\xF6\x33\xF6\x39\x34\x9D", "xxxxxxx", +7);
-            GWCA_INFO("[SCAN] preferences_array = %p\n", (void *)address);
-            if (Verify(address)) {
-                address = *(uintptr_t *)address;
-                preferences_array = reinterpret_cast<uint32_t *>(address);
-            }
-        }
-        {
-            // NB: There are other assertions that match this pattern, this is the first
-            address = GW::Scanner::FindAssertion("p:\\code\\gw\\pref\\prapi.cpp", "info.getMappingProc", -0x1E);
-            GWCA_INFO("[SCAN] more_preferences_array = %p\n", (void*)address);
-            if (Verify(address)) {
-                address = *(uintptr_t*)address;
-                more_preferences_array = reinterpret_cast<uint32_t*>(address);
-            }
+        // NB: There are other assertions that match this pattern, this is the first
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\pref\\prapi.cpp", "info.getMappingProc", -0x1E);
+        if (Verify(address)) {
+            address = *(uintptr_t*)address;
+            more_preferences_array = reinterpret_cast<uint32_t*>(address);
         }
 
-        {
-            address = GW::Scanner::FindAssertion("p:\\code\\engine\\frame\\frtip.cpp", "CMsg::Validate(id)");
-            if(address)
-                address = GW::Scanner::FindInRange("\x56\x8B\xF7", "xxx", -0x13, address, address - 0x200);
-            if (address) {
-                SetTooltip_Func = (SetTooltip_pt)address;
-                address += 0x9;
-                CurrentTooltipPtr = (UI::TooltipInfo***)(*(uintptr_t*)address);
-            }
-            GWCA_INFO("[SCAN] SetTooltip_Func = %p\n", (void*)SetTooltip_Func);
-            GWCA_INFO("[SCAN] CurrentTooltipPtr = %p\n", (void*)CurrentTooltipPtr);
+        address = GW::Scanner::FindAssertion("p:\\code\\engine\\frame\\frtip.cpp", "CMsg::Validate(id)");
+        if(address)
+            address = GW::Scanner::FindInRange("\x56\x8B\xF7", "xxx", -0x13, address, address - 0x200);
+        if (address) {
+            SetTooltip_Func = (SetTooltip_pt)address;
+            address += 0x9;
+            CurrentTooltipPtr = (UI::TooltipInfo***)(*(uintptr_t*)address);
         }
 
         address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
-        GWCA_INFO("[SCAN] GameSettings = %p\n", (void*)address);
         if (Verify(address))
             GameSettings_Addr = *(uintptr_t*)address;
-    
 
         SetTickboxPref_Func = (SetTickboxPref_pt)Scanner::Find(
             "\x8B\x75\x0C\x33\xC9\x39\x0C\xBD\x00\x00\x00\x00\x0F\x95\xC1\x33", "xxxxxxxx????xxxx", -0x6F);
-        GWCA_INFO("[SCAN] SetTickboxPref = %p\n", SetTickboxPref_Func);
 
         if (Verify(SetTickboxPref_Func)) {
             address = (uintptr_t)SetTickboxPref_Func + 0x77;
-            GWCA_INFO("[SCAN] preferences_array2 = %p\n", (void*)address);
             address = *(uintptr_t*)address;
             preferences_array2 = reinterpret_cast<uint32_t*>(address);
         }
 
-        
         // NB: 0x39 is the size of the floating window array
         SetFloatingWindowVisible_Func = (SetFloatingWindowVisible_pt)Scanner::Find("\x8B\x75\x0C\x57\x83\xFE\x39", "xxxxxxx", -0x5);
-        GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %08X\n", SetFloatingWindowVisible_Func);
         if (Verify(SetFloatingWindowVisible_Func)) {
             //HookBase::CreateHook(SetFloatingWindowVisible_Func, OnToggleFloatingWindow, (void**)&RetSetFloatingWindowVisible);
             address = (uintptr_t)SetFloatingWindowVisible_Func + 0x41;
@@ -295,12 +263,9 @@ namespace {
                 floating_windows_array = reinterpret_cast<UI::FloatingWindow*>(address - 0x10);
             }
         }
-        GWCA_INFO("[SCAN] floating_windows_array = %08X\n", floating_windows_array);
 
         // NB: 0x66 is the size of the window info array
         SetWindowVisible_Func = (SetWindowVisible_pt)Scanner::Find("\x8B\x75\x08\x83\xFE\x66\x7C\x19\x68", "xxxxxxxxx", -0x7);
-        GWCA_INFO("[SCAN] SetWindowVisible_Func = %08X\n", SetWindowVisible_Func);
-
         if (SetWindowVisible_Func) {
             SetWindowPosition_Func = reinterpret_cast<SetWindowPosition_pt>((uintptr_t)SetWindowVisible_Func - 0xE0);
             address = (uintptr_t)SetWindowVisible_Func + 0x49;
@@ -309,27 +274,67 @@ namespace {
                 window_positions_array = reinterpret_cast<UI::WindowPosition*>(address);
             }
         }
-        GWCA_INFO("[SCAN] SetWindowPosition_Func = %08X\n", SetWindowPosition_Func);
-        GWCA_INFO("[SCAN] window_positions_array = %p\n", (void*)window_positions_array);
 
         ValidateAsyncDecodeStr = (ValidateAsyncDecodeStr_pt)Scanner::Find("\x83\xC4\x10\x3B\xC6\x5E\x74\x14", "xxxxxxxx", -0x70);
-        GWCA_INFO("[SCAN] ValidateAsyncDecodeStr = %08X\n", ValidateAsyncDecodeStr);
         AsyncDecodeStringPtr = (DoAsyncDecodeStr_pt)Scanner::Find("\x8b\x47\x14\x8d\x9f\x80\xfe\xff\xff", "xxxxxxxxx", -0x8);
-        GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %08X\n", AsyncDecodeStringPtr);
 
         // NB: "p:\\code\\engine\\sound\\sndmain.cpp", "(unsigned)type < arrsize(s_volume)" works, but also matches SetVolume()
         SetVolume_Func = (SetVolume_pt)GW::Scanner::Find("\x8b\x75\x08\x83\xfe\x05\x72\x14\x68\x5b\x04\x00\x00\xba", "xxxxxxxxxxxxxx", -0x4);
-        GWCA_INFO("[SCAN] SetVolume_Func = %08X\n", SetVolume_Func);
 
-        SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);
-        GWCA_INFO("[SCAN] SetMasterVolume_Func = %08X\n", SetMasterVolume_Func);
-        
+        SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);        
         DrawOnCompass_Func = (DrawOnCompass_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\char\\charmsg.cpp", "knotCount <= arrsize(message.knotData)",-0x2e);
 
-        if (Verify(SendUIMessage_Func))
-            HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
-        if (Verify(DoAction_Func))
-            HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
+        GWCA_INFO("[SCAN] FrameCache_addr = %p", FrameCache_addr);
+        GWCA_INFO("[SCAN] WorldMapState_Addr = %p", WorldMapState_Addr);
+        GWCA_INFO("[SCAN] DoAction = %p", DoAction_Func);
+        GWCA_INFO("[SCAN] SendUIMessage = %p", SendUIMessage_Func);
+        GWCA_INFO("[SCAN] LoadSettings = %p", LoadSettings_Func);
+        GWCA_INFO("[SCAN] ui_drawn_addr = %p", ui_drawn_addr);
+        GWCA_INFO("[SCAN] shift_screen_addr = %p", shift_screen_addr);
+        GWCA_INFO("[SCAN] preferences_array = %p", preferences_array);
+        GWCA_INFO("[SCAN] more_preferences_array = %p", more_preferences_array);
+        GWCA_INFO("[SCAN] SetTooltip_Func = %p", SetTooltip_Func);
+        GWCA_INFO("[SCAN] CurrentTooltipPtr = %p", CurrentTooltipPtr);
+        GWCA_INFO("[SCAN] GameSettings = %p", GameSettings_Addr);
+        GWCA_INFO("[SCAN] preferences_array2 = %p", preferences_array2);
+        GWCA_INFO("[SCAN] SetTickboxPref = %p", SetTickboxPref_Func);
+        GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %p", SetFloatingWindowVisible_Func);
+        GWCA_INFO("[SCAN] floating_windows_array = %p\n", floating_windows_array);
+        GWCA_INFO("[SCAN] SetWindowVisible_Func = %p\n", SetWindowVisible_Func);
+        GWCA_INFO("[SCAN] SetWindowPosition_Func = %p\n", SetWindowPosition_Func);
+        GWCA_INFO("[SCAN] window_positions_array = %p\n", window_positions_array);
+        GWCA_INFO("[SCAN] ValidateAsyncDecodeStr = %p\n", ValidateAsyncDecodeStr);
+        GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %p\n", AsyncDecodeStringPtr);
+        GWCA_INFO("[SCAN] SetVolume_Func = %p\n", SetVolume_Func);
+        GWCA_INFO("[SCAN] SetMasterVolume_Func = %p\n", SetMasterVolume_Func);
+
+#if _DEBUG
+        GWCA_ASSERT(FrameCache_addr);
+        GWCA_ASSERT(WorldMapState_Addr);
+        GWCA_ASSERT(DoAction_Func);
+        GWCA_ASSERT(SendUIMessage_Func);
+        GWCA_ASSERT(LoadSettings_Func);
+        GWCA_ASSERT(ui_drawn_addr);
+        GWCA_ASSERT(shift_screen_addr);
+        GWCA_ASSERT(preferences_array);
+        GWCA_ASSERT(more_preferences_array);
+        GWCA_ASSERT(SetTooltip_Func);
+        GWCA_ASSERT(CurrentTooltipPtr);
+        GWCA_ASSERT(GameSettings_Addr);
+        GWCA_ASSERT(preferences_array2);
+        GWCA_ASSERT(SetTickboxPref_Func);
+        GWCA_ASSERT(SetFloatingWindowVisible_Func);
+        GWCA_ASSERT(floating_windows_array);
+        GWCA_ASSERT(SetWindowVisible_Func);
+        GWCA_ASSERT(SetWindowPosition_Func);
+        GWCA_ASSERT(window_positions_array);
+        GWCA_ASSERT(ValidateAsyncDecodeStr);
+        GWCA_ASSERT(AsyncDecodeStringPtr);
+        GWCA_ASSERT(SetVolume_Func);
+        GWCA_ASSERT(SetMasterVolume_Func);
+#endif
+        HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
+        HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
         UI::RegisterUIMessageCallback(&open_template_hook, UI::UIMessage::kOpenTemplate, OnOpenTemplate_UIMessage);
     }
 
@@ -506,7 +511,7 @@ namespace GW {
             pts_conv[i * 2 + 1] = pts[i].y | 0xffff0000;
         }
         DrawOnCompass_Func(session_id, pt_count, pts_conv);
-        delete pts_conv;
+        free(pts_conv);
         return true;
     }
 

@@ -402,7 +402,7 @@ namespace GW {
 
             // agent animation lock (and probably something else)
             struct GenericValue : Packet<GenericValue> {
-                uint32_t Value_id;
+                uint32_t value_id;
                 uint32_t agent_id;
                 uint32_t value;
             };
@@ -1016,13 +1016,6 @@ namespace GW {
                 uint32_t unk;
             };
             constexpr uint32_t Packet<UpdateGuildInfo>::STATIC_HEADER = GAME_SMSG_GUILD_GENERAL_INFO;
-
-            struct UpdateItemOwner : Packet<UpdateItemOwner> {
-                GW::ItemID item_id;
-                GW::AgentID owner_agent_id;
-                float seconds_reserved;
-            };
-            constexpr uint32_t Packet<UpdateItemOwner>::STATIC_HEADER = GAME_SMSG_ITEM_UPDATE_OWNER;
 
             struct UpdateTitle : Packet<UpdateTitle> {
                 uint32_t title_id;

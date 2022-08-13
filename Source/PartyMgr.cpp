@@ -35,7 +35,7 @@ namespace {
     UI::UIInteractionCallback TickButtonUICallback = 0;
     UI::UIInteractionCallback TickButtonUICallback_Ret = 0;
 
-    typedef void(__cdecl* PartySearchSeek_pt)(uint32_t search_type, wchar_t* advertisement, uint32_t unk);
+    typedef void(__cdecl* PartySearchSeek_pt)(uint32_t search_type, const wchar_t* advertisement, uint32_t unk);
     PartySearchSeek_pt PartySearchSeek_Func = 0;
 
     typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
@@ -471,12 +471,10 @@ namespace GW {
             return 0;
         }
 
-        bool SearchParty(uint32_t search_type, wchar_t* advertisement) {
+        bool SearchParty(uint32_t search_type, const wchar_t* advertisement) {
             if (!PartySearchSeek_Func)
                 return false;
-            if (!advertisement)
-                advertisement = L"";
-            PartySearchSeek_Func(search_type, advertisement, 0);
+            PartySearchSeek_Func(search_type, advertisement ? advertisement : L"", 0);
             return true;
         }
         bool SearchPartyCancel() {

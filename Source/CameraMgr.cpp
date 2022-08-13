@@ -48,11 +48,11 @@ namespace {
         }
 
         if (Verify(patch_max_dist_addr))
-            patch_max_dist.SetPatch(patch_max_dist_addr, (void *)("\x90\x90\x90"), 3);
+            patch_max_dist.SetPatch(patch_max_dist_addr, "\x90\x90\x90", 3);
         if (Verify(patch_cam_update_addr))
-            patch_cam_update.SetPatch(patch_cam_update_addr, (void *)("\xEB\x0C"), 2);
+            patch_cam_update.SetPatch(patch_cam_update_addr, "\xEB\x0C", 2);
         if (Verify(patch_fog_addr))
-            patch_fog.SetPatch(patch_fog_addr, (void *)("\x00"), 1);
+            patch_fog.SetPatch(patch_fog_addr,"\x00", 1);
     }
 
     void Exit() {

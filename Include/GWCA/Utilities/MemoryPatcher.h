@@ -9,7 +9,7 @@ namespace GW {
         ~MemoryPatcher();
 
         void Reset();
-        void SetPatch(uintptr_t addr, void* patch, size_t size);
+        void SetPatch(uintptr_t addr, const char* patch, size_t size);
 
         bool TogglePatch(bool flag);
         bool TogglePatch() { TogglePatch(!m_enable); };

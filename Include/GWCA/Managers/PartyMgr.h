@@ -85,7 +85,7 @@ namespace GW {
         
 
         // Advertise your party in party search window
-        GWCA_API bool SearchParty(uint32_t search_type, wchar_t* advertisement = nullptr);
+        GWCA_API bool SearchParty(uint32_t search_type, const wchar_t* advertisement = nullptr);
         // Cancel party advertisement
         GWCA_API bool SearchPartyCancel();
         // Accept or reject a party invitation via party search window

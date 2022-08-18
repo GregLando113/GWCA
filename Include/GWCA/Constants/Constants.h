@@ -256,6 +256,7 @@ namespace GW {
         };
 
         namespace DialogID {
+            constexpr int UwTeleEnquire = 127;      // "where can you teleport us to"
             constexpr int UwTelePlanes = 139;
             constexpr int UwTeleWastes = 140;
             constexpr int UwTeleLab = 141;

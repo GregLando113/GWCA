@@ -39,7 +39,7 @@ namespace GW {
 
         GWCA_API Player *GetPlayerByID(uint32_t player_id = 0);
 
-        GWCA_API wchar_t *GetPlayerName(uint32_t player_id);
+        GWCA_API wchar_t *GetPlayerName(uint32_t player_id = 0);
 
         GWCA_API wchar_t* SetPlayerName(uint32_t player_id, const wchar_t *replace_name);
 

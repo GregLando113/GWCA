@@ -118,24 +118,24 @@ namespace GW {
 
             // Called when the client needs to add an agent to memory (i.e. agent appeared within compass range)
             struct AgentAdd : Packet<AgentAdd> {
-                uint32_t agent_id;
-                uint32_t agent_type; // Bitwise field. 0x20000000 = NPC | PlayerNumber, 0x30000000 = Player | PlayerNumber, 0x00000000 = Signpost
-                uint32_t type; // byte, agent_type > 0 ? 1 : 4
-                uint32_t unk3; // byte
-                Vec2f position;
-                uint32_t unk4; // word
-                Vec2f unk5;
-                uint32_t unk6; // word
-                float speed; // default 288.0
-                float unk7; // default 1.0
-                uint32_t unknown_bitwise_1;
-                uint32_t allegiance_bits;
-                uint32_t unk8[5];
-                Vec2f unk9;
-                Vec2f unk10; // inf, inf
-                uint32_t unk11[2];
-                Vec2f unk12; // inf, inf
-                uint32_t unk13;
+                /* +h0000 */ uint32_t agent_id;
+                /* +h0004 */ uint32_t agent_type; // Bitwise field. 0x20000000 = NPC | PlayerNumber, 0x30000000 = Player | PlayerNumber, 0x00000000 = Signpost
+                /* +h0008 */ uint32_t type; // byte, agent_type > 0 ? 1 : 4
+                /* +h000C */ uint32_t unk3; // byte
+                /* +h0010 */ Vec2f position;
+                /* +h0018 */ uint32_t unk4; // word
+                /* +h001C */ Vec2f unk5;
+                /* +h0020 */ uint32_t unk6; // word
+                /* +h0024 */ float speed; // default 288.0
+                /* +h0028 */ float unk7; // default 1.0
+                /* +h002C */ uint32_t unknown_bitwise_1;
+                /* +h0030 */ uint32_t allegiance_bits;
+                /* +h0034 */ uint32_t unk8[5];
+                /* +h0048 */ Vec2f unk9;
+                /* +h0050 */ Vec2f unk10; // inf, inf
+                /* +h0058 */ uint32_t unk11[2];
+                /* +h0060 */ Vec2f unk12; // inf, inf
+                /* +h0064 */ uint32_t unk13;
             };
             constexpr uint32_t Packet<AgentAdd>::STATIC_HEADER = GAME_SMSG_AGENT_SPAWNED;
 

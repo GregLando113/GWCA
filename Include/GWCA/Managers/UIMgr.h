@@ -84,6 +84,11 @@ namespace GW {
             float height(float multiplier = 1.f) const { return bottom(multiplier) - top(multiplier); }
         };
 
+        struct MapEntryMessage {
+            wchar_t* title;
+            wchar_t* subtitle;
+        };
+
         struct DialogBodyInfo {
             uint32_t type;
             uint32_t agent_id;
@@ -106,11 +111,17 @@ namespace GW {
         };
 
         enum class UIMessage : uint32_t {
+            kUpdateAgentEffects         = 0x10000000 | 0x9,
+            kRerenderAgentModel         = 0x10000000 | 0x7, // wparam = uint32_t agent_id
             kShowAgentNameTag           = 0x10000000 | 0x19, // wparam = AgentNameTagInfo*
             kHideAgentNameTag           = 0x10000000 | 0x1A,
             kSetAgentNameTagAttribs     = 0x10000000 | 0x1B, // wparam = AgentNameTagInfo*
             kChangeTarget               = 0x10000000 | 0x20, // wparam = ChangeTargetUIMsg*
             kAgentStartCasting          = 0x10000000 | 0x27, // wparam = { uint32_t agent_id, uint32_t skill_id }
+            kShowMapEntryMessage        = 0x10000000 | 0x29, // wparam = { wchar_t* title, wchar_t* subtitle }
+            kSetCurrentPlayerData       = 0x10000000 | 0x2A, // fired after setting the worldcontext player name
+            kHeroAgentAdded             = 0x10000000 | 0x38, // hero assigned to agent/inventory/ai mode
+            kHeroDataAdded              = 0x10000000 | 0x39, // hero info received from server (name, level etc)
             kShowXunlaiChest            = 0x10000000 | 0x40,
             kMinionCountUpdated         = 0x10000000 | 0x46,
             kMoraleChange               = 0x10000000 | 0x47, // wparam = {agent id, morale percent }

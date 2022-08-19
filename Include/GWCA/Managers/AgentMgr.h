@@ -37,6 +37,9 @@ namespace GW {
         GWCA_API bool SendDialog(uint32_t dialog_id);
 
         // Returns last dialog id sent to the server. Requires the hook.
+        GWCA_API bool GetIsAgentTargettable(GW::Agent* agent);
+
+        // Returns last dialog id sent to the server. Requires the hook.
         GWCA_API uint32_t GetLastDialogId();
 
         // === Agent Array ===

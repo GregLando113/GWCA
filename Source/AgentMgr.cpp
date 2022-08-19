@@ -69,14 +69,31 @@ namespace {
 
     typedef void(*InteractPlayer_pt)(uint32_t agent_id);
     InteractPlayer_pt InteractPlayer_Func = 0;
+
     typedef void(*InteractCallableAgent_pt)(uint32_t agent_id, uint32_t call_target);
     InteractCallableAgent_pt InteractNPC_Func = 0;
+    InteractCallableAgent_pt InteractNPC_Ret = 0;
     InteractCallableAgent_pt InteractItem_Func = 0;
     InteractCallableAgent_pt InteractGadget_Func = 0;
     InteractCallableAgent_pt InteractEnemy_Func = 0;
 
+    void OnInteractNPC(uint32_t agent_id, uint32_t call_target) {
+        GW::Hook::EnterHook();
+        if (Agents::GetIsAgentTargettable(Agents::GetAgentByID(agent_id)))
+            InteractNPC_Ret(agent_id, call_target);
+        GW::Hook::LeaveHook();
+    }
+
     typedef void(*CallTarget_pt)(CallTargetType type, uint32_t agent_id);
     CallTarget_pt CallTarget_Func = 0;
+    CallTarget_pt CallTarget_Ret = 0;
+
+    void OnCallTarget(CallTargetType type, uint32_t agent_id) {
+        GW::Hook::EnterHook();
+        if (Agents::GetIsAgentTargettable(Agents::GetAgentByID(agent_id)))
+            CallTarget_Ret(type, agent_id);
+        GW::Hook::LeaveHook();
+    }
 
     typedef void(*Move_pt)(GamePos *pos);
     Move_pt Move_Func = 0;
@@ -129,6 +146,8 @@ namespace {
             // NB: What is UI message 0x100001a0 ?
             InteractGadget_Func = (InteractCallableAgent_pt)Scanner::FunctionFromNearCall(address + 0x120);
         }
+        HookBase::CreateHook(CallTarget_Func, OnCallTarget, (void**)&CallTarget_Ret);
+        HookBase::CreateHook(InteractNPC_Func, OnInteractNPC, (void**)&InteractNPC_Ret);
 
         if (SendDialog_Func) {
             HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void**)&RetSendDialog);
@@ -172,8 +191,9 @@ namespace {
     }
 
     void Exit() {
-        if (SendDialog_Func)
-            HookBase::RemoveHook(SendDialog_Func);
+        HookBase::RemoveHook(SendDialog_Func);
+        HookBase::RemoveHook(CallTarget_Func);
+        HookBase::RemoveHook(InteractNPC_Func);
     }
 }
 
@@ -189,6 +209,20 @@ namespace GW {
     };
 
     namespace Agents {
+
+        bool GetIsAgentTargettable(const GW::Agent* agent) {
+            if (!agent) return false;
+            if (!agent->GetIsLivingType())
+                return true;
+            const GW::AgentLiving* l = agent->GetAsAgentLiving();
+            if (l->IsPlayer())
+                return true;
+            const GW::NPC* npc = GW::Agents::GetNPCByID(l->player_number);
+            if (npc && (npc->npc_flags & 0x10000) != 0)
+                return true;
+            return false;
+        }
+
         uint32_t GetLastDialogId() {
             return last_dialog_id;
         }

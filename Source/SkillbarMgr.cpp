@@ -131,13 +131,15 @@ namespace {
     static void __cdecl OnUseSkill(uint32_t agent_id, uint32_t slot, uint32_t target, uint32_t call_target)
     {
         HookBase::EnterHook();
-        HookStatus status;
-        for (auto& it : OnUseSkill_Callbacks) {
-            it.second(&status, agent_id, slot, target, call_target);
-            ++status.altitude;
+        if (!target || Agents::GetIsAgentTargettable(Agents::GetAgentByID(target))) {
+            HookStatus status;
+            for (auto& it : OnUseSkill_Callbacks) {
+                it.second(&status, agent_id, slot, target, call_target);
+                ++status.altitude;
+            }
+            if (!status.blocked)
+                RetUseSkill(agent_id, slot, target, call_target);
         }
-        if (!status.blocked)
-            RetUseSkill(agent_id, slot, target, call_target);
         HookBase::LeaveHook();
     }
 

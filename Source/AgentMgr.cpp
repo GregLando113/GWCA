@@ -218,7 +218,7 @@ namespace GW {
             if (l->IsPlayer())
                 return true;
             const GW::NPC* npc = GW::Agents::GetNPCByID(l->player_number);
-            if (npc && (npc->npc_flags & 0x10000) != 0)
+            if (npc && (npc->npc_flags & 0x10000) == 0)
                 return true;
             return false;
         }

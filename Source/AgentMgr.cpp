@@ -25,11 +25,14 @@ namespace {
     using namespace GW;
 
     uint32_t last_dialog_id = 0;
+    uint32_t dialog_agent_id = 0;
 
     HookEntry OnSendDialog_HookEntry;
     typedef void (*SendDialog_pt)(uint32_t dialog_id);
     SendDialog_pt RetSendDialog = 0;
     SendDialog_pt SendDialog_Func = 0;
+    SendDialog_pt RetSendSignpostDialog = 0;
+    SendDialog_pt SendSignpostDialog_Func = 0;
 
     void OnSendDialog(uint32_t dialog_id) {
         GW::Hook::EnterHook();
@@ -37,15 +40,23 @@ namespace {
         UI::SendUIMessage(UI::UIMessage::kSendDialog, (void*)dialog_id);
         GW::Hook::LeaveHook();
     };
+    void OnDialogBody_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+        GWCA_ASSERT(message_id == UI::UIMessage::kDialogBody && wparam);
+        UI::DialogBodyInfo* info = (UI::DialogBodyInfo*)wparam;
+        // Save dialog agent id; used in OnSendDialog_UIMessage to tell which type of packet to send.
+        dialog_agent_id = info->agent_id;
+    }
     void OnSendDialog_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
         GWCA_ASSERT(message_id == UI::UIMessage::kSendDialog);
-        if (!status->blocked) {
-            last_dialog_id = (uint32_t)wparam;
-            RetSendDialog(last_dialog_id);
+        if (status->blocked)
+            return;
+        last_dialog_id = (uint32_t)wparam;
+        GW::Agent* a = GW::Agents::GetAgentByID(dialog_agent_id);
+        if (a && a->GetIsGadgetType()) {
+            RetSendSignpostDialog(last_dialog_id);
         }
         else {
-            // NB: The Dialog UI interface requires the function call to return
-            //RetSendDialog(0);
+            RetSendDialog(last_dialog_id);
         }
     }
 
@@ -130,8 +141,12 @@ namespace {
         if (Scanner::IsValidPtr(*(uintptr_t*)address))
             PlayerAgentIdPtr = *(uintptr_t*)address;
 
-        address = Scanner::Find("\x0f\xb7\xc0\x0d\x00\x00\x00\x10", "xxxxxxxx", 0x9);
-        SendDialog_Func = (SendDialog_pt)Scanner::FunctionFromNearCall(address);
+        address = Scanner::Find("\x89\x4b\x24\x8b\x4b\x28\x83\xe9\x00", "xxxxxxxxx");
+        if (address) {
+            SendDialog_Func = (SendDialog_pt)Scanner::FunctionFromNearCall(address + 0x15);
+            SendSignpostDialog_Func = (SendDialog_pt)Scanner::FunctionFromNearCall(address + 0x25);
+        }
+        
         
         address = Scanner::Find("\xc7\x45\xf0\x98\x3a\x00\x00", "xxxxxxx", 0x41);
         InteractAgent_Func = (InteractAgent_pt)Scanner::FunctionFromNearCall(address);
@@ -148,20 +163,18 @@ namespace {
         }
         HookBase::CreateHook(CallTarget_Func, OnCallTarget, (void**)&CallTarget_Ret);
         HookBase::CreateHook(InteractNPC_Func, OnInteractNPC, (void**)&InteractNPC_Ret);
-
-        if (SendDialog_Func) {
-            HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void**)&RetSendDialog);
-            UI::RegisterUIMessageCallback(&OnSendDialog_HookEntry, UI::UIMessage::kSendDialog, OnSendDialog_UIMessage, 0x1);
-        }
-            
+        HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void**)&RetSendDialog);
+        HookBase::CreateHook(SendSignpostDialog_Func, OnSendDialog, (void**)&RetSendSignpostDialog);
+        UI::RegisterUIMessageCallback(&OnSendDialog_HookEntry, UI::UIMessage::kDialogBody, OnDialogBody_UIMessage, 0x1);
+        UI::RegisterUIMessageCallback(&OnSendDialog_HookEntry, UI::UIMessage::kSendDialog, OnSendDialog_UIMessage, 0x1);            
 
         GWCA_INFO("[SCAN] ChangeTargetFunction = %p", ChangeTarget_Func);
         GWCA_INFO("[SCAN] TargetAgentIdPtr = %p", TargetAgentIdPtr);
         GWCA_INFO("[SCAN] MouseOverAgentIdPtr = %p", MouseOverAgentIdPtr);
         GWCA_INFO("[SCAN] AgentArrayPtr = %p", AgentArrayPtr);
         GWCA_INFO("[SCAN] PlayerAgentIdPtr = %p", PlayerAgentIdPtr);
-
         GWCA_INFO("[SCAN] SendDialog Function = %p", SendDialog_Func);
+        GWCA_INFO("[SCAN] SendSignpostDialog_Func = %p", SendSignpostDialog_Func);
         GWCA_INFO("[SCAN] InteractEnemy Function = %p", InteractEnemy_Func);
         GWCA_INFO("[SCAN] InteractPlayer Function = %p", InteractPlayer_Func);
         GWCA_INFO("[SCAN] InteractNPC Function = %p", InteractNPC_Func);
@@ -177,6 +190,7 @@ namespace {
         GWCA_ASSERT(AgentArrayPtr);
         GWCA_ASSERT(PlayerAgentIdPtr);
         GWCA_ASSERT(SendDialog_Func);
+        GWCA_ASSERT(SendSignpostDialog_Func);
         GWCA_ASSERT(InteractEnemy_Func);
         GWCA_ASSERT(InteractPlayer_Func);
         GWCA_ASSERT(Move_Func);

@@ -48,7 +48,7 @@
 #define GAME_CMSG_TRANSACT_ITEMS                    (0x004B) // 75
 #define GAME_CMSG_UNEQUIP_ITEM                      (0x004D) // 77
 #define GAME_CMSG_INTERACT_GADGET                   (0x004F) // 79
-#define GAME_CMSG_OPEN_CHEST                        (0x0051) // 81
+#define GAME_CMSG_SEND_SIGNPOST_DIALOG              (0x0051) // 81
 #define GAME_CMSG_EQUIP_VISIBILITY                  (0x0055) // 85
 #define GAME_CMSG_TITLE_DISPLAY                     (0x0056) // 86
 #define GAME_CMSG_TITLE_HIDE                        (0x0057) // 87

@@ -12,8 +12,9 @@ namespace {
 
     typedef void(__cdecl *SendPacket_pt)(
         uint32_t context, uint32_t size, void* packet);
-    SendPacket_pt SendPacket_Func;
-    SendPacket_pt RetSendPacket;
+    SendPacket_pt SendPacket_Func = 0;
+    SendPacket_pt RetSendPacket = 0;
+
     std::vector<std::unordered_map<HookEntry*, CtoS::PacketCallback>> packets_callbacks;
     bool __cdecl CtoSHandler_Func(uint32_t context, uint32_t size, void* packet) {
         HookBase::EnterHook();
@@ -34,22 +35,37 @@ namespace {
     uintptr_t game_srv_object_addr;
 
     void Init() {
-        SendPacket_Func = GWCA_CTOS_DISABLED ? (SendPacket_pt)0 : (SendPacket_pt)Scanner::FindAssertion("p:\\code\\net\\msg\\msgconn.cpp", "bytes >= sizeof(dword)", -0x67);
+#ifdef GWCA_CTOS_DISABLED
+        SendPacket_Func = (SendPacket_pt)Scanner::FindAssertion("p:\\code\\net\\msg\\msgconn.cpp", "bytes >= sizeof(dword)", -0x67);
+#endif
+        uintptr_t address = Scanner::FindAssertion("p:\\code\\gw\\net\\cli\\gcgamecmd.cpp","No valid case for switch variable 'code'", -0x32);
+        if (Verify(address))
+            game_srv_object_addr = *(uintptr_t *)address;
 
-        GWCA_INFO("[SCAN] SendPacket = %p\n", SendPacket_Func);
-        if (Verify(SendPacket_Func))
-            HookBase::CreateHook(SendPacket_Func, CtoSHandler_Func, (void**)&RetSendPacket);
-        {
-            uintptr_t address = Scanner::FindAssertion("p:\\code\\gw\\net\\cli\\gcgamecmd.cpp","No valid case for switch variable 'code'", -0x32);
-            GWCA_INFO("[SCAN] CtoGSObjectPtr = %p\n", (void *)address);
-            if (Verify(address))
-                game_srv_object_addr = *(uintptr_t *)address;
-        }
         packets_callbacks.resize(180);
+
+        GWCA_INFO("[SCAN] SendPacket = %p", SendPacket_Func);
+        GWCA_INFO("[SCAN] CtoGSObjectPtr = %p", game_srv_object_addr);
+
+#if _DEBUG
+#ifndef GWCA_CTOS_DISABLED
+        GWCA_ASSERT(SendPacket_Func);
+#endif
+        GWCA_ASSERT(game_srv_object_addr);
+#endif
+        HookBase::CreateHook(SendPacket_Func, CtoSHandler_Func, (void**)&RetSendPacket);
+
+    }
+    void EnableHooks() {
+        if (SendPacket_Func)
+            HookBase::EnableHooks(SendPacket_Func);
+    }
+    void DisableHooks() {
+        if (SendPacket_Func)
+            HookBase::DisableHooks(SendPacket_Func);
     }
     void Exit() {
-        if (SendPacket_Func)
-            HookBase::RemoveHook(SendPacket_Func);
+        HookBase::RemoveHook(SendPacket_Func);
     }
 }
 
@@ -61,8 +77,8 @@ namespace GW {
         NULL,           // param
         ::Init,         // init_module
         ::Exit,           // exit_module
-        NULL,           // enable_hooks
-        NULL,           // disable_hooks
+        ::EnableHooks,           // enable_hooks
+        ::DisableHooks,           // disable_hooks
     };
     void CtoS::RegisterPacketCallback(
         HookEntry* entry,

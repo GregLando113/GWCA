@@ -115,11 +115,21 @@ namespace {
             UI::RegisterUIMessageCallback(&OnRequestQuoteItemEntry, UI::UIMessage::kSendMerchantRequestQuote, OnRequestQuote_UIMessage, 0x1);
         }
     }
-    void Exit() {
+    void DisableHooks() {
         if (TransactItem_Func)
-            HookBase::RemoveHook(TransactItem_Func);
+            HookBase::DisableHooks(TransactItem_Func);
         if (RequestQuote_func)
-            HookBase::RemoveHook(RequestQuote_func);
+            HookBase::DisableHooks(RequestQuote_func);
+    }
+    void EnableHooks() {
+        if (TransactItem_Func)
+            HookBase::EnableHooks(TransactItem_Func);
+        if (RequestQuote_func)
+            HookBase::EnableHooks(RequestQuote_func);
+    }
+    void Exit() {
+        HookBase::RemoveHook(TransactItem_Func);
+        HookBase::RemoveHook(RequestQuote_func);
     }
 }
 
@@ -130,8 +140,8 @@ namespace GW {
         NULL,               // param
         ::Init,             // init_module
         ::Exit,               // exit_module
-        NULL,               // enable_hooks
-        NULL,               // disable_hooks
+        ::EnableHooks,               // enable_hooks
+        ::DisableHooks,               // disable_hooks
     };
     namespace Merchant {
 

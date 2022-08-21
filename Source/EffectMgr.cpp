@@ -51,13 +51,9 @@ namespace {
 
     void Init() {
         PostProcessEffect_Func = (PostProcessEffect_pt)Scanner::Find("\xD9\x5D\x0C\xD9\x45\x0C\x8D\x45\xF8", "xxxxxxxxx", -0x1C);
-        GWCA_INFO("[SCAN] PostProcessEffect = %p\n", PostProcessEffect_Func);
 
         DWORD address = Scanner::Find("\xf6\x40\x04\x01\x74\x10", "xxxxxx", 0x9);
         DropBuff_Func = (DropBuff_pt)Scanner::FunctionFromNearCall(address);
-
-        if (Verify(PostProcessEffect_Func))
-            HookBase::CreateHook(PostProcessEffect_Func, OnPostProcessEffect, (void **)&RetPostProcessEffect);
 
         GWCA_INFO("[SCAN] PostProcessEffect Function = %p", PostProcessEffect_Func);
         GWCA_INFO("[SCAN] DropBuff Function = %p", DropBuff_Func);
@@ -65,11 +61,21 @@ namespace {
         GWCA_ASSERT(PostProcessEffect_Func);
         GWCA_ASSERT(DropBuff_Func);
 #endif
+
+        HookBase::CreateHook(PostProcessEffect_Func, OnPostProcessEffect, (void**)&RetPostProcessEffect);
+    }
+
+    void DisableHooks() {
+        if (PostProcessEffect_Func)
+            HookBase::DisableHooks(PostProcessEffect_Func);
+    }
+    void EnableHooks() {
+        if (PostProcessEffect_Func)
+            HookBase::EnableHooks(PostProcessEffect_Func);
     }
 
     void Exit() {
-        if (PostProcessEffect_Func)
-            HookBase::RemoveHook(PostProcessEffect_Func);
+        HookBase::RemoveHook(PostProcessEffect_Func);
     }
 
 }
@@ -80,8 +86,8 @@ namespace GW {
         NULL,               // param
         ::Init,             // init_module
         ::Exit,             // exit_module
-        NULL,               // enable_hooks
-        NULL,               // disable_hooks
+        ::EnableHooks,               // enable_hooks
+        ::DisableHooks,               // disable_hooks
     };
     namespace Effects {
 

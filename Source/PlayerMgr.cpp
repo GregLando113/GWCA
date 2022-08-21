@@ -53,6 +53,7 @@ namespace {
         GWCA_INFO("[SCAN] RemoveActiveTitle_Func = %p", RemoveActiveTitle_Func);
         GWCA_INFO("[SCAN] SetActiveTitle_Func = %p", SetActiveTitle_Func);
         GWCA_INFO("[SCAN] DepositFaction_Func = %p", DepositFaction_Func);
+
 #ifdef _DEBUG
         GWCA_ASSERT(RemoveActiveTitle_Func);
         GWCA_ASSERT(SetActiveTitle_Func);

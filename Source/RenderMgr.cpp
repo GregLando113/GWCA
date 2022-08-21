@@ -91,40 +91,50 @@ namespace {
     void Init() {
         InitializeCriticalSection(&mutex);
 
-        uintptr_t address = Scanner::Find(
-            "\x8B\x75\x08\x83\xFE\x05\x7C\x14\x68\xDB\x02\x00\x00", "xxxxxxxxxxxxx", -0x4);
-        GWCA_INFO("[SCAN] GwGetTransform = %p\n", address);
-        if (Verify(address)) {
-            GwGetTransform_func = (GwGetTransform_pt)address;
-        }
+        GwGetTransform_func = (GwGetTransform_pt)Scanner::Find("\x8B\x75\x08\x83\xFE\x05\x7C\x14\x68\xDB\x02\x00\x00", "xxxxxxxxxxxxx", -0x4);
+        GwEndScene_Func = (GwEndScene_pt)Scanner::Find("\x89\x45\xFC\x57\x8B\x7D\x08\x8B\x8F", "xxxxxxxxx", -0xD);
+        ScreenCapture_Func = (GwEndScene_pt)Scanner::Find("\x83\xC4\x10\x8B\x86\x00\x00\x00\x00\x83", "xxxxx??xxx", -0x8F);
+        GwReset_Func = (GwReset_pt)Scanner::Find("\x3B\x4D\xB4\x6A\x00\x1B\xDB\xF7\xDB", "xxxxxxxxx", -0x8C);
 
-        GwEndScene_Func = (GwEndScene_pt)Scanner::Find(
-            "\x89\x45\xFC\x57\x8B\x7D\x08\x8B\x8F", "xxxxxxxxx", -0xD);
-        GWCA_INFO("[SCAN] GwEndScene = %p\n", GwEndScene_Func);
+        GWCA_INFO("[SCAN] GwGetTransform = %p", GwGetTransform_func);
+        GWCA_INFO("[SCAN] GwReset = %p", GwReset_Func);
+        GWCA_INFO("[SCAN] GwEndScene = %p", GwEndScene_Func);
+        GWCA_INFO("[SCAN] GwScreenCapture = %p", ScreenCapture_Func);
 
-        ScreenCapture_Func = (GwEndScene_pt)Scanner::Find(
-            "\x83\xC4\x10\x8B\x86\x00\x00\x00\x00\x83", "xxxxx??xxx", -0x8F);
-        GWCA_INFO("[SCAN] GwScreenCapture = %p\n", ScreenCapture_Func);
+#if _DEBUG
+        GWCA_ASSERT(GwGetTransform_func);
+        GWCA_ASSERT(GwReset_Func);
+        GWCA_ASSERT(GwEndScene_Func);
+        GWCA_ASSERT(ScreenCapture_Func);
+#endif
 
-        GwReset_Func = (GwReset_pt)Scanner::Find(
-            "\x3B\x4D\xB4\x6A\x00\x1B\xDB\xF7\xDB", "xxxxxxxxx", -0x8C);
-        GWCA_INFO("[SCAN] GwReset = %p\n", GwReset_Func);
+        HookBase::CreateHook(GwEndScene_Func, OnGwEndScene, (void **)&RetGwEndScene);
+        HookBase::CreateHook(ScreenCapture_Func, OnScreenCapture, (void **)&RetScreenCapture);
+        HookBase::CreateHook(GwReset_Func, OnGwReset, (void **)&RetGwReset);
+    }
 
-        if (Verify(GwEndScene_Func))
-            HookBase::CreateHook(GwEndScene_Func, OnGwEndScene, (void **)&RetGwEndScene);
-        if (Verify(ScreenCapture_Func))
-            HookBase::CreateHook(ScreenCapture_Func, OnScreenCapture, (void **)&RetScreenCapture);
-        if (Verify(GwReset_Func))
-            HookBase::CreateHook(GwReset_Func, OnGwReset, (void **)&RetGwReset);
+    void EnableHooks() {
+        if (GwEndScene_Func)
+            HookBase::EnableHooks(GwEndScene_Func);
+        if (ScreenCapture_Func)
+            HookBase::EnableHooks(ScreenCapture_Func);
+        if (GwReset_Func)
+            HookBase::EnableHooks(GwReset_Func);
+    }
+
+    void DisableHooks() {
+        if (GwEndScene_Func)
+            HookBase::DisableHooks(GwEndScene_Func);
+        if (ScreenCapture_Func)
+            HookBase::DisableHooks(ScreenCapture_Func);
+        if (GwReset_Func)
+            HookBase::DisableHooks(GwReset_Func);
     }
 
     void Exit() {
-        if (GwEndScene_Func)
-            HookBase::RemoveHook(GwEndScene_Func);
-        if (ScreenCapture_Func)
-            HookBase::RemoveHook(ScreenCapture_Func);
-        if (GwReset_Func)
-            HookBase::RemoveHook(GwReset_Func);
+        HookBase::RemoveHook(GwEndScene_Func);
+        HookBase::RemoveHook(ScreenCapture_Func);
+        HookBase::RemoveHook(GwReset_Func);
         DeleteCriticalSection(&mutex);
     }
 }
@@ -136,8 +146,8 @@ namespace GW {
         NULL,               // param
         ::Init,             // init_module
         ::Exit,             // exit_module
-        NULL,               // enable_hooks
-        NULL,               // disable_hooks
+        ::EnableHooks,               // enable_hooks
+        ::DisableHooks,               // disable_hooks
     };
 
     bool Render::GetIsInRenderLoop() {

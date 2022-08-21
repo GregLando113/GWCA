@@ -93,9 +93,7 @@ namespace {
     void Init() {
         // This function runs every time an update is made to the party window
         TickButtonUICallback = (UI::UIInteractionCallback)Scanner::Find("\x4D\x08\x83\xEC\x10\x8B\x41\x04\x56\x83\xF8\x04", "xxxxxxxxxxxx", -0x4);
-        if (TickButtonUICallback) {
-            HookBase::CreateHook(TickButtonUICallback, OnTickButtonUICallback, (void**)&TickButtonUICallback_Ret);
-        }
+
         DWORD address = Scanner::Find("\x8b\x75\x0c\x83\xc4\x04\x83\x3e\x00\x0f?????\xff\x70\x20","xxxxxxxxxx?????xxx",0x12);
         SetDifficulty_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
@@ -133,13 +131,9 @@ namespace {
         ReturnToOutpost_Func = (Void_pt)Scanner::FunctionFromNearCall(address);
 
         GWCA_INFO("[SCAN] ReturnToOutpost_Func = %p", ReturnToOutpost_Func);
-
         GWCA_INFO("[SCAN] TickButtonUICallback Function = %p", TickButtonUICallback);
-
         GWCA_INFO("[SCAN] SetDifficulty_Func = %p", SetDifficulty_Func);
-
         GWCA_INFO("[SCAN] PartySearchSeek_Func = %p", PartySearchSeek_Func);
-
         GWCA_INFO("[SCAN] PartySearchRequestJoin_Func = %p", PartySearchRequestJoin_Func);
         GWCA_INFO("[SCAN] PartySearchRequestReply_Func = %p", PartySearchRequestReply_Func);
         GWCA_INFO("[SCAN] PartySearchCancel_Func = %p", PartySearchCancel_Func);
@@ -147,7 +141,6 @@ namespace {
         GWCA_INFO("[SCAN] AddHenchman_Func = %p", AddHenchman_Func);
         GWCA_INFO("[SCAN] KickHero_Func = %p", KickHero_Func);
         GWCA_INFO("[SCAN] KickHenchman_Func = %p", KickHenchman_Func);
-
         GWCA_INFO("[SCAN] KickPlayer_Func = %p", KickPlayer_Func);
         GWCA_INFO("[SCAN] LeaveParty_Func = %p", LeaveParty_Func);
         GWCA_INFO("[SCAN] SetReadyStatus_Func = %p", SetReadyStatus_Func);
@@ -156,7 +149,6 @@ namespace {
         GWCA_INFO("[SCAN] SetHeroBehavior_Func = %p", SetHeroBehavior_Func);
         GWCA_INFO("[SCAN] PartyRejectInvite_Func = %p", PartyRejectInvite_Func);
         GWCA_INFO("[SCAN] PartyAcceptInvite_Func = %p", PartyAcceptInvite_Func);
-
         
 #ifdef _DEBUG
         GWCA_ASSERT(TickButtonUICallback);
@@ -178,9 +170,17 @@ namespace {
         GWCA_ASSERT(SetHeroBehavior_Func);
         GWCA_ASSERT(ReturnToOutpost_Func);
 #endif
-
+        HookBase::CreateHook(TickButtonUICallback, OnTickButtonUICallback, (void**)&TickButtonUICallback_Ret);
     }
 
+    void EnableHooks() {
+        if (TickButtonUICallback)
+            HookBase::EnableHooks(TickButtonUICallback);
+    }
+    void DisableHooks() {
+        if (TickButtonUICallback)
+            HookBase::DisableHooks(TickButtonUICallback);
+    }
     void Exit() {
         if (TickButtonUICallback)
             HookBase::RemoveHook(TickButtonUICallback);
@@ -195,8 +195,8 @@ namespace GW {
         NULL,           // param
         ::Init,         // init_module
         ::Exit,         // exit_module
-        NULL,           // enable_hooks
-        NULL,           // disable_hooks
+        ::EnableHooks,           // enable_hooks
+        ::DisableHooks,           // disable_hooks
     };
     namespace PartyMgr {
         bool Tick(bool flag) {

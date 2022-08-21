@@ -62,9 +62,12 @@ namespace {
     {
         InitializeCriticalSection(&mutex);
 
-        uintptr_t address = Scanner::Find(
-            "\x2B\xCE\x8B\x15\x00\x00\x00\x00\xF7\xD9\x1B\xC9", "xxxx????xxxx", +4);
+        uintptr_t address = Scanner::Find("\x2B\xCE\x8B\x15\x00\x00\x00\x00\xF7\xD9\x1B\xC9", "xxxx????xxxx", +4);
         GWCA_INFO("[SCAN] BasePointerLocation = %p", (void *)address);
+
+#if _DEBUG
+        GWCA_ASSERT(address);
+#endif
 
         if (Verify(address)) {
             address = *(uintptr_t *)(address);

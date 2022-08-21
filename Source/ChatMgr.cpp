@@ -342,96 +342,110 @@ namespace {
 
     void Init() {
         ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x2A);
-        GWCA_INFO("[SCAN] Chat Event = %p\n", ChatEvent_Func);
-
-        GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find(
-            "\xC7\x00\x60\xC0\xFF\xFF\x5D\xC3", "xxxxxxxx", -0x1C);
-        GWCA_INFO("[SCAN] GetSenderColor = %p\n", GetSenderColor_Func);
-
-        GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find(
-            "\xC7\x00\xB0\xB0\xB0\xFF\x5D\xC3", "xxxxxxxx", -0x27);
-        GWCA_INFO("[SCAN] GetMessageColor = %p\n", GetMessageColor_Func);
+        GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find("\xC7\x00\x60\xC0\xFF\xFF\x5D\xC3", "xxxxxxxx", -0x1C);
+        GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find("\xC7\x00\xB0\xB0\xB0\xFF\x5D\xC3", "xxxxxxxx", -0x27);
 
         // The last 4 bytes of the patterns are the "SendUIMessage" message id (i.e. 0x1000007E)
-        LocalMessage_Func = (LocalMessage_pt)Scanner::Find(
-            "\x8D\x45\xF8\x6A\x00\x50\x68\x7E\x00\x00\x10", "xxxxxxxxxxx", -0x3D);
-        GWCA_INFO("[SCAN] LocalMessage = %p\n", LocalMessage_Func);
+        LocalMessage_Func = (LocalMessage_pt)Scanner::Find("\x8D\x45\xF8\x6A\x00\x50\x68\x7E\x00\x00\x10", "xxxxxxxxxxx", -0x3D);
+        SendChat_Func = (SendChat_pt)Scanner::Find("\x8D\x85\xE0\xFE\xFF\xFF\x50\x68\x1C\x01", "xxxxxxxxx", -0x3E);
+        StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find("\xFC\x53\x56\x8B\xF1\x57\x6A\x05\xFF\x36\xE8", "xxxxxxxxxxx", -0xF);
+        WriteWhisper_Func = (WriteWhisper_pt)Scanner::Find("\x83\xC4\x04\x8D\x58\x2E", "xxxxxx", -0x18);
+        PrintChat_Func = (PrintChat_pt)Scanner::Find("\x3D\x00\x00\x00\x00\x73\x2B\x6A", "x??xxxxx", -0x46);
+        AddToChatLog_Func = (AddToChatLog_pt)GW::Scanner::Find("\x40\x25\xff\x01\x00\x00", "xxxxxx", -0x97);
+        ChatBuffer_Addr = *(Chat::ChatBuffer***)Scanner::Find("\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
 
-        SendChat_Func = (SendChat_pt)Scanner::Find(
-            "\x8D\x85\xE0\xFE\xFF\xFF\x50\x68\x1C\x01", "xxxxxxxxx", -0x3E);
-        GWCA_INFO("[SCAN] SendChat = %p\n", SendChat_Func);
+        uintptr_t address = Scanner::Find("\x08\xFF\xD0\xC7\x05\x00\x00\x00\x00\x01", "xxxxx????x", +5);
+        if (Verify(address))
+            IsTyping_Addr = *(uintptr_t *)address;
 
-        StartWhisper_Func = (StartWhisper_pt)GW::Scanner::Find(
-            "\xFC\x53\x56\x8B\xF1\x57\x6A\x05\xFF\x36\xE8", "xxxxxxxxxxx", -0xF);
-        GWCA_INFO("[SCAN] StartWhisper = %p\n", StartWhisper_Func);
+        GWCA_INFO("[SCAN] Chat Event = %p", ChatEvent_Func);
+        GWCA_INFO("[SCAN] GetSenderColor = %p", GetSenderColor_Func);
+        GWCA_INFO("[SCAN] GetMessageColor = %p", GetMessageColor_Func);
+        GWCA_INFO("[SCAN] LocalMessage = %p", LocalMessage_Func);
+        GWCA_INFO("[SCAN] SendChat = %p", SendChat_Func);
+        GWCA_INFO("[SCAN] StartWhisper = %p", StartWhisper_Func);
+        GWCA_INFO("[SCAN] WriteWhisper = %p", WriteWhisper_Func);
+        GWCA_INFO("[SCAN] PrintChat = %p", PrintChat_Func);
+        GWCA_INFO("[SCAN] AddToChatLog_Func = %p", AddToChatLog_Func);
+        GWCA_INFO("[SCAN] ChatBuffer_Addr = %p", ChatBuffer_Addr);
+        GWCA_INFO("[SCAN] IsTyping_Addr = %p", IsTyping_Addr);
 
-        WriteWhisper_Func = (WriteWhisper_pt)Scanner::Find(
-            "\x83\xC4\x04\x8D\x58\x2E", "xxxxxx", -0x18);
-        GWCA_INFO("[SCAN] WriteWhisper = %p\n", WriteWhisper_Func);
+#if _DEBUG
+        GWCA_ASSERT(ChatEvent_Func);
+        GWCA_ASSERT(GetSenderColor_Func);
+        GWCA_ASSERT(GetMessageColor_Func);
+        GWCA_ASSERT(LocalMessage_Func);
+        GWCA_ASSERT(SendChat_Func);
+        GWCA_ASSERT(StartWhisper_Func);
+        GWCA_ASSERT(WriteWhisper_Func);
+        GWCA_ASSERT(PrintChat_Func);
+        GWCA_ASSERT(AddToChatLog_Func);
+        GWCA_ASSERT(ChatBuffer_Addr);
+        GWCA_ASSERT(IsTyping_Addr);
+#endif
 
-        PrintChat_Func = (PrintChat_pt)Scanner::Find(
-            "\x3D\x00\x00\x00\x00\x73\x2B\x6A", "x??xxxxx", -0x46);
-        GWCA_INFO("[SCAN] PrintChat = %p\n", PrintChat_Func);
+        HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
+        HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
+        HookBase::CreateHook(GetSenderColor_Func, OnGetSenderColor, (void **)&RetGetSenderColor);
+        HookBase::CreateHook(GetMessageColor_Func, OnGetMessageColor, (void **)&RetGetMessageColor);
+        HookBase::CreateHook(LocalMessage_Func, OnLocalMessage, (void **)&RetLocalMessage);
+        HookBase::CreateHook(SendChat_Func, OnSendChat, (void **)&RetSendChat);
+        HookBase::CreateHook(WriteWhisper_Func, OnWriteWhisper, (void **)&RetWriteWhisper);
+        HookBase::CreateHook(PrintChat_Func, OnPrintChat, (void **)&RetPrintChat);
+        HookBase::CreateHook(AddToChatLog_Func, OnAddToChatLog, (void**)&RetAddToChatLog);
+    }
 
-        {
-            AddToChatLog_Func = (AddToChatLog_pt)GW::Scanner::Find(
-                "\x40\x25\xff\x01\x00\x00", "xxxxxx", -0x97);
-            GWCA_INFO("[SCAN] AddToChatLog_Func = %p\n", AddToChatLog_Func);
-        }
-
-        {
-            ChatBuffer_Addr = *(Chat::ChatBuffer***)Scanner::Find(
-                "\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
-            GWCA_INFO("[SCAN] ChatBuffer_Addr = %p\n", (void *)ChatBuffer_Addr);
-        }
-
-        {
-            uintptr_t address = Scanner::Find(
-                "\x08\xFF\xD0\xC7\x05\x00\x00\x00\x00\x01", "xxxxx????x", +5);
-            GWCA_INFO("[SCAN] IsTyping_Addr = %p\n", (void *)address);
-            if (Verify(address))
-                IsTyping_Addr = *(uintptr_t *)address;
-        }
-
-        if (Verify(StartWhisper_Func))
-            HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
-        if (Verify(ChatEvent_Func))
-            HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
-        if (Verify(GetSenderColor_Func))
-            HookBase::CreateHook(GetSenderColor_Func, OnGetSenderColor, (void **)&RetGetSenderColor);
-        if (Verify(GetMessageColor_Func))
-            HookBase::CreateHook(GetMessageColor_Func, OnGetMessageColor, (void **)&RetGetMessageColor);
-        if (Verify(LocalMessage_Func))
-            HookBase::CreateHook(LocalMessage_Func, OnLocalMessage, (void **)&RetLocalMessage);
-        if (Verify(SendChat_Func))
-            HookBase::CreateHook(SendChat_Func, OnSendChat, (void **)&RetSendChat);
-        if (Verify(WriteWhisper_Func))
-            HookBase::CreateHook(WriteWhisper_Func, OnWriteWhisper, (void **)&RetWriteWhisper);
-        if (Verify(PrintChat_Func))
-            HookBase::CreateHook(PrintChat_Func, OnPrintChat, (void **)&RetPrintChat);
-        if (Verify(AddToChatLog_Func))
-            HookBase::CreateHook(AddToChatLog_Func, OnAddToChatLog, (void**)&RetAddToChatLog);
+    void EnableHooks() {
+        if (StartWhisper_Func)      
+            HookBase::EnableHooks(StartWhisper_Func);
+        if (ChatEvent_Func)      
+            HookBase::EnableHooks(ChatEvent_Func);
+        if (GetSenderColor_Func)      
+            HookBase::EnableHooks(GetSenderColor_Func);
+        if (GetMessageColor_Func)      
+            HookBase::EnableHooks(GetMessageColor_Func);
+        if (LocalMessage_Func)      
+            HookBase::EnableHooks(LocalMessage_Func);
+        if (SendChat_Func)      
+            HookBase::EnableHooks(SendChat_Func);
+        if (WriteWhisper_Func)      
+            HookBase::EnableHooks(WriteWhisper_Func);
+        if (PrintChat_Func)      
+            HookBase::EnableHooks(PrintChat_Func);
+        if (AddToChatLog_Func)      
+            HookBase::EnableHooks(AddToChatLog_Func);
+    }
+    void DisableHooks() {
+        if (StartWhisper_Func)
+            HookBase::DisableHooks(StartWhisper_Func);
+        if (ChatEvent_Func)
+            HookBase::DisableHooks(ChatEvent_Func);
+        if (GetSenderColor_Func)
+            HookBase::DisableHooks(GetSenderColor_Func);
+        if (GetMessageColor_Func)
+            HookBase::DisableHooks(GetMessageColor_Func);
+        if (LocalMessage_Func)
+            HookBase::DisableHooks(LocalMessage_Func);
+        if (SendChat_Func)
+            HookBase::DisableHooks(SendChat_Func);
+        if (WriteWhisper_Func)
+            HookBase::DisableHooks(WriteWhisper_Func);
+        if (PrintChat_Func)
+            HookBase::DisableHooks(PrintChat_Func);
+        if (AddToChatLog_Func)
+            HookBase::DisableHooks(AddToChatLog_Func);
     }
 
     void Exit() {
-        if(StartWhisper_Func)
-            HookBase::RemoveHook(StartWhisper_Func);
-        if (ChatEvent_Func)
-            HookBase::RemoveHook(ChatEvent_Func);
-        if (GetSenderColor_Func)
-            HookBase::RemoveHook(GetSenderColor_Func);
-        if (GetMessageColor_Func)
-            HookBase::RemoveHook(GetMessageColor_Func);
-        if (LocalMessage_Func)
-            HookBase::RemoveHook(LocalMessage_Func);
-        if (SendChat_Func)
-            HookBase::RemoveHook(SendChat_Func);
-        if (WriteWhisper_Func)
-            HookBase::RemoveHook(WriteWhisper_Func);
-        if (PrintChat_Func)
-            HookBase::RemoveHook(PrintChat_Func);
-        if (AddToChatLog_Func)
-            HookBase::RemoveHook(AddToChatLog_Func);
+        HookBase::RemoveHook(StartWhisper_Func);
+        HookBase::RemoveHook(ChatEvent_Func);
+        HookBase::RemoveHook(GetSenderColor_Func);
+        HookBase::RemoveHook(GetMessageColor_Func);
+        HookBase::RemoveHook(LocalMessage_Func);
+        HookBase::RemoveHook(SendChat_Func);
+        HookBase::RemoveHook(WriteWhisper_Func);
+        HookBase::RemoveHook(PrintChat_Func);
+        HookBase::RemoveHook(AddToChatLog_Func);
     }
 }
 
@@ -442,8 +456,8 @@ namespace GW {
         NULL,           // param
         ::Init,         // init_module
         ::Exit,         // exit_module
-        NULL,           // enable_hooks
-        NULL,           // disable_hooks
+        ::EnableHooks,           // enable_hooks
+        ::DisableHooks, // disable_hooks
     };
 
     void Chat::RegisterSendChatCallback(

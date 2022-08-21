@@ -152,9 +152,16 @@ namespace {
         GWCA_ASSERT(CancelEnterChallengeMission_Func);
 #endif
     }
-    void Exit() {
+    void EnableHooks() {
         if (EnterChallengeMission_Func)
-            HookBase::RemoveHook(EnterChallengeMission_Func);
+            HookBase::EnableHooks(EnterChallengeMission_Func);
+    }
+    void DisableHooks() {
+        if (EnterChallengeMission_Func)
+            HookBase::DisableHooks(EnterChallengeMission_Func);
+    }
+    void Exit() {
+        HookBase::RemoveHook(EnterChallengeMission_Func);
     }
 }
 
@@ -165,8 +172,8 @@ namespace GW {
         NULL,           // param
         ::Init,         // init_module
         ::Exit,           // exit_module
-        NULL,           // enable_hooks
-        NULL,           // disable_hooks
+        ::EnableHooks,           // enable_hooks
+        ::DisableHooks,           // disable_hooks
     };
     namespace Map {
 

@@ -228,8 +228,7 @@ namespace {
         GWCA_ASSERT(SalvageMaterials_Func);
         GWCA_ASSERT(SalvageStart_Func);
 #endif
-        if (ItemClick_Func)
-            HookBase::CreateHook(ItemClick_Func, OnItemClick, (void**)&RetItemClick);
+        HookBase::CreateHook(ItemClick_Func, OnItemClick, (void**)&RetItemClick);
         if (PingWeaponSet_Func) {
             HookBase::CreateHook(PingWeaponSet_Func, OnPingWeaponSet, (void**)&PingWeaponSet_Ret);
             UI::RegisterUIMessageCallback(&OnPingWeaponSet_Entry, UI::UIMessage::kSendPingWeaponSet, OnPingWeaponSet_UIMessage, 0x1);
@@ -244,15 +243,33 @@ namespace {
         }
     }
 
-    void Exit() {
+    void EnableHooks() {
         if (ItemClick_Func)
-            HookBase::RemoveHook(ItemClick_Func);
+            HookBase::EnableHooks(ItemClick_Func);
         if (PingWeaponSet_Func)
-            HookBase::RemoveHook(PingWeaponSet_Func);
+            HookBase::EnableHooks(PingWeaponSet_Func);
         if (MoveItem_Func)
-            HookBase::RemoveHook(MoveItem_Func);
+            HookBase::EnableHooks(MoveItem_Func);
         if (UseItem_Func)
-            HookBase::RemoveHook(UseItem_Func);
+            HookBase::EnableHooks(UseItem_Func);
+    }
+
+    void DisableHooks() {
+        if (ItemClick_Func)
+            HookBase::DisableHooks(ItemClick_Func);
+        if (PingWeaponSet_Func)
+            HookBase::DisableHooks(PingWeaponSet_Func);
+        if (MoveItem_Func)
+            HookBase::DisableHooks(MoveItem_Func);
+        if (UseItem_Func)
+            HookBase::DisableHooks(UseItem_Func);
+    }
+
+    void Exit() {
+        HookBase::RemoveHook(ItemClick_Func);
+        HookBase::RemoveHook(PingWeaponSet_Func);
+        HookBase::RemoveHook(MoveItem_Func);
+        HookBase::RemoveHook(UseItem_Func);
     }
 }
 
@@ -263,8 +280,8 @@ namespace GW {
         NULL,           // param
         ::Init,         // init_module
         ::Exit,         // exit_module
-        NULL,           // enable_hooks
-        NULL,           // disable_hooks
+        ::EnableHooks,           // enable_hooks
+        ::DisableHooks,           // disable_hooks
     };
     bool Item::GetIsZcoin() const {
         if (model_file_id == 31202) return true; // Copper

@@ -53,44 +53,45 @@ namespace {
     uintptr_t FriendList_Addr;
 
     void Init() {
-        {
-            // @Remplaced
-            uintptr_t address = Scanner::Find(
-                "\x74\x30\x8D\x47\xFF\x83\xF8\x01", "xxxxxxxx", -0xB);
-            GWCA_INFO("[SCAN] FriendList_Addr = %p\n", (void *)address);
-            if (Verify(address)) {
-                FriendList_Addr = *(uintptr_t *)address;
-            }
-        }
 
-        // @Remplaced
-        FriendStatusHandler_Func = (FriendStatusHandler_pt)Scanner::Find(
-            "\x8B\x75\x14\x8B\x01\x89\x45\x98", "xxxxxxxx", -0x17);
-        GWCA_INFO("[SCAN] FriendStatusHandler = %p\n", FriendStatusHandler_Func);
-        if (Verify(FriendStatusHandler_Func)) {
-            HookBase::CreateHook(FriendStatusHandler_Func,
-                OnFriendStatusHandler, (void **)&RetFriendStatusHandler);
-        }
+        uintptr_t address = Scanner::Find("\x74\x30\x8D\x47\xFF\x83\xF8\x01", "xxxxxxxx", -0xB);
+        if (Verify(address))
+            FriendList_Addr = *(uintptr_t*)address;
 
-        // @Remplaced
-        SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find(
-            "\x83\xFE\x03\x77\x40\xFF\x24\xB5\x00\x00\x00\x00\x33\xC0", "xxxxxxxx????xx", -0x26);
-        GWCA_INFO("[SCAN] SetOnlineStatus = %p\n", SetOnlineStatus_Func);
+        FriendStatusHandler_Func = (FriendStatusHandler_pt)Scanner::Find("\x8B\x75\x14\x8B\x01\x89\x45\x98", "xxxxxxxx", -0x17);
+        SetOnlineStatus_Func = (SetOnlineStatus_pt)Scanner::Find("\x83\xFE\x03\x77\x40\xFF\x24\xB5\x00\x00\x00\x00\x33\xC0", "xxxxxxxx????xx", -0x26);
+        AddFriend_Func = (AddFriend_pt)Scanner::Find("\x8B\x75\x10\x83\xFE\x03\x74\x65", "xxxxxxxx", -0x48);
+        RemoveFriend_Func = (RemoveFriend_pt)Scanner::Find("\x8B\x4D\x10\x89\x4E\x28\x8B\x4D\x08\xC7\x06", "xxxxxxxxxxx", -0x2D);
 
-        // @Remplaced
-        AddFriend_Func = (AddFriend_pt)Scanner::Find(
-            "\x8B\x75\x10\x83\xFE\x03\x74\x65", "xxxxxxxx", -0x48);
-        GWCA_INFO("[SCAN] AddFriend_Func = %p\n", AddFriend_Func);
+        GWCA_INFO("[SCAN] FriendList_Addr = %p", FriendList_Addr);
+        GWCA_INFO("[SCAN] FriendStatusHandler = %p", FriendStatusHandler_Func);
+        GWCA_INFO("[SCAN] SetOnlineStatus = %p", SetOnlineStatus_Func);
+        GWCA_INFO("[SCAN] AddFriend_Func = %p", AddFriend_Func);
+        GWCA_INFO("[SCAN] RemoveFriend_Func = %p", RemoveFriend_Func);
 
-        // @Remplaced
-        RemoveFriend_Func = (RemoveFriend_pt)Scanner::Find(
-            "\x8B\x4D\x10\x89\x4E\x28\x8B\x4D\x08\xC7\x06", "xxxxxxxxxxx", -0x2D);
-        GWCA_INFO("[SCAN] RemoveFriend_Func = %p\n", RemoveFriend_Func);
+#if _DEBUG
+        GWCA_ASSERT(FriendList_Addr);
+        GWCA_ASSERT(FriendStatusHandler_Func);
+        GWCA_ASSERT(SetOnlineStatus_Func);
+        GWCA_ASSERT(AddFriend_Func);
+        GWCA_ASSERT(RemoveFriend_Func);
+#endif
+
+        HookBase::CreateHook(FriendStatusHandler_Func, OnFriendStatusHandler, (void**)&RetFriendStatusHandler);
+    }
+
+    void EnableHooks() {
+        if (FriendStatusHandler_Func)
+            HookBase::EnableHooks(FriendStatusHandler_Func);
+    }
+
+    void DisableHooks() {
+        if(FriendStatusHandler_Func)
+            HookBase::DisableHooks(FriendStatusHandler_Func);
     }
 
     void Exit() {
-        if (FriendStatusHandler_Func)
-            HookBase::RemoveHook(FriendStatusHandler_Func);
+        HookBase::RemoveHook(FriendStatusHandler_Func);
     }
 }
 

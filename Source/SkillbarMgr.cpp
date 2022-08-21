@@ -187,11 +187,23 @@ namespace {
 
     }
 
-    static void Exit() {
+    void EnableHooks() {
         if(UseSkill_Func)
-            HookBase::RemoveHook(UseSkill_Func);
+            HookBase::EnableHooks(UseSkill_Func);
+        if(LoadSkills_Func)
+            HookBase::EnableHooks(LoadSkills_Func);
+    }
+
+    void DisableHooks() {
+        if (UseSkill_Func)
+            HookBase::DisableHooks(UseSkill_Func);
         if (LoadSkills_Func)
-            HookBase::RemoveHook(LoadSkills_Func);
+            HookBase::DisableHooks(LoadSkills_Func);
+    }
+
+    void Exit() {
+        HookBase::RemoveHook(UseSkill_Func);
+        HookBase::RemoveHook(LoadSkills_Func);
     }
 
 
@@ -203,8 +215,8 @@ namespace GW {
         NULL,               // param
         ::Init,             // init_module
         ::Exit,               // exit_module
-        NULL,               // enable_hooks
-        NULL,               // disable_hooks
+        ::EnableHooks,               // enable_hooks
+        ::DisableHooks,               // disable_hooks
     };
     namespace SkillbarMgr {
 

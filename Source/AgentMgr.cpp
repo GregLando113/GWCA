@@ -203,9 +203,29 @@ namespace {
         
 
     }
-
+    void EnableHooks() {
+        if (SendDialog_Func)
+            HookBase::EnableHooks(SendDialog_Func);
+        if (SendSignpostDialog_Func)
+            HookBase::EnableHooks(SendSignpostDialog_Func);
+        if (CallTarget_Func)
+            HookBase::EnableHooks(CallTarget_Func);
+        if (InteractNPC_Func)
+            HookBase::EnableHooks(InteractNPC_Func);
+    }
+    void DisableHooks() {
+        if(SendDialog_Func)
+            HookBase::DisableHooks(SendDialog_Func);
+        if(SendSignpostDialog_Func)
+            HookBase::DisableHooks(SendSignpostDialog_Func);
+        if(CallTarget_Func)
+            HookBase::DisableHooks(CallTarget_Func);
+        if(InteractNPC_Func)
+            HookBase::DisableHooks(InteractNPC_Func);
+    }
     void Exit() {
         HookBase::RemoveHook(SendDialog_Func);
+        HookBase::RemoveHook(SendSignpostDialog_Func);
         HookBase::RemoveHook(CallTarget_Func);
         HookBase::RemoveHook(InteractNPC_Func);
     }
@@ -218,8 +238,8 @@ namespace GW {
         NULL,               // param
         ::Init,             // init_module
         ::Exit,             // exit_module
-        NULL,               // enable_hooks
-        NULL,               // disable_hooks
+        ::EnableHooks,               // enable_hooks
+        ::DisableHooks,               // disable_hooks
     };
 
     namespace Agents {

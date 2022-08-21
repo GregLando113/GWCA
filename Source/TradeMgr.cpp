@@ -77,10 +77,7 @@ namespace {
             TODO: Move the RVA's for submitting etc further up the UI tree in order to trigger the UI to update.
         */
         OfferTradeItem_Func = (OfferTradeItem_pt)Scanner::Find("\x68\x49\x04\x00\x00\x89\x5D\xE4\xE8", "xxxxxxxxx", -0x6B);
-        HookBase::CreateHook(OfferTradeItem_Func, OnOfferTradeItem, (void**)&RetOfferTradeItem);
-
         UpdateTradeCart_Func = (UpdateTradeCart_pt)Scanner::Find("\x57\x8B\x7D\x0C\x3D\xEF\x00\x00\x10", "xxxxxxxxx", -0x24);
-        HookBase::CreateHook(UpdateTradeCart_Func, OnUpdateTradeWindow, (void**)&RetUpdateTradeCart);
 
         // typedef void(__fastcall*)(void* ecx, void* edx, UI::InteractionMessage*); 06f0
         DWORD address = Scanner::Find("\x8b\x41\x04\x83\xf8\x0e\x0f\x87\x82\x02\x00\x00", "xxxxxxxxxxxx", -0xc); 
@@ -96,13 +93,13 @@ namespace {
         address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmtrade.cpp", "breakClose", 0x1e);
         TradeCancel_Func = (Void_pt)Scanner::FunctionFromNearCall(address);
 
-        GWCA_INFO("[SCAN] OfferTradeItem_Func = %p\n", OfferTradeItem_Func);
-        GWCA_INFO("[SCAN] UpdateTradeCart_Func = %p\n", UpdateTradeCart_Func);
-        GWCA_INFO("[SCAN] TradeCancelOffer_Func = %p\n", TradeCancelOffer_Func);
-        GWCA_INFO("[SCAN] TradeSendOffer_Func = %p\n", TradeSendOffer_Func);
-        GWCA_INFO("[SCAN] TradeAcceptOffer_Func = %p\n", TradeAcceptOffer_Func);
-        GWCA_INFO("[SCAN] TradeRemoveItem_Func = %p\n", TradeRemoveItem_Func);
-        GWCA_INFO("[SCAN] TradeCancel_Func = %p\n", TradeCancel_Func);
+        GWCA_INFO("[SCAN] OfferTradeItem_Func = %p", OfferTradeItem_Func);
+        GWCA_INFO("[SCAN] UpdateTradeCart_Func = %p", UpdateTradeCart_Func);
+        GWCA_INFO("[SCAN] TradeCancelOffer_Func = %p", TradeCancelOffer_Func);
+        GWCA_INFO("[SCAN] TradeSendOffer_Func = %p", TradeSendOffer_Func);
+        GWCA_INFO("[SCAN] TradeAcceptOffer_Func = %p", TradeAcceptOffer_Func);
+        GWCA_INFO("[SCAN] TradeRemoveItem_Func = %p", TradeRemoveItem_Func);
+        GWCA_INFO("[SCAN] TradeCancel_Func = %p", TradeCancel_Func);
 
 #ifdef _DEBUG
         GWCA_ASSERT(OfferTradeItem_Func);
@@ -113,6 +110,21 @@ namespace {
         GWCA_ASSERT(TradeRemoveItem_Func);
         GWCA_ASSERT(TradeCancel_Func);
 #endif
+
+        HookBase::CreateHook(OfferTradeItem_Func, OnOfferTradeItem, (void**)&RetOfferTradeItem);
+        HookBase::CreateHook(UpdateTradeCart_Func, OnUpdateTradeWindow, (void**)&RetUpdateTradeCart);
+    }
+    void EnableHooks() {
+        if(OfferTradeItem_Func)
+            HookBase::EnableHooks(OfferTradeItem_Func);
+        if(UpdateTradeCart_Func)
+            HookBase::EnableHooks(UpdateTradeCart_Func);
+    }
+    void DisableHooks() {
+        if (OfferTradeItem_Func)
+            HookBase::DisableHooks(OfferTradeItem_Func);
+        if (UpdateTradeCart_Func)
+            HookBase::DisableHooks(UpdateTradeCart_Func);
     }
     void Exit() {
         HookBase::RemoveHook(OfferTradeItem_Func);
@@ -125,8 +137,8 @@ namespace GW {
         NULL,           // param
         ::Init,           // init_module
         ::Exit,           // exit_module
-        NULL,           // enable_hooks
-        NULL,           // disable_hooks
+        ::EnableHooks,           // enable_hooks
+        ::DisableHooks,           // disable_hooks
     };
 
     bool Trade::OpenTradeWindow(uint32_t agent_id) { 

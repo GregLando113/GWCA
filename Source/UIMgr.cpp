@@ -299,14 +299,15 @@ namespace {
         GWCA_INFO("[SCAN] preferences_array2 = %p", preferences_array2);
         GWCA_INFO("[SCAN] SetTickboxPref = %p", SetTickboxPref_Func);
         GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %p", SetFloatingWindowVisible_Func);
-        GWCA_INFO("[SCAN] floating_windows_array = %p\n", floating_windows_array);
-        GWCA_INFO("[SCAN] SetWindowVisible_Func = %p\n", SetWindowVisible_Func);
-        GWCA_INFO("[SCAN] SetWindowPosition_Func = %p\n", SetWindowPosition_Func);
-        GWCA_INFO("[SCAN] window_positions_array = %p\n", window_positions_array);
-        GWCA_INFO("[SCAN] ValidateAsyncDecodeStr = %p\n", ValidateAsyncDecodeStr);
-        GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %p\n", AsyncDecodeStringPtr);
-        GWCA_INFO("[SCAN] SetVolume_Func = %p\n", SetVolume_Func);
-        GWCA_INFO("[SCAN] SetMasterVolume_Func = %p\n", SetMasterVolume_Func);
+        GWCA_INFO("[SCAN] floating_windows_array = %p", floating_windows_array);
+        GWCA_INFO("[SCAN] SetWindowVisible_Func = %p", SetWindowVisible_Func);
+        GWCA_INFO("[SCAN] SetWindowPosition_Func = %p", SetWindowPosition_Func);
+        GWCA_INFO("[SCAN] window_positions_array = %p", window_positions_array);
+        GWCA_INFO("[SCAN] ValidateAsyncDecodeStr = %p", ValidateAsyncDecodeStr);
+        GWCA_INFO("[SCAN] AsyncDecodeStringPtr = %p", AsyncDecodeStringPtr);
+        GWCA_INFO("[SCAN] SetVolume_Func = %p", SetVolume_Func);
+        GWCA_INFO("[SCAN] SetMasterVolume_Func = %p", SetMasterVolume_Func);
+        GWCA_INFO("[SCAN] DrawOnCompass_Func = %p", DrawOnCompass_Func);
 
 #if _DEBUG
         GWCA_ASSERT(FrameCache_addr);
@@ -332,15 +333,42 @@ namespace {
         GWCA_ASSERT(AsyncDecodeStringPtr);
         GWCA_ASSERT(SetVolume_Func);
         GWCA_ASSERT(SetMasterVolume_Func);
+        GWCA_ASSERT(DrawOnCompass_Func);
 #endif
         HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
         HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
+        
+    }
+
+    void EnableHooks() {
+        if (AsyncDecodeStringPtr)
+            HookBase::EnableHooks(AsyncDecodeStringPtr);
+        if (DoAction_Func)
+            HookBase::EnableHooks(DoAction_Func);
+        if (SetTickboxPref_Func)
+            HookBase::EnableHooks(SetTickboxPref_Func);
+        if (SetTooltip_Func)
+            HookBase::EnableHooks(SetTooltip_Func);
+        if (SendUIMessage_Func)
+            HookBase::EnableHooks(SendUIMessage_Func);
         UI::RegisterUIMessageCallback(&open_template_hook, UI::UIMessage::kOpenTemplate, OnOpenTemplate_UIMessage);
+    }
+    void DisableHooks() {
+        UI::RemoveUIMessageCallback(&open_template_hook);
+        if (AsyncDecodeStringPtr)
+            HookBase::DisableHooks(AsyncDecodeStringPtr);
+        if (DoAction_Func)
+            HookBase::DisableHooks(DoAction_Func);
+        if (SetTickboxPref_Func)
+            HookBase::DisableHooks(SetTickboxPref_Func);
+        if (SetTooltip_Func)
+            HookBase::DisableHooks(SetTooltip_Func);
+        if (SendUIMessage_Func)
+            HookBase::DisableHooks(SendUIMessage_Func);
     }
 
     void Exit()
     {
-        UI::RemoveUIMessageCallback(&open_template_hook);
         HookBase::RemoveHook(AsyncDecodeStringPtr);
         HookBase::RemoveHook(DoAction_Func);
         HookBase::RemoveHook(SetTickboxPref_Func);
@@ -357,8 +385,8 @@ namespace GW {
         NULL,           // param
         ::Init,         // init_module
         ::Exit,         // exit_module
-        NULL,           // enable_hooks
-        NULL,           // disable_hooks
+        ::EnableHooks,           // enable_hooks
+        ::DisableHooks,           // disable_hooks
     };
     Vec2f UI::WindowPosition::yAxis(float multiplier) const {
         const float h = static_cast<float>(Render::GetViewportHeight());

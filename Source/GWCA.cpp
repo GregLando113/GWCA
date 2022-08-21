@@ -75,7 +75,7 @@ namespace GW
 
             // We could get it from thread ctx
             uintptr_t address = Scanner::Find("\x50\x6A\x0F\x6A\x00\xFF\x35", "xxxxxxx", +7);
-            GWCA_INFO("[SCAN] base_ptr = %p\n", (void *)address);
+            GWCA_INFO("[SCAN] base_ptr = %p", (void *)address);
             if (Verify(address))
                 base_ptr = *(uintptr_t *)address;
 
@@ -84,10 +84,10 @@ namespace GW
             address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uipregame.cpp", "!s_scene", 0x34);
             if (Verify(address))
                 PreGameContext_addr = *(uintptr_t*)address;
-            GWCA_INFO("[SCAN] PreGameContext_addr = %p\n", PreGameContext_addr);
+            GWCA_INFO("[SCAN] PreGameContext_addr = %p", PreGameContext_addr);
 
             for (Module *module : modules) {
-                GWCA_INFO("Initializing module '%s'\n", module->name);
+                GWCA_INFO("\nInitializing module '%s'\n", module->name);
                 if (module->init_module)
                     module->init_module();
             }

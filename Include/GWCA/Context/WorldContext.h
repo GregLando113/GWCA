@@ -67,15 +67,22 @@ namespace GW {
     };
     static_assert(sizeof(ProfessionState) == 0x14);
 
+    struct AccountInfo {
+        wchar_t* account_name;
+        uint32_t wins;
+        uint32_t losses;
+        uint32_t rating;
+        uint32_t qualifier_points;
+        uint32_t rank;
+        uint32_t tournament_reward_points;
+    };
+    static_assert(sizeof(AccountInfo) == 0x1c);
+
     struct WorldContext {
 
         static WorldContext* instance();
 
-        struct sub1 {
-            wchar_t* name;
-            //...
-        } *sub1; // 0x0
-
+        /* +h0000 */ AccountInfo* accountInfo;
         /* +h0004 */ Array<wchar_t> message_buff;
         /* +h0014 */ Array<wchar_t> dialog_buff;
         /* +h0024 */ MerchItemArray merch_items;

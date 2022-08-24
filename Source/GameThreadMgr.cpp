@@ -36,8 +36,8 @@ namespace {
         EnterCriticalSection(&mutex);
         in_gamethread = true;
         if (!singleshot_callbacks.empty()) {
-            for (const auto& Call : singleshot_callbacks) {
-                Call();
+            for (const auto& call : singleshot_callbacks) {
+                call();
             }
 
             singleshot_callbacks.clear();
@@ -129,7 +129,7 @@ namespace GW {
         LeaveCriticalSection(&mutex);
     }
 
-    void GameThread::Enqueue(std::function<void()> f)
+    void GameThread::Enqueue(const std::function<void()>& f)
     {
         if (!initialised)
             return;

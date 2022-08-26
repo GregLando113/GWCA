@@ -128,7 +128,7 @@ namespace GW {
         GameThread_callbacks.clear();
         LeaveCriticalSection(&mutex);
     }
-
+    
     void GameThread::Enqueue(const std::function<void()>& f)
     {
         if (!initialised)
@@ -142,6 +142,7 @@ namespace GW {
         }
         LeaveCriticalSection(&mutex);
     }
+
     bool GameThread::IsInGameThread()
     {
         if (!initialised)

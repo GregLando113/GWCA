@@ -90,8 +90,7 @@ namespace {
 
     void OnInteractNPC(uint32_t agent_id, uint32_t call_target) {
         GW::Hook::EnterHook();
-        if (Agents::GetIsAgentTargettable(Agents::GetAgentByID(agent_id)))
-            InteractNPC_Ret(agent_id, call_target);
+        InteractNPC_Ret(agent_id, call_target);
         GW::Hook::LeaveHook();
     }
 
@@ -101,8 +100,7 @@ namespace {
 
     void OnCallTarget(CallTargetType type, uint32_t agent_id) {
         GW::Hook::EnterHook();
-        if (Agents::GetIsAgentTargettable(Agents::GetAgentByID(agent_id)))
-            CallTarget_Ret(type, agent_id);
+        CallTarget_Ret(type, agent_id);
         GW::Hook::LeaveHook();
     }
 

@@ -83,7 +83,7 @@ namespace GW {
     void CtoS::RegisterPacketCallback(
         HookEntry* entry,
         uint32_t header,
-        PacketCallback callback)
+        const PacketCallback& callback)
     {
         packets_callbacks[header].insert({ entry, callback });
     }

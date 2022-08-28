@@ -613,7 +613,7 @@ namespace GW {
 
         void RegisterItemClickCallback(
             HookEntry* entry,
-            ItemClickCallback callback)
+            const ItemClickCallback& callback)
         {
             ItemClick_callbacks.insert({ entry, callback });
         }

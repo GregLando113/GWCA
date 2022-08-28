@@ -594,7 +594,7 @@ namespace GW {
         }
         void RegisterUseSkillCallback(
             HookEntry* entry,
-            UseSkillCallback callback)
+            const UseSkillCallback& callback)
         {
             OnUseSkill_Callbacks.insert({ entry, callback });
         }

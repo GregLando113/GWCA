@@ -126,7 +126,7 @@ namespace GW {
         typedef HookCallback<uint32_t, uint32_t, Bag *> ItemClickCallback;
         GWCA_API void RegisterItemClickCallback(
             HookEntry *entry,
-            ItemClickCallback callback);
+            const ItemClickCallback& callback);
 
         GWCA_API void RemoveItemClickCallback(
             HookEntry *entry);

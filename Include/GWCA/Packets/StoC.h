@@ -440,7 +440,7 @@ namespace GW {
             // to be investigated further.
             // all types have their value in the float field 'value'.
             // in all types the value is in percentage, unless otherwise specified.
-            // the value can be negative (e.g. damage, sacrifice) 
+            // the value can be negative (e.g. damage, sacrifice)
             // or positive (e.g. heal, lifesteal).
             struct GenericModifier : Packet<GenericModifier> {
                 uint32_t type;         // type as specified above in P156_Type
@@ -531,7 +531,7 @@ namespace GW {
                 uint32_t skill_id;
             };
             constexpr uint32_t Packet<UpdateSkillbarSkill>::STATIC_HEADER = GAME_SMSG_SKILLBAR_UPDATE_SKILL;
-            
+
             // Used to duplicate skills in skill window i.e. more than 1 signet of capture. Packet is received after map is loaded
             struct UpdateSkillCountAfterMapLoad : Packet<UpdateSkillCountAfterMapLoad> {
                 uint32_t skill_id;
@@ -615,7 +615,7 @@ namespace GW {
             // e.g. map doors stop opening or closing. "update object state"
             struct ManipulateMapObject2 : Packet<ManipulateMapObject2> {
                 uint32_t object_id; // Door ID
-                uint32_t unk1; // 
+                uint32_t unk1; //
                 uint32_t state; // Open = 1, Closed = 0
             };
             constexpr uint32_t Packet<ManipulateMapObject2>::STATIC_HEADER = GAME_SMSG_MANIPULATE_MAP_OBJECT2;

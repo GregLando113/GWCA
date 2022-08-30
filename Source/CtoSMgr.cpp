@@ -21,7 +21,6 @@ namespace {
         HookStatus status;
         uint32_t header = *(uint32_t*)packet;
         if (header < packets_callbacks.size()) {
-            auto callbacks = packets_callbacks.at(header);
             for (auto& it : packets_callbacks[header]) {
                 it.second(&status, packet);
                 ++status.altitude;

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
@@ -21,7 +20,7 @@ namespace {
 
     HookCallback<Friend *, FriendStatus, const wchar_t *, const wchar_t *> OnFriendStatus_callback;
     std::unordered_map<HookEntry *, FriendListMgr::FriendStatusCallback> FriendStatus_callbacks;
-    void __cdecl OnFriendStatusHandler(FriendStatus status, 
+    void __cdecl OnFriendStatusHandler(FriendStatus status,
         const uint8_t *uuid, const wchar_t *alias, const wchar_t *charname)
     {
         HookBase::EnterHook();
@@ -118,7 +117,7 @@ namespace GW {
 
     void FriendListMgr::RegisterFriendStatusCallback(
         HookEntry *entry,
-        FriendStatusCallback callback)
+        const FriendStatusCallback& callback)
     {
         FriendStatus_callbacks.insert({entry, callback});
     }

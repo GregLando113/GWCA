@@ -1,11 +1,7 @@
 #include "stdafx.h"
 
-#include <GWCA/GameContainers/Array.h>
-
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
-#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/Managers/Module.h>
@@ -181,11 +177,11 @@ namespace GW {
         return GwGetTransform_func(transform);
     }
 
-    void Render::SetRenderCallback(std::function<void(IDirect3DDevice9*)> callback) {
+    void Render::SetRenderCallback(const std::function<void(IDirect3DDevice9*)>& callback) {
         render_callback = callback;
     }
 
-    void Render::SetResetCallback(std::function<void(IDirect3DDevice9* device)> callback) {
+    void Render::SetResetCallback(const std::function<void(IDirect3DDevice9*)>& callback) {
         reset_callback = callback;
     }
 } // namespace GW

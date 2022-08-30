@@ -1,15 +1,10 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
-#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
-
-#include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/GameEntities/Party.h>
 #include <GWCA/GameEntities/Agent.h>
@@ -25,7 +20,6 @@
 #include <GWCA/Managers/MapMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
-#include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/SkillbarMgr.h>
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
@@ -38,7 +32,7 @@ namespace {
     AttributeInfo* attribute_array_addr = 0;
     uint32_t ATTRIBUTE_COUNT = 0;
 
-    static const char _Base64ToValue[128] = {
+    const char _Base64ToValue[128] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [16,  32)
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63, // [32,  48)
@@ -48,17 +42,17 @@ namespace {
         -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, // [96,  112)
         41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, // [112, 128)
     };
-    static const unsigned char _Base64Table[65] =
+    const unsigned char _Base64Table[65] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-    static int _WriteBits(int val, char* buff, int count = 6) {
+    int _WriteBits(int val, char* buff, int count = 6) {
         for (int i = 0; i < count; i++) {
             buff[i] = ((val >> i) & 1);
         }
         return count;
     }
 
-    static int _ReadBits(char** str, int n) {
+    int _ReadBits(char** str, int n) {
         int val = 0;
         char* s = *str;
         for (int i = 0; i < n; i++)
@@ -128,22 +122,20 @@ namespace {
     ChangeSecondary_pt ChangeSecondary_Func = 0;
 
     std::unordered_map<HookEntry*, UseSkillCallback> OnUseSkill_Callbacks;
-    static void __cdecl OnUseSkill(uint32_t agent_id, uint32_t slot, uint32_t target, uint32_t call_target)
+    void __cdecl OnUseSkill(uint32_t agent_id, uint32_t slot, uint32_t target, uint32_t call_target)
     {
         HookBase::EnterHook();
-        if (!target || Agents::GetIsAgentTargettable(Agents::GetAgentByID(target))) {
-            HookStatus status;
-            for (auto& it : OnUseSkill_Callbacks) {
-                it.second(&status, agent_id, slot, target, call_target);
-                ++status.altitude;
-            }
-            if (!status.blocked)
-                RetUseSkill(agent_id, slot, target, call_target);
+        HookStatus status;
+        for (auto& it : OnUseSkill_Callbacks) {
+            it.second(&status, agent_id, slot, target, call_target);
+            ++status.altitude;
         }
+        if (!status.blocked)
+            RetUseSkill(agent_id, slot, target, call_target);
         HookBase::LeaveHook();
     }
 
-    static void Init() {
+    void Init() {
 
         DWORD address = 0;
         address = GW::Scanner::Find("\x8D\x04\xB6\xC1\xE0\x05\x05", "xxxxxxx", +7);
@@ -602,7 +594,7 @@ namespace GW {
         }
         void RegisterUseSkillCallback(
             HookEntry* entry,
-            UseSkillCallback callback)
+            const UseSkillCallback& callback)
         {
             OnUseSkill_Callbacks.insert({ entry, callback });
         }

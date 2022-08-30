@@ -31,7 +31,7 @@ namespace {
     GW::HookEntry on_trade_action_entry;
 
     std::unordered_map<HookEntry*, Trade::OfferItemCallback> OnOfferItem_callbacks;
-    
+
     typedef void(__fastcall* OfferTradeItem_pt)(void* ecx, void* edx, uint32_t item_id, uint32_t quantity, uint32_t always_one);
     OfferTradeItem_pt OfferTradeItem_Func = 0;
     OfferTradeItem_pt RetOfferTradeItem = 0;
@@ -80,7 +80,7 @@ namespace {
         UpdateTradeCart_Func = (UpdateTradeCart_pt)Scanner::Find("\x57\x8B\x7D\x0C\x3D\xEF\x00\x00\x10", "xxxxxxxxx", -0x24);
 
         // typedef void(__fastcall*)(void* ecx, void* edx, UI::InteractionMessage*); 06f0
-        DWORD address = Scanner::Find("\x8b\x41\x04\x83\xf8\x0e\x0f\x87\x82\x02\x00\x00", "xxxxxxxxxxxx", -0xc); 
+        DWORD address = Scanner::Find("\x8b\x41\x04\x83\xf8\x0e\x0f\x87\x82\x02\x00\x00", "xxxxxxxxxxxx", -0xc);
         TradeCancelOffer_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0xa6);
         TradeSendOffer_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x101);
 
@@ -141,7 +141,7 @@ namespace GW {
         ::DisableHooks,           // disable_hooks
     };
 
-    bool Trade::OpenTradeWindow(uint32_t agent_id) { 
+    bool Trade::OpenTradeWindow(uint32_t agent_id) {
         return UI::SendUIMessage(GW::UI::UIMessage::kInitiateTrade, (void*)agent_id);
     }
 
@@ -171,7 +171,7 @@ namespace GW {
         return true;
     }
 
-    void Trade::RegisterOfferItemCallback(HookEntry* entry, OfferItemCallback callback) {
+    void Trade::RegisterOfferItemCallback(HookEntry* entry, const OfferItemCallback& callback) {
         OnOfferItem_callbacks.insert({ entry, callback });
     }
     void Trade::RemoveOfferItemCallback(HookEntry* entry) {

@@ -29,7 +29,7 @@ namespace {
 
     void Init() {
         patch_fog_addr = Scanner::Find("\x83\xE0\x01\x8B\x09\x50\x6A\x1C", "xxxxxxxx", +2);
-        
+
 #if 0
         patch_max_dist_addr = Scanner::Find(
             "\xD8\xD9\xDF\xE0\xF6\xC4\x41\x75\x26\xD9\x46", "xxxxxxxxxxx", +0x9B);

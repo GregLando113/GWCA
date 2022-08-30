@@ -17,11 +17,11 @@ namespace GW {
         typedef HookCallback<void*> PacketCallback;
         // Send packet that uses only dword parameters, can copypaste most gwa2 sendpackets :D. Returns true if enqueued.
         GWCA_API bool SendPacket(uint32_t size, ...);
-        
+
         GWCA_API void RegisterPacketCallback(
             HookEntry* entry,
             uint32_t header,
-            PacketCallback callback);
+            const PacketCallback& callback);
 
         GWCA_API void RemoveCallback(uint32_t header, HookEntry* entry);
         // Send a packet with a specific struct alignment, used for more complex packets. Returns true if enqueued.

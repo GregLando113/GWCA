@@ -46,6 +46,7 @@
 #include <algorithm>
 #include <functional>
 #include <unordered_map>
+#include <utility>
 
 #ifndef NOMINMAX
 # define NOMINMAX

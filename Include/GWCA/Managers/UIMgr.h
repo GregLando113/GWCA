@@ -100,7 +100,7 @@ namespace GW {
             uint32_t dialog_id;
             uint32_t skill_id; // Default 0xFFFFFFF
         };
-        
+
         struct DecodingString {
             std::wstring encoded;
             std::wstring decoded;
@@ -136,7 +136,7 @@ namespace GW {
             kFriendUpdated              = 0x10000000 | 0x89, // wparam = { GW::Friend*, ... }
             kMapLoaded                  = 0x10000000 | 0x8A,
             kOpenWhisper                = 0x10000000 | 0x90, // wparam = wchar* name
-            kLogout                     = 0x10000000 | 0x9b, // wparam = { bool unknown, bool character_select } 
+            kLogout                     = 0x10000000 | 0x9b, // wparam = { bool unknown, bool character_select }
             kDialogBody                 = 0x10000000 | 0xA4, // wparam = DialogBodyInfo*
             kDialogButton               = 0x10000000 | 0xA1, // wparam = DialogButtonInfo*
             kQuotedItemPrice            = 0x10000000 | 0xBB, // wparam = { uint32_t item_id, uint32_t price }
@@ -167,7 +167,7 @@ namespace GW {
 
             // GWCA Client to Server commands. Only added the ones that are used for hooks, everything else goes straight into GW
             kSendDialog                 = 0x30000000 | 0x1,  // wparam = dialog_id
-            kSendEnterMission           = 0x30000000 | 0x2,  // wparam = arena_id 
+            kSendEnterMission           = 0x30000000 | 0x2,  // wparam = arena_id
             kSendLoadSkillbar           = 0x30000000 | 0x3,  // wparam = { uint32_t agent_id, uint32_t* skill_ids }
             kSendPingWeaponSet          = 0x30000000 | 0x4,  // wparam = { uint32_t agent_id, uint32_t weapon_item_id, uint32_t offhand_item_id }
             kSendMoveItem               = 0x30000000 | 0x5,  // wparam = { uint32_t item_id, uint32_t quantity, uint32_t bag_id, uint32_t slot }
@@ -200,7 +200,7 @@ namespace GW {
             Preference_TextLanguage = 0x80A,
             Preference_AudioLanguage = 0x80B,
             Preference_ChatFilterLevel = 0x80C,
-            Preference_SkillListSortMethod = 0x811, 
+            Preference_SkillListSortMethod = 0x811,
             Preference_SkillListViewMode = 0x812,
             Preference_SoundQuality = 0x813, // 0 to 100
             Preference_StorageBagPage = 0x814,
@@ -354,7 +354,7 @@ namespace GW {
             ControlAction_ReverseDirection = 0xB1,
             ControlAction_Autorun = 0xB7,
             ControlAction_Follow = 0xCC,
-            
+
             // Targeting
             ControlAction_TargetPartyMember1 = 0x96,
             ControlAction_TargetPartyMember2,
@@ -373,7 +373,7 @@ namespace GW {
             ControlAction_TargetNextItem = 0xC4,
             ControlAction_TargetPreviousItem = 0xC5,
             ControlAction_TargetPartyMemberNext = 0xCA,
-            ControlAction_TargetPartyMemberPrevious = 0xCB, 
+            ControlAction_TargetPartyMemberPrevious = 0xCB,
             ControlAction_TargetAllyNearest = 0xBC,
             ControlAction_ClearTarget = 0xE3,
             ControlAction_TargetSelf = 0xA0, // also 0x96
@@ -384,10 +384,10 @@ namespace GW {
 
             ControlAction_ShowOthers = 0x89,
             ControlAction_ShowTargets = 0x94,
-            
+
             ControlAction_CameraZoomIn = 0xCE,
             ControlAction_CameraZoomOut = 0xCF,
-            
+
             // Party/Hero commands
             ControlAction_ClearPartyCommands = 0xDB,
             ControlAction_CommandParty = 0xD6,
@@ -480,7 +480,7 @@ namespace GW {
             ControlAction_UseSkill6,
             ControlAction_UseSkill7,
             ControlAction_UseSkill8
-            
+
         };
         struct FloatingWindow {
             void* unk1; // Some kind of function call
@@ -571,12 +571,12 @@ namespace GW {
         typedef HookCallback<uint32_t> KeyCallback;
         GWCA_API void RegisterKeydownCallback(
             HookEntry* entry,
-            KeyCallback callback);
+            const KeyCallback& callback);
         GWCA_API void RemoveKeydownCallback(
             HookEntry* entry);
         GWCA_API void RegisterKeyupCallback(
             HookEntry* entry,
-            KeyCallback callback);
+            const KeyCallback& callback);
         GWCA_API void RemoveKeyupCallback(
             HookEntry* entry);
 
@@ -584,7 +584,7 @@ namespace GW {
         GWCA_API void RegisterUIMessageCallback(
             HookEntry *entry,
             UIMessage message_id,
-            UIMessageCallback callback,
+            const UIMessageCallback& callback,
             int altitude = -0x8000);
 
         GWCA_API void RemoveUIMessageCallback(

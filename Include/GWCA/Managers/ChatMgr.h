@@ -78,7 +78,7 @@ namespace GW {
 
 
         typedef std::function<void(const wchar_t*, int, wchar_t**)> CmdCB;
-        GWCA_API void CreateCommand(std::wstring cmd, CmdCB callback);
+        GWCA_API void CreateCommand(std::wstring cmd, const CmdCB& callback);
         GWCA_API void DeleteCommand(std::wstring cmd);
 
         GWCA_API void ToggleTimestamps(bool enable);
@@ -95,7 +95,7 @@ namespace GW {
         typedef HookCallback<Channel, wchar_t*> SendChatCallback;
         GWCA_API void RegisterSendChatCallback(
             HookEntry* entry,
-            SendChatCallback callback);
+            const SendChatCallback& callback);
 
         GWCA_API void RemoveSendChatCallback(
             HookEntry* entry);
@@ -103,7 +103,7 @@ namespace GW {
         typedef HookCallback<uint32_t, uint32_t, wchar_t*, void*> ChatEventCallback;
         GWCA_API void RegisterChatEventCallback(
             HookEntry* entry,
-            ChatEventCallback callback);
+            const ChatEventCallback& callback);
 
         GWCA_API void RemoveChatEventCallback(
             HookEntry* entry);
@@ -111,7 +111,7 @@ namespace GW {
         typedef HookCallback<int, wchar_t*> LocalMessageCallback;
         GWCA_API void RegisterLocalMessageCallback(
             HookEntry* entry,
-            LocalMessageCallback callback);
+            const LocalMessageCallback& callback);
 
         GWCA_API void RemoveLocalMessageCallback(
             HookEntry* entry);
@@ -119,7 +119,7 @@ namespace GW {
         typedef HookCallback<wchar_t*, wchar_t*> WhisperCallback;
         GWCA_API void RegisterWhisperCallback(
             HookEntry* entry,
-            WhisperCallback callback);
+            const WhisperCallback& callback);
 
         GWCA_API void RemoveRegisterWhisperCallback(
             HookEntry* entry);
@@ -127,12 +127,12 @@ namespace GW {
         typedef HookCallback<Channel, wchar_t**, FILETIME, int> PrintChatCallback;
         GWCA_API void RegisterPrintChatCallback(
             HookEntry* entry,
-            PrintChatCallback callback);
+            const PrintChatCallback& callback);
 
         typedef HookCallback<wchar_t*> StartWhisperCallback;
         GWCA_API void RegisterStartWhisperCallback(
             HookEntry* entry,
-            StartWhisperCallback callback);
+            const StartWhisperCallback& callback);
 
         GWCA_API void RemoveStartWhisperCallback(
             HookEntry* entry);
@@ -140,7 +140,7 @@ namespace GW {
         typedef HookCallback<wchar_t*, uint32_t, ChatMessage*> ChatLogCallback;
         GWCA_API void RegisterChatLogCallback(
             HookEntry* entry,
-            ChatLogCallback callback,
+            const ChatLogCallback& callback,
             int altitude = -0x8000);
         GWCA_API void RemoveChatLogCallback(HookEntry* entry);
     };

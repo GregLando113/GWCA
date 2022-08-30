@@ -4,7 +4,6 @@
 #include <GWCA/Context/AgentContext.h>
 #include <GWCA/Context/GadgetContext.h>
 #include <GWCA/Context/WorldContext.h>
-#include <GWCA/Context/ItemContext.h>
 
 #include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/NPC.h>
@@ -90,8 +89,7 @@ namespace {
 
     void OnInteractNPC(uint32_t agent_id, uint32_t call_target) {
         GW::Hook::EnterHook();
-        if (Agents::GetIsAgentTargettable(Agents::GetAgentByID(agent_id)))
-            InteractNPC_Ret(agent_id, call_target);
+        InteractNPC_Ret(agent_id, call_target);
         GW::Hook::LeaveHook();
     }
 
@@ -101,8 +99,7 @@ namespace {
 
     void OnCallTarget(CallTargetType type, uint32_t agent_id) {
         GW::Hook::EnterHook();
-        if (Agents::GetIsAgentTargettable(Agents::GetAgentByID(agent_id)))
-            CallTarget_Ret(type, agent_id);
+        CallTarget_Ret(type, agent_id);
         GW::Hook::LeaveHook();
     }
 
@@ -119,7 +116,7 @@ namespace {
 
     void Init() {
         uintptr_t address = 0;
-        
+
         address = Scanner::Find( "\x3B\xDF\x0F\x95", "xxxx", -0x0089);
         if (address) {
             ChangeTarget_Func = (ChangeTarget_pt)address;
@@ -146,8 +143,8 @@ namespace {
             SendDialog_Func = (SendDialog_pt)Scanner::FunctionFromNearCall(address + 0x15);
             SendSignpostDialog_Func = (SendDialog_pt)Scanner::FunctionFromNearCall(address + 0x25);
         }
-        
-        
+
+
         address = Scanner::Find("\xc7\x45\xf0\x98\x3a\x00\x00", "xxxxxxx", 0x41);
         InteractAgent_Func = (InteractAgent_pt)Scanner::FunctionFromNearCall(address);
         if (InteractAgent_Func) {
@@ -166,7 +163,7 @@ namespace {
         HookBase::CreateHook(SendDialog_Func, OnSendDialog, (void**)&RetSendDialog);
         HookBase::CreateHook(SendSignpostDialog_Func, OnSendDialog, (void**)&RetSendSignpostDialog);
         UI::RegisterUIMessageCallback(&OnSendDialog_HookEntry, UI::UIMessage::kDialogBody, OnDialogBody_UIMessage, 0x1);
-        UI::RegisterUIMessageCallback(&OnSendDialog_HookEntry, UI::UIMessage::kSendDialog, OnSendDialog_UIMessage, 0x1);            
+        UI::RegisterUIMessageCallback(&OnSendDialog_HookEntry, UI::UIMessage::kSendDialog, OnSendDialog_UIMessage, 0x1);
 
         GWCA_INFO("[SCAN] ChangeTargetFunction = %p", ChangeTarget_Func);
         GWCA_INFO("[SCAN] TargetAgentIdPtr = %p", TargetAgentIdPtr);
@@ -200,7 +197,7 @@ namespace {
         GWCA_ASSERT(InteractGadget_Func);
 #endif
 
-        
+
 
     }
     void EnableHooks() {

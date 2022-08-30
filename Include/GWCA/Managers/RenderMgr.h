@@ -32,27 +32,27 @@ namespace GW {
             enum Flags {
                 Shear = 1 << 3
             };
-            
+
             uint32_t flags;
         } Mat4x3f;
 
         enum Transform : int {
-            // TODO: 
+            // TODO:
             TRANSFORM_COUNT = 5
         };
 
 
         GWCA_API Mat4x3f* GetTransform(Transform transform);
 
-        // Set up a callback for drawing on screen. 
-        // Will be called after GW render. 
-        // 
-        // Important: if you use this, you should call  GW::Terminate() 
+        // Set up a callback for drawing on screen.
+        // Will be called after GW render.
+        //
+        // Important: if you use this, you should call  GW::Terminate()
         // or at least GW::Render::RestoreHooks() from within the callback
-        GWCA_API void SetRenderCallback(std::function<void(IDirect3DDevice9 *)> callback);
+        GWCA_API void SetRenderCallback(const std::function<void(IDirect3DDevice9*)>& callback);
 
         // Set up a callback for directx device reset
-        GWCA_API void SetResetCallback(std::function<void(IDirect3DDevice9 *)> callback);
+        GWCA_API void SetResetCallback(const std::function<void(IDirect3DDevice9*)>& callback);
 
         // Check if gw is in fullscreen
         // Note: requires one or both callbacks to be set and called before

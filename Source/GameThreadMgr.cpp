@@ -1,22 +1,16 @@
 #include "stdafx.h"
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
-#include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/Managers/Module.h>
-#include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
 
 namespace {
     using namespace GW;
 
     CRITICAL_SECTION mutex;
-
-    uint32_t last_identifier = 0;
-    bool render_state = false;
 
     typedef void(__cdecl *Render_t)(void*);
     uintptr_t *g__thingy = 0;
@@ -26,7 +20,7 @@ namespace {
 
     bool in_gamethread = false;
 
-    std::vector<std::function<void(void)>> singleshot_callbacks;
+    std::vector<std::function<void()>> singleshot_callbacks;
     std::unordered_map<HookEntry *, GameThread::GameThreadCallback> GameThread_callbacks;
 
     void CallFunctions()
@@ -36,8 +30,8 @@ namespace {
         EnterCriticalSection(&mutex);
         in_gamethread = true;
         if (!singleshot_callbacks.empty()) {
-            for (const auto& Call : singleshot_callbacks) {
-                Call();
+            for (const auto& call : singleshot_callbacks) {
+                call();
             }
 
             singleshot_callbacks.clear();
@@ -129,7 +123,7 @@ namespace GW {
         LeaveCriticalSection(&mutex);
     }
 
-    void GameThread::Enqueue(std::function<void()> f)
+    void GameThread::Enqueue(const std::function<void()>& f)
     {
         if (!initialised)
             return;
@@ -138,23 +132,37 @@ namespace GW {
             f();
         }
         else {
-            singleshot_callbacks.emplace_back(f);
+            singleshot_callbacks.push_back(f);
         }
         LeaveCriticalSection(&mutex);
     }
+
+    void GameThread::Enqueue(std::function<void()>&& f)
+    {
+        if (!initialised)
+            return;
+        EnterCriticalSection(&mutex);
+        if (in_gamethread) {
+            f();
+        } else {
+            singleshot_callbacks.push_back(std::move(f));
+        }
+        LeaveCriticalSection(&mutex);
+    }
+
     bool GameThread::IsInGameThread()
     {
         if (!initialised)
             return false;
         EnterCriticalSection(&mutex);
-        bool ret = in_gamethread;
+        const bool ret = in_gamethread;
         LeaveCriticalSection(&mutex);
-        return ret;        
+        return ret;
     }
 
     void GameThread::RegisterGameThreadCallback(
         HookEntry *entry,
-        GameThreadCallback callback)
+        const GameThreadCallback& callback)
     {
         GameThread_callbacks.insert({entry, callback});
     }

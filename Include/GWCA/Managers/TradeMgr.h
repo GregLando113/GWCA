@@ -21,7 +21,7 @@ namespace GW {
         typedef HookCallback<uint32_t, uint32_t> OfferItemCallback;
         GWCA_API void RegisterOfferItemCallback(
             HookEntry* entry,
-            OfferItemCallback callback);
+            const OfferItemCallback& callback);
         GWCA_API void RemoveOfferItemCallback(
             HookEntry* entry);
     };

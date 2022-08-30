@@ -34,7 +34,7 @@ namespace GW {
         typedef HookCallback<Friend *, FriendStatus, const wchar_t *, const wchar_t *> FriendStatusCallback;
         GWCA_API void RegisterFriendStatusCallback(
             HookEntry *entry,
-            FriendStatusCallback callback);
+            const FriendStatusCallback& callback);
 
         GWCA_API void RemoveFriendStatusCallback(
             HookEntry *entry);

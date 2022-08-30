@@ -3,18 +3,14 @@
 #include <GWCA/Constants/Constants.h>
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
-
-#include <GWCA/GameContainers/Array.h>
 
 #include <GWCA/Managers/Module.h>
 
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/ChatMgr.h>
-#include <GWCA/Managers/MemoryMgr.h>
 
 #define COLOR_ARGB(a, r, g, b) (GW::Chat::Color)((((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
 #define COLOR_RGB(r, g, b) COLOR_ARGB(0xff, r, g, b)
@@ -396,23 +392,23 @@ namespace {
     }
 
     void EnableHooks() {
-        if (StartWhisper_Func)      
+        if (StartWhisper_Func)
             HookBase::EnableHooks(StartWhisper_Func);
-        if (ChatEvent_Func)      
+        if (ChatEvent_Func)
             HookBase::EnableHooks(ChatEvent_Func);
-        if (GetSenderColor_Func)      
+        if (GetSenderColor_Func)
             HookBase::EnableHooks(GetSenderColor_Func);
-        if (GetMessageColor_Func)      
+        if (GetMessageColor_Func)
             HookBase::EnableHooks(GetMessageColor_Func);
-        if (LocalMessage_Func)      
+        if (LocalMessage_Func)
             HookBase::EnableHooks(LocalMessage_Func);
-        if (SendChat_Func)      
+        if (SendChat_Func)
             HookBase::EnableHooks(SendChat_Func);
-        if (WriteWhisper_Func)      
+        if (WriteWhisper_Func)
             HookBase::EnableHooks(WriteWhisper_Func);
-        if (PrintChat_Func)      
+        if (PrintChat_Func)
             HookBase::EnableHooks(PrintChat_Func);
-        if (AddToChatLog_Func)      
+        if (AddToChatLog_Func)
             HookBase::EnableHooks(AddToChatLog_Func);
     }
     void DisableHooks() {
@@ -462,7 +458,7 @@ namespace GW {
 
     void Chat::RegisterSendChatCallback(
         HookEntry *entry,
-        SendChatCallback callback)
+        const SendChatCallback& callback)
     {
         SendChat_callbacks.insert({entry, callback});
     }
@@ -477,7 +473,7 @@ namespace GW {
 
     void Chat::RegisterChatEventCallback(
         HookEntry *entry,
-        ChatEventCallback callback)
+        const ChatEventCallback& callback)
     {
         ChatEvent_callbacks.insert({entry, callback});
     }
@@ -492,7 +488,7 @@ namespace GW {
 
     void Chat::RegisterLocalMessageCallback(
         HookEntry *entry,
-        LocalMessageCallback callback)
+        const LocalMessageCallback& callback)
     {
         LocalMessage_callbacks.insert({entry, callback});
     }
@@ -507,20 +503,20 @@ namespace GW {
 
     void Chat::RegisterWhisperCallback(
         HookEntry *entry,
-        WhisperCallback callback)
+        const WhisperCallback& callback)
     {
         Whisper_callbacks.insert({entry, callback});
     }
 
     void Chat::RegisterPrintChatCallback(
         HookEntry* entry,
-        PrintChatCallback callback)
+        const PrintChatCallback& callback)
         {
             PrintChat_callbacks.insert({ entry, callback });
         }
     void Chat::RegisterChatLogCallback(
         HookEntry* entry,
-        ChatLogCallback callback,
+        const ChatLogCallback& callback,
         int altitude)
     {
         ChatLog_callbacks.push_back({ altitude, entry, callback });
@@ -548,7 +544,7 @@ namespace GW {
 
     void Chat::RegisterStartWhisperCallback(
         HookEntry* entry,
-        StartWhisperCallback callback)
+        const StartWhisperCallback& callback)
     {
         StartWhisper_callbacks.insert({entry, callback});
     }
@@ -748,8 +744,7 @@ namespace GW {
         }
         WriteChatEnc(channel, message_encoded, sender_encoded, transient);
         delete[] message_encoded;
-        if (sender_encoded)
-            delete[] sender_encoded;
+        delete[] sender_encoded;
     }
     void Chat::WriteChatEnc(Channel channel, const wchar_t* message_encoded, const wchar_t* sender_encoded, bool transient) {
         UI::UIChatMessage param;
@@ -783,7 +778,7 @@ namespace GW {
             delete[] param.message;
     }
 
-    void Chat::CreateCommand(std::wstring cmd, CmdCB callback) {
+    void Chat::CreateCommand(std::wstring cmd, const CmdCB& callback) {
         ::wstring_tolower(cmd);
         SlashCmdList[cmd] = callback;
     }

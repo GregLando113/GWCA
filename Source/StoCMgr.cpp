@@ -7,7 +7,6 @@
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/GameContainers/GamePos.h>
 
 #include <GWCA/Packets/StoC.h>
 
@@ -132,7 +131,7 @@ namespace GW {
     void StoC::RegisterPacketCallback(
         HookEntry *entry,
         uint32_t header,
-        PacketCallback callback,
+        const PacketCallback& callback,
         int altitude)
     {
         RemoveCallback(header, entry);
@@ -142,11 +141,11 @@ namespace GW {
                 break;
             it++;
         }
-        packet_entries[header].insert(it, { altitude,entry,callback });
+        packet_entries[header].insert(it, { altitude,entry, callback});
         game_server_handlers->at(header).handler_func = StoCHandler_Func;
     }
 
-    GWCA_API void StoC::RegisterPostPacketCallback(HookEntry* entry, uint32_t header, PacketCallback callback)
+    GWCA_API void StoC::RegisterPostPacketCallback(HookEntry* entry, uint32_t header, const PacketCallback& callback)
     {
         return RegisterPacketCallback(entry, header, callback, 0x8000);
     }

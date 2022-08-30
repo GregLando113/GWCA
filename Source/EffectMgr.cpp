@@ -1,32 +1,20 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Skills.h>
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
-#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameContainers/Array.h>
-#include <GWCA/GameContainers/GamePos.h>
 
-#include <GWCA/Packets/StoC.h>
-
-#include <GWCA/GameEntities/NPC.h>
-#include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Skill.h>
 
-#include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
 
 #include <GWCA/Managers/Module.h>
-
-#include <GWCA/Managers/StoCMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/EffectMgr.h>
-#include <GWCA/Managers/GameThreadMgr.h>
 
 namespace {
     using namespace GW;

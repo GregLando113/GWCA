@@ -1,16 +1,12 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
-
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/TextParser.h>
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
-#include <GWCA/Utilities/MemoryPatcher.h>
 
 #include <GWCA/GameContainers/Array.h>
 
@@ -18,7 +14,6 @@
 
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/CtoSMgr.h>
-#include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/RenderMgr.h>
 
@@ -81,7 +76,7 @@ namespace {
     typedef void (__cdecl *LoadSettings_pt)(uint32_t size, uint8_t *data);
     LoadSettings_pt LoadSettings_Func = 0;
 
-    
+
     typedef void(__cdecl* ValidateAsyncDecodeStr_pt)(const wchar_t* s, GW::UI::DecodeStr_Callback cb, void* wParam);
     typedef uint32_t(__fastcall* DoAsyncDecodeStr_pt)(void* ecx, void* edx, wchar_t* encoded_str, GW::UI::DecodeStr_Callback cb, void* wParam);
     ValidateAsyncDecodeStr_pt ValidateAsyncDecodeStr = 0;
@@ -188,7 +183,7 @@ namespace {
         *str = s;
     }
 
-    
+
 
     void Init() {
         uintptr_t address;
@@ -281,7 +276,7 @@ namespace {
         // NB: "p:\\code\\engine\\sound\\sndmain.cpp", "(unsigned)type < arrsize(s_volume)" works, but also matches SetVolume()
         SetVolume_Func = (SetVolume_pt)GW::Scanner::Find("\x8b\x75\x08\x83\xfe\x05\x72\x14\x68\x5b\x04\x00\x00\xba", "xxxxxxxxxxxxxx", -0x4);
 
-        SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);        
+        SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);
         DrawOnCompass_Func = (DrawOnCompass_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\char\\charmsg.cpp", "knotCount <= arrsize(message.knotData)",-0x2e);
 
         GWCA_INFO("[SCAN] FrameCache_addr = %p", FrameCache_addr);
@@ -337,7 +332,7 @@ namespace {
 #endif
         HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
         HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
-        
+
     }
 
     void EnableHooks() {
@@ -699,7 +694,7 @@ namespace GW {
         }
     }
 
-    void UI::RegisterKeyupCallback(HookEntry* entry, KeyCallback callback) {
+    void UI::RegisterKeyupCallback(HookEntry* entry, const KeyCallback& callback) {
         OnKeyup_callbacks.insert({ entry, callback });
     }
     void UI::RemoveKeyupCallback(HookEntry* entry) {
@@ -708,7 +703,7 @@ namespace GW {
             OnKeyup_callbacks.erase(it);
     }
 
-    void UI::RegisterKeydownCallback(HookEntry* entry, KeyCallback callback) {
+    void UI::RegisterKeydownCallback(HookEntry* entry, const KeyCallback& callback) {
         OnKeydown_callbacks.insert({ entry, callback });
     }
     void UI::RemoveKeydownCallback(HookEntry* entry) {
@@ -720,11 +715,10 @@ namespace GW {
     void UI::RegisterUIMessageCallback(
         HookEntry *entry,
         UIMessage message_id,
-        UIMessageCallback callback,
+        const UIMessageCallback& callback,
         int altitude)
     {
-        auto found = UIMessage_callbacks.find(message_id);
-        if (found == UIMessage_callbacks.end()) {
+        if (!UIMessage_callbacks.contains(message_id)) {
             UIMessage_callbacks[message_id] = std::vector<CallbackEntry>();
         }
         auto it = UIMessage_callbacks[message_id].begin();
@@ -733,7 +727,7 @@ namespace GW {
                 break;
             it++;
         }
-        UIMessage_callbacks[message_id].insert(it, { altitude,entry,callback });
+        UIMessage_callbacks[message_id].insert(it, { altitude, entry, callback});
     }
 
     void UI::RemoveUIMessageCallback(

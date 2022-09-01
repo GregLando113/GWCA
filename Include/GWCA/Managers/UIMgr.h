@@ -147,6 +147,7 @@ namespace GW {
             kUpdateGoldCharacter        = 0x10000000 | 0xEA, // wparam = { uint32_t unk, uint32_t gold_character }
             kUpdateGoldStorage          = 0x10000000 | 0xEB, // wparam = { uint32_t unk, uint32_t gold_storage }
             kPvPWindowContent           = 0x10000000 | 0xF8,
+            kItemUpdated                = 0x10000000 | 0x104, // wparam = item id
             kMapChange                  = 0x10000000 | 0x10F, // wparam = map id
             kCheckboxPreference         = 0x10000000 | 0x13F,
             kPreferenceChanged          = 0x10000000 | 0x140,

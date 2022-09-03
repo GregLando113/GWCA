@@ -78,6 +78,23 @@ namespace GW {
     };
     static_assert(sizeof(AccountInfo) == 0x1c);
 
+    struct PartyMemberMoraleInfo {
+        uint32_t agent_id;
+        uint32_t agent_id_dup;
+        uint32_t unk[4];
+        uint32_t morale;
+        // ... unknown size
+    };
+
+    struct PartyMoraleLink {
+        uint32_t unk;
+        uint32_t unk2;
+        PartyMemberMoraleInfo* party_member_info;
+    };
+    static_assert(sizeof(PartyMoraleLink) == 0xc);
+
+
+
     struct WorldContext {
 
         static WorldContext* instance();
@@ -122,8 +139,10 @@ namespace GW {
         /* +h05EC */ Array<uint32_t> missions_bonus_hm;
         /* +h05FC */ Array<uint32_t> missions_completed_hm;
         /* +h060C */ Array<uint32_t> unlocked_map;
-        /* +h061C */ uint32_t h061C[4];
-        /* +h062C */ Array<void *> h062C;
+        /* +h061C */ uint32_t h061C[2];
+        /* +h0624 */ PartyMemberMoraleInfo* player_morale_info;
+        /* +h0628 */ uint32_t h028C;
+        /* +h062C */ Array<PartyMoraleLink> party_morale_related;
         /* +h063C */ uint32_t h063C[16];
         /* +h067C */ uint32_t player_number;
         /* +h0680 */ void* playerControlledChar; // Struct size = 0x134 ?

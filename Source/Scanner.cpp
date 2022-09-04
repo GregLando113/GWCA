@@ -116,7 +116,11 @@ uintptr_t GW::Scanner::FunctionFromNearCall(uintptr_t call_instruction_address) 
         return 0; // Not a near call instruction
     uintptr_t near_address = *(uintptr_t*)(call_instruction_address + 1);
     uintptr_t function_address = (near_address)+(call_instruction_address + 5);
-    return IsValidPtr(function_address, Section::TEXT) ? function_address : 0;
+    if (!IsValidPtr(function_address, Section::TEXT))
+        return 0;
+    // Check to see if there are any nested JMP's etc
+    uintptr_t nested_call = FunctionFromNearCall(function_address);
+    return nested_call ? nested_call : function_address;
 }
 
 void GW::Scanner::Initialize(const char* moduleName) {

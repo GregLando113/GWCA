@@ -102,6 +102,8 @@ namespace {
     UI::WindowPosition* window_positions_array = 0;
     UI::FloatingWindow* floating_windows_array = 0;
 
+    uint32_t* nametag_display_flag = 0;
+
     static void OnOpenTemplate_UIMessage(HookStatus *hook_status, UI::UIMessage msgid, void *wParam, void *)
     {
         GWCA_ASSERT(msgid == UI::UIMessage::kOpenTemplate && wParam);
@@ -278,6 +280,13 @@ namespace {
 
         SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);
         DrawOnCompass_Func = (DrawOnCompass_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\char\\charmsg.cpp", "knotCount <= arrsize(message.knotData)",-0x2e);
+
+        // Reset agent view Manager function dfb
+        address = Scanner::Find("\x2b\xf0\x89\x77\x64\xd9\x55\xf8", "xxxxxxxx");
+        if (address) {
+            nametag_display_flag = *(uint32_t**)(address + 0x3D);
+        }
+
 
         GWCA_INFO("[SCAN] FrameCache_addr = %p", FrameCache_addr);
         GWCA_INFO("[SCAN] WorldMapState_Addr = %p", WorldMapState_Addr);
@@ -747,5 +756,9 @@ namespace GW {
 
     UI::TooltipInfo* UI::GetCurrentTooltip() {
         return CurrentTooltipPtr && *CurrentTooltipPtr ? **CurrentTooltipPtr : 0;
+    }
+
+    uint32_t UI::GetNameTagVisibilityFlag() {
+        return nametag_display_flag ? *nametag_display_flag : 0;
     }
 } // namespace GW

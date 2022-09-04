@@ -125,5 +125,8 @@ namespace GW {
         GWCA_API wchar_t* GetAgentEncName(uint32_t agent_id);
 
         GWCA_API bool AsyncGetAgentName(const Agent *agent, std::wstring& name);
+
+        // Internal function, game uses this to determine what to show/hide on compass and on name tags.
+        GWCA_API bool DoesAgentMatchBitmapState(const Agent* agent, uint32_t state_bitmap);
     };
 }

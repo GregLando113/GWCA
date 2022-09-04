@@ -474,5 +474,13 @@ namespace GW {
             UI::AsyncDecodeStr(str, &res);
             return true;
         }
+        GWCA_API bool DoesAgentMatchBitmapState(const Agent* agent, uint32_t state_bitmap)
+        {
+            if (!agent) return false;
+            typedef bool(__fastcall* DoesAgentMatchBitmapState_pt)(const Agent* agent, uint32_t edx, uint32_t state_bitmap, uint32_t* extra_out);
+            DoesAgentMatchBitmapState_pt func = (DoesAgentMatchBitmapState_pt)agent->vtable[7];
+            uint32_t extra_out;
+            return agent && func(agent, 0, state_bitmap, &extra_out);
+        }
     }
 } // namespace GW

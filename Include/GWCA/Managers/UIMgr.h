@@ -593,7 +593,5 @@ namespace GW {
 
         GWCA_API TooltipInfo* GetCurrentTooltip();
 
-        // Get current setting for displaying name tags in the game world e.g. holding ctrl or alt
-        GWCA_API uint32_t GetNameTagVisibilityFlag();
     }
 }

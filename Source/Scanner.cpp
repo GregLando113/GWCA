@@ -20,44 +20,44 @@ uintptr_t GW::Scanner::FindAssertion(const char* assertion_file, const char* ass
 #pragma warning( disable : 4242 )
 #pragma warning( disable : 4244 )
 #pragma warning( disable : 4365 )
-    char mask[64];
-    int i;
-    char assertion_bytes[] = "\xBA????\xB9????";
-    char assertion_mask[] = "x????x????";
-    if (assertion_msg && assertion_msg[0]) {
-        for (i = 0; assertion_msg[i]; i++) {
-            mask[i] = 'x';
-        }
-        mask[i++] = 'x'; // Include terminating char
-        mask[i] = 0;
-        uint32_t rdata_addr = Find(assertion_msg, mask, 0, Section::RDATA);
-        if (!rdata_addr)
-            return 0;
-
-        assertion_bytes[6] = rdata_addr;
-        assertion_bytes[7] = rdata_addr >> 8;
-        assertion_bytes[8] = rdata_addr >> 16;
-        assertion_bytes[9] = rdata_addr >> 24;
-
-        memcpy(&assertion_mask[6], "xxxx",4);
+char mask[64];
+int i;
+char assertion_bytes[] = "\xBA????\xB9????";
+char assertion_mask[] = "x????x????";
+if (assertion_msg && assertion_msg[0]) {
+    for (i = 0; assertion_msg[i]; i++) {
+        mask[i] = 'x';
     }
-    if (assertion_file) {
-        for (i = 0; assertion_file[i]; i++) {
-            mask[i] = 'x';
-        }
-        mask[i++] = 'x'; // Include terminating char
-        mask[i] = 0;
-        uint32_t rdata_addr = Find(assertion_file, mask, 0, Section::RDATA);
-        if (!rdata_addr)
-            return 0;
-        assertion_bytes[1] = rdata_addr;
-        assertion_bytes[2] = rdata_addr >> 8;
-        assertion_bytes[3] = rdata_addr >> 16;
-        assertion_bytes[4] = rdata_addr >> 24;
-        memcpy(&assertion_mask[1], "xxxx",4);
+    mask[i++] = 'x'; // Include terminating char
+    mask[i] = 0;
+    uint32_t rdata_addr = Find(assertion_msg, mask, 0, Section::RDATA);
+    if (!rdata_addr)
+        return 0;
+
+    assertion_bytes[6] = rdata_addr;
+    assertion_bytes[7] = rdata_addr >> 8;
+    assertion_bytes[8] = rdata_addr >> 16;
+    assertion_bytes[9] = rdata_addr >> 24;
+
+    memcpy(&assertion_mask[6], "xxxx", 4);
+}
+if (assertion_file) {
+    for (i = 0; assertion_file[i]; i++) {
+        mask[i] = 'x';
     }
+    mask[i++] = 'x'; // Include terminating char
+    mask[i] = 0;
+    uint32_t rdata_addr = Find(assertion_file, mask, 0, Section::RDATA);
+    if (!rdata_addr)
+        return 0;
+    assertion_bytes[1] = rdata_addr;
+    assertion_bytes[2] = rdata_addr >> 8;
+    assertion_bytes[3] = rdata_addr >> 16;
+    assertion_bytes[4] = rdata_addr >> 24;
+    memcpy(&assertion_mask[1], "xxxx", 4);
+}
 #pragma warning(pop)
-    return Find(assertion_bytes, assertion_mask, offset);
+return Find(assertion_bytes, assertion_mask, offset);
 }
 uintptr_t GW::Scanner::FindInRange(const char* pattern, const char* mask, int offset, DWORD start, DWORD end) {
     char first = pattern[0];
@@ -67,7 +67,7 @@ uintptr_t GW::Scanner::FindInRange(const char* pattern, const char* mask, int of
 
     if (start > end) {
         // Scan backward
-        for (DWORD i = start; i >= end ; i--) {
+        for (DWORD i = start; i >= end; i--) {
             if (*(char*)i != first)
                 continue;
             found = true;
@@ -119,7 +119,10 @@ uintptr_t GW::Scanner::FunctionFromNearCall(uintptr_t call_instruction_address) 
     if (!IsValidPtr(function_address, Section::TEXT))
         return 0;
     // Check to see if there are any nested JMP's etc
-    uintptr_t nested_call = FunctionFromNearCall(function_address);
+    uintptr_t nested_call = function_address;
+    while (nested_call && ((*(uintptr_t*)nested_call) & 0x000000e9) == 0x000000e9) {
+        nested_call = FunctionFromNearCall(nested_call);
+    }
     return nested_call ? nested_call : function_address;
 }
 

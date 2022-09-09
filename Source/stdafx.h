@@ -34,8 +34,8 @@
 #endif
 
 #include <math.h>
-#include <stdio.h>
-#include <stdint.h>
+#include <cstdio>
+#include <cstdint>
 #include <string.h>
 
 #include <map>

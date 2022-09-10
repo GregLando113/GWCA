@@ -40,7 +40,7 @@ namespace GW {
 
         void RemoveFromList() {
             NextLink()->prev_link = prev_link;
-			prev_link->next_node = next_node;
+            prev_link->next_node = next_node;
         }
     };
 

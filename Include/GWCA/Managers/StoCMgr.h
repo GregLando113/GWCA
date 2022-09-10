@@ -52,13 +52,13 @@ namespace GW {
 
         // @Deprecated: use RegisterPacketCallback with a positive altitude instead.
         template <typename T>
-		void RegisterPostPacketCallback(HookEntry* entry, const HookCallback<T*>& handler) {
-			uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
-			return RegisterPostPacketCallback(entry, header,
+        void RegisterPostPacketCallback(HookEntry* entry, const HookCallback<T*>& handler) {
+            uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
+            return RegisterPostPacketCallback(entry, header,
                                               [handler](HookStatus* status, Packet::StoC::PacketBase* pak) -> void {
                                                   return handler(status, static_cast<T*>(pak));
                                               });
-		}
+        }
 
         GWCA_API void RemoveCallback(uint32_t header, HookEntry *entry);
 

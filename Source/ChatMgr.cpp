@@ -280,17 +280,17 @@ namespace {
             HookBase::LeaveHook();
             return; // Spoof packet from GetChatWindowContext();
         }
-		HookStatus status;
+        HookStatus status;
         wchar_t** str_p = &str;
-		for (auto& it : PrintChat_callbacks) {
-			it.second(&status, channel, str_p, timestamp, reprint);
-			++status.altitude;
-		}
-		if (status.blocked) {
-			//RetPrintChat(ctx, edx, channel, str, timestamp, reprint);
-			HookBase::LeaveHook();
-			return;
-		}
+        for (auto& it : PrintChat_callbacks) {
+            it.second(&status, channel, str_p, timestamp, reprint);
+            ++status.altitude;
+        }
+        if (status.blocked) {
+            //RetPrintChat(ctx, edx, channel, str, timestamp, reprint);
+            HookBase::LeaveHook();
+            return;
+        }
 
         if (!ShowTimestamps) {
             RetPrintChat(ctx, edx, channel, *str_p, timestamp, reprint);

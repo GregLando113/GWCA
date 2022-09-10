@@ -74,14 +74,14 @@ namespace GW {
             Material_Storage, Unclaimed_Items, Storage_1, Storage_2,
             Storage_3, Storage_4, Storage_5, Storage_6, Storage_7,
             Storage_8, Storage_9, Storage_10, Storage_11, Storage_12,
-			Storage_13, Storage_14, Equipped_Items, Max
+            Storage_13, Storage_14, Equipped_Items, Max
         };
-		// Order of storage panes.
-		enum class StoragePane {
-			Storage_1,Storage_2,Storage_3,Storage_4,Storage_5,
-			Storage_6,Storage_7,Storage_8,Storage_9,Storage_10,
-			Storage_11,Storage_12,Storage_13,Storage_14,Material_Storage
-		};
+        // Order of storage panes.
+        enum class StoragePane {
+            Storage_1,Storage_2,Storage_3,Storage_4,Storage_5,
+            Storage_6,Storage_7,Storage_8,Storage_9,Storage_10,
+            Storage_11,Storage_12,Storage_13,Storage_14,Material_Storage
+        };
 
         constexpr size_t BagMax = (size_t)Bag::Max;
 

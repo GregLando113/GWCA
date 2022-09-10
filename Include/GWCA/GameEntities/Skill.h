@@ -51,8 +51,8 @@ namespace GW {
         /* +h0080 */ uint32_t target_overhead_animation_id;
         /* +h0084 */ uint32_t projectile_animation_1_id;
         /* +h0088 */ uint32_t projectile_animation_2_id;
-		/* +h008C */ uint32_t icon_file_id;
-		/* +h0090 */ uint8_t h0090[4];
+        /* +h008C */ uint32_t icon_file_id;
+        /* +h0090 */ uint8_t h0090[4];
         /* +h0094 */ uint32_t name; // String id
         /* +h0098 */ uint32_t concise; // String id
         /* +h009C */ uint32_t description; // String id

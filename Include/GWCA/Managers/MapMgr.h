@@ -31,7 +31,7 @@ namespace GW {
     extern Module MapModule;
 
     namespace Map {
-		GWCA_API float QueryAltitude(const GamePos& pos, float radius, float& alt, Vec3f* terrain_normal = nullptr);
+        GWCA_API float QueryAltitude(const GamePos& pos, float radius, float& alt, Vec3f* terrain_normal = nullptr);
 
         GWCA_API bool GetIsMapLoaded();
 

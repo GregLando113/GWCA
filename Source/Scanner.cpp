@@ -127,14 +127,14 @@ uintptr_t GW::Scanner::FunctionFromNearCall(uintptr_t call_instruction_address) 
 }
 
 void GW::Scanner::Initialize(const char* moduleName) {
-	HMODULE hModule = GetModuleHandleA(moduleName);
-	uint32_t dllImageBase = (uint32_t)hModule;
-	IMAGE_NT_HEADERS* pNtHdr = ImageNtHeader(hModule);
-	IMAGE_SECTION_HEADER* pSectionHdr = (IMAGE_SECTION_HEADER*)(pNtHdr + 1);
-	//iterate through the list of all sections, and check the section name in the if conditon. etc
-	for (int i = 0; i < pNtHdr->FileHeader.NumberOfSections; i++)
-	{
-		char* name = (char*)pSectionHdr->Name;
+    HMODULE hModule = GetModuleHandleA(moduleName);
+    uint32_t dllImageBase = (uint32_t)hModule;
+    IMAGE_NT_HEADERS* pNtHdr = ImageNtHeader(hModule);
+    IMAGE_SECTION_HEADER* pSectionHdr = (IMAGE_SECTION_HEADER*)(pNtHdr + 1);
+    //iterate through the list of all sections, and check the section name in the if conditon. etc
+    for (int i = 0; i < pNtHdr->FileHeader.NumberOfSections; i++)
+    {
+        char* name = (char*)pSectionHdr->Name;
         uint8_t section = 0x8;
         if (memcmp(name, ".text", 5) == 0)
             section = Section::TEXT;
@@ -147,7 +147,7 @@ void GW::Scanner::Initialize(const char* moduleName) {
             sections[section].end = sections[section].start + pSectionHdr->Misc.VirtualSize;
         }
         pSectionHdr++;
-	}
+    }
     if (!(sections[Section::TEXT].start && sections[Section::TEXT].end))
         throw 1;
 }

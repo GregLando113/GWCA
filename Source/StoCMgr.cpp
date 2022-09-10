@@ -169,7 +169,7 @@ namespace GW {
     void StoC::EmulatePacket(Packet::StoC::PacketBase *packet) {
         if (!Verify(original_functions))
             return;
-		OriginalHandler(packet);
+        OriginalHandler(packet);
     }
 
 } // namespace GW

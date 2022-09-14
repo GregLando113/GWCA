@@ -604,7 +604,7 @@ namespace GW {
         }
 
         uint32_t GetStoragePage(void) {
-            return UI::GetPreference(UI::Preference::Preference_StorageBagPage);
+            return UI::GetPreference(UI::NumberPreference::StorageBagPage);
         }
 
         bool GetIsStorageOpen(void) {

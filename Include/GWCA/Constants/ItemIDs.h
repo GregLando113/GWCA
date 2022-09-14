@@ -4,7 +4,7 @@ namespace GW {
     namespace Constants {
         namespace ItemID { // aka item modelIDs
             constexpr int Dye = 146;
-            
+
             // items that make agents
             constexpr int GhostInTheBox = 6368;
             constexpr int GhastlyStone = 32557;
@@ -171,6 +171,7 @@ namespace GW {
             // Weapons
             constexpr int DSR = 32823;
             constexpr int EternalBlade = 1045;
+            constexpr int ObsidianEdge = 1900;
             constexpr int VoltaicSpear = 2071;
             constexpr int CrystallineSword = 399;
 

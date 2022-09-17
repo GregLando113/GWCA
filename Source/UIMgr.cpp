@@ -527,14 +527,14 @@ namespace GW {
     {
         if (!DrawOnCompass_Func)
             return false;
-        uint32_t* pts_conv = (uint32_t*)malloc(pt_count * sizeof(uint32_t) * 2);
+        const auto pts_conv = new uint32_t[pt_count * 2];
         // Legacy code was to pass short* for coordinates direct to CtoS. New hook needs them in int* coordinates, fill with 0xf
         for (unsigned i = 0; i < pt_count; i++) {
             pts_conv[i * 2] = pts[i].x | 0xffff0000;
             pts_conv[i * 2 + 1] = pts[i].y | 0xffff0000;
         }
         DrawOnCompass_Func(session_id, pt_count, pts_conv);
-        free(pts_conv);
+        delete[] pts_conv;
         return true;
     }
 

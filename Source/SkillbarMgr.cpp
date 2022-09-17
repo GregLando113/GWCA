@@ -232,24 +232,20 @@ namespace GW {
         bool LoadSkillbar(Constants::SkillID* skills, size_t n_skills, uint32_t hero_index) {
             if (!LoadSkills_Func)
                 return false;
-            const size_t bytes = n_skills * sizeof(uint32_t);
-            uint32_t* skill_ids = (uint32_t*)malloc(bytes);
-            if (skill_ids == 0)
-                return false;
-            memset(skill_ids, 0, bytes);
-            memcpy(skill_ids, skills, bytes);
+            auto skill_ids = new Constants::SkillID[n_skills];
+            std::copy_n(skills, n_skills, skill_ids);
             AgentID agent_id = Agents::GetHeroAgentID(hero_index);
             // NB: GW Client sends UI Message 0x1000005e (update skillbar skills message) without waiting for a server response!
             // This is a bug in the client, but because this affects rendering we have to enqueue the call
-            GameThread::Enqueue([agent_id, n_skills, skill_ids]() {
-                LoadSkills_Func(agent_id, n_skills, skill_ids);
-                free(skill_ids);
+            GameThread::Enqueue([agent_id, n_skills, skill_ids] {
+                LoadSkills_Func(agent_id, n_skills, reinterpret_cast<uint32_t*>(skill_ids));
+                delete[] skill_ids;
                 });
             return true;
         }
         bool EncodeSkillTemplate(const SkillTemplate& in, char* build_code_result, size_t build_code_result_len)
         {
-            const int bufSize = 1024;
+            constexpr int bufSize = 1024;
 
             char bitStr[bufSize]; // @Cleanup: Confirm that the buffer is alway big enough.
             size_t offset = 0;
@@ -258,7 +254,7 @@ namespace GW {
             offset += _WriteBits(0, &bitStr[offset], 4); // 4 Bits - Version Number - 0
 
             // Professions
-            int bits_per_prof = 4; // Professions go up to 10 - more than 4 bits would be 16 - how could this ever be more than 4 bits?
+            constexpr int bits_per_prof = 4; // Professions go up to 10 - more than 4 bits would be 16 - how could this ever be more than 4 bits?
             offset += _WriteBits((int)((bits_per_prof - 4) * 0.5), &bitStr[offset], 2); // 2 Bits - A code controlling the number of encoded bits per profession id
             offset += _WriteBits((int)in.primary, &bitStr[offset], bits_per_prof);
             offset += _WriteBits((int)in.secondary, &bitStr[offset], bits_per_prof);

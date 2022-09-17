@@ -620,11 +620,11 @@ namespace GW {
     bool UI::UInt32ToEncStr(uint32_t value, wchar_t *buffer, size_t count) {
         // Each "case" in the array of wchar_t contains a value in the range [0, WORD_VALUE_RANGE)
         // This value is offseted by WORD_VALUE_BASE and if it take more than 1 "case" it set the bytes WORD_BIT_MORE
-        size_t case_required = (value + WORD_VALUE_RANGE - 1) / WORD_VALUE_RANGE;
-        if (case_required + 1 > count)
+        const int case_required = (value + WORD_VALUE_RANGE - 1) / WORD_VALUE_RANGE;
+        if (case_required >= static_cast<int>(count))
             return false;
         buffer[case_required] = 0;
-        for (size_t i = case_required - 1; i < case_required; i--) {
+        for (int i = case_required - 1; i >= 0; i--) {
             buffer[i] = WORD_VALUE_BASE + (value % WORD_VALUE_RANGE);
             value /= WORD_VALUE_RANGE;
             if (i != case_required - 1)

@@ -101,12 +101,12 @@ namespace GW {
             return true;
         }
         // Copy the packet and enqueue in the game thread
-        void* buffer_cpy = malloc(size);
+        void* buffer_cpy = operator new(size);
         GWCA_ASSERT(buffer_cpy != NULL);
         memcpy(buffer_cpy, buffer, size);
         GameThread::Enqueue([buffer_cpy, size]() {
-            SendPacket_Func(*(uint32_t*)game_srv_object_addr, size, buffer_cpy);
-            free(buffer_cpy);
+            SendPacket_Func(*reinterpret_cast<uint32_t*>(game_srv_object_addr), size, buffer_cpy);
+            operator delete(buffer_cpy);
         });
         return true;
     }

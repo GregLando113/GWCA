@@ -32,6 +32,24 @@ namespace {
     SetTooltip_pt SetTooltip_Func = 0;
     SetTooltip_pt RetSetTooltip = 0;
 
+    
+    typedef uint32_t(__cdecl* CreateUIComponent_pt)(uint32_t frame_id, uint32_t component_flags, uint32_t tab_index, void* event_callback, wchar_t* name_enc, wchar_t* component_label);
+    CreateUIComponent_pt CreateUIComponent_Func = 0;
+    CreateUIComponent_pt CreateUIComponent_Ret = 0;
+    std::unordered_map<HookEntry*, UI::CreateUIComponentCallback> OnCreateUIComponent_callbacks;
+
+
+    uint32_t __cdecl OnCreateUIComponent(uint32_t frame_id, uint32_t component_flags, uint32_t tab_index, void* event_callback, wchar_t* name_enc, wchar_t* component_label) {
+        GW::Hook::EnterHook();
+        UI::CreateUIComponentPacket packet = {frame_id,component_flags, tab_index, event_callback, name_enc, component_label};
+        for (auto& it : OnCreateUIComponent_callbacks) {
+            it.second(&packet);
+        }
+        uint32_t out = CreateUIComponent_Ret(packet.frame_id,packet.component_flags,packet.tab_index,packet.event_callback,packet.name_enc,packet.component_label);
+        GW::Hook::LeaveHook();
+        return out;
+    }
+
     typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
     SetWindowVisible_pt SetWindowVisible_Func = 0;
 
@@ -297,6 +315,8 @@ namespace {
         SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);
         DrawOnCompass_Func = (DrawOnCompass_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\char\\charmsg.cpp", "knotCount <= arrsize(message.knotData)",-0x2e);
 
+        CreateUIComponent_Func = (CreateUIComponent_pt)GW::Scanner::Find("\x33\xd2\x89\x45\x08\xb9\xac\x01\x00\x00", "xxxxxxxxxx", -0x27);
+
         GWCA_INFO("[SCAN] FrameCache_addr = %p", FrameCache_addr);
         GWCA_INFO("[SCAN] WorldMapState_Addr = %p", WorldMapState_Addr);
         GWCA_INFO("[SCAN] DoAction = %p", DoAction_Func);
@@ -325,6 +345,7 @@ namespace {
         GWCA_INFO("[SCAN] SetVolume_Func = %p", SetVolume_Func);
         GWCA_INFO("[SCAN] SetMasterVolume_Func = %p", SetMasterVolume_Func);
         GWCA_INFO("[SCAN] DrawOnCompass_Func = %p", DrawOnCompass_Func);
+        GWCA_INFO("[SCAN] CreateUIComponent_Func = %p", CreateUIComponent_Func);
 
 #if _DEBUG
         GWCA_ASSERT(GetStringPreference_Func);
@@ -354,9 +375,11 @@ namespace {
         GWCA_ASSERT(SetVolume_Func);
         GWCA_ASSERT(SetMasterVolume_Func);
         GWCA_ASSERT(DrawOnCompass_Func);
+        GWCA_ASSERT(CreateUIComponent_Func);
 #endif
         HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
         HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
+        HookBase::CreateHook(CreateUIComponent_Func, OnCreateUIComponent, (void**)&CreateUIComponent_Ret);
 
     }
 
@@ -369,6 +392,8 @@ namespace {
             HookBase::EnableHooks(SetTooltip_Func);
         if (SendUIMessage_Func)
             HookBase::EnableHooks(SendUIMessage_Func);
+        if (CreateUIComponent_Func)
+            HookBase::EnableHooks(CreateUIComponent_Func);
         UI::RegisterUIMessageCallback(&open_template_hook, UI::UIMessage::kOpenTemplate, OnOpenTemplate_UIMessage);
     }
     void DisableHooks() {
@@ -381,6 +406,8 @@ namespace {
             HookBase::DisableHooks(SetTooltip_Func);
         if (SendUIMessage_Func)
             HookBase::DisableHooks(SendUIMessage_Func);
+        if (CreateUIComponent_Func)
+            HookBase::DisableHooks(CreateUIComponent_Func);
     }
 
     void Exit()
@@ -389,6 +416,7 @@ namespace {
         HookBase::RemoveHook(DoAction_Func);
         HookBase::RemoveHook(SetTooltip_Func);
         HookBase::RemoveHook(SendUIMessage_Func);
+        HookBase::RemoveHook(CreateUIComponent_Func);
     }
 }
 
@@ -780,6 +808,17 @@ namespace GW {
 
         TooltipInfo* GetCurrentTooltip() {
             return CurrentTooltipPtr && *CurrentTooltipPtr ? **CurrentTooltipPtr : 0;
+        }
+
+        void RegisterCreateUIComponentCallback(HookEntry* entry, const CreateUIComponentCallback& callback)
+        {
+            if (!OnCreateUIComponent_callbacks.contains(entry))
+                OnCreateUIComponent_callbacks[entry] = callback;
+        }
+        void RemoveCreateUIComponentCallback(HookEntry* entry)
+        {
+            if (OnCreateUIComponent_callbacks.contains(entry))
+                OnCreateUIComponent_callbacks.erase(entry);
         }
     }
     

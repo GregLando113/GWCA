@@ -548,6 +548,15 @@ namespace GW {
             }
         };
 
+        struct CreateUIComponentPacket {
+            uint32_t frame_id;
+            uint32_t component_flags;
+            uint32_t tab_index;
+            void* event_callback;
+            wchar_t* name_enc;
+            wchar_t* component_label;
+        };
+
         // SendMessage for Guild Wars UI messages, most UI interactions will use this.
         GWCA_API bool SendUIMessage(UI::UIMessage message, void* wParam = nullptr, void* lParam = nullptr);
 
@@ -614,6 +623,14 @@ namespace GW {
             HookEntry *entry);
 
         GWCA_API TooltipInfo* GetCurrentTooltip();
+
+        typedef std::function<void (CreateUIComponentPacket*)> CreateUIComponentCallback;
+        GWCA_API void RegisterCreateUIComponentCallback(
+            HookEntry *entry,
+            const CreateUIComponentCallback& callback);
+
+        GWCA_API void RemoveCreateUIComponentCallback(
+            HookEntry *entry);
 
     }
 }

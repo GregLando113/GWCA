@@ -96,9 +96,33 @@ namespace {
 
     UI::TooltipInfo*** CurrentTooltipPtr = 0;
 
-    uint32_t *preferences_array;
-    uint32_t *more_preferences_array;
-    uint32_t *preferences_array2;
+    // Get command line parameters that were assigned when GW started
+    typedef bool (__cdecl *GetFlagParameter_pt)(uint32_t flag_parameter_id);
+    GetFlagParameter_pt GetFlagParameter_Func = 0;
+    typedef wchar_t* (__cdecl *GetStringParameter_pt)(uint32_t string_parameter_id_plus_0x27);
+    GetStringParameter_pt GetStringParameter_Func = 0;
+
+    // Get in-game preferences assigd during gameplay
+    typedef bool (__cdecl *GetFlagPreference_pt)(uint32_t flag_pref_id);
+    GetFlagPreference_pt GetFlagPreference_Func = 0;
+    typedef void (__cdecl *SetFlagPreference_pt)(uint32_t flag_pref_id, bool value);
+    SetFlagPreference_pt SetFlagPreference_Func = 0;
+
+    typedef wchar_t* (__cdecl *GetStringPreference_pt)(uint32_t string_pref_id);
+    GetStringPreference_pt GetStringPreference_Func = 0;
+    typedef void (__cdecl *SetStringPreference_pt)(uint32_t string_pref_id, wchar_t* value);
+    SetStringPreference_pt SetStringPreference_Func = 0;
+
+    typedef uint32_t (__cdecl *GetEnumPreference_pt)(uint32_t choice_pref_id);
+    GetEnumPreference_pt GetEnumPreference_Func = 0;
+    typedef void (__cdecl *SetEnumPreference_pt)(uint32_t choice_pref_id, uint32_t value);
+    SetEnumPreference_pt SetEnumPreference_Func = 0;
+
+    typedef uint32_t (__cdecl *GetNumberPreference_pt)(uint32_t number_pref_id);
+    GetNumberPreference_pt GetNumberPreference_Func = 0;
+    typedef void (__cdecl *SetNumberPreference_pt)(uint32_t number_pref_id, uint32_t value);
+    SetNumberPreference_pt SetNumberPreference_Func = 0;
+
     UI::WindowPosition* window_positions_array = 0;
     UI::FloatingWindow* floating_windows_array = 0;
 
@@ -213,18 +237,24 @@ namespace {
         if (Verify(address))
             shift_screen_addr = *(uintptr_t *)address;
 
-        address = GW::Scanner::Find("\x75\xF6\x33\xF6\x39\x34\x9D", "xxxxxxx", +7);
-        if (Verify(address)) {
-            address = *(uintptr_t *)address;
-            preferences_array = reinterpret_cast<uint32_t *>(address);
+        address = GW::Scanner::Find("\x83\x0e\x02\x57\x6a\x2a", "xxxxxx", -0x14); // Initialise preferences function start
+        if (address) {
+            GetFlagParameter_Func = (GetFlagParameter_pt)GW::Scanner::FunctionFromNearCall(address + 0xf);
+            GetStringParameter_Func = (GetStringParameter_pt)GW::Scanner::FunctionFromNearCall(address + 0x32);
+           
+            GetStringPreference_Func = (GetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x5c);
+            GetFlagPreference_Func = (GetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x10b);
+            GetEnumPreference_Func = (GetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x118);
+            GetNumberPreference_Func = (GetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x13f);
         }
 
-        // NB: There are other assertions that match this pattern, this is the first
-        address = GW::Scanner::FindAssertion("p:\\code\\gw\\pref\\prapi.cpp", "info.getMappingProc", -0x1E);
-        if (Verify(address)) {
-            address = *(uintptr_t*)address;
-            more_preferences_array = reinterpret_cast<uint32_t*>(address);
-        }
+        address = GW::Scanner::Find("\x50\x68\x50\x00\x00\x10", "xxxxxx", -0x3f);
+        SetStringPreference_Func = (SetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address);
+
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\ui\\dialog\\dlgoptgr.cpp", "No valid case for switch variable 'quality'");
+        SetEnumPreference_Func = (SetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x84);
+        GetFlagPreference_Func = (GetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x3b);
+        SetNumberPreference_Func = (SetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x61);
 
         address = GW::Scanner::FindAssertion("p:\\code\\engine\\frame\\frtip.cpp", "CMsg::Validate(id)");
         if(address)
@@ -238,15 +268,6 @@ namespace {
         address = Scanner::Find("\x8D\x4B\x28\x89\x73\x24\x8B\xD7", "xxxxxxx", +0x10);
         if (Verify(address))
             GameSettings_Addr = *(uintptr_t*)address;
-
-        SetTickboxPref_Func = (SetTickboxPref_pt)Scanner::Find(
-            "\x8B\x75\x0C\x33\xC9\x39\x0C\xBD\x00\x00\x00\x00\x0F\x95\xC1\x33", "xxxxxxxx????xxxx", -0x6F);
-
-        if (Verify(SetTickboxPref_Func)) {
-            address = (uintptr_t)SetTickboxPref_Func + 0x77;
-            address = *(uintptr_t*)address;
-            preferences_array2 = reinterpret_cast<uint32_t*>(address);
-        }
 
         // NB: 0x39 is the size of the floating window array
         SetFloatingWindowVisible_Func = (SetFloatingWindowVisible_pt)Scanner::Find("\x8B\x75\x0C\x57\x83\xFE\x39", "xxxxxxx", -0x5);
@@ -286,12 +307,17 @@ namespace {
         GWCA_INFO("[SCAN] LoadSettings = %p", LoadSettings_Func);
         GWCA_INFO("[SCAN] ui_drawn_addr = %p", ui_drawn_addr);
         GWCA_INFO("[SCAN] shift_screen_addr = %p", shift_screen_addr);
-        GWCA_INFO("[SCAN] preferences_array = %p", preferences_array);
-        GWCA_INFO("[SCAN] more_preferences_array = %p", more_preferences_array);
+        GWCA_INFO("[SCAN] GetStringPreference_Func = %p", GetStringPreference_Func);
+        GWCA_INFO("[SCAN] GetEnumPreference_Func = %p", GetEnumPreference_Func);
+        GWCA_INFO("[SCAN] GetNumberPreference_Func = %p", GetNumberPreference_Func);
+        GWCA_INFO("[SCAN] GetFlagPreference_Func = %p", GetFlagPreference_Func);
+        GWCA_INFO("[SCAN] SetStringPreference_Func = %p", SetStringPreference_Func);
+        GWCA_INFO("[SCAN] SetEnumPreference_Func = %p", SetEnumPreference_Func);
+        GWCA_INFO("[SCAN] SetNumberPreference_Func = %p", SetNumberPreference_Func);
+        GWCA_INFO("[SCAN] SetFlagPreference_Func = %p", SetFlagPreference_Func);
         GWCA_INFO("[SCAN] SetTooltip_Func = %p", SetTooltip_Func);
         GWCA_INFO("[SCAN] CurrentTooltipPtr = %p", CurrentTooltipPtr);
         GWCA_INFO("[SCAN] GameSettings = %p", GameSettings_Addr);
-        GWCA_INFO("[SCAN] preferences_array2 = %p", preferences_array2);
         GWCA_INFO("[SCAN] SetTickboxPref = %p", SetTickboxPref_Func);
         GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %p", SetFloatingWindowVisible_Func);
         GWCA_INFO("[SCAN] floating_windows_array = %p", floating_windows_array);
@@ -305,6 +331,14 @@ namespace {
         GWCA_INFO("[SCAN] DrawOnCompass_Func = %p", DrawOnCompass_Func);
 
 #if _DEBUG
+        GWCA_ASSERT(GetStringPreference_Func);
+        GWCA_ASSERT(GetEnumPreference_Func);
+        GWCA_ASSERT(GetNumberPreference_Func);
+        GWCA_ASSERT(GetFlagPreference_Func);
+        GWCA_ASSERT(SetStringPreference_Func);
+        GWCA_ASSERT(SetEnumPreference_Func);
+        GWCA_ASSERT(SetNumberPreference_Func);
+        GWCA_ASSERT(SetFlagPreference_Func);
         GWCA_ASSERT(FrameCache_addr);
         GWCA_ASSERT(WorldMapState_Addr);
         GWCA_ASSERT(DoAction_Func);
@@ -312,12 +346,9 @@ namespace {
         GWCA_ASSERT(LoadSettings_Func);
         GWCA_ASSERT(ui_drawn_addr);
         GWCA_ASSERT(shift_screen_addr);
-        GWCA_ASSERT(preferences_array);
-        GWCA_ASSERT(more_preferences_array);
         GWCA_ASSERT(SetTooltip_Func);
         GWCA_ASSERT(CurrentTooltipPtr);
         GWCA_ASSERT(GameSettings_Addr);
-        GWCA_ASSERT(preferences_array2);
         GWCA_ASSERT(SetTickboxPref_Func);
         GWCA_ASSERT(SetFloatingWindowVisible_Func);
         GWCA_ASSERT(floating_windows_array);
@@ -383,369 +414,394 @@ namespace GW {
         ::EnableHooks,           // enable_hooks
         ::DisableHooks,           // disable_hooks
     };
-    Vec2f UI::WindowPosition::yAxis(float multiplier) const {
-        const float h = static_cast<float>(Render::GetViewportHeight());
-        Vec2f y;
-        float correct;
-        switch (state ^ 0x1) {
-        case 0x20:
-        case 0x24:
-        case 0x30:
-            y = { h - p1.y * multiplier, h - p2.y * multiplier };
-            break;
-        case 0x4:
-        case 0x10:
-        case 0x0:
-            correct = (h / 2.f);
-            y = { correct - p1.y * multiplier, correct + p2.y * multiplier };
-            break;
-        default:
-            y = { p1.y * multiplier, p2.y * multiplier };
-            break;
+    namespace UI {
+        Vec2f WindowPosition::yAxis(float multiplier) const {
+            const float h = static_cast<float>(Render::GetViewportHeight());
+            Vec2f y;
+            float correct;
+            switch (state ^ 0x1) {
+            case 0x20:
+            case 0x24:
+            case 0x30:
+                y = { h - p1.y * multiplier, h - p2.y * multiplier };
+                break;
+            case 0x4:
+            case 0x10:
+            case 0x0:
+                correct = (h / 2.f);
+                y = { correct - p1.y * multiplier, correct + p2.y * multiplier };
+                break;
+            default:
+                y = { p1.y * multiplier, p2.y * multiplier };
+                break;
+            }
+            return y;
         }
-        return y;
-    }
-    Vec2f UI::WindowPosition::xAxis(float multiplier) const {
-        const float w = static_cast<float>(Render::GetViewportWidth());
-        Vec2f x;
-        float correct;
-        switch (state ^ 0x1) {
-        case 0x10:
-        case 0x18:
-        case 0x30:
-            x = { w - p1.x * multiplier, w - p2.x * multiplier };
-            break;
-        case 0x8:
-        case 0x20:
-        case 0x0:
-            correct = (w / 2.f);
-            x = { correct - p1.x * multiplier, correct + p2.x * multiplier };
-            break;
-        default:
-            x = { p1.x * multiplier, p2.x * multiplier };
-            break;
+        Vec2f WindowPosition::xAxis(float multiplier) const {
+            const float w = static_cast<float>(Render::GetViewportWidth());
+            Vec2f x;
+            float correct;
+            switch (state ^ 0x1) {
+            case 0x10:
+            case 0x18:
+            case 0x30:
+                x = { w - p1.x * multiplier, w - p2.x * multiplier };
+                break;
+            case 0x8:
+            case 0x20:
+            case 0x0:
+                correct = (w / 2.f);
+                x = { correct - p1.x * multiplier, correct + p2.x * multiplier };
+                break;
+            default:
+                x = { p1.x * multiplier, p2.x * multiplier };
+                break;
+            }
+
+            return x;
+        }
+        float WindowPosition::top(float multiplier) const {
+            return yAxis(multiplier).x;
+        }
+        float WindowPosition::left(float multiplier) const {
+            return xAxis(multiplier).x;
+        }
+        float WindowPosition::bottom(float multiplier) const {
+            return yAxis(multiplier).y;
+        }
+        float WindowPosition::right(float multiplier) const {
+            return xAxis(multiplier).y;
         }
 
-        return x;
-    }
-    float UI::WindowPosition::top(float multiplier) const {
-        return yAxis(multiplier).x;
-    }
-    float UI::WindowPosition::left(float multiplier) const {
-        return xAxis(multiplier).x;
-    }
-    float UI::WindowPosition::bottom(float multiplier) const {
-        return yAxis(multiplier).y;
-    }
-    float UI::WindowPosition::right(float multiplier) const {
-        return xAxis(multiplier).y;
-    }
+        bool SendUIMessage(UIMessage msgid, void *wParam, void *lParam)
+        {
+            auto forward_call = [msgid, wParam, lParam]() {
+                if (!RetSendUIMessage)
+                    return false;
+                HookBase::EnterHook();
+                RetSendUIMessage(msgid, wParam, lParam);
+                HookBase::LeaveHook();
+                return true;
+            };
+            HookStatus status;
+            auto found = UIMessage_callbacks.find(msgid);
+            if (found == UIMessage_callbacks.end()) {
+                return forward_call();
+            }
 
-    bool UI::SendUIMessage(UIMessage msgid, void *wParam, void *lParam)
-    {
-        auto forward_call = [msgid, wParam, lParam]() {
-            if (!RetSendUIMessage)
+            auto it = found->second.begin();
+            auto end = found->second.end();
+            // Pre callbacks
+            while (it != end) {
+                if (it->altitude > 0)
+                    break;
+                it->callback(&status, msgid, wParam, lParam);
+                ++status.altitude;
+                it++;
+            }
+
+            bool result = !status.blocked && forward_call();
+
+            // Post callbacks
+            while (it != end) {
+                it->callback(&status, msgid, wParam, lParam);
+                ++status.altitude;
+                it++;
+            }
+            return result;
+        }
+        bool Keydown(ControlAction key) {
+            uintptr_t ecx = GetActionContext();
+            if (!(ecx && RetDoAction))
                 return false;
-            HookBase::EnterHook();
-            RetSendUIMessage(msgid, wParam, lParam);
-            HookBase::LeaveHook();
+            KeypressPacket action;
+            action.key = key;
+            OnDoAction((void*)ecx, 0, 0x1E, &action, 0);
             return true;
-        };
-        HookStatus status;
-        auto found = UIMessage_callbacks.find(msgid);
-        if (found == UIMessage_callbacks.end()) {
-            return forward_call();
         }
-
-        auto it = found->second.begin();
-        auto end = found->second.end();
-        // Pre callbacks
-        while (it != end) {
-            if (it->altitude > 0)
-                break;
-            it->callback(&status, msgid, wParam, lParam);
-            ++status.altitude;
-            it++;
-        }
-
-        bool result = !status.blocked && forward_call();
-
-        // Post callbacks
-        while (it != end) {
-            it->callback(&status, msgid, wParam, lParam);
-            ++status.altitude;
-            it++;
-        }
-        return result;
-    }
-    bool UI::Keydown(ControlAction key) {
-        uintptr_t ecx = GetActionContext();
-        if (!(ecx && RetDoAction))
-            return false;
-        KeypressPacket action;
-        action.key = key;
-        OnDoAction((void*)ecx, 0, 0x1E, &action, 0);
-        return true;
-    }
-    bool UI::Keyup(ControlAction key) {
-        uintptr_t ecx = GetActionContext();
-        if (!(ecx && RetDoAction))
-            return false;
-        KeypressPacket action;
-        action.key = key;
-        OnDoAction((void*)ecx, 0, 0x20, &action, 0);
-        return true;
-    }
-
-    bool UI::SetWindowVisible(UI::WindowID window_id,bool is_visible) {
-        if (!SetWindowVisible_Func || window_id >= UI::WindowID::WindowID_Count)
-            return false;
-        SetWindowVisible_Func(window_id, is_visible ? 1u : 0u, 0, 0);
-        return true;
-    }
-    bool UI::SetWindowPosition(UI::WindowID window_id, UI::WindowPosition* info) {
-        if (!SetWindowPosition_Func || window_id >= UI::WindowID::WindowID_Count)
-            return false;
-        SetWindowPosition_Func(window_id, info, 0, 0);
-        return true;
-    }
-    UI::WindowPosition* UI::GetWindowPosition(UI::WindowID window_id) {
-        if (!window_positions_array || window_id >= UI::WindowID::WindowID_Count)
-            return nullptr;
-        return &window_positions_array[window_id];
-    }
-
-    bool UI::Keypress(ControlAction key) {
-        if (!Keydown(key))
-            return false;
-        GW::GameThread::Enqueue([key]() {
-            Keyup(key);
-            });
-        return true;
-    }
-    bool UI::DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
-    {
-        if (!DrawOnCompass_Func)
-            return false;
-        uint32_t* pts_conv = (uint32_t*)malloc(pt_count * sizeof(uint32_t) * 2);
-        // Legacy code was to pass short* for coordinates direct to CtoS. New hook needs them in int* coordinates, fill with 0xf
-        for (unsigned i = 0; i < pt_count; i++) {
-            pts_conv[i * 2] = pts[i].x | 0xffff0000;
-            pts_conv[i * 2 + 1] = pts[i].y | 0xffff0000;
-        }
-        DrawOnCompass_Func(session_id, pt_count, pts_conv);
-        free(pts_conv);
-        return true;
-    }
-
-    void UI::LoadSettings(size_t size, uint8_t *data) {
-        if (Verify(LoadSettings_Func))
-            LoadSettings_Func(size, data);
-    }
-
-    UI::ArrayByte* UI::GetSettings() {
-        return (UI::ArrayByte *)GameSettings_Addr;
-    }
-
-    bool UI::GetIsUIDrawn() {
-        uint32_t *ui_drawn = (uint32_t *)ui_drawn_addr;
-        if (Verify(ui_drawn))
-            return (*ui_drawn == 0);
-        else
+        bool Keyup(ControlAction key) {
+            uintptr_t ecx = GetActionContext();
+            if (!(ecx && RetDoAction))
+                return false;
+            KeypressPacket action;
+            action.key = key;
+            OnDoAction((void*)ecx, 0, 0x20, &action, 0);
             return true;
-    }
-    bool UI::GetIsWorldMapShowing() {
-        uint32_t* WorldMapState = (uint32_t*)WorldMapState_Addr;
-        if (Verify(WorldMapState))
-            return (*WorldMapState & 0x80000) != 0;
-        else
-            return false;
-    }
-
-    bool UI::GetIsShiftScreenShot() {
-        uint32_t *shift_screen = (uint32_t *)shift_screen_addr;
-        if (Verify(shift_screen))
-            return (*shift_screen != 0);
-        else
-            return false;
-    }
-
-    void UI::AsyncDecodeStr(const wchar_t *enc_str, wchar_t *buffer, size_t size) {
-        if (!ValidateAsyncDecodeStr)
-            return;
-        // @Enhancement: Should use a pool of this buffer, but w/e for now
-        AsyncBuffer *abuf = new AsyncBuffer;
-        abuf->buffer = buffer;
-        abuf->size = size;
-        ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_wchar, abuf);
-    }
-
-    void UI::AsyncDecodeStr(const wchar_t *enc_str, char *buffer, size_t size) {
-        if (!ValidateAsyncDecodeStr)
-            return;
-        // @Enhancement: Should use a pool of this buffer, but w/e for now
-        AsyncBuffer *abuf = new AsyncBuffer;
-        abuf->buffer = buffer;
-        abuf->size = size;
-        ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_char, abuf);
-    }
-
-    void UI::AsyncDecodeStr(const wchar_t* enc_str, DecodeStr_Callback callback, void* callback_param, uint32_t language_id) {
-        if (!ValidateAsyncDecodeStr)
-            return;
-        auto& textParser = GameContext::instance()->text_parser;
-        uint32_t prev_language_id = textParser->language_id;
-        if (language_id != -1) {
-            textParser->language_id = language_id;
         }
-        ValidateAsyncDecodeStr((wchar_t*)enc_str, callback, callback_param);
-        textParser->language_id = prev_language_id;
-    }
 
-    void UI::AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id) {
-        if (!ValidateAsyncDecodeStr)
-            return;
-        auto& textParser = GameContext::instance()->text_parser;
-        uint32_t prev_language_id = textParser->language_id;
-        if (language_id != -1) {
-            textParser->language_id = language_id;
+        bool SetWindowVisible(WindowID window_id,bool is_visible) {
+            if (!SetWindowVisible_Func || window_id >= WindowID::WindowID_Count)
+                return false;
+            SetWindowVisible_Func(window_id, is_visible ? 1u : 0u, 0, 0);
+            return true;
         }
-        ValidateAsyncDecodeStr((wchar_t*)enc_str, __calback_copy_wstring, out);
-        textParser->language_id = prev_language_id;
-    }
-
-    #define WORD_BIT_MORE       (0x8000)
-    #define WORD_VALUE_BASE     (0x100)
-    #define WORD_VALUE_RANGE    (WORD_BIT_MORE - WORD_VALUE_BASE)
-    bool UI::UInt32ToEncStr(uint32_t value, wchar_t *buffer, size_t count) {
-        // Each "case" in the array of wchar_t contains a value in the range [0, WORD_VALUE_RANGE)
-        // This value is offseted by WORD_VALUE_BASE and if it take more than 1 "case" it set the bytes WORD_BIT_MORE
-        size_t case_required = (value + WORD_VALUE_RANGE - 1) / WORD_VALUE_RANGE;
-        if (case_required + 1 > count)
-            return false;
-        buffer[case_required] = 0;
-        for (size_t i = case_required - 1; i < case_required; i--) {
-            buffer[i] = WORD_VALUE_BASE + (value % WORD_VALUE_RANGE);
-            value /= WORD_VALUE_RANGE;
-            if (i != case_required - 1)
-                buffer[i] |= WORD_BIT_MORE;
+        bool SetWindowPosition(WindowID window_id, WindowPosition* info) {
+            if (!SetWindowPosition_Func || window_id >= WindowID::WindowID_Count)
+                return false;
+            SetWindowPosition_Func(window_id, info, 0, 0);
+            return true;
         }
-        return true;
-    }
-
-    uint32_t UI::EncStrToUInt32(const wchar_t *enc_str) {
-        uint32_t val = 0;
-        do {
-            GWCA_ASSERT(*enc_str >= WORD_VALUE_BASE);
-            val *= WORD_VALUE_RANGE;
-            val += (*enc_str & ~WORD_BIT_MORE) - WORD_VALUE_BASE;
-        } while (*enc_str++ & WORD_BIT_MORE);
-        return val;
-    }
-
-    void UI::SetOpenLinks(bool toggle)
-    {
-        open_links = toggle;
-    }
-
-    uint32_t UI::GetPreference(Preference pref)
-    {
-        if (pref & 0x800) {
-            return more_preferences_array[pref ^ 0x800];
+        WindowPosition* GetWindowPosition(WindowID window_id) {
+            if (!window_positions_array || window_id >= WindowID::WindowID_Count)
+                return nullptr;
+            return &window_positions_array[window_id];
         }
-        else if (pref & 0x8000) {
-            return preferences_array2[pref ^ 0x8000];
-        }
-        return preferences_array[pref];
-    }
 
-    void UI::SetPreference(Preference pref, uint32_t value)
-    {
-        if (pref & 0x800) {
-            more_preferences_array[pref ^ 0x800] = value;
-        } else if(pref & 0x8000) {
-            // Checkbox values
-            if ((value == 1 || value == 0) && preferences_array2[pref ^ 0x8000] != value)
-                SetTickboxPref_Func(pref ^ 0x8000, value, 0);
-            return;
+        bool Keypress(ControlAction key) {
+            if (!Keydown(key))
+                return false;
+            GW::GameThread::Enqueue([key]() {
+                Keyup(key);
+                });
+            return true;
         }
-        // Set in-game volume
-        switch (pref) {
-        case GW::UI::Preference::Preference_EffectsVolume:
-            if(SetVolume_Func) SetVolume_Func(0, (float)((float)value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_DialogVolume:
-            if (SetVolume_Func) SetVolume_Func(4, (float)((float)value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_BackgroundVolume:
-            if (SetVolume_Func) SetVolume_Func(1, (float)((float)value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_MusicVolume:
-            if (SetVolume_Func) SetVolume_Func(3, (float)((float)value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_UIVolume:
-            if (SetVolume_Func) SetVolume_Func(2, (float)((float)value / 100.f));
-            break;
-        case GW::UI::Preference::Preference_MasterVolume:
-            if(SetMasterVolume_Func) SetMasterVolume_Func((float)((float)value / 100.f));
-            break;
-        default:
-            break;
+        bool DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint *pts)
+        {
+            if (!DrawOnCompass_Func)
+                return false;
+            uint32_t* pts_conv = (uint32_t*)malloc(pt_count * sizeof(uint32_t) * 2);
+            // Legacy code was to pass short* for coordinates direct to CtoS. New hook needs them in int* coordinates, fill with 0xf
+            for (unsigned i = 0; i < pt_count; i++) {
+                pts_conv[i * 2] = pts[i].x | 0xffff0000;
+                pts_conv[i * 2 + 1] = pts[i].y | 0xffff0000;
+            }
+            DrawOnCompass_Func(session_id, pt_count, pts_conv);
+            free(pts_conv);
+            return true;
         }
-    }
 
-    void UI::RegisterKeyupCallback(HookEntry* entry, const KeyCallback& callback) {
-        OnKeyup_callbacks.insert({ entry, callback });
-    }
-    void UI::RemoveKeyupCallback(HookEntry* entry) {
-        auto it = OnKeyup_callbacks.find(entry);
-        if (it != OnKeyup_callbacks.end())
-            OnKeyup_callbacks.erase(it);
-    }
-
-    void UI::RegisterKeydownCallback(HookEntry* entry, const KeyCallback& callback) {
-        OnKeydown_callbacks.insert({ entry, callback });
-    }
-    void UI::RemoveKeydownCallback(HookEntry* entry) {
-        auto it = OnKeydown_callbacks.find(entry);
-        if (it != OnKeydown_callbacks.end())
-            OnKeydown_callbacks.erase(it);
-    }
-
-    void UI::RegisterUIMessageCallback(
-        HookEntry *entry,
-        UIMessage message_id,
-        const UIMessageCallback& callback,
-        int altitude)
-    {
-        if (!UIMessage_callbacks.contains(message_id)) {
-            UIMessage_callbacks[message_id] = std::vector<CallbackEntry>();
+        void LoadSettings(size_t size, uint8_t *data) {
+            if (Verify(LoadSettings_Func))
+                LoadSettings_Func(size, data);
         }
-        auto it = UIMessage_callbacks[message_id].begin();
-        while (it != UIMessage_callbacks[message_id].end()) {
-            if (it->altitude > altitude)
+
+        ArrayByte* GetSettings() {
+            return (ArrayByte *)GameSettings_Addr;
+        }
+
+        bool GetIsUIDrawn() {
+            uint32_t *ui_drawn = (uint32_t *)ui_drawn_addr;
+            if (Verify(ui_drawn))
+                return (*ui_drawn == 0);
+            else
+                return true;
+        }
+        bool GetIsWorldMapShowing() {
+            uint32_t* WorldMapState = (uint32_t*)WorldMapState_Addr;
+            if (Verify(WorldMapState))
+                return (*WorldMapState & 0x80000) != 0;
+            else
+                return false;
+        }
+
+        bool GetIsShiftScreenShot() {
+            uint32_t *shift_screen = (uint32_t *)shift_screen_addr;
+            if (Verify(shift_screen))
+                return (*shift_screen != 0);
+            else
+                return false;
+        }
+
+        void AsyncDecodeStr(const wchar_t *enc_str, wchar_t *buffer, size_t size) {
+            if (!ValidateAsyncDecodeStr)
+                return;
+            // @Enhancement: Should use a pool of this buffer, but w/e for now
+            AsyncBuffer *abuf = new AsyncBuffer;
+            abuf->buffer = buffer;
+            abuf->size = size;
+            ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_wchar, abuf);
+        }
+
+        void AsyncDecodeStr(const wchar_t *enc_str, char *buffer, size_t size) {
+            if (!ValidateAsyncDecodeStr)
+                return;
+            // @Enhancement: Should use a pool of this buffer, but w/e for now
+            AsyncBuffer *abuf = new AsyncBuffer;
+            abuf->buffer = buffer;
+            abuf->size = size;
+            ValidateAsyncDecodeStr((wchar_t*)enc_str, __callback_copy_char, abuf);
+        }
+
+        void AsyncDecodeStr(const wchar_t* enc_str, DecodeStr_Callback callback, void* callback_param, uint32_t language_id) {
+            if (!ValidateAsyncDecodeStr)
+                return;
+            auto& textParser = GameContext::instance()->text_parser;
+            uint32_t prev_language_id = textParser->language_id;
+            if (language_id != -1) {
+                textParser->language_id = language_id;
+            }
+            ValidateAsyncDecodeStr((wchar_t*)enc_str, callback, callback_param);
+            textParser->language_id = prev_language_id;
+        }
+
+        void AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id) {
+            if (!ValidateAsyncDecodeStr)
+                return;
+            auto& textParser = GameContext::instance()->text_parser;
+            uint32_t prev_language_id = textParser->language_id;
+            if (language_id != -1) {
+                textParser->language_id = language_id;
+            }
+            ValidateAsyncDecodeStr((wchar_t*)enc_str, __calback_copy_wstring, out);
+            textParser->language_id = prev_language_id;
+        }
+
+#define WORD_BIT_MORE       (0x8000)
+#define WORD_VALUE_BASE     (0x100)
+#define WORD_VALUE_RANGE    (WORD_BIT_MORE - WORD_VALUE_BASE)
+        bool UInt32ToEncStr(uint32_t value, wchar_t *buffer, size_t count) {
+            // Each "case" in the array of wchar_t contains a value in the range [0, WORD_VALUE_RANGE)
+            // This value is offseted by WORD_VALUE_BASE and if it take more than 1 "case" it set the bytes WORD_BIT_MORE
+            size_t case_required = (value + WORD_VALUE_RANGE - 1) / WORD_VALUE_RANGE;
+            if (case_required + 1 > count)
+                return false;
+            buffer[case_required] = 0;
+            for (size_t i = case_required - 1; i < case_required; i--) {
+                buffer[i] = WORD_VALUE_BASE + (value % WORD_VALUE_RANGE);
+                value /= WORD_VALUE_RANGE;
+                if (i != case_required - 1)
+                    buffer[i] |= WORD_BIT_MORE;
+            }
+            return true;
+        }
+
+        uint32_t EncStrToUInt32(const wchar_t *enc_str) {
+            uint32_t val = 0;
+            do {
+                GWCA_ASSERT(*enc_str >= WORD_VALUE_BASE);
+                val *= WORD_VALUE_RANGE;
+                val += (*enc_str & ~WORD_BIT_MORE) - WORD_VALUE_BASE;
+            } while (*enc_str++ & WORD_BIT_MORE);
+            return val;
+        }
+
+        void SetOpenLinks(bool toggle)
+        {
+            open_links = toggle;
+        }
+
+        uint32_t GetPreference(EnumPreference pref)
+        {
+            return GetEnumPreference_Func && pref < EnumPreference::Count ? GetEnumPreference_Func((uint32_t)pref) : 0;
+        }
+        uint32_t GetPreference(NumberPreference pref)
+        {
+            return GetNumberPreference_Func && pref < NumberPreference::Count ? GetNumberPreference_Func((uint32_t)pref) : 0;
+        }
+        wchar_t* GetPreference(StringPreference pref)
+        {
+            return GetStringPreference_Func && pref < StringPreference::Count ? GetStringPreference_Func((uint32_t)pref) : 0;
+        }
+        bool GetPreference(FlagPreference pref)
+        {
+            return GetFlagPreference_Func && pref < FlagPreference::Count ? GetFlagPreference_Func((uint32_t)pref) : 0;
+        }
+        bool SetPreference(EnumPreference pref, uint32_t value)
+        {
+            return SetEnumPreference_Func && pref < EnumPreference::Count ? SetEnumPreference_Func((uint32_t)pref, value), true : false;
+        }
+        bool SetPreference(NumberPreference pref, uint32_t value)
+        {
+            return SetNumberPreference_Func && pref < NumberPreference::Count ? SetNumberPreference_Func((uint32_t)pref, value), true : false;
+        }
+        bool SetPreference(StringPreference pref, wchar_t* value)
+        {
+            return SetStringPreference_Func && pref < StringPreference::Count ? SetStringPreference_Func((uint32_t)pref, value), true : false;
+        }
+        bool SetPreference(FlagPreference pref, bool value)
+        {
+            return SetFlagPreference_Func && pref < FlagPreference::Count ? SetFlagPreference_Func((uint32_t)pref, value), true : false;
+        }
+        /*
+        void SetPreference(Preference pref, uint32_t value)
+        {
+            if (pref & 0x800) {
+                number_preferences_array[pref ^ 0x800] = value;
+            } else if(pref & 0x8000) {
+                // Checkbox values
+                if ((value == 1 || value == 0) && preferences_array2[pref ^ 0x8000] != value)
+                    SetTickboxPref_Func(pref ^ 0x8000, value, 0);
+                return;
+            }
+            // Set in-game volume
+            switch (pref) {
+            case GW::Preference::Preference_EffectsVolume:
+                if(SetVolume_Func) SetVolume_Func(0, (float)((float)value / 100.f));
                 break;
-            it++;
-        }
-        UIMessage_callbacks[message_id].insert(it, { altitude, entry, callback});
-    }
+            case GW::Preference::Preference_DialogVolume:
+                if (SetVolume_Func) SetVolume_Func(4, (float)((float)value / 100.f));
+                break;
+            case GW::Preference::Preference_BackgroundVolume:
+                if (SetVolume_Func) SetVolume_Func(1, (float)((float)value / 100.f));
+                break;
+            case GW::Preference::Preference_MusicVolume:
+                if (SetVolume_Func) SetVolume_Func(3, (float)((float)value / 100.f));
+                break;
+            case GW::Preference::Preference_UIVolume:
+                if (SetVolume_Func) SetVolume_Func(2, (float)((float)value / 100.f));
+                break;
+            case GW::Preference::Preference_MasterVolume:
+                if(SetMasterVolume_Func) SetMasterVolume_Func((float)((float)value / 100.f));
+                break;
+            default:
+                break;
+            }
+        }*/
 
-    void UI::RemoveUIMessageCallback(
-        HookEntry *entry)
-    {
-        for (auto& it : UIMessage_callbacks) {
-            auto it2 = it.second.begin();
-            while (it2 != it.second.end()) {
-                if (it2->entry == entry) {
-                    it.second.erase(it2);
-                    return;
+        void RegisterKeyupCallback(HookEntry* entry, const KeyCallback& callback) {
+            OnKeyup_callbacks.insert({ entry, callback });
+        }
+        void RemoveKeyupCallback(HookEntry* entry) {
+            auto it = OnKeyup_callbacks.find(entry);
+            if (it != OnKeyup_callbacks.end())
+                OnKeyup_callbacks.erase(it);
+        }
+
+        void RegisterKeydownCallback(HookEntry* entry, const KeyCallback& callback) {
+            OnKeydown_callbacks.insert({ entry, callback });
+        }
+        void RemoveKeydownCallback(HookEntry* entry) {
+            auto it = OnKeydown_callbacks.find(entry);
+            if (it != OnKeydown_callbacks.end())
+                OnKeydown_callbacks.erase(it);
+        }
+
+        void RegisterUIMessageCallback(
+            HookEntry *entry,
+            UIMessage message_id,
+            const UIMessageCallback& callback,
+            int altitude)
+        {
+            if (!UIMessage_callbacks.contains(message_id)) {
+                UIMessage_callbacks[message_id] = std::vector<CallbackEntry>();
+            }
+            auto it = UIMessage_callbacks[message_id].begin();
+            while (it != UIMessage_callbacks[message_id].end()) {
+                if (it->altitude > altitude)
+                    break;
+                it++;
+            }
+            UIMessage_callbacks[message_id].insert(it, { altitude, entry, callback});
+        }
+
+        void RemoveUIMessageCallback(
+            HookEntry *entry)
+        {
+            for (auto& it : UIMessage_callbacks) {
+                auto it2 = it.second.begin();
+                while (it2 != it.second.end()) {
+                    if (it2->entry == entry) {
+                        it.second.erase(it2);
+                        return;
+                    }
+                    it2++;
                 }
-                it2++;
             }
         }
-    }
 
-    UI::TooltipInfo* UI::GetCurrentTooltip() {
-        return CurrentTooltipPtr && *CurrentTooltipPtr ? **CurrentTooltipPtr : 0;
+        TooltipInfo* GetCurrentTooltip() {
+            return CurrentTooltipPtr && *CurrentTooltipPtr ? **CurrentTooltipPtr : 0;
+        }
     }
+    
 } // namespace GW

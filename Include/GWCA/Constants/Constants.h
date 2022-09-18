@@ -191,7 +191,7 @@ namespace GW {
 
         enum class Tick { NOT_READY, READY };
 
-        enum class InterfaceSize { SMALL = 0, NORMAL, LARGE, LARGER };
+        enum class InterfaceSize { SMALL = -1, NORMAL, LARGE, LARGER };
         namespace HealthbarHeight {
             constexpr size_t Small = 24;
             constexpr size_t Normal = 22;

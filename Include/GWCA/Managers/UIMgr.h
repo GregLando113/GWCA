@@ -179,81 +179,92 @@ namespace GW {
             kSendUseItem                = 0x30000000 | 0x8,  // wparam = uint32_t item_id
         };
 
-        enum Preference : uint32_t {
-            // preferences_array
-            Preference_CharSortOrder = 0x0, // Unused
-            Preference_AntiAliasing = 0x1, // multi sampling
-            Preference_Reflections = 0x2,
-            Preference_ShaderQuality = 0x3,
-            Preference_ShadowQuality = 0x4,
-            Preference_TerrainQuality = 0x5,
-            Preference_InterfaceSize = 0x6,
-            Preference_FrameLimiter = 0x7,
-
-            // more_preferences_array | 0x800
-            Preference_ChatState = 0x801, // 1 == showing chat window, 0 = not showing chat window
-            Preference_ChatTab = 0x802,
-            Preference_DistrictLastVisitedLanguage = 0x803,
-            Preference_DistrictLastVisitedLanguage2 = 0x804,
-            Preference_DistrictLastVisitedNonInternationalLanguage = 0x805,
-            Preference_DistrictLastVisitedNonInternationalLanguage2 = 0x806,
-            Preference_DamageTextSize = 0x807, // 0 to 100
-            Preference_FullscreenGamma = 0x808, // 0 to 100
-            Preference_InventoryBag = 0x809, // Selected bag in inventory window
-            Preference_TextLanguage = 0x80A,
-            Preference_AudioLanguage = 0x80B,
-            Preference_ChatFilterLevel = 0x80C,
-            Preference_SkillListSortMethod = 0x811,
-            Preference_SkillListViewMode = 0x812,
-            Preference_SoundQuality = 0x813, // 0 to 100
-            Preference_StorageBagPage = 0x814,
-            Preference_TextureQuality = 0x816, // TextureLod
-            Preference_UseBestTextureFiltering = 0x817,
-            Preference_EffectsVolume = 0x818, // 0 to 100
-            Preference_DialogVolume = 0x819, // 0 to 100
-            Preference_BackgroundVolume = 0x81A, // 0 to 100
-            Preference_MusicVolume = 0x81B, // 0 to 100
-            Preference_UIVolume = 0x81C, // 0 to 100
-            Preference_WindowPosX = 0x81E,
-            Preference_WindowPosY = 0x81F,
-            Preference_WindowSizeX = 0x820,
-            Preference_WindowSizeY = 0x821,
-            Preference_SealedSeed = 0x822, // Used in codex arena
-            Preference_SealedCount = 0x823, // Used in codex arena
-            Preference_FieldOfView = 0x824, // 0 to 100
-            Preference_CameraRotationSpeed = 0x825, // 0 to 100
-            Preference_ScreenBorderless = 0x826, // 0x1 = Windowed Borderless, 0x2 = Windowed Fullscreen
-            Preference_MasterVolume = 0x827, // 0 to 100
-            Preference_ClockMode = 0x828,
-
-            // checkbox preference array | 0x8000 ( count = 0x5d)
-            Preference_ChannelAlliance = 0x8004,
-            Preference_ChannelEmotes = 0x8006,
-            Preference_ChannelGuild = 0x8007,
-            Preference_ChannelLocal = 0x8008,
-            Preference_ChannelGroup = 0x8009,
-            Preference_ChannelTrade = 0x800A,
-            Preference_ShowTextInSkillFloaters = 0x8011,
-            Preference_InvertMouseControlOfCamera = 0x8016,
-            Preference_DisableMouseWalking = 0x8017,
-            Preference_ShowSpendAttributesButton = 0x8031, // The game uses this hacky method of showing the "spend attributes" button next to the exp bar.
-            Preference_ConciseSkillDescriptions = 0x8032,
-            Preference_DoNotShowSkillTipsOnEffectMonitor = 0x8033,
-            Preference_DoNotShowSkillTipsOnSkillBars = 0x8034,
-            Preference_MuteWhenGuildWarsIsInBackground = 0x8037,
-            Preference_AutoTargetFoes = 0x8039,
-            Preference_AutoTargetNPCs = 0x803a,
-            Preference_AlwaysShowNearbyNamesPvP = 0x803b,
-            Preference_FadeDistantNameTags = 0x803c,
-            Preference_DoNotCloseWindowsOnEscape = 0x8045,
-            Preference_WaitForVSync = 0x8054,
-            Preference_WhispersFromFriendsEtcOnly = 0x8055,
-            Preference_ShowChatTimestamps = 0x8056,
-            Preference_ShowCollapsedBags = 0x8057,
-            Preference_ItemRarityBorder = 0x8058,
-            Preference_AlwaysShowAllyNames = 0x8059,
-            Preference_AlwaysShowFoeNames = 0x805a,
-            Preference_LockCompassRotation = 0x805c
+        enum class EnumPreference : uint32_t {
+            CharSortOrder, // Unused
+            AntiAliasing, // multi sampling
+            Reflections,
+            ShaderQuality,
+            ShadowQuality,
+            TerrainQuality,
+            InterfaceSize,
+            FrameLimiter,
+            Count = 0x8
+        };
+        enum class StringPreference : uint32_t {
+            Unk1,
+            Unk2,
+            Unk3,
+            Count = 0x3
+        };
+        enum class NumberPreference : uint32_t {
+            // number preferences
+            ChatState = 0x1, // 1 == showing chat window, 0 = not showing chat window
+            ChatTab,
+            DistrictLastVisitedLanguage,
+            DistrictLastVisitedLanguage2,
+            DistrictLastVisitedNonInternationalLanguage,
+            DistrictLastVisitedNonInternationalLanguage2,
+            DamageTextSize, // 0 to 100
+            FullscreenGamma, // 0 to 100
+            InventoryBag, // Selected bag in inventory window
+            TextLanguage,
+            AudioLanguage,
+            ChatFilterLevel,
+            SkillListSortMethod = 0x11,
+            SkillListViewMode,
+            SoundQuality, // 0 to 100
+            StorageBagPage,
+            TextureQuality = 0x16, // TextureLod
+            UseBestTextureFiltering,
+            EffectsVolume, // 0 to 100
+            DialogVolume, // 0 to 100
+            BackgroundVolume, // 0 to 100
+            MusicVolume, // 0 to 100
+            UIVolume, // 0 to 100
+            WindowPosX = 0x1E,
+            WindowPosY,
+            WindowSizeX,
+            WindowSizeY,
+            SealedSeed = 0x22, // Used in codex arena
+            SealedCount, // Used in codex arena
+            FieldOfView, // 0 to 100
+            CameraRotationSpeed, // 0 to 100
+            ScreenBorderless, // 0x1 = Windowed Borderless, 0x2 = Windowed Fullscreen
+            MasterVolume, // 0 to 100
+            ClockMode,
+            Count = 0x29
+        };
+        enum class FlagPreference : uint32_t {
+            // boolean preferences
+            ChannelAlliance = 0x4,
+            ChannelEmotes = 0x6,
+            ChannelGuild,
+            ChannelLocal,
+            ChannelGroup,
+            ChannelTrade,
+            ShowTextInSkillFloaters = 0x11,
+            InvertMouseControlOfCamera = 0x16,
+            DisableMouseWalking,
+            RememberAccountName = 0x2D,
+            ShowSpendAttributesButton = 0x31, // The game uses this hacky method of showing the "spend attributes" button next to the exp bar.
+            ConciseSkillDescriptions,
+            DoNotShowSkillTipsOnEffectMonitor,
+            DoNotShowSkillTipsOnSkillBars,
+            MuteWhenGuildWarsIsInBackground = 0x37,
+            AutoTargetFoes = 0x39,
+            AutoTargetNPCs,
+            AlwaysShowNearbyNamesPvP,
+            FadeDistantNameTags,
+            DoNotCloseWindowsOnEscape = 0x45,
+            WaitForVSync = 0x54,
+            WhispersFromFriendsEtcOnly,
+            ShowChatTimestamps,
+            ShowCollapsedBags,
+            ItemRarityBorder,
+            AlwaysShowAllyNames,
+            AlwaysShowFoeNames,
+            LockCompassRotation = 0x5c,
+            Count = 0x5d
         };
         // Used with GetWindowPosition
         enum WindowID : uint32_t {
@@ -568,8 +579,17 @@ namespace GW {
 
         GWCA_API void SetOpenLinks(bool toggle);
 
-        GWCA_API uint32_t GetPreference(Preference pref);
-        GWCA_API void SetPreference(Preference pref, uint32_t value);
+        GWCA_API uint32_t GetPreference(EnumPreference pref);
+        GWCA_API uint32_t GetPreference(NumberPreference pref);
+        GWCA_API bool GetPreference(FlagPreference pref);
+        GWCA_API wchar_t* GetPreference(StringPreference pref);
+        GWCA_API bool SetPreference(EnumPreference pref, uint32_t value);
+        GWCA_API bool SetPreference(NumberPreference pref, uint32_t value);
+        GWCA_API bool SetPreference(FlagPreference pref, bool value);
+        GWCA_API bool SetPreference(StringPreference pref, wchar_t* value);
+
+        //GWCA_API void SetPreference(Preference pref, uint32_t value);
+
 
         typedef HookCallback<uint32_t> KeyCallback;
         GWCA_API void RegisterKeydownCallback(

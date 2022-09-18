@@ -49,10 +49,6 @@ namespace {
     typedef void(__cdecl* SetWindowPosition_pt)(uint32_t window_id, UI::WindowPosition* info, void* wParam, void* lParam);
     SetWindowPosition_pt SetWindowPosition_Func = 0;
 
-    typedef void(__cdecl* SetTickboxPref_pt)(uint32_t preference_index, uint32_t value, uint32_t unk0);
-    SetTickboxPref_pt SetTickboxPref_Func = 0;
-    SetTickboxPref_pt RetSetTickboxPref = 0;
-
     typedef void(__fastcall* DoAction_pt)(void* ecx, void* edx, uint32_t msgid, void* arg1, void* arg2);
     DoAction_pt DoAction_Func = 0;
     DoAction_pt RetDoAction = 0;
@@ -237,7 +233,7 @@ namespace {
         if (Verify(address))
             shift_screen_addr = *(uintptr_t *)address;
 
-        address = GW::Scanner::Find("\x83\x0e\x02\x57\x6a\x2a", "xxxxxx", -0x14); // Initialise preferences function start
+        address = GW::Scanner::Find("\x83\x0e\x02\x57\x6a\x2a", "xxxxxx", -0x2c); // Initialise preferences function start
         if (address) {
             GetFlagParameter_Func = (GetFlagParameter_pt)GW::Scanner::FunctionFromNearCall(address + 0xf);
             GetStringParameter_Func = (GetStringParameter_pt)GW::Scanner::FunctionFromNearCall(address + 0x32);
@@ -248,12 +244,13 @@ namespace {
             GetNumberPreference_Func = (GetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x13f);
         }
 
-        address = GW::Scanner::Find("\x50\x68\x50\x00\x00\x10", "xxxxxx", -0x3f);
-        SetStringPreference_Func = (SetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address);
+        //TODO: RVA fix
+        //address = GW::Scanner::Find("\x50\x68\x50\x00\x00\x10", "xxxxxx", -0x3f);
+        //SetStringPreference_Func = (SetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address);
 
         address = GW::Scanner::FindAssertion("p:\\code\\gw\\ui\\dialog\\dlgoptgr.cpp", "No valid case for switch variable 'quality'");
         SetEnumPreference_Func = (SetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x84);
-        GetFlagPreference_Func = (GetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x3b);
+        SetFlagPreference_Func = (SetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x3b);
         SetNumberPreference_Func = (SetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x61);
 
         address = GW::Scanner::FindAssertion("p:\\code\\engine\\frame\\frtip.cpp", "CMsg::Validate(id)");
@@ -318,7 +315,6 @@ namespace {
         GWCA_INFO("[SCAN] SetTooltip_Func = %p", SetTooltip_Func);
         GWCA_INFO("[SCAN] CurrentTooltipPtr = %p", CurrentTooltipPtr);
         GWCA_INFO("[SCAN] GameSettings = %p", GameSettings_Addr);
-        GWCA_INFO("[SCAN] SetTickboxPref = %p", SetTickboxPref_Func);
         GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %p", SetFloatingWindowVisible_Func);
         GWCA_INFO("[SCAN] floating_windows_array = %p", floating_windows_array);
         GWCA_INFO("[SCAN] SetWindowVisible_Func = %p", SetWindowVisible_Func);
@@ -335,7 +331,7 @@ namespace {
         GWCA_ASSERT(GetEnumPreference_Func);
         GWCA_ASSERT(GetNumberPreference_Func);
         GWCA_ASSERT(GetFlagPreference_Func);
-        GWCA_ASSERT(SetStringPreference_Func);
+        //GWCA_ASSERT(SetStringPreference_Func);
         GWCA_ASSERT(SetEnumPreference_Func);
         GWCA_ASSERT(SetNumberPreference_Func);
         GWCA_ASSERT(SetFlagPreference_Func);
@@ -349,8 +345,6 @@ namespace {
         GWCA_ASSERT(SetTooltip_Func);
         GWCA_ASSERT(CurrentTooltipPtr);
         GWCA_ASSERT(GameSettings_Addr);
-        GWCA_ASSERT(SetTickboxPref_Func);
-        GWCA_ASSERT(SetFloatingWindowVisible_Func);
         GWCA_ASSERT(floating_windows_array);
         GWCA_ASSERT(SetWindowVisible_Func);
         GWCA_ASSERT(SetWindowPosition_Func);
@@ -371,8 +365,6 @@ namespace {
             HookBase::EnableHooks(AsyncDecodeStringPtr);
         if (DoAction_Func)
             HookBase::EnableHooks(DoAction_Func);
-        if (SetTickboxPref_Func)
-            HookBase::EnableHooks(SetTickboxPref_Func);
         if (SetTooltip_Func)
             HookBase::EnableHooks(SetTooltip_Func);
         if (SendUIMessage_Func)
@@ -385,8 +377,6 @@ namespace {
             HookBase::DisableHooks(AsyncDecodeStringPtr);
         if (DoAction_Func)
             HookBase::DisableHooks(DoAction_Func);
-        if (SetTickboxPref_Func)
-            HookBase::DisableHooks(SetTickboxPref_Func);
         if (SetTooltip_Func)
             HookBase::DisableHooks(SetTooltip_Func);
         if (SendUIMessage_Func)
@@ -397,10 +387,8 @@ namespace {
     {
         HookBase::RemoveHook(AsyncDecodeStringPtr);
         HookBase::RemoveHook(DoAction_Func);
-        HookBase::RemoveHook(SetTickboxPref_Func);
         HookBase::RemoveHook(SetTooltip_Func);
         HookBase::RemoveHook(SendUIMessage_Func);
-        HookBase::RemoveHook(SetTickboxPref_Func);
     }
 }
 
@@ -702,7 +690,33 @@ namespace GW {
         }
         bool SetPreference(NumberPreference pref, uint32_t value)
         {
-            return SetNumberPreference_Func && pref < NumberPreference::Count ? SetNumberPreference_Func((uint32_t)pref, value), true : false;
+            bool ok = SetNumberPreference_Func && pref < NumberPreference::Count ? SetNumberPreference_Func((uint32_t)pref, value), true : false;
+            if (!ok)
+                return ok;
+            // Set in-game volume
+            switch (pref) {
+            case NumberPreference::EffectsVolume:
+                if(SetVolume_Func) SetVolume_Func(0, (float)((float)value / 100.f));
+                break;
+            case NumberPreference::DialogVolume:
+                if (SetVolume_Func) SetVolume_Func(4, (float)((float)value / 100.f));
+                break;
+            case NumberPreference::BackgroundVolume:
+                if (SetVolume_Func) SetVolume_Func(1, (float)((float)value / 100.f));
+                break;
+            case NumberPreference::MusicVolume:
+                if (SetVolume_Func) SetVolume_Func(3, (float)((float)value / 100.f));
+                break;
+            case NumberPreference::UIVolume:
+                if (SetVolume_Func) SetVolume_Func(2, (float)((float)value / 100.f));
+                break;
+            case NumberPreference::MasterVolume:
+                if(SetMasterVolume_Func) SetMasterVolume_Func((float)((float)value / 100.f));
+                break;
+            default:
+                break;
+            }
+            return ok;
         }
         bool SetPreference(StringPreference pref, wchar_t* value)
         {
@@ -712,41 +726,6 @@ namespace GW {
         {
             return SetFlagPreference_Func && pref < FlagPreference::Count ? SetFlagPreference_Func((uint32_t)pref, value), true : false;
         }
-        /*
-        void SetPreference(Preference pref, uint32_t value)
-        {
-            if (pref & 0x800) {
-                number_preferences_array[pref ^ 0x800] = value;
-            } else if(pref & 0x8000) {
-                // Checkbox values
-                if ((value == 1 || value == 0) && preferences_array2[pref ^ 0x8000] != value)
-                    SetTickboxPref_Func(pref ^ 0x8000, value, 0);
-                return;
-            }
-            // Set in-game volume
-            switch (pref) {
-            case GW::Preference::Preference_EffectsVolume:
-                if(SetVolume_Func) SetVolume_Func(0, (float)((float)value / 100.f));
-                break;
-            case GW::Preference::Preference_DialogVolume:
-                if (SetVolume_Func) SetVolume_Func(4, (float)((float)value / 100.f));
-                break;
-            case GW::Preference::Preference_BackgroundVolume:
-                if (SetVolume_Func) SetVolume_Func(1, (float)((float)value / 100.f));
-                break;
-            case GW::Preference::Preference_MusicVolume:
-                if (SetVolume_Func) SetVolume_Func(3, (float)((float)value / 100.f));
-                break;
-            case GW::Preference::Preference_UIVolume:
-                if (SetVolume_Func) SetVolume_Func(2, (float)((float)value / 100.f));
-                break;
-            case GW::Preference::Preference_MasterVolume:
-                if(SetMasterVolume_Func) SetMasterVolume_Func((float)((float)value / 100.f));
-                break;
-            default:
-                break;
-            }
-        }*/
 
         void RegisterKeyupCallback(HookEntry* entry, const KeyCallback& callback) {
             OnKeyup_callbacks.insert({ entry, callback });

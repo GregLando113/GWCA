@@ -98,7 +98,6 @@ namespace {
     }
 
     std::unordered_map<HookEntry *, Chat::SendChatCallback>     SendChat_callbacks;
-    std::unordered_map<HookEntry *, Chat::ChatEventCallback>    ChatEvent_callbacks;
     std::unordered_map<HookEntry *, Chat::LocalMessageCallback> LocalMessage_callbacks;
     std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
     std::unordered_map<HookEntry*, Chat::PrintChatCallback>     PrintChat_callbacks;
@@ -109,21 +108,6 @@ namespace {
         Chat::ChatLogCallback callback;
     };
     std::vector<ChatLogCallbackEntry> ChatLog_callbacks;
-
-    typedef void(__cdecl *ChatEvent_pt)(uint32_t event_id, uint32_t type, wchar_t *info, void *unk);
-    ChatEvent_pt RetChatEvent;
-    ChatEvent_pt ChatEvent_Func;
-    void __cdecl OnChatEvent(uint32_t event_id, uint32_t type, wchar_t *info, void *unk) {
-        HookBase::EnterHook();
-        HookStatus status;
-        for (auto& it : ChatEvent_callbacks) {
-            it.second(&status, event_id, type, info, unk);
-            ++status.altitude;
-        }
-        if (!status.blocked)
-            RetChatEvent(event_id, type, info, unk);
-        HookBase::LeaveHook();
-    }
 
     typedef Chat::Color* (__cdecl *GetChannelColor_pt)(Chat::Color *color, Chat::Channel chan);
     GetChannelColor_pt RetGetSenderColor;
@@ -337,7 +321,6 @@ namespace {
     }
 
     void Init() {
-        ChatEvent_Func = (ChatEvent_pt)Scanner::Find("\x83\xFB\x06\x1B", "xxxx", -0x2A);
         GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find("\xC7\x00\x60\xC0\xFF\xFF\x5D\xC3", "xxxxxxxx", -0x1C);
         GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find("\xC7\x00\xB0\xB0\xB0\xFF\x5D\xC3", "xxxxxxxx", -0x27);
 
@@ -354,7 +337,6 @@ namespace {
         if (Verify(address))
             IsTyping_Addr = *(uintptr_t *)address;
 
-        GWCA_INFO("[SCAN] Chat Event = %p", ChatEvent_Func);
         GWCA_INFO("[SCAN] GetSenderColor = %p", GetSenderColor_Func);
         GWCA_INFO("[SCAN] GetMessageColor = %p", GetMessageColor_Func);
         GWCA_INFO("[SCAN] LocalMessage = %p", LocalMessage_Func);
@@ -367,7 +349,6 @@ namespace {
         GWCA_INFO("[SCAN] IsTyping_Addr = %p", IsTyping_Addr);
 
 #if _DEBUG
-        GWCA_ASSERT(ChatEvent_Func);
         GWCA_ASSERT(GetSenderColor_Func);
         GWCA_ASSERT(GetMessageColor_Func);
         GWCA_ASSERT(LocalMessage_Func);
@@ -381,7 +362,6 @@ namespace {
 #endif
 
         HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
-        HookBase::CreateHook(ChatEvent_Func, OnChatEvent, (void **)&RetChatEvent);
         HookBase::CreateHook(GetSenderColor_Func, OnGetSenderColor, (void **)&RetGetSenderColor);
         HookBase::CreateHook(GetMessageColor_Func, OnGetMessageColor, (void **)&RetGetMessageColor);
         HookBase::CreateHook(LocalMessage_Func, OnLocalMessage, (void **)&RetLocalMessage);
@@ -394,8 +374,6 @@ namespace {
     void EnableHooks() {
         if (StartWhisper_Func)
             HookBase::EnableHooks(StartWhisper_Func);
-        if (ChatEvent_Func)
-            HookBase::EnableHooks(ChatEvent_Func);
         if (GetSenderColor_Func)
             HookBase::EnableHooks(GetSenderColor_Func);
         if (GetMessageColor_Func)
@@ -414,8 +392,6 @@ namespace {
     void DisableHooks() {
         if (StartWhisper_Func)
             HookBase::DisableHooks(StartWhisper_Func);
-        if (ChatEvent_Func)
-            HookBase::DisableHooks(ChatEvent_Func);
         if (GetSenderColor_Func)
             HookBase::DisableHooks(GetSenderColor_Func);
         if (GetMessageColor_Func)
@@ -434,7 +410,6 @@ namespace {
 
     void Exit() {
         HookBase::RemoveHook(StartWhisper_Func);
-        HookBase::RemoveHook(ChatEvent_Func);
         HookBase::RemoveHook(GetSenderColor_Func);
         HookBase::RemoveHook(GetMessageColor_Func);
         HookBase::RemoveHook(LocalMessage_Func);
@@ -464,26 +439,11 @@ namespace GW {
     }
 
     void Chat::RemoveSendChatCallback(
-        HookEntry *entry)
+        HookEntry* entry)
     {
         auto it = SendChat_callbacks.find(entry);
         if (it != SendChat_callbacks.end())
             SendChat_callbacks.erase(it);
-    }
-
-    void Chat::RegisterChatEventCallback(
-        HookEntry *entry,
-        const ChatEventCallback& callback)
-    {
-        ChatEvent_callbacks.insert({entry, callback});
-    }
-
-    void Chat::RemoveChatEventCallback(
-        HookEntry *entry)
-    {
-        auto it = ChatEvent_callbacks.find(entry);
-        if (it != ChatEvent_callbacks.end())
-            ChatEvent_callbacks.erase(it);
     }
 
     void Chat::RegisterLocalMessageCallback(

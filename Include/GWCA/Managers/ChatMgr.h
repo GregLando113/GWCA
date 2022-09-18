@@ -100,14 +100,6 @@ namespace GW {
         GWCA_API void RemoveSendChatCallback(
             HookEntry* entry);
 
-        typedef HookCallback<uint32_t, uint32_t, wchar_t*, void*> ChatEventCallback;
-        GWCA_API void RegisterChatEventCallback(
-            HookEntry* entry,
-            const ChatEventCallback& callback);
-
-        GWCA_API void RemoveChatEventCallback(
-            HookEntry* entry);
-
         typedef HookCallback<int, wchar_t*> LocalMessageCallback;
         GWCA_API void RegisterLocalMessageCallback(
             HookEntry* entry,

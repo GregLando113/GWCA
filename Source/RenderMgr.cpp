@@ -161,15 +161,11 @@ namespace GW {
     }
 
     uint32_t Render::GetViewportWidth() {
-        // @Cleanup: What to really do here?
-        GWCA_ASSERT(gwdx_ptr != nullptr);
-        return gwdx_ptr->viewport_width;
+        return gwdx_ptr ? gwdx_ptr->viewport_width : 0;
     }
 
     uint32_t Render::GetViewportHeight() {
-        // @Cleanup: What to really do here?
-        GWCA_ASSERT(gwdx_ptr != nullptr);
-        return gwdx_ptr->viewport_height;
+        return gwdx_ptr ? gwdx_ptr->viewport_height : 0;
     }
 
     Render::Mat4x3f* Render::GetTransform(Transform transform) {

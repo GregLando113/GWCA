@@ -6,6 +6,7 @@
 
 #include <GWCA/Managers/Module.h>
 #include <GWCA/Managers/GameThreadMgr.h>
+#include <GWCA/Utilities/Hooker.h>
 
 namespace {
     using namespace GW;
@@ -14,7 +15,8 @@ namespace {
 
     typedef void(__cdecl *Render_t)(void*);
     uintptr_t *g__thingy = 0;
-    Render_t g__thingyret = 0;
+    Render_t LeaveGameThread_Func = 0;
+    Render_t LeaveGameThread_Ret = 0;
 
     bool initialised = false;
 
@@ -46,17 +48,27 @@ namespace {
         LeaveCriticalSection(&mutex);
     }
 
-    void __cdecl gameLoopHook(void* unk)
-    {
+
+    void __cdecl OnLeaveGameThread(void* unk) {
         CallFunctions();
-        g__thingyret(unk);
+        LeaveGameThread_Ret(unk);
     }
 
     void Init()
     {
         InitializeCriticalSection(&mutex);
 
-        uintptr_t address = Scanner::Find("\x2B\xCE\x8B\x15\x00\x00\x00\x00\xF7\xD9\x1B\xC9", "xxxx????xxxx", +4);
+        uintptr_t address = Scanner::FindAssertion("p:\\code\\engine\\frame\\frapi.cpp", "!s_bufferBits", 0x5f);
+        LeaveGameThread_Func = *(Render_t*)address;
+
+
+#if _DEBUG
+        GWCA_ASSERT(LeaveGameThread_Func);
+#endif
+
+        GW::HookBase::CreateHook(LeaveGameThread_Func, OnLeaveGameThread, (void **)&LeaveGameThread_Ret);
+        /*
+                uintptr_t address = Scanner::Find("\x2B\xCE\x8B\x15\x00\x00\x00\x00\xF7\xD9\x1B\xC9", "xxxx????xxxx", +4);
         GWCA_INFO("[SCAN] BasePointerLocation = %p", (void *)address);
 
 #if _DEBUG
@@ -71,17 +83,19 @@ namespace {
             g__thingy = (uintptr_t *)(address + 4);
             g__thingyret = (Render_t)*g__thingy;
         }
+        */
+
+
+
         initialised = true;
     }
-
-
 
     void EnableHooks()
     {
         if (!initialised)
             return;
         EnterCriticalSection(&mutex);
-        *g__thingy = (uintptr_t)gameLoopHook;
+        HookBase::EnableHooks(LeaveGameThread_Func);
         LeaveCriticalSection(&mutex);
     }
 
@@ -90,7 +104,7 @@ namespace {
         if (!initialised)
             return;
         EnterCriticalSection(&mutex);
-        *g__thingy = (uintptr_t)g__thingyret;
+        HookBase::DisableHooks(LeaveGameThread_Func);
         LeaveCriticalSection(&mutex);
     }
     void Exit()
@@ -99,6 +113,7 @@ namespace {
             return;
         DisableHooks();
         GameThread::ClearCalls();
+        HookBase::RemoveHook(LeaveGameThread_Func);
         DeleteCriticalSection(&mutex);
     }
 }

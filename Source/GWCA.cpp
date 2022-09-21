@@ -52,6 +52,7 @@ namespace GW
 
     bool Initialize()
     {
+        modules.push_back(&GameThreadModule);
         modules.push_back(&UIModule);
         modules.push_back(&MapModule);
         modules.push_back(&ChatModule);
@@ -68,16 +69,16 @@ namespace GW
         modules.push_back(&RenderModule);
         modules.push_back(&MerchantModule);
         modules.push_back(&SkillbarModule);
-        modules.push_back(&GameThreadModule);
         modules.push_back(&FriendListModule);
 
         if (MemoryMgr::Scan()) {
 
             // We could get it from thread ctx
             uintptr_t address = Scanner::Find("\x50\x6A\x0F\x6A\x00\xFF\x35", "xxxxxxx", +7);
-            GWCA_INFO("[SCAN] base_ptr = %p", (void *)address);
+            
             if (Verify(address))
                 base_ptr = *(uintptr_t *)address;
+            GWCA_INFO("[SCAN] base_ptr = %p, %p", (void *)base_ptr);
 
             HookBase::Initialize();
 
@@ -124,7 +125,8 @@ namespace GW
         HookBase::Deinitialize();
     }
     GameContext* GameContext::instance() {
-        return *(GameContext**)((*(uint8_t**)base_ptr) + 0x18);
+        uintptr_t** base_context = base_ptr ? *(uintptr_t***)base_ptr : nullptr;
+        return base_context ? (GameContext*)base_context[0x6] : nullptr;
     }
     PreGameContext* PreGameContext::instance() {
         return *(PreGameContext**)PreGameContext_addr;

@@ -32,7 +32,7 @@ namespace {
     SetTooltip_pt SetTooltip_Func = 0;
     SetTooltip_pt RetSetTooltip = 0;
 
-    
+
     typedef uint32_t(__cdecl* CreateUIComponent_pt)(uint32_t frame_id, uint32_t component_flags, uint32_t tab_index, void* event_callback, wchar_t* name_enc, wchar_t* component_label);
     CreateUIComponent_pt CreateUIComponent_Func = 0;
     CreateUIComponent_pt CreateUIComponent_Ret = 0;
@@ -255,7 +255,7 @@ namespace {
         if (address) {
             GetFlagParameter_Func = (GetFlagParameter_pt)GW::Scanner::FunctionFromNearCall(address + 0xf);
             GetStringParameter_Func = (GetStringParameter_pt)GW::Scanner::FunctionFromNearCall(address + 0x32);
-           
+
             GetStringPreference_Func = (GetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x5c);
             GetFlagPreference_Func = (GetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x10b);
             GetEnumPreference_Func = (GetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x118);
@@ -454,27 +454,20 @@ namespace GW {
             return y;
         }
         Vec2f WindowPosition::xAxis(float multiplier) const {
-            const float w = static_cast<float>(Render::GetViewportWidth());
-            Vec2f x;
-            float correct;
+            const auto w = static_cast<float>(Render::GetViewportWidth());
+            const auto middle = w / 2.f;
             switch (state ^ 0x1) {
             case 0x10:
             case 0x18:
             case 0x30:
-                x = { w - p1.x * multiplier, w - p2.x * multiplier };
-                break;
+                return { std::roundf(w - p1.x * multiplier), std::roundf(w - p2.x * multiplier) };
             case 0x8:
             case 0x20:
             case 0x0:
-                correct = (w / 2.f);
-                x = { correct - p1.x * multiplier, correct + p2.x * multiplier };
-                break;
+                return { std::roundf(middle - p1.x * multiplier), std::roundf(middle + p2.x * multiplier) };
             default:
-                x = { p1.x * multiplier, p2.x * multiplier };
-                break;
+                return {std::roundf(p1.x * multiplier), std::roundf(p2.x * multiplier)};
             }
-
-            return x;
         }
         float WindowPosition::top(float multiplier) const {
             return yAxis(multiplier).x;
@@ -821,5 +814,5 @@ namespace GW {
                 OnCreateUIComponent_callbacks.erase(entry);
         }
     }
-    
+
 } // namespace GW

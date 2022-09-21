@@ -28,8 +28,10 @@ namespace GW {
         }
 
         Vec3f(int _x, int _y, int _z)
-            : x(_x), y(_y), z(_z)
         {
+            x = static_cast<float>(_x);
+            y = static_cast<float>(_y);
+            z = static_cast<float>(_z);
         }
 
         Vec3f() = default;
@@ -111,8 +113,9 @@ namespace GW {
         }
 
         Vec2f(int _x, int _y)
-            : x(_x), y(_y)
         {
+            x = static_cast<float>(_x);
+            y = static_cast<float>(_y);
         }
 
         Vec2f() = default;

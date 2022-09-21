@@ -18,18 +18,21 @@ namespace GW {
     } Mat4x3f;
 
     struct Vec3f {
-        float x;
-        float y;
-        float z;
+        float x = 0.f;
+        float y = 0.f;
+        float z = 0.f;
 
         Vec3f(float _x, float _y, float _z)
             : x(_x), y(_y), z(_z)
         {
         }
 
-        Vec3f() : Vec3f(0.f, 0.f, 0.f)
+        Vec3f(int _x, int _y, int _z)
+            : x(_x), y(_y), z(_z)
         {
         }
+
+        Vec3f() = default;
     };
 
     inline Vec3f& operator+=(Vec3f& lhs, Vec3f rhs) {
@@ -57,7 +60,7 @@ namespace GW {
     }
 
     inline Vec3f operator-(Vec3f v) {
-        return Vec3f(-v.x, -v.y, -v.z);
+        return {-v.x, -v.y, -v.z};
     }
 
     inline Vec3f& operator*=(Vec3f& lhs, float rhs) {
@@ -99,17 +102,20 @@ namespace GW {
     }
 
     struct Vec2f {
-        float x;
-        float y;
+        float x = 0.f;
+        float y = 0.f;
 
         Vec2f(float _x, float _y)
             : x(_x), y(_y)
         {
         }
 
-        Vec2f() : Vec2f(0.f, 0.f)
+        Vec2f(int _x, int _y)
+            : x(_x), y(_y)
         {
         }
+
+        Vec2f() = default;
     };
 
     inline Vec2f& operator+=(Vec2f& lhs, Vec2f rhs)
@@ -137,7 +143,7 @@ namespace GW {
     }
 
     inline Vec2f operator-(Vec2f v) {
-        return Vec2f(-v.x, -v.y);
+        return {-v.x, -v.y};
     }
 
     inline Vec2f& operator*=(Vec2f& lhs, float rhs) {

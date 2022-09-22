@@ -66,7 +66,6 @@
 #pragma warning(pop)
 
 
-
 #pragma warning(disable: 4061) // enumerator 'identifier' in switch of enum 'enumeration' is not explicitly handled by a case label
 #pragma warning(disable: 4201) // nonstandard extension used : nameless struct/union
 #pragma warning(disable: 4514) // 'function' : unreferenced inline function has been removed
@@ -83,4 +82,4 @@
 #pragma warning(disable: 5026) // 'type': move constructor was implicitly defined as deleted
 #pragma warning(disable: 5027) // 'type': move assignment operator was implicitly defined as deleted
 #pragma warning(disable: 5045) // Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
-
+#pragma warning(disable: 28159) // Consider using 'GetTickCount64' instead of 'GetTickCount'.

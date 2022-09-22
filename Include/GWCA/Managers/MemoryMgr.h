@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GWCA/Utilities/Export.h>
-
 namespace GW {
 
     struct MemoryMgr {
@@ -13,17 +11,17 @@ namespace GW {
 
         static uintptr_t GetPersonalDirPtr;
 
-        static uint32_t(_cdecl* GetGWVersion)(void);
+        static uint32_t(_cdecl* GetGWVersion)();
 
         // Basics
         static bool Scan();
 
         static DWORD GetSkillTimer() {
-            return GetTickCount() + *(DWORD*)SkillTimerPtr;
+            return GetTickCount() + *SkillTimerPtr;
         }
 
         static HWND GetGWWindowHandle() {
-            return *(HWND *)WinHandlePtr;
+            return *reinterpret_cast<HWND*>(WinHandlePtr);
         }
     };
 }

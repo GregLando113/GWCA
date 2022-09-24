@@ -1,7 +1,5 @@
 #include "stdafx.h"
 
-#include <GWCA/Constants/Constants.h>
-
 #include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>

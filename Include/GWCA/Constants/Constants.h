@@ -1,10 +1,11 @@
+// ReSharper disable CppUnusedIncludeDirective
 #pragma once
 
-#include "Skills.h"
-#include "Maps.h"
-#include "ItemIDs.h"
 #include "AgentIDs.h"
+#include "ItemIDs.h"
+#include "Maps.h"
 #include "QuestIDs.h"
+#include "Skills.h"
 
 namespace GW {
     namespace Constants {

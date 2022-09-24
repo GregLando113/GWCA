@@ -48,7 +48,7 @@ namespace {
 
     // General purpose "void function that does something with this id"
     typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
-    
+
     DoAction_pt DropGold_Func = 0;
     DoAction_pt OpenLockedChest_Func = 0;
 
@@ -168,7 +168,7 @@ namespace {
         EquipItem_Func = (EquipItem_pt)Scanner::FunctionFromNearCall(address + 0x1e);
         MoveItem_Func = (MoveItem_pt)Scanner::FunctionFromNearCall(address + 0x6e);
 
-        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmview.cpp", "param.notifyData");
+        address = Scanner::FindAssertion(R"(p:\code\gw\ui\game\gmview.cpp)", "param.notifyData");
         DropGold_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x13);
 
         SalvageSessionCancel_Func = (Void_pt)Scanner::FunctionFromNearCall(address - 0x22);
@@ -192,7 +192,7 @@ namespace {
         address = Scanner::Find("\x83\xc9\x01\x89\x4b\x24", "xxxxxx", 0x28);
         OpenLockedChest_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
-        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmweaponbar.cpp", "slotIndex < ITEM_PLAYER_EQUIP_SETS", 0x128);
+        address = Scanner::FindAssertion(R"(p:\code\gw\ui\game\gmweaponbar.cpp)", "slotIndex < ITEM_PLAYER_EQUIP_SETS", 0x128);
         PingWeaponSet_Func = (PingWeaponSet_pt)Scanner::FunctionFromNearCall(address);
 
         GWCA_INFO("[SCAN] StorageOpenPtr = %p", storage_open_addr);

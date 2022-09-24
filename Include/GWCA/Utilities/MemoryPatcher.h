@@ -11,6 +11,9 @@ namespace GW {
         void Reset();
         void SetPatch(uintptr_t addr, const char* patch, size_t size);
 
+        // Use to redirect a CALL or JMP instruction to call a different function instead.
+        bool SetRedirect(uintptr_t call_instruction_address, uintptr_t redirect_func);
+
         bool TogglePatch(bool flag);
         bool TogglePatch() { TogglePatch(!m_enable); };
 

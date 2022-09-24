@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 #include <GWCA/Utilities/MemoryPatcher.h>

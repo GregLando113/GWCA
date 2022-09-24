@@ -8,7 +8,6 @@
 #include <GWCA/Context/ItemContext.h>
 #include <GWCA/Context/WorldContext.h>
 
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Scanner.h>

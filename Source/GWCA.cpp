@@ -2,12 +2,6 @@
 
 #include <GWCA/GWCA.h>
 
-#include <GWCA/Constants/Constants.h>
-
-#include <GWCA/GameContainers/Array.h>
-#include <GWCA/GameContainers/GamePos.h>
-#include <GWCA/Packets/StoC.h>
-
 #include <GWCA/Utilities/Debug.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Macros.h>
@@ -75,7 +69,7 @@ namespace GW
 
             // We could get it from thread ctx
             uintptr_t address = Scanner::Find("\x50\x6A\x0F\x6A\x00\xFF\x35", "xxxxxxx", +7);
-            
+
             if (Verify(address))
                 base_ptr = *(uintptr_t *)address;
             GWCA_INFO("[SCAN] base_ptr = %p, %p", (void *)base_ptr);

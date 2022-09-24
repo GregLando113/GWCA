@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameContainers/GamePos.h>
 
 namespace GW {
     namespace Constants {

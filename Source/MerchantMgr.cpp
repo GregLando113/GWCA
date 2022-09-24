@@ -1,18 +1,12 @@
 #include "stdafx.h"
 
-#include <GWCA/Constants/Constants.h>
-
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Hooker.h>
 
-#include <GWCA/GameContainers/GamePos.h>
-
 #include <GWCA/GameEntities/Item.h>
-#include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
 
 #include <GWCA/Managers/Module.h>

@@ -1,15 +1,9 @@
 #include "stdafx.h"
 
 
-
-#include <GWCA/Packets/Opcodes.h>
-#include <GWCA/Utilities/Export.h>
-#include <GWCA/Utilities/Scanner.h>
-
 #include <GWCA/GameEntities/Guild.h>
 #include <GWCA/GameEntities/Map.h>
 
-#include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/GuildContext.h>
 
 #include <GWCA/Managers/Module.h>

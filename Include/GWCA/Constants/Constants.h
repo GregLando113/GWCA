@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "Skills.h"
 #include "Maps.h"
 #include "ItemIDs.h"
@@ -172,9 +170,9 @@ namespace GW {
 
         enum class TitleID : uint32_t {
             Hero, TyrianCarto, CanthanCarto, Gladiator, Champion, Kurzick,
-            Luxon, Drunkard, 
+            Luxon, Drunkard,
             Deprecated_SkillHunter, // Pre hard mode update version
-            Survivor, KoaBD, 
+            Survivor, KoaBD,
             Deprecated_TreasureHunter, // Old title, non-account bound
             Deprecated_Wisdom, // Old title, non-account bound
             ProtectorTyria,

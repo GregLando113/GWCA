@@ -1,10 +1,9 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
 #include <GWCA/Constants/Constants.h>
+#include <GWCA/Constants/Maps.h>
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 #include <GWCA/Utilities/Hooker.h>
@@ -20,7 +19,6 @@
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/AgentContext.h>
 #include <GWCA/Context/WorldContext.h>
-#include <GWCA/Context/PartyContext.h>
 
 #include <GWCA/Managers/Module.h>
 #include <GWCA/Managers/UIMgr.h>
@@ -35,8 +33,8 @@ namespace {
 
     typedef float(__cdecl* QueryAltitude_pt)(
         const GamePos* point,
-        float radius, 
-        float* alt, 
+        float radius,
+        float* alt,
         Vec3f* unk);
     QueryAltitude_pt QueryAltitude_Func;
 
@@ -60,13 +58,13 @@ namespace {
 
 
     enum class EnterMissionArena : uint32_t {
-        
+
         DAlessioArena = 0x13E,
         AmnoonArena = 0x13F,
         FortKoga = 0x140,
         HeroesCrypt = 0x141,
         ShiverpeakArena = 0x142,
-        
+
         CurrentMap = 0x36d
     };
     enum class EnterMissionFoe : uint32_t {
@@ -133,7 +131,7 @@ namespace {
             map_type_instance_infos = *(MapTypeInstanceInfo**)(address + 0x19);
             map_type_instance_infos_size = (*(uint32_t*)(address + 5)) / sizeof(MapTypeInstanceInfo);
         }
-        
+
 
         GWCA_INFO("[SCAN] map_type_instance_infos address = %p, size = %d", map_type_instance_infos, map_type_instance_infos_size);
         GWCA_INFO("[SCAN] RegionId address = %p", region_id_addr);

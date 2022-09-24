@@ -1,7 +1,7 @@
 #pragma once
+
 #include <GWCA/GameContainers/Array.h>
 
-#include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
 namespace GW {
@@ -60,7 +60,7 @@ namespace GW {
         inline Agent   *GetPlayer() { return GetAgentByID(GetPlayerId()); }
         // Get Agent of current target
         inline Agent   *GetTarget() { return GetAgentByID(GetTargetId()); }
-        
+
 
         GWCA_API Agent *GetPlayerByID(uint32_t player_id);
 

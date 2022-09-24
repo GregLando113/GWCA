@@ -1,10 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
-
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
-#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Scanner.h>
 
@@ -16,13 +12,11 @@
 #include <GWCA/GameEntities/Player.h>
 #include <GWCA/GameEntities/Hero.h>
 
-#include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PartyContext.h>
 #include <GWCA/Context/WorldContext.h>
 
 #include <GWCA/Managers/Module.h>
 
-#include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/PartyMgr.h>

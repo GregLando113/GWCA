@@ -1,5 +1,9 @@
 #include "stdafx.h"
+
 #include <GWCA/Utilities/Debug.h>
+#include <GWCA/Utilities/Macros.h>
+#include <GWCA/Utilities/Hooker.h>
+#include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>

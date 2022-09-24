@@ -61,7 +61,7 @@ namespace GW {
         }
         // Figure out the offset from the target address to the destination function
         uintptr_t call_offset = redirect_func - call_instruction_address - 5;
-        char patch[5] = { instruction_type, call_offset, call_offset >> 8, call_offset >> 16, call_offset >> 24 };
+        const char patch[5] = { instruction_type, (char)(call_offset), (char)(call_offset >> 8), (char)(call_offset >> 16), (char)(call_offset >> 24) };
 
         // Go through usual channels to set the patch
         SetPatch(call_instruction_address, patch, 5);

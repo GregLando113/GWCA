@@ -492,7 +492,7 @@ namespace GW {
         }
     }
 
-    void Chat::RemoveRegisterWhisperCallback(
+    void Chat::RemoveWhisperCallback(
         HookEntry *entry)
     {
         auto it = Whisper_callbacks.find(entry);

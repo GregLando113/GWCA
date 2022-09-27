@@ -94,7 +94,7 @@ namespace {
         PartySearchSeek_Func = (PartySearchSeek_pt)Scanner::Find("\x8b\x78\x4c\x8d\x8f\x9c\x00\x00\x00", "xxxxxxxxx", -0xc);
 
         // Party Search Window Button Callback functions
-        address = Scanner::FindAssertion("p:\code\gw\ui\game\party\ptsearch.cpp", "m_activeList == LIST_HEROES", -0xd5);
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptsearch.cpp", "m_activeList == LIST_HEROES", -0xd5);
         PartySearchRequestJoin_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x60);
         PartySearchRequestReply_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x150);
         PartySearchCancel_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0x45f);

@@ -307,12 +307,12 @@ namespace GW {
             return area_info_addr ? &area_info_addr[(uint32_t)map_id] : nullptr;
         }
 
-        bool GetIsInCinematic(void) {
+        bool GetIsInCinematic() {
             auto* g = GameContext::instance();
             return g && g->cinematic ? g->cinematic->h0004 != 0 : false;
         }
 
-        bool SkipCinematic(void) {
+        bool SkipCinematic() {
             return SkipCinematic_Func ? SkipCinematic_Func(), true : false;
         }
 

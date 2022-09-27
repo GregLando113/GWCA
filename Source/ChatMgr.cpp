@@ -736,14 +736,18 @@ namespace GW {
             delete[] param.message;
     }
 
-    void Chat::CreateCommand(std::wstring cmd, const CmdCB& callback) {
-        ::wstring_tolower(cmd);
-        SlashCmdList[cmd] = callback;
+    void Chat::CreateCommand(const wchar_t* cmd, const CmdCB& callback)
+    {
+        std::wstring cpy{cmd};
+        ::wstring_tolower(cpy);
+        SlashCmdList[std::move(cpy)] = callback;
     }
 
-    void Chat::DeleteCommand(std::wstring cmd) {
-        ::wstring_tolower(cmd);
-        SlashCmdList.erase(cmd);
+    void Chat::DeleteCommand(const wchar_t* cmd)
+    {
+        std::wstring cpy{cmd};
+        ::wstring_tolower(cpy);
+        SlashCmdList.erase(cpy);
     }
 
     void Chat::ToggleTimestamps(bool enable) {

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string>
-#include <functional>
-
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 
@@ -77,8 +74,8 @@ namespace GW {
 
 
         typedef std::function<void(const wchar_t*, int, wchar_t**)> CmdCB;
-        GWCA_API void CreateCommand(std::wstring cmd, const CmdCB& callback);
-        GWCA_API void DeleteCommand(std::wstring cmd);
+        GWCA_API void CreateCommand(const wchar_t* cmd, const CmdCB& callback);
+        GWCA_API void DeleteCommand(const wchar_t* cmd);
 
         GWCA_API void ToggleTimestamps(bool enable);
         GWCA_API void SetTimestampsFormat(bool use_24h, bool show_timestamp_seconds = false);

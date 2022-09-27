@@ -197,7 +197,7 @@ namespace GW {
         return success;
     }
 
-    GWCA_API bool StoC::RegisterPostPacketCallback(HookEntry* entry, uint32_t header, const PacketCallback& callback)
+    bool StoC::RegisterPostPacketCallback(HookEntry* entry, uint32_t header, const PacketCallback& callback)
     {
         return RegisterPacketCallback(entry, header, callback, 0x8000);
     }
@@ -218,7 +218,7 @@ namespace GW {
         LeaveCriticalSection(&mutex);
     }
 
-    GWCA_API void StoC::RemovePostCallback(uint32_t header, HookEntry* entry)
+    void StoC::RemovePostCallback(uint32_t header, HookEntry* entry)
     {
         RemoveCallback(header, entry);
     }

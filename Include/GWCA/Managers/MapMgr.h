@@ -18,7 +18,6 @@ namespace GW {
         enum class MapID;
         enum class District;
         enum class InstanceType;
-        
     }
 
     enum class RegionType : uint32_t;
@@ -85,8 +84,8 @@ namespace GW {
             return GetMapInfo(map_id);
         }
 
-        GWCA_API bool GetIsInCinematic(void);
-        GWCA_API bool SkipCinematic(void);
+        GWCA_API bool GetIsInCinematic();
+        GWCA_API bool SkipCinematic();
 
         GWCA_API bool EnterChallenge();
         GWCA_API bool CancelEnterChallenge();

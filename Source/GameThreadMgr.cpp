@@ -56,7 +56,7 @@ namespace {
     {
         InitializeCriticalSection(&mutex);
 
-        uintptr_t address = Scanner::FindAssertion(R"(p:\code\engine\frame\frapi.cpp)", "!s_bufferBits", 0x5f);
+        uintptr_t address = Scanner::FindAssertion("p:\\code\\engine\\frame\\frapi.cpp", "!s_bufferBits", 0x5f);
         LeaveGameThread_Func = *(Render_t*)address;
 
 

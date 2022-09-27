@@ -76,7 +76,7 @@ namespace GW
 
             HookBase::Initialize();
 
-            address = Scanner::FindAssertion(R"(p:\code\gw\ui\uipregame.cpp)", "!s_scene", 0x34);
+            address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uipregame.cpp", "!s_scene", 0x34);
             if (Verify(address))
                 PreGameContext_addr = *(uintptr_t*)address;
             GWCA_INFO("[SCAN] PreGameContext_addr = %p", PreGameContext_addr);

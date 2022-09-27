@@ -42,7 +42,7 @@ namespace {
         address = Scanner::Find("\x68\x88\x13\x00\x00\xff\x76\x0c\x6a\x00", "xxxxxxxxxx", 0xa); // UI::UIInteractionCallback for entering player name for faction donation
         DepositFaction_Func = (DepositFaction_pt)Scanner::FunctionFromNearCall(address);
 
-        title_data = *(TitleClientData**)Scanner::FindAssertion(R"(p:\code\gw\const\consttitle.cpp)", "index < arrsize(s_titleClientData)", 0x12);
+        title_data = *(TitleClientData**)Scanner::FindAssertion("p:\\code\\gw\\const\\consttitle.cpp", "index < arrsize(s_titleClientData)", 0x12);
 
         GWCA_INFO("[SCAN] title_data = %p", title_data);
         GWCA_INFO("[SCAN] RemoveActiveTitle_Func = %p", RemoveActiveTitle_Func);

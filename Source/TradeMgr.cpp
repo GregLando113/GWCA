@@ -86,7 +86,7 @@ namespace {
         address = Scanner::Find("\x8b\x46\x14\x8b\x00\x85\xc0", "xxxxxxx", 0xa);
         TradeRemoveItem_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
-        address = Scanner::FindAssertion(R"(p:\code\gw\ui\game\gmtrade.cpp)", "breakClose", 0x1e);
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmtrade.cpp", "breakClose", 0x1e);
         TradeCancel_Func = (Void_pt)Scanner::FunctionFromNearCall(address);
 
         GWCA_INFO("[SCAN] OfferTradeItem_Func = %p", OfferTradeItem_Func);

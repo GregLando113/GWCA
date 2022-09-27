@@ -242,7 +242,7 @@ namespace {
         LoadSettings_Func = (LoadSettings_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\xFF\x75\x0C\xFF\x75\x08\x6A\x00", "x????xxxxxxxx", -0x1E);
 
-        address = Scanner::FindAssertion(R"(p:\code\gw\ui\uiroot.cpp)", "!s_count++", -0xD);
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uiroot.cpp", "!s_count++", -0xD);
         if (Verify(address))
             ui_drawn_addr = *(uintptr_t*)address - 0x10;
 
@@ -266,12 +266,12 @@ namespace {
         //address = GW::Scanner::Find("\x50\x68\x50\x00\x00\x10", "xxxxxx", -0x3f);
         //SetStringPreference_Func = (SetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address);
 
-        address = GW::Scanner::FindAssertion(R"(p:\code\gw\ui\dialog\dlgoptgr.cpp)", "No valid case for switch variable 'quality'");
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\ui\\dialog\\dlgoptgr.cpp", "No valid case for switch variable 'quality'");
         SetEnumPreference_Func = (SetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x84);
         SetFlagPreference_Func = (SetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x3b);
         SetNumberPreference_Func = (SetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x61);
 
-        address = GW::Scanner::FindAssertion(R"(p:\code\engine\frame\frtip.cpp)", "CMsg::Validate(id)");
+        address = GW::Scanner::FindAssertion("p:\\code\\engine\\frame\\frtip.cpp", "CMsg::Validate(id)");
         if(address)
             address = GW::Scanner::FindInRange("\x56\x8B\xF7", "xxx", -0x13, address, address - 0x200);
         if (address) {
@@ -313,7 +313,7 @@ namespace {
         SetVolume_Func = (SetVolume_pt)GW::Scanner::Find("\x8b\x75\x08\x83\xfe\x05\x72\x14\x68\x5b\x04\x00\x00\xba", "xxxxxxxxxxxxxx", -0x4);
 
         SetMasterVolume_Func = (SetMasterVolume_pt)GW::Scanner::Find("\xd9\x45\x08\x83\xc6\x1c\x83\xef\x01\x75\xea\x5f\xdd\xd8\x5e\x5d", "xxxxxxxxxxxxxxxx", -0x4b);
-        DrawOnCompass_Func = (DrawOnCompass_pt)GW::Scanner::FindAssertion(R"(p:\code\gw\char\charmsg.cpp)", "knotCount <= arrsize(message.knotData)",-0x2e);
+        DrawOnCompass_Func = (DrawOnCompass_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\char\\charmsg.cpp", "knotCount <= arrsize(message.knotData)",-0x2e);
 
         CreateUIComponent_Func = (CreateUIComponent_pt)GW::Scanner::Find("\x33\xd2\x89\x45\x08\xb9\xac\x01\x00\x00", "xxxxxxxxxx", -0x27);
 

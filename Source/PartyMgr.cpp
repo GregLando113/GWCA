@@ -94,7 +94,7 @@ namespace {
         PartySearchSeek_Func = (PartySearchSeek_pt)Scanner::Find("\x8b\x78\x4c\x8d\x8f\x9c\x00\x00\x00", "xxxxxxxxx", -0xc);
 
         // Party Search Window Button Callback functions
-        address = Scanner::FindAssertion(R"(p:\code\gw\ui\game\party\ptsearch.cpp)", "m_activeList == LIST_HEROES", -0xd5);
+        address = Scanner::FindAssertion("p:\code\gw\ui\game\party\ptsearch.cpp", "m_activeList == LIST_HEROES", -0xd5);
         PartySearchRequestJoin_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x60);
         PartySearchRequestReply_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x150);
         PartySearchCancel_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0x45f);
@@ -104,18 +104,18 @@ namespace {
         KickHenchman_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x22a);
 
         // Party Window Button Callback functions
-        address = Scanner::FindAssertion(R"(p:\code\gw\ui\game\party\ptbuttons.cpp)", "m_selection.agentId", -0x5e);
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptbuttons.cpp", "m_selection.agentId", -0x5e);
         KickPlayer_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0x132);
         LeaveParty_Func = (Void_pt)Scanner::FunctionFromNearCall(address + 0x17c);
 
-        address = Scanner::FindAssertion(R"(p:\code\gw\ui\game\party\ptplayer.cpp)", "No valid case for switch variable '\"\"'", 0x27);
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\party\\ptplayer.cpp", "No valid case for switch variable '\"\"'", 0x27);
         SetReadyStatus_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
         address = Scanner::Find("\x8d\x45\x10\x50\x56\x6a\x4d\x57","xxxxxxxx");
         FlagHeroAgent_Func = (FlagHeroAgent_pt)Scanner::FunctionFromNearCall(address + 0x4e);
         FlagAll_Func = (FlagAll_pt)Scanner::FunctionFromNearCall(address + 0x7c);
 
-        SetHeroBehavior_Func = (SetHeroBehavior_pt)Scanner::FindAssertion(R"(p:\code\gw\char\cli\chcliapi.cpp)", "mode < CHAR_AI_MODES",-0xe);
+        SetHeroBehavior_Func = (SetHeroBehavior_pt)Scanner::FindAssertion("p:\\code\\gw\\char\\cli\\chcliapi.cpp", "mode < CHAR_AI_MODES",-0xe);
 
         address = Scanner::Find("\x6a\x00\x68\x00\x02\x02\x00\xff\x77\x04", "xxxxxxxxxx");
         PartyRejectInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xb6);

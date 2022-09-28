@@ -8,7 +8,6 @@
 #include <GWCA/Context/ItemContext.h>
 #include <GWCA/Context/WorldContext.h>
 
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Scanner.h>
@@ -49,7 +48,7 @@ namespace {
 
     // General purpose "void function that does something with this id"
     typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
-    
+
     DoAction_pt DropGold_Func = 0;
     DoAction_pt OpenLockedChest_Func = 0;
 

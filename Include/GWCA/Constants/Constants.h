@@ -1,12 +1,11 @@
+// ReSharper disable CppUnusedIncludeDirective
 #pragma once
 
-#include <string>
-
-#include "Skills.h"
-#include "Maps.h"
-#include "ItemIDs.h"
 #include "AgentIDs.h"
+#include "ItemIDs.h"
+#include "Maps.h"
 #include "QuestIDs.h"
+#include "Skills.h"
 
 namespace GW {
     namespace Constants {
@@ -172,9 +171,9 @@ namespace GW {
 
         enum class TitleID : uint32_t {
             Hero, TyrianCarto, CanthanCarto, Gladiator, Champion, Kurzick,
-            Luxon, Drunkard, 
+            Luxon, Drunkard,
             Deprecated_SkillHunter, // Pre hard mode update version
-            Survivor, KoaBD, 
+            Survivor, KoaBD,
             Deprecated_TreasureHunter, // Old title, non-account bound
             Deprecated_Wisdom, // Old title, non-account bound
             ProtectorTyria,

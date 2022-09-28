@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GWCA/GameContainers/Array.h>
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/Managers/Module.h>
@@ -14,7 +13,6 @@ namespace {
     CRITICAL_SECTION mutex;
 
     typedef void(__cdecl *Render_t)(void*);
-    uintptr_t *g__thingy = 0;
     Render_t LeaveGameThread_Func = 0;
     Render_t LeaveGameThread_Ret = 0;
 

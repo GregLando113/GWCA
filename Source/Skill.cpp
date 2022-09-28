@@ -1,15 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Utilities/Macros.h>
-#include <GWCA/Constants/Constants.h>
-
-#include <GWCA/GameContainers/GamePos.h>
-
-#include <GWCA/GameEntities/Agent.h>
 #include <GWCA/GameEntities/Skill.h>
-
-#include <GWCA/Context/GameContext.h>
-#include <GWCA/Context/WorldContext.h>
 
 #include <GWCA/Managers/MemoryMgr.h>
 

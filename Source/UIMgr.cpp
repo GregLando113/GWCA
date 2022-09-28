@@ -772,7 +772,7 @@ namespace GW {
             const UIMessageCallback& callback,
             int altitude)
         {
-            if (!UIMessage_callbacks.contains(message_id)) {
+            if (UIMessage_callbacks.find(message_id) == UIMessage_callbacks.end()) {
                 UIMessage_callbacks[message_id] = std::vector<CallbackEntry>();
             }
             auto it = UIMessage_callbacks[message_id].begin();
@@ -805,12 +805,12 @@ namespace GW {
 
         void RegisterCreateUIComponentCallback(HookEntry* entry, const CreateUIComponentCallback& callback)
         {
-            if (!OnCreateUIComponent_callbacks.contains(entry))
+            if (OnCreateUIComponent_callbacks.find(entry) == OnCreateUIComponent_callbacks.end())
                 OnCreateUIComponent_callbacks[entry] = callback;
         }
         void RemoveCreateUIComponentCallback(HookEntry* entry)
         {
-            if (OnCreateUIComponent_callbacks.contains(entry))
+            if (OnCreateUIComponent_callbacks.find(entry) != OnCreateUIComponent_callbacks.end())
                 OnCreateUIComponent_callbacks.erase(entry);
         }
     }

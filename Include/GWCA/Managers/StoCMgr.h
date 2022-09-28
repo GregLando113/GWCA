@@ -63,7 +63,7 @@ namespace GW {
         GWCA_API void RemoveCallback(uint32_t header, HookEntry *entry);
 
         template <typename T>
-        void RemoveCallback(HookEntry *entry) {
+        void RemoveCallback(HookEntry* entry) {
             uint32_t header = Packet::StoC::Packet<T>::STATIC_HEADER;
             RemoveCallback(header, entry);
         }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GWCA/Utilities/Export.h>
-
 namespace GW {
     struct Module {
         const char  *name;

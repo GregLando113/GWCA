@@ -275,15 +275,18 @@ namespace GW {
             return *(uint32_t*)MouseOverAgentIdPtr;
         }
 
-        bool ChangeTarget(AgentID agent_id) {
-            return ChangeTarget(GetAgentByID(agent_id));
+        bool ChangeTarget(AgentID agent_id)
+        {
+            if (!ChangeTarget_Func)
+                return false;
+            ChangeTarget_Func(agent_id, 0);
+            return true;
         }
 
         bool ChangeTarget(const Agent* agent) {
-            if (!(ChangeTarget_Func && agent))
+            if (!agent)
                 return false;
-            ChangeTarget_Func(agent->agent_id, 0);
-            return true;
+            return ChangeTarget(agent->agent_id);
         }
 
         bool Move(float x, float y, uint32_t zplane /*= 0*/) {

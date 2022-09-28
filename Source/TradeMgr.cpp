@@ -1,10 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
-
-#include <GWCA/Utilities/Export.h>
 #include <GWCA/Utilities/Hooker.h>
-#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Scanner.h>
 
 #include <GWCA/GameEntities/Item.h>

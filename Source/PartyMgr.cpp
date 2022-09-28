@@ -1,10 +1,6 @@
 #include "stdafx.h"
 
-#include <GWCA/Packets/Opcodes.h>
-
 #include <GWCA/Utilities/Debug.h>
-#include <GWCA/Utilities/Export.h>
-#include <GWCA/Utilities/Macros.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Scanner.h>
 
@@ -16,13 +12,11 @@
 #include <GWCA/GameEntities/Player.h>
 #include <GWCA/GameEntities/Hero.h>
 
-#include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/PartyContext.h>
 #include <GWCA/Context/WorldContext.h>
 
 #include <GWCA/Managers/Module.h>
 
-#include <GWCA/Managers/CtoSMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/UIMgr.h>
 #include <GWCA/Managers/PartyMgr.h>
@@ -41,7 +35,7 @@ namespace {
     typedef void(__cdecl* DoAction_pt)(uint32_t identifier);
     DoAction_pt PartySearchRequestJoin_Func = 0;
     DoAction_pt PartySearchRequestReply_Func = 0;
-    
+
     DoAction_pt AddHero_Func = 0;
     DoAction_pt AddHenchman_Func = 0;
     DoAction_pt KickHero_Func = 0;
@@ -149,7 +143,7 @@ namespace {
         GWCA_INFO("[SCAN] SetHeroBehavior_Func = %p", SetHeroBehavior_Func);
         GWCA_INFO("[SCAN] PartyRejectInvite_Func = %p", PartyRejectInvite_Func);
         GWCA_INFO("[SCAN] PartyAcceptInvite_Func = %p", PartyAcceptInvite_Func);
-        
+
 #ifdef _DEBUG
         GWCA_ASSERT(TickButtonUICallback);
         GWCA_ASSERT(SetDifficulty_Func);

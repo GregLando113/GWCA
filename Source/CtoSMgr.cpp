@@ -38,7 +38,7 @@ namespace {
     uintptr_t game_srv_object_addr;
 
     void Init() {
-#ifdef GWCA_CTOS_DISABLED
+#ifndef GWCA_CTOS_DISABLED
         SendPacket_Func = (SendPacket_pt)Scanner::FindAssertion("p:\\code\\net\\msg\\msgconn.cpp", "bytes >= sizeof(dword)", -0x67);
 #endif
         uintptr_t address = Scanner::FindAssertion("p:\\code\\gw\\net\\cli\\gcgamecmd.cpp","No valid case for switch variable 'code'", -0x32);

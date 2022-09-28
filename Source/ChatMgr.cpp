@@ -743,6 +743,16 @@ namespace GW {
         SlashCmdList[std::move(cpy)] = callback;
     }
 
+    Chat::CmdCB Chat::GetCommand(const wchar_t* cmd)
+    {
+        std::wstring cpy{cmd};
+        ::wstring_tolower(cpy);
+        if (SlashCmdList.find(cpy) != SlashCmdList.end()) {
+            return SlashCmdList[std::move(cpy)];
+        }
+        return nullptr;
+    }
+
     void Chat::DeleteCommand(const wchar_t* cmd)
     {
         std::wstring cpy{cmd};

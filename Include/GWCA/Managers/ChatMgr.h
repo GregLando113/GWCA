@@ -75,6 +75,7 @@ namespace GW {
 
         typedef std::function<void(const wchar_t*, int, wchar_t**)> CmdCB;
         GWCA_API void CreateCommand(const wchar_t* cmd, const CmdCB& callback);
+        GWCA_API CmdCB GetCommand(const wchar_t* cmd);
         GWCA_API void DeleteCommand(const wchar_t* cmd);
 
         GWCA_API void ToggleTimestamps(bool enable);

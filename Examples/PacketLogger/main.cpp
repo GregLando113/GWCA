@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <GWCA/GWCA.h>
+#include <GWCA/GameContainers/Array.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Scanner.h>
 #include <GWCA/Packets/StoC.h>
@@ -46,7 +47,7 @@ enum class FieldType {
 };
 
 static volatile bool running;
-static StoCHandlerArray  game_server_handler;
+static StoCHandlerArray*  game_server_handler;
 static std::vector<bool> ignored_packets;
 static std::vector<GW::HookEntry> hook_entries;
 static FILE* stdout_proxy;
@@ -79,9 +80,9 @@ static void InitStoC()
     StoCHandler_Addr = *(uintptr_t *)address;
 
     GameServer **addr = (GameServer **)StoCHandler_Addr;
-    game_server_handler = (*addr)->gs_codec->handlers;
-    ignored_packets.resize(game_server_handler.size());
-    hook_entries.resize(game_server_handler.size());
+    game_server_handler = &(*addr)->gs_codec->handlers;
+    ignored_packets.resize(game_server_handler->size());
+    hook_entries.resize(game_server_handler->size());
 
     ignored_packets[12] = true;
     ignored_packets[13] = true;
@@ -329,12 +330,12 @@ static void PrintNestedField(uint32_t *fields, uint32_t n_fields,
 
 static void PacketHandler(GW::HookStatus *status, GW::Packet::StoC::PacketBase *packet)
 {
-    if (packet->header >= game_server_handler.size())
+    if (packet->header >= game_server_handler->size())
         return;
     if (ignored_packets[packet->header])
         return;
 
-    StoCHandler handler = game_server_handler[packet->header];
+    StoCHandler handler = (*game_server_handler)[packet->header];
     uint8_t *packet_raw = reinterpret_cast<uint8_t*>(packet);
 
     uint8_t **bytes = &packet_raw;
@@ -359,7 +360,7 @@ static void GameLoop(IDirect3DDevice9* device)
         initialized = true;
 
         InitStoC();
-        for (size_t i = 0; i < game_server_handler.size(); i++) {
+        for (size_t i = 0; i < game_server_handler->size(); i++) {
             GW::StoC::RegisterPacketCallback(&hook_entries[i], i, PacketHandler);
         }
 

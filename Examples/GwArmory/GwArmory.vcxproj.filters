@@ -9,22 +9,20 @@
     <ClInclude Include="ImGuiAddons.h" />
     <ClInclude Include="ArmorsDatabase.h" />
     <ClInclude Include="imgui_impl_dx9.h" />
-    <ClInclude Include="..\imgui\imconfig.h">
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imconfig.h" />
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\imgui\imgui.h">
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imstb_textedit.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\imgui\imgui_internal.h">
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imstb_rectpack.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\imgui\imstb_rectpack.h">
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui_internal.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\imgui\imstb_textedit.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\imgui\imstb_truetype.h">
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui.h">
       <Filter>ImGui</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,13 +30,16 @@
     <ClCompile Include="ImGuiAddons.cpp" />
     <ClCompile Include="imgui_impl_dx9.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="..\imgui\imgui.cpp">
+    <ClCompile Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\imgui\imgui_draw.cpp">
+    <ClCompile Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui_draw.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\imgui\imgui_widgets.cpp">
+    <ClCompile Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui_widgets.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\build\_deps\imgui-src\imgui_tables.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
   </ItemGroup>

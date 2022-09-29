@@ -180,7 +180,7 @@ namespace {
         GWCA_INFO("[SCAN] MoveTo Function = %p", Move_Func);
         GWCA_INFO("[SCAN] CallTarget Function = %p", CallTarget_Func);
 
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(ChangeTarget_Func);
         GWCA_ASSERT(TargetAgentIdPtr);
         GWCA_ASSERT(MouseOverAgentIdPtr);

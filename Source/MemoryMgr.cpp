@@ -39,7 +39,7 @@ bool GW::MemoryMgr::Scan() {
     GWCA_INFO("[SCAN] GetPersonalDirPtr = %08X", GetPersonalDirPtr);
     GWCA_INFO("[SCAN] GetGWVersion = %08X, %d", GetGWVersion, GetGWVersion());
 
-#if _DEBUG
+#ifdef _DEBUG
     GWCA_ASSERT(SkillTimerPtr);
     GWCA_ASSERT(WinHandlePtr);
     GWCA_ASSERT(GetPersonalDirPtr);

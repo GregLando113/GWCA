@@ -45,7 +45,7 @@ namespace {
         GWCA_INFO("[SCAN] patch_fog_addr = %p", patch_fog_addr);
         GWCA_INFO("[SCAN] scan_cam_class = %p", scan_cam_class);
 
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(patch_fog_addr);
         GWCA_ASSERT(patch_cam_update_addr);
         GWCA_ASSERT(scan_cam_class);

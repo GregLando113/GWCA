@@ -45,7 +45,7 @@ namespace {
 
         GWCA_INFO("[SCAN] PostProcessEffect Function = %p", PostProcessEffect_Func);
         GWCA_INFO("[SCAN] DropBuff Function = %p", DropBuff_Func);
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(PostProcessEffect_Func);
         GWCA_ASSERT(DropBuff_Func);
 #endif

@@ -1,6 +1,7 @@
 // ReSharper disable CppUnusedIncludeDirective
 #pragma once
 
+#include <string>
 #include "AgentIDs.h"
 #include "ItemIDs.h"
 #include "Maps.h"

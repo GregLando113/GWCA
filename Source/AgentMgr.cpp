@@ -39,7 +39,7 @@ namespace {
         UI::SendUIMessage(UI::UIMessage::kSendDialog, (void*)dialog_id);
         GW::Hook::LeaveHook();
     };
-    void OnDialogBody_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+    void OnDialogBody_UIMessage(GW::HookStatus*, UI::UIMessage message_id, void* wparam, void*) {
         GWCA_ASSERT(message_id == UI::UIMessage::kDialogBody && wparam);
         UI::DialogBodyInfo* info = (UI::DialogBodyInfo*)wparam;
         // Save dialog agent id; used in OnSendDialog_UIMessage to tell which type of packet to send.

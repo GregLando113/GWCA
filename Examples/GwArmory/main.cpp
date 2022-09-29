@@ -7,8 +7,6 @@
 
 #include <vector>
 
-#include <d3dx9tex.h>
-
 #include <imgui.h>
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS

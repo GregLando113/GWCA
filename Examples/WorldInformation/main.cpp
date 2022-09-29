@@ -114,7 +114,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM l
             if (!right_mouse_down) io.MouseDown[0] = true;
             break;
         case WM_LBUTTONUP:
-            io.MouseDown[0] = false; 
+            io.MouseDown[0] = false;
             break;
         case WM_MBUTTONDOWN:
         case WM_MBUTTONDBLCLK:
@@ -127,8 +127,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM l
             io.KeysDown[VK_MBUTTON] = false;
             io.MouseDown[2] = false;
             break;
-        case WM_MOUSEWHEEL: 
-            if (!right_mouse_down) io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? +1.0f : -1.0f; 
+        case WM_MOUSEWHEEL:
+            if (!right_mouse_down) io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? +1.0f : -1.0f;
             break;
         case WM_MOUSEMOVE:
             if (!right_mouse_down) {
@@ -200,7 +200,7 @@ enum MissionIcon
     MissionIcon_DesolationPrimary,
     MissionIcon_DesolationExpert,
     MissionIcon_DesolationMaster,
-    
+
     MissionIcon_HmIncomplete,
     MissionIcon_HmPrimary,
     MissionIcon_HmBonus,
@@ -279,8 +279,8 @@ static bool GetIsInDesolation(GW::AreaInfo *area)
 static IDirect3DTexture9 *mission_icon_textures[MissionIcon_Count];
 static IDirect3DTexture9* GetMissionTexture(GW::WorldContext *ctx, GW::Constants::MapID map_id, bool hardmode)
 {
-    GW::Array<uint32_t> missions_bonus;
-    GW::Array<uint32_t> missions_completed;
+    GW::Array<uint32_t>* missions_bonus;
+    GW::Array<uint32_t>* missions_completed;
 
     MissionIcon incomplete;
     MissionIcon primary;
@@ -289,8 +289,8 @@ static IDirect3DTexture9* GetMissionTexture(GW::WorldContext *ctx, GW::Constants
 
     GW::AreaInfo *area_info = GW::Map::GetMapInfo(map_id);
     if (hardmode) {
-        missions_bonus = ctx->missions_bonus_hm;
-        missions_completed = ctx->missions_completed_hm;
+        missions_bonus = &ctx->missions_bonus_hm;
+        missions_completed = &ctx->missions_completed_hm;
 
         incomplete = MissionIcon_HmIncomplete;
         primary = MissionIcon_HmComplete;
@@ -300,8 +300,8 @@ static IDirect3DTexture9* GetMissionTexture(GW::WorldContext *ctx, GW::Constants
         else
             master = MissionIcon_HmMaster;
     } else {
-        missions_bonus = ctx->missions_bonus;
-        missions_completed = ctx->missions_completed;
+        missions_bonus = &ctx->missions_bonus;
+        missions_completed = &ctx->missions_completed;
 
         if (GetIsInDesolation(area_info)) {
             incomplete = MissionIcon_DesolationIncomplete;
@@ -326,8 +326,8 @@ static IDirect3DTexture9* GetMissionTexture(GW::WorldContext *ctx, GW::Constants
         }
     }
 
-    bool bonus = ArrayBoolAt(missions_bonus, static_cast<uint32_t>(map_id));
-    bool complete = ArrayBoolAt(missions_completed, static_cast<uint32_t>(map_id));
+    bool bonus = ArrayBoolAt(*missions_bonus, static_cast<uint32_t>(map_id));
+    bool complete = ArrayBoolAt(*missions_completed, static_cast<uint32_t>(map_id));
 
     if (bonus && complete)
         return mission_icon_textures[master];
@@ -359,7 +359,7 @@ static void WorldInformation_Draw(IDirect3DDevice9 *device)
             GW::Constants::MapID map_id = missions[mission_id];
             GW::AreaInfo *area_info = GW::Map::GetMapInfo(map_id);
             if (!area_info) continue;
-            if (area_info->type != GW::RegionType_MissionOutpost) continue;
+            if (area_info->type != GW::RegionType::MissionOutpost) continue;
 
             wchar_t enc_name[16];
             if (GW::UI::UInt32ToEncStr(area_info->name_id, enc_name, 16)) {

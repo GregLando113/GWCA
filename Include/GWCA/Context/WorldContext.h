@@ -2,8 +2,12 @@
 
 #include <GWCA/GameContainers/Array.h>
 #include <GWCA/GameContainers/GamePos.h>
+#include <GWCA/Utilities/Export.h>
 
 namespace GW {
+    struct WorldContext;
+    GWCA_API WorldContext* GetWorldContext();
+
     typedef uint32_t ItemID;
 
     struct NPC;

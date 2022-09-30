@@ -1,8 +1,11 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/Utilities/Export.h>
 
 namespace GW {
+    struct PreGameContext;
+    GWCA_API PreGameContext* GetPreGameContext();
 
     struct LoginCharacter {
         uint32_t unk0; // Some kind of function call

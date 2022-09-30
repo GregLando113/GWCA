@@ -1,8 +1,12 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/Utilities/Export.h>
 
 namespace GW {
+    struct ItemContext;
+    GWCA_API ItemContext* GetItemContext();
+
     struct Bag;
     struct Item;
     struct Inventory;

@@ -2,8 +2,11 @@
 
 #include <GWCA/GameEntities/Guild.h>
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/Utilities/Export.h>
 
 namespace GW {
+    struct GuildContext;
+    GWCA_API GuildContext* GetGuildContext();
 
     typedef Array<Guild *> GuildArray;
     typedef Array<GuildPlayer *> GuildRoster;

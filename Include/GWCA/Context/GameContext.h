@@ -1,6 +1,10 @@
 #pragma once
+#include <GWCA/Utilities/Export.h>
 
 namespace GW {
+    struct GameContext;
+    GWCA_API GameContext* GetGameContext();
+
     struct Cinematic;
     struct MapContext;
     struct TextParser;

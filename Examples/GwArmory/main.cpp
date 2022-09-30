@@ -2,33 +2,35 @@
 #include <Windows.h>
 #include <Windowsx.h>
 
-#include <assert.h>
-#include <stdint.h>
+#include <cassert>
+#include <cstdint>
 
+#include <string>
 #include <vector>
 
 #include <imgui.h>
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
-#include <imgui_internal.h>
-#include "imgui_impl_dx9.h"
 #include "ImGuiAddons.h"
+#include "imgui_impl_dx9.h"
+#include <imgui_internal.h>
 
 #include <GWCA/GWCA.h>
 
+#include <GWCA/Constants/Constants.h>
 #include <GWCA/Utilities/Hooker.h>
 #include <GWCA/Utilities/Scanner.h>
-#include <GWCA/Constants/Constants.h>
 
 #include <GWCA/GameEntities/Agent.h>
 
-#include <GWCA/Managers/ChatMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
+#include <GWCA/Managers/ChatMgr.h>
 #include <GWCA/Managers/MemoryMgr.h>
 #include <GWCA/Managers/RenderMgr.h>
 
 #include "ArmorsDatabase.h"
+
 
 // Arg3:
 //  - Costume = 0x20000006
@@ -288,7 +290,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM l
     case WM_KEYUP:
     case WM_SYSKEYUP:
         if (io.WantTextInput) break; // if imgui wants them, send to imgui (above) and to gw
-        // else fallthrough
+        [[fallthrough]];
     case WM_KEYDOWN:
     case WM_SYSKEYDOWN:
     case WM_CHAR:

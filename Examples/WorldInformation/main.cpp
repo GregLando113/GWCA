@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <Windowsx.h>
 
+#include <string>
 #include <vector>
 #include <functional>
 

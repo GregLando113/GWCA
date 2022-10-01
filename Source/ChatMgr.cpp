@@ -346,7 +346,7 @@ namespace {
         GWCA_INFO("[SCAN] ChatBuffer_Addr = %p", ChatBuffer_Addr);
         GWCA_INFO("[SCAN] IsTyping_Addr = %p", IsTyping_Addr);
 
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(GetSenderColor_Func);
         GWCA_ASSERT(GetMessageColor_Func);
         GWCA_ASSERT(LocalMessage_Func);

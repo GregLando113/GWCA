@@ -39,7 +39,7 @@ namespace {
         UI::SendUIMessage(UI::UIMessage::kSendDialog, (void*)dialog_id);
         GW::Hook::LeaveHook();
     };
-    void OnDialogBody_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
+    void OnDialogBody_UIMessage(GW::HookStatus*, UI::UIMessage message_id, void* wparam, void*) {
         GWCA_ASSERT(message_id == UI::UIMessage::kDialogBody && wparam);
         UI::DialogBodyInfo* info = (UI::DialogBodyInfo*)wparam;
         // Save dialog agent id; used in OnSendDialog_UIMessage to tell which type of packet to send.
@@ -180,7 +180,7 @@ namespace {
         GWCA_INFO("[SCAN] MoveTo Function = %p", Move_Func);
         GWCA_INFO("[SCAN] CallTarget Function = %p", CallTarget_Func);
 
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(ChangeTarget_Func);
         GWCA_ASSERT(TargetAgentIdPtr);
         GWCA_ASSERT(MouseOverAgentIdPtr);

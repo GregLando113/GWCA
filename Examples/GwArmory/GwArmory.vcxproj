@@ -21,14 +21,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <SpectreMitigation>false</SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <SpectreMitigation>false</SpectreMitigation>
@@ -52,13 +52,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\imgui\;$(ProjectDir)..\..\Include\;$(ProjectDir)..\..\Dependencies\DirectX\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\build\_deps\imgui-src;$(ProjectDir)..\..\Include\;$(ProjectDir)..\..\Dependencies\DirectX\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\Dependencies\DirectX\Lib\x86\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -69,7 +68,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\imgui\;$(ProjectDir)..\..\Include\;$(ProjectDir)..\..\Dependencies\DirectX\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\build\_deps\imgui-src;$(ProjectDir)..\..\Include\;$(ProjectDir)..\..\Dependencies\DirectX\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -86,20 +85,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\imgui\imgui.cpp" />
-    <ClCompile Include="..\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui.cpp" />
+    <ClCompile Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui_draw.cpp" />
+    <ClCompile Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\..\..\build\_deps\imgui-src\imgui_tables.cpp" />
     <ClCompile Include="ImGuiAddons.cpp" />
     <ClCompile Include="imgui_impl_dx9.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\imgui\imconfig.h" />
-    <ClInclude Include="..\imgui\imgui.h" />
-    <ClInclude Include="..\imgui\imgui_internal.h" />
-    <ClInclude Include="..\imgui\imstb_rectpack.h" />
-    <ClInclude Include="..\imgui\imstb_textedit.h" />
-    <ClInclude Include="..\imgui\imstb_truetype.h" />
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imconfig.h" />
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui.h" />
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imgui_internal.h" />
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imstb_rectpack.h" />
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imstb_textedit.h" />
+    <ClInclude Include="$(ProjectDir)..\..\..\..\build\_deps\imgui-src\imstb_truetype.h" />
     <ClInclude Include="ArmorsDatabase.h" />
     <ClInclude Include="ImGuiAddons.h" />
     <ClInclude Include="imgui_impl_dx9.h" />

@@ -1,6 +1,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+#include <string>
+
 #include <GWCA/GWCA.h>
 #include <GWCA/Utilities/Hooker.h>
 

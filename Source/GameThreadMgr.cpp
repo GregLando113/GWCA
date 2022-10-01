@@ -60,7 +60,7 @@ namespace {
         LeaveGameThread_Func = *(Render_t*)address;
 
 
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(LeaveGameThread_Func);
 #endif
 

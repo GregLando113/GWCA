@@ -97,7 +97,7 @@ namespace {
         GWCA_INFO("[SCAN] GwEndScene = %p", GwEndScene_Func);
         GWCA_INFO("[SCAN] GwScreenCapture = %p", ScreenCapture_Func);
 
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(GwGetTransform_func);
         GWCA_ASSERT(GwReset_Func);
         GWCA_ASSERT(GwEndScene_Func);

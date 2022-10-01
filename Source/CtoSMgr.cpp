@@ -50,7 +50,7 @@ namespace {
         GWCA_INFO("[SCAN] SendPacket = %p", SendPacket_Func);
         GWCA_INFO("[SCAN] CtoGSObjectPtr = %p", game_srv_object_addr);
 
-#if _DEBUG
+#ifdef _DEBUG
 #ifndef GWCA_CTOS_DISABLED
         GWCA_ASSERT(SendPacket_Func);
 #endif

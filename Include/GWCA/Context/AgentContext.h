@@ -1,8 +1,12 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/Utilities/Export.h>
 
 namespace GW {
+    struct AgentContext;
+    GWCA_API AgentContext* GetAgentContext();
+
     struct AgentMovement;
 
     struct AgentSummaryInfo {

@@ -21,22 +21,14 @@
 #pragma warning(disable: 5039) // 'function': pointer or reference to potentially throwing function passed to extern C function under -EHc. Undefined behavior may occur if this function throws an exception.
 #pragma warning(disable: 5045) // Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
 
-#ifndef __STDC__
-# define __STDC__ 1
-#endif
-
 #ifndef _CRT_SECURE_NO_WARNINGS
 # define _CRT_SECURE_NO_WARNINGS 1
 #endif
 
-#ifndef _CRT_SECURE_NO_DEPRECATE
-# define _CRT_SECURE_NO_DEPRECATE 1
-#endif
-
-#include <math.h>
+#include <cmath>
 #include <cstdio>
 #include <cstdint>
-#include <string.h>
+#include <cstring>
 
 #include <map>
 #include <atomic>
@@ -54,10 +46,6 @@
 
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
-#endif
-
-#ifndef STRICT
-# define STRICT
 #endif
 
 #include <Windows.h>

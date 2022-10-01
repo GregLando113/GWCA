@@ -140,7 +140,7 @@ namespace {
         GWCA_INFO("[SCAN] QueryAltitude Function = %p", QueryAltitude_Func);
         GWCA_INFO("[SCAN] EnterChallengeMission_Func = %p", EnterChallengeMission_Func);
         GWCA_INFO("[SCAN] CancelEnterChallengeMission_Func = %p", CancelEnterChallengeMission_Func);
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(map_type_instance_infos);
         GWCA_ASSERT(region_id_addr);
         GWCA_ASSERT(area_info_addr);

@@ -83,7 +83,7 @@ bool ImGui::IconButton(const char* label, ImTextureID icon, const ImVec2& size)
 bool ImGui::ColorButtonPicker(const char* label, Color* imcol, const ImGuiColorEditFlags flags)
 {
 	ImVec4 col = ImGui::ColorConvertU32ToFloat4(*imcol);
-	if (ImGui::ColorEdit4(label, &col.x, flags | ImGuiColorEditFlags__DisplayMask | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoLabel |
+	if (ImGui::ColorEdit4(label, &col.x, flags | ImGuiColorEditFlags_DisplayMask_ | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoLabel |
 		ImGuiColorEditFlags_NoInputs)) {
 		*imcol = ImGui::ColorConvertFloat4ToU32(col);
 		return true;
@@ -105,7 +105,7 @@ bool ImGui::MyCombo(const char* label, const char* preview_text, int* current_it
 
 	// this is actually shared between all combos. It's kinda ok because there is
 	// only one combo open at any given time, however it causes a problem where
-	// if you open combo -> keyboard select (but no enter) and close, the 
+	// if you open combo -> keyboard select (but no enter) and close, the
 	// keyboard_selected will stay as-is when re-opening the combo, or even others.
 	static int keyboard_selected = -1;
 

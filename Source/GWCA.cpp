@@ -65,44 +65,42 @@ namespace GW
         modules.push_back(&SkillbarModule);
         modules.push_back(&FriendListModule);
 
-        if (MemoryMgr::Scan()) {
-
-            // We could get it from thread ctx
-            uintptr_t address = Scanner::Find("\x50\x6A\x0F\x6A\x00\xFF\x35", "xxxxxxx", +7);
-
-            if (Verify(address))
-                base_ptr = *(uintptr_t *)address;
-            GWCA_INFO("[SCAN] base_ptr = %p, %p", (void *)base_ptr);
-
-            HookBase::Initialize();
-
-            address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uipregame.cpp", "!s_scene", 0x34);
-            if (Verify(address))
-                PreGameContext_addr = *(uintptr_t*)address;
-            GWCA_INFO("[SCAN] PreGameContext_addr = %p", PreGameContext_addr);
-
-            for (Module *module : modules) {
-                GWCA_INFO("\nInitializing module '%s'\n", module->name);
-                if (module->init_module)
-                    module->init_module();
-            }
-
-            HookBase::EnableHooks();
-            for (Module *module : modules) {
-                if (module->enable_hooks)
-                    module->enable_hooks();
-            }
-
-            return true;
-        } else {
+        if (!MemoryMgr::Scan())
             return false;
+
+        // We could get it from thread ctx
+        uintptr_t address = Scanner::Find("\x50\x6A\x0F\x6A\x00\xFF\x35", "xxxxxxx", +7);
+
+        if (Verify(address))
+            base_ptr = *(uintptr_t *)address;
+        GWCA_INFO("[SCAN] base_ptr = %p, %p", (void *)base_ptr);
+
+        HookBase::Initialize();
+
+        address = Scanner::FindAssertion("p:\\code\\gw\\ui\\uipregame.cpp", "!s_scene", 0x34);
+        if (Verify(address))
+            PreGameContext_addr = *(uintptr_t*)address;
+        GWCA_INFO("[SCAN] PreGameContext_addr = %p", PreGameContext_addr);
+
+        for (const Module* module : modules) {
+            GWCA_INFO("\nInitializing module '%s'\n", module->name);
+            if (module->init_module)
+                module->init_module();
         }
+
+        HookBase::EnableHooks();
+        for (const Module* module : modules) {
+            if (module->enable_hooks)
+                module->enable_hooks();
+        }
+
+        return true;
     }
 
     void DisableHooks()
     {
         HookBase::DisableHooks();
-        for (Module *module : modules) {
+        for (const Module* module : modules) {
             if (module->disable_hooks)
                 module->disable_hooks();
         }
@@ -111,42 +109,60 @@ namespace GW
     void Terminate()
     {
         DisableHooks();
-        for (Module *module : modules) {
+        for (const Module* module : modules) {
             if (module->exit_module)
                 module->exit_module();
         }
 
         HookBase::Deinitialize();
     }
-    GameContext* GameContext::instance() {
+
+    GameContext* GetGameContext()
+    {
         uintptr_t** base_context = base_ptr ? *(uintptr_t***)base_ptr : nullptr;
         return base_context ? (GameContext*)base_context[0x6] : nullptr;
     }
-    PreGameContext* PreGameContext::instance() {
+    PreGameContext* GetPreGameContext()
+    {
         return *(PreGameContext**)PreGameContext_addr;
     }
-    WorldContext* WorldContext::instance() {
-        auto* g = GameContext::instance();
+    WorldContext* GetWorldContext()
+    {
+        const auto* g = GetGameContext();
         return g ? g->world : nullptr;
     }
-    PartyContext* PartyContext::instance() {
-        auto* g = GameContext::instance();
+    PartyContext* GetPartyContext()
+    {
+        const auto* g = GetGameContext();
         return g ? g->party : nullptr;
     }
-    CharContext* CharContext::instance() {
-        auto* g = GameContext::instance();
+    CharContext* GetCharContext()
+    {
+        const auto* g = GetGameContext();
         return g ? g->character : nullptr;
     }
-    GuildContext* GuildContext::instance() {
-        auto* g = GameContext::instance();
+    GuildContext* GetGuildContext()
+    {
+        const auto* g = GetGameContext();
         return g ? g->guild : nullptr;
     }
-    ItemContext* ItemContext::instance() {
-        auto* g = GameContext::instance();
+    ItemContext* GetItemContext()
+    {
+        const auto* g = GetGameContext();
         return g ? g->items : nullptr;
     }
-    AgentContext* AgentContext::instance() {
-        auto* g = GameContext::instance();
+    AgentContext* GetAgentContext()
+    {
+        const auto* g = GetGameContext();
         return g ? g->agent : nullptr;
     }
+
+    [[deprecated]] GameContext* GameContext::instance() { return GetGameContext(); }
+    [[deprecated]] PreGameContext* PreGameContext::instance() { return GetPreGameContext(); }
+    [[deprecated]] WorldContext* WorldContext::instance() { return GetWorldContext(); }
+    [[deprecated]] PartyContext* PartyContext::instance() { return GetPartyContext(); }
+    [[deprecated]] CharContext* CharContext::instance() { return GetCharContext(); }
+    [[deprecated]] GuildContext* GuildContext::instance() { return GetGuildContext(); }
+    [[deprecated]] ItemContext* ItemContext::instance() { return GetItemContext(); }
+    [[deprecated]] AgentContext* AgentContext::instance() { return GetAgentContext(); }
 } // namespace GW

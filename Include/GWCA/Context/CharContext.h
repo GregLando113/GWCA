@@ -1,9 +1,12 @@
 #pragma once
 
 #include <GWCA/GameContainers/Array.h>
-
+#include <GWCA/Utilities/Export.h>
 
 namespace GW {
+    struct CharContext;
+    GWCA_API CharContext* GetCharContext();
+
     struct ObserverMatch;
 
     struct ProgressBar {

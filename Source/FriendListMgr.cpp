@@ -68,7 +68,7 @@ namespace {
         GWCA_INFO("[SCAN] AddFriend_Func = %p", AddFriend_Func);
         GWCA_INFO("[SCAN] RemoveFriend_Func = %p", RemoveFriend_Func);
 
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(FriendList_Addr);
         GWCA_ASSERT(FriendStatusHandler_Func);
         GWCA_ASSERT(SetOnlineStatus_Func);
@@ -79,12 +79,12 @@ namespace {
         HookBase::CreateHook(FriendStatusHandler_Func, OnFriendStatusHandler, (void**)&RetFriendStatusHandler);
     }
 
-    void EnableHooks() {
+    [[maybe_unused]] void EnableHooks() {
         if (FriendStatusHandler_Func)
             HookBase::EnableHooks(FriendStatusHandler_Func);
     }
 
-    void DisableHooks() {
+    [[maybe_unused]] void DisableHooks() {
         if(FriendStatusHandler_Func)
             HookBase::DisableHooks(FriendStatusHandler_Func);
     }

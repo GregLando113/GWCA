@@ -8,7 +8,7 @@
 // If you are new to ImGui, see examples/README.txt and documentation at the top of imgui.cpp.
 // https://github.com/ocornut/imgui
 
-// CHANGELOG 
+// CHANGELOG
 // (minor and older changes stripped away, please see git history for details)
 //  2018-05-07: Render: Saving/restoring Transform because they don't seem to be included in the StateBlock. Setting shading mode to Gouraud.
 //  2018-03-20: Misc: Setup io.BackendFlags ImGuiBackendFlags_HasMouseCursors and ImGuiBackendFlags_HasSetMousePos flags + honor ImGuiConfigFlags_NoMouseCursorChange flag.
@@ -18,7 +18,7 @@
 //  2018-02-06: Inputs: Honoring the io.WantSetMousePos by repositioning the mouse (when using navigation and ImGuiConfigFlags_NavEnableSetMousePos is set).
 //  2018-02-06: Inputs: Added mapping for ImGuiKey_Space.
 
-#include "imgui.h"
+#include <imgui.h>
 #include "imgui_impl_dx9.h"
 
 // DirectX
@@ -220,7 +220,7 @@ static bool ImGui_ImplWin32_UpdateMouseCursor() {
 #define WM_MOUSEHWHEEL 0x020E
 #endif
 
-// Process Win32 mouse/keyboard inputs. 
+// Process Win32 mouse/keyboard inputs.
 // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
 // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
 // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.

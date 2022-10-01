@@ -91,12 +91,12 @@ namespace {
     void Init() {
         TransactItem_Func = (TransactItem_pt )Scanner::Find("\x85\xFF\x74\x1D\x8B\x4D\x14\xEB\x08", "xxxxxxxxx", -0x7F);
         RequestQuote_func = (RequestQuote_pt )Scanner::Find("\x8B\x75\x20\x83\xFE\x10\x76\x14", "xxxxxxxx", -0x35);
-        
+
 
         GWCA_INFO("[SCAN] TransactItem Function = %p", TransactItem_Func);
         GWCA_INFO("[SCAN] RequestQuote Function = %p", RequestQuote_func);
 
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(TransactItem_Func);
         GWCA_ASSERT(RequestQuote_func);
 #endif

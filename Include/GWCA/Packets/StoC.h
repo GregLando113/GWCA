@@ -93,7 +93,6 @@ namespace GW {
 
             template <class Specific>
             struct Packet : PacketBase {
-            public:
                 static const uint32_t STATIC_HEADER;
             };
             struct TradeStart : Packet<TradeStart> {
@@ -938,11 +937,6 @@ namespace GW {
             struct CapeVisibility : Packet<CapeVisibility> {
                 uint32_t agent_id;
                 uint32_t visible; // 0 or 1
-
-                constexpr CapeVisibility(uint32_t id, uint32_t visible)
-                    : Packet{STATIC_HEADER}
-                    , agent_id{id}
-                    , visible{visible} {}
             };
             constexpr uint32_t Packet<CapeVisibility>::STATIC_HEADER = GAME_SMSG_AGENT_DISPLAY_CAPE;
 

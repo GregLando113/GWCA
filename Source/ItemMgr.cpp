@@ -210,7 +210,7 @@ namespace {
         GWCA_INFO("[SCAN] SalvageSessionComplete_Func = %p", SalvageSessionComplete_Func);
         GWCA_INFO("[SCAN] SalvageMaterials_Func = %p", SalvageMaterials_Func);
         GWCA_INFO("[SCAN] SalvageStart_Func = %p", SalvageStart_Func);
-#if _DEBUG
+#ifdef _DEBUG
         GWCA_ASSERT(storage_open_addr);
         GWCA_ASSERT(ItemClick_Func);
         GWCA_ASSERT(EquipItem_Func);

@@ -136,7 +136,7 @@ namespace GW {
         LeaveCriticalSection(&mutex);
     }
 
-    void GameThread::Enqueue(const std::function<void()>& f)
+    void GameThread::Enqueue(std::function<void()> f)
     {
         if (!initialised)
             return;
@@ -145,19 +145,6 @@ namespace GW {
             f();
         }
         else {
-            singleshot_callbacks.push_back(f);
-        }
-        LeaveCriticalSection(&mutex);
-    }
-
-    void GameThread::Enqueue(std::function<void()>&& f)
-    {
-        if (!initialised)
-            return;
-        EnterCriticalSection(&mutex);
-        if (in_gamethread) {
-            f();
-        } else {
             singleshot_callbacks.push_back(std::move(f));
         }
         LeaveCriticalSection(&mutex);

@@ -1,6 +1,5 @@
 #pragma once
 #include <imgui.h>
-#include <imgui_internal.h>
 typedef ImU32 Color;
 
 namespace ImGui {

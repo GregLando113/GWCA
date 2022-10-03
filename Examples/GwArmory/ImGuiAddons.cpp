@@ -1,5 +1,6 @@
 #include <Windows.h>
 
+#include <imgui_internal.h>
 #include "ImGuiAddons.h"
 
 
@@ -182,7 +183,7 @@ bool ImGui::MyCombo(const char* label, const char* preview_text, int* current_it
 	// Display items
 	bool value_changed = false;
 	for (int i = 0; i < items_count; i++) {
-		PushID((void*)(intptr_t)i);
+		PushID(i);
 		const bool item_selected = (i == *current_item);
 		const bool item_keyboard_selected = (i == keyboard_selected);
 		const char* item_text;

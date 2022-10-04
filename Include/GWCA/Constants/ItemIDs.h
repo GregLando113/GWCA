@@ -180,6 +180,8 @@ namespace GW {
 
             // Bundles
             constexpr int UnholyText = 2619;
+            constexpr int DungeonKey = 25410;
+            constexpr int BossKey = 25416;
 
             // Money
             constexpr int GoldCoin = 2510;

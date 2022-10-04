@@ -182,6 +182,9 @@ namespace GW {
             constexpr int UnholyText = 2619;
             constexpr int DungeonKey = 25410;
             constexpr int BossKey = 25416;
+            constexpr int EnchantedTorch = 503;
+            constexpr int LightOfSeborhin = 15531;
+            constexpr int IstaniFireOil = 16339;
 
             // Money
             constexpr int GoldCoin = 2510;

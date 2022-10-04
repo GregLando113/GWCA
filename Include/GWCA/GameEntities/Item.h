@@ -39,7 +39,7 @@ namespace GW {
 
     struct ItemModifier {
         uint32_t mod = 0;
-                          
+
         uint32_t identifier() const { return mod >> 16; }
         uint32_t arg1() const { return (mod & 0x0000FF00) >> 8; }
         uint32_t arg2() const { return (mod & 0x000000FF); }
@@ -83,11 +83,11 @@ namespace GW {
     };
     static_assert(sizeof(Item) == 84, "struct Item has incorect size");
 
-    struct WeapondSet { // total: 0x8/8
-        /* +h0000 */ Item *weapond;
+    struct WeaponSet { // total: 0x8/8
+        /* +h0000 */ Item *weapon;
         /* +h0004 */ Item *offhand;
     };
-    static_assert(sizeof(WeapondSet) == 8, "struct WeapondSet has incorect size");
+    static_assert(sizeof(WeaponSet) == 8, "struct WeaponSet has incorect size");
 
     struct Inventory { // total: 0x98/152
         union {
@@ -121,7 +121,7 @@ namespace GW {
         /* +h005C */ Item *bundle;
         /* +h0060 */ uint32_t h0060;
         union {
-        /* +h0064 */ WeapondSet weapon_sets[4];
+        /* +h0064 */ WeaponSet weapon_sets[4];
             struct {
         /* +h0064 */ Item *weapon_set0;
         /* +h0068 */ Item *offhand_set0;

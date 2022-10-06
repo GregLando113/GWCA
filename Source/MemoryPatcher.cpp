@@ -43,7 +43,7 @@ namespace GW {
         VirtualProtect(m_addr, size, old_prot, &old_prot);
     }
 
-    bool MemoryPatcher::SetRedirect(uintptr_t call_instruction_address, uintptr_t redirect_func) {
+    bool MemoryPatcher::SetRedirect(uintptr_t call_instruction_address, void* redirect_func) {
         GWCA_ASSERT(m_addr == nullptr);
         if (!(call_instruction_address && redirect_func))
             return false;
@@ -53,14 +53,14 @@ namespace GW {
 
         char instruction_type = (char)((*(uintptr_t*)call_instruction_address) & 0x000000ff);
         switch (instruction_type) {
-        case 0xe8: // Near call
-        case 0xe9: // Jump call
+        case '\xe8': // Near call
+        case '\xe9': // Jump call
             break;
         default: // Other instructions not supported
             return false;
         }
         // Figure out the offset from the target address to the destination function
-        uintptr_t call_offset = redirect_func - call_instruction_address - 5;
+        uintptr_t call_offset = ((uintptr_t)redirect_func) - call_instruction_address - 5;
         const char patch[5] = { instruction_type, (char)(call_offset), (char)(call_offset >> 8), (char)(call_offset >> 16), (char)(call_offset >> 24) };
 
         // Go through usual channels to set the patch

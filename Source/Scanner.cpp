@@ -20,7 +20,7 @@ uintptr_t GW::Scanner::FindAssertion(const char* assertion_file, const char* ass
 #pragma warning( disable : 4242 )
 #pragma warning( disable : 4244 )
 #pragma warning( disable : 4365 )
-char mask[64];
+char mask[128];
 int i;
 char assertion_bytes[] = "\xBA????\xB9????";
 char assertion_mask[] = "x????x????";

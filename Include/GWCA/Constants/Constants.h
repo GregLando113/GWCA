@@ -92,7 +92,7 @@ namespace GW {
             Ally_NonAttackable = 0x1, Neutral = 0x2, Enemy = 0x3, Spirit_Pet = 0x4, Minion = 0x5, Npc_Minipet = 0x6
         };
 
-        enum class ItemType {
+        enum class ItemType : uint8_t {
             Salvage, Axe = 2, Bag, Boots, Bow, Chestpiece = 7, Rune_Mod, Usable, Dye,
             Materials_Zcoins, Offhand, Gloves, Hammer = 15, Headpiece, CC_Shards,
             Key, Leggings, Gold_Coin, Quest_Item, Wand, Shield = 24, Staff = 26, Sword,

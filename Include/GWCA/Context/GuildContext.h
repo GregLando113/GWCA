@@ -33,7 +33,7 @@ namespace GW {
         /* +h0074 */ uint32_t h0074;
         /* +h0078 */ wchar_t announcement[256];
         /* +h0278 */ wchar_t announcement_author[20];
-        /* +h02A0 */ uint32_t h02A0;
+        /* +h02A0 */ uint32_t player_guild_rank;
         /* +h02A4 */ uint32_t h02A4;
         /* +h02A8 */ Array<void *> factions_outpost_guilds;
         /* +h02B8 */ Array<void *> h02B8;

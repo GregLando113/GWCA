@@ -304,13 +304,13 @@ namespace GW {
             return true;
         }
         uint32_t GetAmountOfPlayersInInstance() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             // -1 because the 1st array element is nil
             return w && w->players.valid() ? w->players.size() - 1 : 0;
         }
 
         MapAgentArray* GetMapAgentArray() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w ? &w->map_agents : nullptr;
         }
 
@@ -396,12 +396,12 @@ namespace GW {
         }
 
         PlayerArray* GetPlayerArray() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w && w->players.valid() ? &w->players : nullptr;
         }
 
         NPCArray* GetNPCArray() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w && w->npcs.valid() ? &w->npcs : nullptr;
         }
 
@@ -415,7 +415,7 @@ namespace GW {
             if (agent) {
                 return GetAgentEncName(agent);
             }
-            GW::AgentInfoArray& agent_infos = WorldContext::instance()->agent_infos;
+            GW::AgentInfoArray& agent_infos = GetWorldContext()->agent_infos;
             if (!agent_infos.valid() || agent_id >= agent_infos.size()) {
                 return nullptr;
             }
@@ -441,7 +441,7 @@ namespace GW {
                 // If we only use NPCArray, we have a problem because 2 agents can share the same PlayerNumber.
                 // In Isle of Nameless, few npcs (Zaischen Weapond Collector) share the PlayerNumber with "The Guide" so using NPCArray only won't work.
                 // But, the dummies (Suit of xx Armor) don't have there NameString in AgentInfo array, so we need NPCArray.
-                Array<AgentInfo>& agent_infos = WorldContext::instance()->agent_infos;
+                Array<AgentInfo>& agent_infos = GetWorldContext()->agent_infos;
                 if (ag->agent_id >= agent_infos.size()) return nullptr;
                 if (agent_infos[ag->agent_id].name_enc)
                     return agent_infos[ag->agent_id].name_enc;
@@ -449,8 +449,8 @@ namespace GW {
                 return npc ? npc->name_enc : nullptr;
             }
             if (agent->GetIsGadgetType()) {
-                AgentContext* ctx = AgentContext::instance();
-                GadgetContext* gadget = GameContext::instance()->gadget;
+                AgentContext* ctx = GetAgentContext();
+                GadgetContext* gadget = GetGameContext()->gadget;
                 if (!ctx || !gadget) return nullptr;
                 auto* GadgetIds = ctx->agent_summary_info[agent->agent_id].extra_info_sub;
                 if (!GadgetIds)

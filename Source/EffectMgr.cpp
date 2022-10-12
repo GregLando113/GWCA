@@ -109,7 +109,7 @@ namespace GW {
             return nullptr;
         }
         AgentEffectsArray* GetPartyEffectsArray() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w && w->party_effects.valid() ? &w->party_effects : nullptr;
         }
         AgentEffects* GetAgentEffectsArray(uint32_t agent_id) {

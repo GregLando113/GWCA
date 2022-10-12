@@ -634,7 +634,7 @@ namespace GW {
         void AsyncDecodeStr(const wchar_t* enc_str, DecodeStr_Callback callback, void* callback_param, uint32_t language_id) {
             if (!ValidateAsyncDecodeStr)
                 return;
-            auto& textParser = GameContext::instance()->text_parser;
+            auto& textParser = GetGameContext()->text_parser;
             uint32_t prev_language_id = textParser->language_id;
             if (language_id != -1) {
                 textParser->language_id = language_id;
@@ -646,7 +646,7 @@ namespace GW {
         void AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id) {
             if (!ValidateAsyncDecodeStr)
                 return;
-            auto& textParser = GameContext::instance()->text_parser;
+            auto& textParser = GetGameContext()->text_parser;
             uint32_t prev_language_id = textParser->language_id;
             if (language_id != -1) {
                 textParser->language_id = language_id;

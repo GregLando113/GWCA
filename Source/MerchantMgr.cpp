@@ -159,7 +159,7 @@ namespace GW {
         }
 
         MerchItemArray* GetMerchantItemsArray() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w && w->merch_items.valid() ? &w->merch_items : nullptr;
         }
     }

@@ -484,7 +484,7 @@ namespace GW {
             if (hero.owner_player_id != me->login_number)
                 return false;
 
-            GW::WorldContext* w = WorldContext::instance();
+            GW::WorldContext* w = GetWorldContext();
             const HeroInfo* existing_hero = nullptr;
             for (const HeroInfo& it_hero : w->hero_info) {
                 if (it_hero.hero_id != hero.hero_id)
@@ -559,7 +559,7 @@ namespace GW {
         }
 
         SkillbarArray* GetSkillbarArray() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w && w->skillbar.valid() ? &w->skillbar : nullptr;
         }
 
@@ -580,7 +580,7 @@ namespace GW {
             return GetSkillConstantData(*(GW::Constants::SkillID*)tooltip->payload);
         }
         bool GetIsSkillUnlocked(GW::Constants::SkillID skill_id) {
-            GW::GameContext* g = GW::GameContext::instance();
+            GW::GameContext* g = GW::GetGameContext();
             GW::WorldContext* w = g->world;
 
             auto& array = w->unlocked_character_skills;

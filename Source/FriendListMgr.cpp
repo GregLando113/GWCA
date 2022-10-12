@@ -79,12 +79,12 @@ namespace {
         HookBase::CreateHook(FriendStatusHandler_Func, OnFriendStatusHandler, (void**)&RetFriendStatusHandler);
     }
 
-    [[maybe_unused]] void EnableHooks() {
+    void EnableHooks() {
         if (FriendStatusHandler_Func)
             HookBase::EnableHooks(FriendStatusHandler_Func);
     }
 
-    [[maybe_unused]] void DisableHooks() {
+    void DisableHooks() {
         if(FriendStatusHandler_Func)
             HookBase::DisableHooks(FriendStatusHandler_Func);
     }

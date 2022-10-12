@@ -24,22 +24,22 @@ namespace GW {
     };
     namespace GuildMgr {
         wchar_t* GetPlayerGuildAnnouncer() {
-            auto* g = GuildContext::instance();
+            auto* g = GetGuildContext();
             return g ? g->announcement_author : nullptr;
         }
 
         wchar_t* GetPlayerGuildAnnouncement() {
-            auto* g = GuildContext::instance();
+            auto* g = GetGuildContext();
             return g ? g->announcement : nullptr;
         }
 
         uint32_t GetPlayerGuildIndex() {
-            auto* g = GuildContext::instance();
+            auto* g = GetGuildContext();
             return g ? g->player_guild_index : 0;
         }
 
         GuildArray* GetGuildArray() {
-            auto* g = GuildContext::instance();
+            auto* g = GetGuildContext();
             return g && g->guilds.valid() ? &g->guilds : nullptr;
         }
         Guild* GetPlayerGuild() {
@@ -63,7 +63,7 @@ namespace GW {
         }
 
         bool TravelGH() {
-            auto* g = GuildContext::instance();
+            auto* g = GetGuildContext();
             return g ? TravelGH(g->player_gh_key) : false;
 
         }

@@ -156,13 +156,4 @@ namespace GW
         const auto* g = GetGameContext();
         return g ? g->agent : nullptr;
     }
-
-    [[deprecated]] GameContext* GameContext::instance() { return GetGameContext(); }
-    [[deprecated]] PreGameContext* PreGameContext::instance() { return GetPreGameContext(); }
-    [[deprecated]] WorldContext* WorldContext::instance() { return GetWorldContext(); }
-    [[deprecated]] PartyContext* PartyContext::instance() { return GetPartyContext(); }
-    [[deprecated]] CharContext* CharContext::instance() { return GetCharContext(); }
-    [[deprecated]] GuildContext* GuildContext::instance() { return GetGuildContext(); }
-    [[deprecated]] ItemContext* ItemContext::instance() { return GetItemContext(); }
-    [[deprecated]] AgentContext* AgentContext::instance() { return GetAgentContext(); }
 } // namespace GW

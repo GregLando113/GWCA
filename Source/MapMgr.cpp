@@ -182,7 +182,7 @@ namespace GW {
         }
 
         bool GetIsMapLoaded() {
-            auto* g = GameContext::instance();
+            auto* g = GetGameContext();
             return g && g->map != nullptr;
         }
 
@@ -235,12 +235,12 @@ namespace GW {
         }
 
         uint32_t GetInstanceTime() {
-            auto* a = AgentContext::instance();
+            auto* a = GetAgentContext();
             return a ? a->instance_timer : 0;
         }
 
         Constants::MapID GetMapID() {
-            auto* c = CharContext::instance();
+            auto* c = GetCharContext();
             return c ? (Constants::MapID)c->current_map_id : Constants::MapID::None;
         }
 
@@ -249,7 +249,7 @@ namespace GW {
         }
 
         bool GetIsMapUnlocked(Constants::MapID map_id) {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             Array<uint32_t>* unlocked_map = w && w->unlocked_map.valid() ? &w->unlocked_map : nullptr;
             if (!unlocked_map)
                 return false;
@@ -262,17 +262,17 @@ namespace GW {
         }
 
         int GetLanguage() {
-            auto* c = CharContext::instance();
+            auto* c = GetCharContext();
             return c ? c->language : 0;
         }
 
         bool GetIsObserving() {
-            auto* c = CharContext::instance();
+            auto* c = GetCharContext();
             return c ? c->current_map_id != c->observe_map_id : false;
         }
 
         int GetDistrict() {
-            auto* c = CharContext::instance();
+            auto* c = GetCharContext();
             return c ? (int)c->district_number : 0;
         }
 
@@ -281,22 +281,22 @@ namespace GW {
         }
 
         MissionMapIconArray* GetMissionMapIconArray() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w && w->mission_map_icons.valid() ? &w->mission_map_icons : nullptr;
         }
 
         PathingMapArray* GetPathingMap() {
             // @Cleanup: Verify pointers
-            return &GameContext::instance()->map->sub1->sub2->pmaps;
+            return &GetGameContext()->map->sub1->sub2->pmaps;
         }
 
         uint32_t GetFoesKilled() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w ? w->foes_killed : 0;
         }
 
         uint32_t GetFoesToKill() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w ? w->foes_to_kill : 0;
         }
 
@@ -308,7 +308,7 @@ namespace GW {
         }
 
         bool GetIsInCinematic() {
-            auto* g = GameContext::instance();
+            auto* g = GetGameContext();
             return g && g->cinematic ? g->cinematic->h0004 != 0 : false;
         }
 

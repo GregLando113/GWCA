@@ -82,7 +82,7 @@ namespace GW {
         }
 
         GW::TitleArray* GetTitleArray() {
-            auto w = WorldContext::instance();
+            auto w = GetWorldContext();
             return (w && w->titles.valid()) ? &w->titles : nullptr;
         }
 
@@ -128,11 +128,11 @@ namespace GW {
             return nullptr;
         }
         QuestLog* GetQuestLog() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w && w->quest_log.valid() ? &w->quest_log : nullptr;
         }
         GW::Constants::QuestID GetActiveQuestId() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w ? w->active_quest_id : (GW::Constants::QuestID)0;
         }
 
@@ -140,11 +140,11 @@ namespace GW {
             return Agents::GetAmountOfPlayersInInstance();
         }
         PlayerArray* GetPlayerArray() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w && w->players.valid() ? &w->players : nullptr;
         }
         PlayerNumber GetPlayerNumber() {
-            auto* c = CharContext::instance();
+            auto* c = GetCharContext();
             return c ? c->player_number : 0;
         }
 

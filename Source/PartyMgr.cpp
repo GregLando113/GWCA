@@ -202,7 +202,7 @@ namespace GW {
         }
 
         Attribute* GetAgentAttributes(uint32_t agent_id) {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             if (!(w && w->attributes.valid()))
                 return nullptr;
             for (auto& agent_attributes : w->attributes) {
@@ -213,7 +213,7 @@ namespace GW {
         }
 
         PartyInfo* GetPartyInfo(uint32_t party_id) {
-            GW::PartyContext* ctx = GW::PartyContext::instance();
+            GW::PartyContext* ctx = GW::GetPartyContext();
             if (!ctx || !ctx->parties.size()) return 0;
             if (!party_id) return ctx->player_party;
             if (party_id >= ctx->parties.size())
@@ -229,11 +229,11 @@ namespace GW {
         }
 
         bool GetIsPartyInHardMode() {
-            auto* p = PartyContext::instance();
+            auto* p = GetPartyContext();
             return p ? p->InHardMode() : false;
         }
         bool GetIsHardModeUnlocked() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w ? w->is_hard_mode_unlocked != 0 : false;
         }
 
@@ -256,12 +256,12 @@ namespace GW {
         }
 
         bool GetIsPartyDefeated() {
-            auto* p = PartyContext::instance();
+            auto* p = GetPartyContext();
             return p ? p->IsDefeated() : false;
         }
 
         bool SetHardMode(bool flag) {
-            auto* p = PartyContext::instance();
+            auto* p = GetPartyContext();
             if (!(SetDifficulty_Func && p && p->player_party))
                 return false;
             if (p->InHardMode() != flag) {
@@ -423,7 +423,7 @@ namespace GW {
         }
 
         bool SetHeroBehavior(uint32_t agent_id, HeroBehavior behavior) {
-            auto w = WorldContext::instance();
+            auto w = GetWorldContext();
             if (!(w && SetHeroBehavior_Func && w->hero_flags.size()))
                 return false;
             auto& flags = w->hero_flags;

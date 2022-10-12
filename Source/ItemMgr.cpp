@@ -388,11 +388,11 @@ namespace GW {
         }
 
         ItemArray* GetItemArray() {
-            auto* i = ItemContext::instance();
+            auto* i = GetItemContext();
             return i && i->item_array.valid() ? &i->item_array : nullptr;
         }
         Inventory* GetInventory() {
-            auto* i = ItemContext::instance();
+            auto* i = GetItemContext();
             return i ? i->inventory : nullptr;
         }
 
@@ -416,7 +416,7 @@ namespace GW {
         }
 
         bool SalvageStart(uint32_t salvage_kit_id, uint32_t item_id) {
-            return SalvageStart_Func ? SalvageStart_Func(salvage_kit_id, WorldContext::instance()->salvage_session_id, item_id), true : false;
+            return SalvageStart_Func ? SalvageStart_Func(salvage_kit_id, GetWorldContext()->salvage_session_id, item_id), true : false;
         }
 
         bool IdentifyItem(uint32_t identification_kit_id, uint32_t item_id) {
@@ -633,7 +633,7 @@ namespace GW {
         }
 
         uint32_t GetEquipmentVisibilityState() {
-            auto* w = WorldContext::instance();
+            auto* w = GetWorldContext();
             return w ? w->equipment_status : 0;
         }
         EquipmentStatus GetEquipmentVisibility(EquipmentType type) {

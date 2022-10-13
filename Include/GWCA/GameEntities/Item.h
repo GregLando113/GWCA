@@ -5,6 +5,9 @@
 
 namespace GW {
     typedef uint32_t ItemID;
+    namespace Constants {
+        enum class Bag;
+    }
 
     struct Item;
     typedef Array<Item *> ItemArray;
@@ -18,7 +21,7 @@ namespace GW {
     struct Bag { // total: 0x28/40
         /* +h0000 */ uint32_t bag_type; // Bag 1, Equipped 2, NotCollected 3, Storage 4, MaterialStorage 5
         /* +h0004 */ uint32_t index;
-        /* +h0008 */ uint32_t bag_id;
+        /* +h0008 */ Constants::Bag bag_id;
         /* +h000C */ uint32_t container_item;
         /* +h0010 */ uint32_t items_count;
         /* +h0014 */ Bag  *bag_array;

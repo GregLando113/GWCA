@@ -140,7 +140,7 @@ namespace {
     UI::WindowPosition* window_positions_array = 0;
     UI::FloatingWindow* floating_windows_array = 0;
 
-    static void OnOpenTemplate_UIMessage(HookStatus *hook_status, UI::UIMessage msgid, void *wParam, void *)
+    void OnOpenTemplate_UIMessage(HookStatus *hook_status, UI::UIMessage msgid, void *wParam, void *)
     {
         GWCA_ASSERT(msgid == UI::UIMessage::kOpenTemplate && wParam);
         UI::ChatTemplate *info = static_cast<UI::ChatTemplate *>(wParam);
@@ -159,7 +159,7 @@ namespace {
     };
     std::map<UI::UIMessage,std::vector<CallbackEntry>> UIMessage_callbacks;
 
-    static void __cdecl OnSendUIMessage(UI::UIMessage msgid, void *wParam, void *lParam)
+    void __cdecl OnSendUIMessage(UI::UIMessage msgid, void *wParam, void *lParam)
     {
         HookBase::EnterHook();
         UI::SendUIMessage(msgid, wParam, lParam);
@@ -168,16 +168,16 @@ namespace {
 
     std::unordered_map<HookEntry*, UI::KeyCallback> OnKeydown_callbacks;
     std::unordered_map<HookEntry*, UI::KeyCallback> OnKeyup_callbacks;
-    static void __fastcall OnDoAction(void* ecx, void* edx, uint32_t action_type, void* arg1, void* arg2) {
+    void __fastcall OnDoAction(void* ecx, void* edx, uint32_t action_type, void* arg1, void* arg2) {
         HookBase::EnterHook();
         switch (action_type) {
         case 0x1E: // Keydown
         case 0x20: // Keyup
         {
             GW::HookStatus status;
-            uint32_t key_pressed = *(uint32_t*)arg1;
-            auto* callbacks = action_type == 0x1e ? &OnKeydown_callbacks : &OnKeyup_callbacks;
-            for (auto& it : *callbacks) {
+            const uint32_t key_pressed = *static_cast<uint32_t*>(arg1);
+            const auto& callbacks = action_type == 0x1e ? OnKeydown_callbacks : OnKeyup_callbacks;
+            for (const auto& it : callbacks) {
                 it.second(&status, key_pressed);
                 ++status.altitude;
             }
@@ -186,7 +186,7 @@ namespace {
         }
             break;
         default:
-            RetDoAction(ecx, edx, action_type, arg1, arg2);
+             RetDoAction(ecx, edx, action_type, arg1, arg2);
             break;
         }
         HookBase::LeaveHook();
@@ -482,9 +482,9 @@ namespace GW {
             return xAxis(multiplier).y;
         }
 
-        bool SendUIMessage(UIMessage msgid, void *wParam, void *lParam)
+        bool SendUIMessage(UIMessage msgid, void* wParam, void* lParam)
         {
-            auto forward_call = [msgid, wParam, lParam]() {
+            auto forward_call = [msgid, wParam, lParam] {
                 if (!RetSendUIMessage)
                     return false;
                 HookBase::EnterHook();
@@ -493,13 +493,13 @@ namespace GW {
                 return true;
             };
             HookStatus status;
-            auto found = UIMessage_callbacks.find(msgid);
+            const auto found = UIMessage_callbacks.find(msgid);
             if (found == UIMessage_callbacks.end()) {
                 return forward_call();
             }
 
             auto it = found->second.begin();
-            auto end = found->second.end();
+            const auto end = found->second.end();
             // Pre callbacks
             while (it != end) {
                 if (it->altitude > 0)
@@ -509,7 +509,7 @@ namespace GW {
                 it++;
             }
 
-            bool result = !status.blocked && forward_call();
+            const bool result = !status.blocked && forward_call();
 
             // Post callbacks
             while (it != end) {
@@ -520,21 +520,21 @@ namespace GW {
             return result;
         }
         bool Keydown(ControlAction key) {
-            uintptr_t ecx = GetActionContext();
+            const uintptr_t ecx = GetActionContext();
             if (!(ecx && RetDoAction))
                 return false;
             KeypressPacket action;
             action.key = key;
-            OnDoAction((void*)ecx, 0, 0x1E, &action, 0);
+            OnDoAction(reinterpret_cast<void*>(ecx), nullptr, 0x1E, &action, nullptr);
             return true;
         }
         bool Keyup(ControlAction key) {
-            uintptr_t ecx = GetActionContext();
+            const uintptr_t ecx = GetActionContext();
             if (!(ecx && RetDoAction))
                 return false;
             KeypressPacket action;
             action.key = key;
-            OnDoAction((void*)ecx, 0, 0x20, &action, 0);
+            OnDoAction(reinterpret_cast<void*>(ecx), nullptr, 0x20, &action, nullptr);
             return true;
         }
 
@@ -559,7 +559,7 @@ namespace GW {
         bool Keypress(ControlAction key) {
             if (!Keydown(key))
                 return false;
-            GW::GameThread::Enqueue([key]() {
+            GW::GameThread::Enqueue([key] {
                 Keyup(key);
                 });
             return true;

@@ -559,7 +559,7 @@ namespace GW {
         };
 
         // SendMessage for Guild Wars UI messages, most UI interactions will use this.
-        GWCA_API bool SendUIMessage(UI::UIMessage message, void* wParam = nullptr, void* lParam = nullptr);
+        GWCA_API bool SendUIMessage(UI::UIMessage msgid, void* wParam = nullptr, void* lParam = nullptr);
 
         GWCA_API bool Keydown(ControlAction key);
         GWCA_API bool Keyup(ControlAction key);
@@ -569,7 +569,7 @@ namespace GW {
         GWCA_API bool SetWindowVisible(UI::WindowID window_id, bool is_visible);
         GWCA_API bool SetWindowPosition(UI::WindowID window_id, UI::WindowPosition* info);
 
-        GWCA_API bool DrawOnCompass(unsigned sessionid, unsigned ptcount, CompassPoint* pts);
+        GWCA_API bool DrawOnCompass(unsigned session_id, unsigned pt_count, CompassPoint* pts);
 
         // Call from GameThread to be safe
         GWCA_API void LoadSettings(size_t size, uint8_t *data);

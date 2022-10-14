@@ -248,10 +248,10 @@
 #define GAME_SMSG_GUILD_CHANGE_PLAYER_CONTEXT       (0x012A) // 298
 #define GAME_SMSG_GUILD_CHANGE_PLAYER_STATUS        (0x012B) // 299
 #define GAME_SMSG_GUILD_CHANGE_PLAYER_TYPE          (0x012C) // 300
-#define GAME_SMSG_ITEM_UPDATE_OWNER                    (0x0134) // 308
-#define GAME_SMSG_INVENTORY_ITEM_QUANTITY           (0x0138) // 312
+#define GAME_SMSG_ITEM_UPDATE_OWNER                 (0x0134) // 308
+#define GAME_SMSG_ITEM_UPDATE_QUANTITY              (0x0138) // 312
 #define GAME_SMSG_ITEM_UPDATE_NAME                  (0x0139) // 313
-#define GAME_SMSG_INVENTORY_ITEM_LOCATION           (0x013D) // 317
+#define GAME_SMSG_ITEM_MOVED_TO_LOCATION            (0x013D) // 317
 #define GAME_SMSG_INVENTORY_CREATE_BAG              (0x013E) // 318
 #define GAME_SMSG_GOLD_CHARACTER_ADD                (0x013F) // 319
 #define GAME_SMSG_GOLD_STORAGE_ADD                  (0x0140) // 320

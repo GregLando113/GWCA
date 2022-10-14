@@ -7,6 +7,15 @@ namespace GW {
     typedef uint32_t ItemID;
     namespace Constants {
         enum class Bag;
+
+        enum class BagType {
+            None,
+            Inventory,
+            Equipped,
+            NotCollected,
+            Storage,
+            MaterialStorage
+        };
     }
 
     struct Item;
@@ -19,7 +28,7 @@ namespace GW {
         uint8_t dye4 : 4;
     };
     struct Bag { // total: 0x28/40
-        /* +h0000 */ uint32_t bag_type; // Bag 1, Equipped 2, NotCollected 3, Storage 4, MaterialStorage 5
+        /* +h0000 */ Constants::BagType bag_type;
         /* +h0004 */ uint32_t index;
         /* +h0008 */ Constants::Bag bag_id;
         /* +h000C */ uint32_t container_item;
@@ -27,9 +36,9 @@ namespace GW {
         /* +h0014 */ Bag  *bag_array;
         /* +h0018 */ ItemArray items;
 
-        inline bool IsInventoryBag() const { return (bag_type == 1); }
-        inline bool IsStorageBag()   const { return (bag_type == 4); }
-        inline bool IsMaterialStorage()   const { return (bag_type == 5); }
+        inline bool IsInventoryBag() const { return (bag_type == Constants::BagType::Inventory); }
+        inline bool IsStorageBag()   const { return (bag_type == Constants::BagType::Storage); }
+        inline bool IsMaterialStorage()   const { return (bag_type == Constants::BagType::MaterialStorage); }
 
         static const size_t npos = (size_t)-1;
 

@@ -149,8 +149,12 @@ namespace GW {
             kShowHint                   = 0x10000000 | 0xDF, // wparam = { uint32_t icon_type, wchar_t* message_enc }
             kUpdateGoldCharacter        = 0x10000000 | 0xEA, // wparam = { uint32_t unk, uint32_t gold_character }
             kUpdateGoldStorage          = 0x10000000 | 0xEB, // wparam = { uint32_t unk, uint32_t gold_storage }
+            kInventorySlotUpdated       = 0x10000000 | 0xEC, // undocumented. Triggered when an item is moved into a slot
+            kEquipmentSlotUpdated       = 0x10000000 | 0xED, // undocumented. Triggered when an item is moved into a slot
+            kInventorySlotCleared       = 0x10000000 | 0xEF, // undocumented. Triggered when an item has been removed from a slot
+            kEquipmentSlotCleared       = 0x10000000 | 0xF0, // undocumented. Triggered when an item has been removed from a slot
             kPvPWindowContent           = 0x10000000 | 0xF8,
-            kItemUpdated                = 0x10000000 | 0x104, // wparam = item id
+            kItemUpdated                = 0x10000000 | 0x104, // wparam = *ItemGeneral packet
             kMapChange                  = 0x10000000 | 0x10F, // wparam = map id
             kCheckboxPreference         = 0x10000000 | 0x13F,
             kPreferenceChanged          = 0x10000000 | 0x140,

@@ -16,6 +16,9 @@ the packet name, e.g. P391 -> P391_InstanceLoadMap
 namespace GW {
     typedef uint32_t AgentID;
     typedef uint32_t ItemID;
+    namespace Chat {
+        enum Channel : int;
+    }
     namespace Packet {
         namespace StoC {
             struct PacketBase {
@@ -263,7 +266,7 @@ namespace GW {
             // Deliver chat message (player sender in the instance)
             struct MessageLocal : Packet<MessageLocal> {
                 uint32_t player_number; // PlayerNumber of the sender
-                uint32_t channel; // enum ChatChannel above.
+                Chat::Channel channel; // enum ChatChannel above.
             };
             constexpr uint32_t Packet<MessageLocal>::STATIC_HEADER = GAME_SMSG_CHAT_MESSAGE_LOCAL;
 

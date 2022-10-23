@@ -67,6 +67,8 @@ namespace GW {
         GWCA_API void SendChat(const wchar_t* from, const wchar_t* msg);
         GWCA_API void SendChat(const char* from, const char* msg);
 
+        // Write unencoded non-transient message to chat with no sender using print format
+        GWCA_API void WriteChatF(Channel channel, const wchar_t* format, ...);
         // Write to chat box, passing in unencoded message and optional unencoded sender. transient = true to bypass chat log.
         GWCA_API void WriteChat(Channel channel, const wchar_t* message, const wchar_t* sender = nullptr, bool transient = false);
         // Write to chat box, passing in encoded message and optional encoded sender. transient = true to bypass chat log.

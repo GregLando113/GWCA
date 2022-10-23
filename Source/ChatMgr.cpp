@@ -669,24 +669,18 @@ namespace GW {
 
     // Change to WriteChatF(Channel chan, const wchar_t *from, const wchar_t *frmt, ..)
     // and       WriteChat(Channel chan, const wchar_t *from, const wchar_t *msg)
-    /*
-    void Chat::WriteChatF(const wchar_t* from, const wchar_t* format, ...) {
+    
+    void Chat::WriteChatF(Channel channel, const wchar_t* format, ...) {
         va_list vl;
         va_start(vl, format);
-        size_t szbuf = _vscwprintf(format, vl) + 1;
+        size_t szbuf = vswprintf(NULL,0,format, vl) + 1;
         wchar_t* chat = new wchar_t[szbuf];
-        vswprintf_s(chat, szbuf, format, vl);
+        vswprintf(chat, szbuf, format, vl);
         va_end(vl);
 
-        WriteChat(from, chat);
+        WriteChat(channel, chat);
         delete[] chat;
     }
-
-    void Chat::WriteChat(const wchar_t *from, const wchar_t *msg) {
-        if (WriteWhisper_addr == nullptr) Initialize();
-        WriteWhisper_addr(0, from, msg);
-    }
-    */
 
 
 

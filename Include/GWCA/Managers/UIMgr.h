@@ -160,6 +160,7 @@ namespace GW {
             kPreferenceChanged          = 0x10000000 | 0x140,
             kUIPositionChanged          = 0x10000000 | 0x141,
             kQuestAdded                 = 0x10000000 | 0x149, // wparam = { quest_id, ... }
+            kQuestDetailsChanged        = 0x10000000 | 0x14A, // wparam = { quest_id, ... }
             kCurrentQuestChanged        = 0x10000000 | 0x14C, // wparam = { quest_id, ... }
             kObjectiveComplete          = 0x10000000 | 0x156, // wparam = { objective_id, ... }
             kCheckUIState               = 0x10000000 | 0x170, // Undocumented

@@ -16,6 +16,7 @@
 #define GAME_CMSG_ATTRIBUTE_LOAD                    (0x000E) // 14
 #define GAME_CMSG_QUEST_ABANDON                     (0x000F) // 15
 #define GAME_CMSG_QUEST_REQUEST_INFOS               (0x0010) // 16
+#define GAME_CMSG_QUEST_SET_ACTIVE_CONFIRMED        (0x0012) // 18
 #define GAME_CMSG_HERO_BEHAVIOR                     (0x0013) // 19
 #define GAME_CMSG_HERO_LOCK_TARGET                  (0x0014) // 20
 #define GAME_CMSG_HERO_SKILL_TOGGLE                 (0x0017) // 23
@@ -143,6 +144,7 @@
 #define GAME_SMSG_QUEST_UPDATE_MARKER               (0x0050) // 80
 #define GAME_SMSG_QUEST_REMOVE                      (0x0051) // 81
 #define GAME_SMSG_QUEST_ADD_MARKER                  (0x0052) // 82
+#define GAME_SMSG_QUEST_UPDATE_NAME                 (0x0053) // 83
 #define GAME_SMSG_NPC_UPDATE_PROPERTIES             (0x0055) // 85
 #define GAME_SMSG_NPC_UPDATE_MODEL                  (0x0056) // 86
 #define GAME_SMSG_AGENT_CREATE_PLAYER               (0x0058) // 88

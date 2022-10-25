@@ -185,6 +185,13 @@ namespace GW {
             kSendUseItem                = 0x30000000 | 0x8,  // wparam = uint32_t item_id
         };
 
+        enum class NumberCommandLineParameter : uint32_t {
+            Unk1,
+            Unk2,
+            FPS,
+            Count = 0x3
+        };
+
         enum class EnumPreference : uint32_t {
             CharSortOrder, // Unused
             AntiAliasing, // multi sampling
@@ -602,6 +609,11 @@ namespace GW {
         GWCA_API bool SetPreference(NumberPreference pref, uint32_t value);
         GWCA_API bool SetPreference(FlagPreference pref, bool value);
         GWCA_API bool SetPreference(StringPreference pref, wchar_t* value);
+
+        // Returns actual hard frame limit, factoring in vsync, monitor refresh rate and in-game preferences
+        GWCA_API uint32_t GetFrameLimit();
+        // Set a hard upper limit for frame rate. Actual limit may be lower (but not higher) depending on vsync/in-game preference
+        GWCA_API bool SetFrameLimit(uint32_t value);
 
         //GWCA_API void SetPreference(Preference pref, uint32_t value);
 

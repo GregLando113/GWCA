@@ -110,12 +110,6 @@ namespace {
 
     UI::TooltipInfo*** CurrentTooltipPtr = 0;
 
-    // Get command line parameters that were assigned when GW started
-    typedef bool (__cdecl *GetFlagParameter_pt)(uint32_t flag_parameter_id);
-    GetFlagParameter_pt GetFlagParameter_Func = 0;
-    typedef wchar_t* (__cdecl *GetStringParameter_pt)(uint32_t string_parameter_id_plus_0x27);
-    GetStringParameter_pt GetStringParameter_Func = 0;
-
     // Get in-game preferences assigd during gameplay
     typedef bool (__cdecl *GetFlagPreference_pt)(uint32_t flag_pref_id);
     GetFlagPreference_pt GetFlagPreference_Func = 0;
@@ -136,6 +130,16 @@ namespace {
     GetNumberPreference_pt GetNumberPreference_Func = 0;
     typedef void (__cdecl *SetNumberPreference_pt)(uint32_t number_pref_id, uint32_t value);
     SetNumberPreference_pt SetNumberPreference_Func = 0;
+
+    // Get command line parameters that were assigned when GW started
+    GetFlagPreference_pt GetCommandLineFlag_Func = 0;
+    GetNumberPreference_pt GetCommandLineNumber_Func = 0;
+    uint32_t* CommandLineNumber_Buffer = 0;
+
+    typedef uint32_t (__cdecl *GetGraphicsRendererValue_pt)(void* graphics_renderer_ptr, uint32_t property_enum); 
+    GetGraphicsRendererValue_pt GetGraphicsRendererValue_Func = 0;
+
+    GetStringPreference_pt GetCommandLineString_Func = 0; // NB: Plus 0x27 when calling
 
     UI::WindowPosition* window_positions_array = 0;
     UI::FloatingWindow* floating_windows_array = 0;
@@ -253,14 +257,23 @@ namespace {
 
         address = GW::Scanner::Find("\x83\x0e\x02\x57\x6a\x2a", "xxxxxx", -0x2c); // Initialise preferences function start
         if (address) {
-            GetFlagParameter_Func = (GetFlagParameter_pt)GW::Scanner::FunctionFromNearCall(address + 0xf);
-            GetStringParameter_Func = (GetStringParameter_pt)GW::Scanner::FunctionFromNearCall(address + 0x32);
+            GetCommandLineFlag_Func = (GetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0xf);
+            GetCommandLineString_Func = (GetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x32);
 
             GetStringPreference_Func = (GetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x5c);
             GetFlagPreference_Func = (GetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x10b);
             GetEnumPreference_Func = (GetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x118);
             GetNumberPreference_Func = (GetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x13f);
         }
+        
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\param\\param.cpp","value - PARAM_VALUE_FIRST < (sizeof(s_values) / sizeof((s_values)[0]))",-0x13);
+        if (address) {
+            GetCommandLineNumber_Func = (GetNumberPreference_pt)address;
+            CommandLineNumber_Buffer = *(uint32_t**)(address + 0x29);
+            CommandLineNumber_Buffer += 0x33;
+        }
+        address = GW::Scanner::Find("\x74\x12\x6a\x16\x6a\x00", "xxxxxx", 0x6);
+        GetGraphicsRendererValue_Func = (GetGraphicsRendererValue_pt)GW::Scanner::FunctionFromNearCall(address);
 
         //TODO: RVA fix
         //address = GW::Scanner::Find("\x50\x68\x50\x00\x00\x10", "xxxxxx", -0x3f);
@@ -346,6 +359,7 @@ namespace {
         GWCA_INFO("[SCAN] SetMasterVolume_Func = %p", SetMasterVolume_Func);
         GWCA_INFO("[SCAN] DrawOnCompass_Func = %p", DrawOnCompass_Func);
         GWCA_INFO("[SCAN] CreateUIComponent_Func = %p", CreateUIComponent_Func);
+        GWCA_INFO("[SCAN] CommandLineNumber_Buffer = %p", CommandLineNumber_Buffer);
 
 #ifdef _DEBUG
         GWCA_ASSERT(GetStringPreference_Func);
@@ -746,6 +760,30 @@ namespace GW {
         bool SetPreference(FlagPreference pref, bool value)
         {
             return SetFlagPreference_Func && pref < FlagPreference::Count ? SetFlagPreference_Func((uint32_t)pref, value), true : false;
+        }
+        uint32_t GetFrameLimit() {
+            uint32_t frame_limit = CommandLineNumber_Buffer ? CommandLineNumber_Buffer[(uint32_t)NumberCommandLineParameter::FPS] : 0;
+            uint32_t vsync_enabled = GetGraphicsRendererValue_Func(0, 0xf);
+            uint32_t monitor_refresh_rate = GetGraphicsRendererValue_Func(0, 0x16);
+            if (!frame_limit) {
+                switch (GetPreference(EnumPreference::FrameLimiter)) {
+                case 1: // 30 fps
+                    frame_limit = 30;
+                    break;
+                case 2: // 60 fps
+                    frame_limit = 60;
+                    break;
+                case 3: // monitor refresh rate
+                    frame_limit = monitor_refresh_rate;
+                    break;
+                }
+            }
+            if (vsync_enabled && monitor_refresh_rate && frame_limit > monitor_refresh_rate)
+                frame_limit = monitor_refresh_rate; // Can't have higher fps than the monitor refresh rate with vsync
+            return frame_limit;
+        }
+        bool SetFrameLimit(uint32_t value) {
+            return CommandLineNumber_Buffer ? CommandLineNumber_Buffer[(uint32_t)NumberCommandLineParameter::FPS] = value, true : false;
         }
 
         void RegisterKeyupCallback(HookEntry* entry, const KeyCallback& callback) {

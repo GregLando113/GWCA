@@ -161,7 +161,7 @@ namespace GW {
         /* +h06DC */ uint32_t h06DC;
         /* +h06E0 */ Array<void *> h06E0;
         /* +h06F0 */ SkillbarArray skillbar;
-        /* +h0700 */ Array<void *> h0700; // related to +h0710, but always 0
+        /* +h0700 */ Array<uint32_t> learnable_character_skills; // populated at skill trainer and when using signet of capture
         /* +h0710 */ Array<uint32_t> unlocked_character_skills; // bit field
         /* +h0720 */ Array<DupeSkill> duplicated_character_skills; // When res signet is bought more than once, its mapped into this array. Used in skill window.
         /* +h0730 */ Array<void *> h0730;

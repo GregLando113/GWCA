@@ -235,6 +235,7 @@ namespace GW {
         };
 
         namespace Range {
+            constexpr float Touch = 144.f;
             constexpr float Adjacent = 166.0f;
             constexpr float Nearby = 252.0f;
             constexpr float Area = 322.0f;

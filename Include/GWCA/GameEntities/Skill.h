@@ -64,7 +64,16 @@ namespace GW {
             default: return energy_cost;
             }
         }
+        inline bool IsTouchRange() { return (special & 0x2) != 0; }
+        inline bool IsElite() { return (special & 0x4) != 0; }
+        inline bool IsHalfRange() { return (special & 0x8) != 0; }
         inline bool IsPvP() { return (special & 0x400000) != 0; }
+        inline bool IsPvE() { return (special & 0x800000) != 0; }
+        inline bool IsPlayable() { return (special & 0x2000000) == 0; }
+
+        // NB: Guild Wars uses the skill array to build mods for weapons, so stuff like runes are skills too, and use stacking/non-stacking flags
+        inline bool IsStacking() { return (special & 0x10000) != 0; }
+        inline bool IsNonStacking() { return (special & 0x20000) != 0; }
     };
     static_assert(sizeof(Skill) == 0xa0, "struct Skill has incorect size");
 

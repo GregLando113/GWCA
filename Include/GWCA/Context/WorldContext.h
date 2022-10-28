@@ -8,6 +8,10 @@ namespace GW {
     struct WorldContext;
     GWCA_API WorldContext* GetWorldContext();
 
+    namespace Constants {
+        enum class Profession;
+    }
+
     typedef uint32_t ItemID;
 
     struct NPC;
@@ -60,13 +64,13 @@ namespace GW {
     };
     struct ProfessionState {
         uint32_t agent_id;
-        uint32_t current_primary;
-        uint32_t current_secondary;
+        GW::Constants::Profession primary;
+        GW::Constants::Profession secondary;
         uint32_t unlocked_professions; // bitwise
         uint32_t unk;
 
-        inline bool IsProfessionUnlocked(uint32_t profession) {
-            return (unlocked_professions & (1 << profession)) != 0;
+        inline bool IsProfessionUnlocked(GW::Constants::Profession profession) const {
+            return (unlocked_professions & (1 << (uint32_t)profession)) != 0;
         }
     };
     static_assert(sizeof(ProfessionState) == 0x14);

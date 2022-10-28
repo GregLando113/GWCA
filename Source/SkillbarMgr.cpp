@@ -199,7 +199,16 @@ namespace {
         HookBase::RemoveHook(LoadSkills_Func);
     }
 
-
+    // Gets current/available professions for a party member.
+    const ProfessionState* GetAgentProfessionState(uint32_t agent_id) {
+        const auto w = GetWorldContext();
+        if (!w) return nullptr;
+        for (const auto& it : w->party_profession_states) {
+            if (it.agent_id == agent_id)
+                return &it;
+        }
+        return nullptr;
+    }
 }
 namespace GW {
 
@@ -441,10 +450,19 @@ namespace GW {
 
             if (me->primary != (BYTE)skill_template.primary)
                 return false;
-            // @Enhancement: Check if we already bought this secondary profession.
-            if (me->secondary != (BYTE)skill_template.secondary)
+            const auto profession_state = GetAgentProfessionState(me->agent_id);
+            if (!profession_state) {
+                return false;
+            }
+            if (profession_state->primary != skill_template.primary) {
+                return false;
+            }
+            if (!profession_state->IsProfessionUnlocked(skill_template.secondary)) {
+                return false;
+            }
+            if (profession_state->secondary != skill_template.secondary) {
                 ChangeSecondProfession(skill_template.secondary);
-            // @Robustness: That cast is not very good :(
+            }
             LoadSkillbar(skill_template.skills, _countof(skill_template.skills));
             SetAttributes(skill_template.attributes, _countof(skill_template.attributes));
             return true;
@@ -484,22 +502,15 @@ namespace GW {
             if (hero.owner_player_id != me->login_number)
                 return false;
 
-            GW::WorldContext* w = GetWorldContext();
-            const HeroInfo* existing_hero = nullptr;
-            for (const HeroInfo& it_hero : w->hero_info) {
-                if (it_hero.hero_id != hero.hero_id)
-                    continue;
-                existing_hero = &it_hero;
-                break;
-            }
-            if (!existing_hero) {
+            const auto profession_state = GetAgentProfessionState(hero.agent_id);
+            if (!profession_state) {
                 return false; // Hero not unlocked??
             }
 
-            if (existing_hero->primary != static_cast<uint32_t>(skill_template.primary)) {
+            if (profession_state->primary != skill_template.primary) {
                 return false;
             }
-            if (existing_hero->secondary != static_cast<uint32_t>(skill_template.secondary)) {
+            if (profession_state->secondary != skill_template.secondary) {
                 ChangeSecondProfession(skill_template.secondary, hero_index);
             }
 

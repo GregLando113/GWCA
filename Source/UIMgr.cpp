@@ -136,8 +136,10 @@ namespace {
     GetNumberPreference_pt GetCommandLineNumber_Func = 0;
     uint32_t* CommandLineNumber_Buffer = 0;
 
-    typedef uint32_t (__cdecl *GetGraphicsRendererValue_pt)(void* graphics_renderer_ptr, uint32_t property_enum); 
+    typedef uint32_t (__cdecl *GetGraphicsRendererValue_pt)(void* graphics_renderer_ptr, uint32_t metric_id); 
     GetGraphicsRendererValue_pt GetGraphicsRendererValue_Func = 0;
+    typedef uint32_t (__cdecl *SetGraphicsRendererValue_pt)(void* graphics_renderer, uint32_t renderer_mode, uint32_t metric_id, uint32_t value); 
+    SetGraphicsRendererValue_pt SetGraphicsRendererValue_Func = 0;
 
     GetStringPreference_pt GetCommandLineString_Func = 0; // NB: Plus 0x27 when calling
 
@@ -274,6 +276,7 @@ namespace {
         }
         address = GW::Scanner::Find("\x74\x12\x6a\x16\x6a\x00", "xxxxxx", 0x6);
         GetGraphicsRendererValue_Func = (GetGraphicsRendererValue_pt)GW::Scanner::FunctionFromNearCall(address);
+        SetGraphicsRendererValue_Func = (SetGraphicsRendererValue_pt)GW::Scanner::FindAssertion("p:\\code\\engine\\gr\\grdev.cpp","metric != GR_METRIC_TEXTURE_MAX_CX",-0x76);
 
         //TODO: RVA fix
         //address = GW::Scanner::Find("\x50\x68\x50\x00\x00\x10", "xxxxxx", -0x3f);
@@ -721,7 +724,20 @@ namespace GW {
         }
         bool SetPreference(EnumPreference pref, uint32_t value)
         {
-            return SetEnumPreference_Func && pref < EnumPreference::Count ? SetEnumPreference_Func((uint32_t)pref, value), true : false;
+            if (!(SetEnumPreference_Func && pref < EnumPreference::Count))
+                return false;
+            SetEnumPreference_Func((uint32_t)pref, value);
+            switch (pref) {
+            case EnumPreference::AntiAliasing:
+                SetGraphicsRendererValue_Func(0, 2, 5, value);
+                SetGraphicsRendererValue_Func(0, 0, 5, value);
+                break;
+            case EnumPreference::ShaderQuality:
+                SetGraphicsRendererValue_Func(0, 2, 9, value);
+                SetGraphicsRendererValue_Func(0, 0, 9, value);
+                break;
+            }
+            return true;
         }
         bool SetPreference(NumberPreference pref, uint32_t value)
         {
@@ -747,6 +763,14 @@ namespace GW {
                 break;
             case NumberPreference::MasterVolume:
                 if(SetMasterVolume_Func) SetMasterVolume_Func((float)((float)value / 100.f));
+                break;
+            case NumberPreference::TextureQuality:
+                SetGraphicsRendererValue_Func(0, 2, 0xd, value);
+                SetGraphicsRendererValue_Func(0, 0, 0xd, value);
+                break;
+            case NumberPreference::UseBestTextureFiltering:
+                SetGraphicsRendererValue_Func(0, 2, 0xc, value);
+                SetGraphicsRendererValue_Func(0, 0, 0xc, value);
                 break;
             default:
                 break;

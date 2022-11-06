@@ -602,6 +602,7 @@ namespace GW {
         GWCA_API void SetOpenLinks(bool toggle);
 
         GWCA_API uint32_t GetPreference(EnumPreference pref);
+        GWCA_API uint32_t GetPreferenceOptions(EnumPreference pref, uint32_t** options_out = 0);
         GWCA_API uint32_t GetPreference(NumberPreference pref);
         GWCA_API bool GetPreference(FlagPreference pref);
         GWCA_API wchar_t* GetPreference(StringPreference pref);

@@ -53,16 +53,11 @@ namespace {
     typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
     SetWindowVisible_pt SetWindowVisible_Func = 0;
 
-    typedef void(__cdecl* SetVolume_pt)(uint32_t volume_id, float amount);
+    typedef void(__cdecl* SetVolume_pt)(uint32_t volume_id, uint32_t amount); // NB: amount is actually a float but we use uint32_t, avoid the cast.
     SetVolume_pt SetVolume_Func = 0;
 
-    typedef void(__cdecl* SetMasterVolume_pt)(float amount);
+    typedef void(__cdecl* SetMasterVolume_pt)(uint32_t amount); // NB: amount is actually a float but we use uint32_t, avoid the cast.
     SetMasterVolume_pt SetMasterVolume_Func = 0;
-
-
-    typedef void(__cdecl* SetFloatingWindowVisible_pt)(uint32_t unk, uint32_t window_id, uint32_t visible, void* unk1, void* unk2, void* unk3);
-    SetFloatingWindowVisible_pt SetFloatingWindowVisible_Func = 0;
-    SetFloatingWindowVisible_pt RetSetFloatingWindowVisible = 0;
 
     typedef void(__cdecl* SetWindowPosition_pt)(uint32_t window_id, UI::WindowPosition* info, void* wParam, void* lParam);
     SetWindowPosition_pt SetWindowPosition_Func = 0;
@@ -90,6 +85,27 @@ namespace {
     typedef void (__cdecl *LoadSettings_pt)(uint32_t size, uint8_t *data);
     LoadSettings_pt LoadSettings_Func = 0;
 
+    struct EnumPreferenceInfo {
+        wchar_t* name;
+        uint32_t options_count;
+        uint32_t* options;
+        uint32_t unk;
+        uint32_t pref_type; // Used to perform other logic we don't care about
+    };
+    // Used to ensure preference values are within range for GW to avoid assertion errors.
+    EnumPreferenceInfo* EnumPreferenceOptions_Addr = 0; 
+
+    typedef uint32_t (__cdecl *EnumClampValue_pt)(uint32_t original_value);
+    struct NumberPreferenceInfo {
+        wchar_t* name;
+        uint32_t flags; // & 0x1 if we have to clamp the value
+        uint32_t h000C;
+        uint32_t h0010;
+        EnumClampValue_pt clampProc; // Clamps upper/lower bounds for this value; GW will assert an error if this actually clamped the value
+        void* mappingProc; // Used to update other UI elments when changed
+    };
+    // Used to ensure preference values are clamped if applicable to avoid assertion errors.
+    NumberPreferenceInfo* NumberPreferenceOptions_Addr = 0;
 
     typedef void(__cdecl* ValidateAsyncDecodeStr_pt)(const wchar_t* s, GW::UI::DecodeStr_Callback cb, void* wParam);
     typedef uint32_t(__fastcall* DoAsyncDecodeStr_pt)(void* ecx, void* edx, wchar_t* encoded_str, GW::UI::DecodeStr_Callback cb, void* wParam);
@@ -103,10 +119,10 @@ namespace {
     HookEntry open_template_hook;
 
     uintptr_t CommandAction_Addr = 0;
-    uintptr_t GameSettings_Addr;
-    uintptr_t ui_drawn_addr;
-    uintptr_t shift_screen_addr;
-    uintptr_t WorldMapState_Addr;
+    uintptr_t GameSettings_Addr = 0;
+    uintptr_t ui_drawn_addr = 0;
+    uintptr_t shift_screen_addr = 0;
+    uintptr_t WorldMapState_Addr = 0;
 
     UI::TooltipInfo*** CurrentTooltipPtr = 0;
 
@@ -135,16 +151,29 @@ namespace {
     GetFlagPreference_pt GetCommandLineFlag_Func = 0;
     GetNumberPreference_pt GetCommandLineNumber_Func = 0;
     uint32_t* CommandLineNumber_Buffer = 0;
-
-    typedef uint32_t (__cdecl *GetGraphicsRendererValue_pt)(void* graphics_renderer_ptr, uint32_t metric_id); 
-    GetGraphicsRendererValue_pt GetGraphicsRendererValue_Func = 0;
-    typedef uint32_t (__cdecl *SetGraphicsRendererValue_pt)(void* graphics_renderer, uint32_t renderer_mode, uint32_t metric_id, uint32_t value); 
-    SetGraphicsRendererValue_pt SetGraphicsRendererValue_Func = 0;
-
     GetStringPreference_pt GetCommandLineString_Func = 0; // NB: Plus 0x27 when calling
 
+    typedef uint32_t (__cdecl *GetGraphicsRendererValue_pt)(void* graphics_renderer_ptr, uint32_t metric_id); 
+    GetGraphicsRendererValue_pt GetGraphicsRendererValue_Func = 0; // Can be used to get info about the graphics device e.g. vsync state
+    typedef void (__cdecl *SetGraphicsRendererValue_pt)(void* graphics_renderer, uint32_t renderer_mode, uint32_t metric_id, uint32_t value); 
+    SetGraphicsRendererValue_pt SetGraphicsRendererValue_Func = 0; // Triggers the graphics device to use the metric given e.g. anti aliasing level
+
+    typedef void (__cdecl *SetInGameShadowQuality_pt)(uint32_t value); 
+    SetInGameShadowQuality_pt SetInGameShadowQuality_Func = 0; // Triggers the game to actually use the shadow quality given.
+
+    typedef void (__cdecl *SetInGameStaticPreference_pt)(uint32_t static_preference_id, uint32_t value);
+    // There are a bunch of static variables used at run time which are directly associated with some preferences. This function will sort those variables out.
+    SetInGameStaticPreference_pt SetInGameStaticPreference_Func = 0;
+
+    typedef void (__cdecl *TriggerTerrainRerender_pt)(); 
+    // After we've updated some game world related preferences, this function triggers the actual rerender.
+    TriggerTerrainRerender_pt TriggerTerrainRerender_Func = 0;
+
+    typedef void (__cdecl *SetInGameUIScale_pt)(uint32_t value); 
+    SetInGameUIScale_pt SetInGameUIScale_Func = 0; // Triggers the game to actually use the ui scale chosen.
+
+
     UI::WindowPosition* window_positions_array = 0;
-    UI::FloatingWindow* floating_windows_array = 0;
 
     void OnOpenTemplate_UIMessage(HookStatus *hook_status, UI::UIMessage msgid, void *wParam, void *)
     {
@@ -163,7 +192,7 @@ namespace {
         HookEntry* entry;
         UI::UIMessageCallback callback;
     };
-    std::map<UI::UIMessage,std::vector<CallbackEntry>> UIMessage_callbacks;
+    std::unordered_map<UI::UIMessage,std::vector<CallbackEntry>> UIMessage_callbacks;
 
     void __cdecl OnSendUIMessage(UI::UIMessage msgid, void *wParam, void *lParam)
     {
@@ -269,23 +298,34 @@ namespace {
         }
         
         address = GW::Scanner::FindAssertion("p:\\code\\gw\\param\\param.cpp","value - PARAM_VALUE_FIRST < (sizeof(s_values) / sizeof((s_values)[0]))",-0x13);
-        if (address) {
+        if (address && GW::Scanner::IsValidPtr(address, GW::Scanner::TEXT)) {
             GetCommandLineNumber_Func = (GetNumberPreference_pt)address;
             CommandLineNumber_Buffer = *(uint32_t**)(address + 0x29);
             CommandLineNumber_Buffer += 0x33;
         }
+
         address = GW::Scanner::Find("\x74\x12\x6a\x16\x6a\x00", "xxxxxx", 0x6);
         GetGraphicsRendererValue_Func = (GetGraphicsRendererValue_pt)GW::Scanner::FunctionFromNearCall(address);
-        SetGraphicsRendererValue_Func = (SetGraphicsRendererValue_pt)GW::Scanner::FindAssertion("p:\\code\\engine\\gr\\grdev.cpp","metric != GR_METRIC_TEXTURE_MAX_CX",-0x76);
+        SetGraphicsRendererValue_Func = (SetGraphicsRendererValue_pt)GW::Scanner::FindAssertion("p:\\code\\engine\\gr\\grdev.cpp","metric != GR_METRIC_TEXTURE_MAX_CX",-0x9f);
 
-        //TODO: RVA fix
-        //address = GW::Scanner::Find("\x50\x68\x50\x00\x00\x10", "xxxxxx", -0x3f);
-        //SetStringPreference_Func = (SetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address);
+        SetInGameShadowQuality_Func = (SetInGameShadowQuality_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\agentview\\avshadow.cpp","No valid case for switch variable 'value'",-0xca);
+
+        address = GW::Scanner::Find("\x83\xc4\x1c\x81\xfe\x20\x03\x00\x00","xxxxxxxxx",0x31);
+        SetInGameUIScale_Func = (SetInGameUIScale_pt)GW::Scanner::FunctionFromNearCall(address);
 
         address = GW::Scanner::FindAssertion("p:\\code\\gw\\ui\\dialog\\dlgoptgr.cpp", "No valid case for switch variable 'quality'");
         SetEnumPreference_Func = (SetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x84);
         SetFlagPreference_Func = (SetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x3b);
         SetNumberPreference_Func = (SetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x61);
+        SetInGameStaticPreference_Func = (SetInGameStaticPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0xf6);
+        TriggerTerrainRerender_Func = (TriggerTerrainRerender_pt)GW::Scanner::FunctionFromNearCall(address - 0x36);
+
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\pref\\prconst.cpp", "pref < arrsize(s_enumInfo)", 0x15);
+        if (GW::Scanner::IsValidPtr(address, GW::Scanner::TEXT))
+            EnumPreferenceOptions_Addr = *(EnumPreferenceInfo**)address;
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\pref\\prconst.cpp", "pref < arrsize(s_valueInfo)", 0x15);
+        if (GW::Scanner::IsValidPtr(address, GW::Scanner::TEXT))
+            NumberPreferenceOptions_Addr = *(NumberPreferenceInfo**)address;
 
         address = GW::Scanner::FindAssertion("p:\\code\\engine\\frame\\frtip.cpp", "CMsg::Validate(id)");
         if(address)
@@ -300,25 +340,13 @@ namespace {
         if (Verify(address))
             GameSettings_Addr = *(uintptr_t*)address;
 
-        // NB: 0x39 is the size of the floating window array
-        SetFloatingWindowVisible_Func = (SetFloatingWindowVisible_pt)Scanner::Find("\x8B\x75\x0C\x57\x83\xFE\x39", "xxxxxxx", -0x5);
-        if (Verify(SetFloatingWindowVisible_Func)) {
-            //HookBase::CreateHook(SetFloatingWindowVisible_Func, OnToggleFloatingWindow, (void**)&RetSetFloatingWindowVisible);
-            address = (uintptr_t)SetFloatingWindowVisible_Func + 0x41;
-            if (Verify(address)) {
-                address = *(uintptr_t*)address;
-                floating_windows_array = reinterpret_cast<UI::FloatingWindow*>(address - 0x10);
-            }
-        }
-
         // NB: 0x66 is the size of the window info array
         SetWindowVisible_Func = (SetWindowVisible_pt)Scanner::Find("\x8B\x75\x08\x83\xFE\x66\x7C\x19\x68", "xxxxxxxxx", -0x7);
         if (SetWindowVisible_Func) {
             SetWindowPosition_Func = reinterpret_cast<SetWindowPosition_pt>((uintptr_t)SetWindowVisible_Func - 0xE0);
             address = (uintptr_t)SetWindowVisible_Func + 0x49;
             if (Verify(address)) {
-                address = *(uintptr_t*)address;
-                window_positions_array = reinterpret_cast<UI::WindowPosition*>(address);
+                window_positions_array = *(UI::WindowPosition**)address;
             }
         }
 
@@ -351,8 +379,6 @@ namespace {
         GWCA_INFO("[SCAN] SetTooltip_Func = %p", SetTooltip_Func);
         GWCA_INFO("[SCAN] CurrentTooltipPtr = %p", CurrentTooltipPtr);
         GWCA_INFO("[SCAN] GameSettings = %p", GameSettings_Addr);
-        GWCA_INFO("[SCAN] SetFloatingWindowVisible_Func = %p", SetFloatingWindowVisible_Func);
-        GWCA_INFO("[SCAN] floating_windows_array = %p", floating_windows_array);
         GWCA_INFO("[SCAN] SetWindowVisible_Func = %p", SetWindowVisible_Func);
         GWCA_INFO("[SCAN] SetWindowPosition_Func = %p", SetWindowPosition_Func);
         GWCA_INFO("[SCAN] window_positions_array = %p", window_positions_array);
@@ -363,13 +389,16 @@ namespace {
         GWCA_INFO("[SCAN] DrawOnCompass_Func = %p", DrawOnCompass_Func);
         GWCA_INFO("[SCAN] CreateUIComponent_Func = %p", CreateUIComponent_Func);
         GWCA_INFO("[SCAN] CommandLineNumber_Buffer = %p", CommandLineNumber_Buffer);
+        GWCA_INFO("[SCAN] EnumPreferenceOptions_Addr = %p", EnumPreferenceOptions_Addr);
+        GWCA_INFO("[SCAN] NumberPreferenceOptions_Addr = %p", NumberPreferenceOptions_Addr);
+        GWCA_INFO("[SCAN] SetInGameStaticPreference_Func = %p", SetInGameStaticPreference_Func);
+        GWCA_INFO("[SCAN] SetInGameUIScale_Func = %p", SetInGameUIScale_Func);
 
 #ifdef _DEBUG
         GWCA_ASSERT(GetStringPreference_Func);
         GWCA_ASSERT(GetEnumPreference_Func);
         GWCA_ASSERT(GetNumberPreference_Func);
         GWCA_ASSERT(GetFlagPreference_Func);
-        //GWCA_ASSERT(SetStringPreference_Func);
         GWCA_ASSERT(SetEnumPreference_Func);
         GWCA_ASSERT(SetNumberPreference_Func);
         GWCA_ASSERT(SetFlagPreference_Func);
@@ -383,7 +412,6 @@ namespace {
         GWCA_ASSERT(SetTooltip_Func);
         GWCA_ASSERT(CurrentTooltipPtr);
         GWCA_ASSERT(GameSettings_Addr);
-        GWCA_ASSERT(floating_windows_array);
         GWCA_ASSERT(SetWindowVisible_Func);
         GWCA_ASSERT(SetWindowPosition_Func);
         GWCA_ASSERT(window_positions_array);
@@ -393,6 +421,10 @@ namespace {
         GWCA_ASSERT(SetMasterVolume_Func);
         GWCA_ASSERT(DrawOnCompass_Func);
         GWCA_ASSERT(CreateUIComponent_Func);
+        GWCA_ASSERT(EnumPreferenceOptions_Addr);
+        GWCA_ASSERT(NumberPreferenceOptions_Addr);
+        GWCA_ASSERT(SetInGameStaticPreference_Func);
+        GWCA_ASSERT(SetInGameUIScale_Func);
 #endif
         HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
         HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
@@ -499,24 +531,25 @@ namespace GW {
             return xAxis(multiplier).y;
         }
 
+        bool RawSendUIMessage(UIMessage msgid, void* wParam, void* lParam) {
+            if (!RetSendUIMessage)
+                return false;
+            HookBase::EnterHook();
+            RetSendUIMessage(msgid, wParam, lParam);
+            HookBase::LeaveHook();
+            return true;
+        }
+
         bool SendUIMessage(UIMessage msgid, void* wParam, void* lParam)
         {
-            auto forward_call = [msgid, wParam, lParam] {
-                if (!RetSendUIMessage)
-                    return false;
-                HookBase::EnterHook();
-                RetSendUIMessage(msgid, wParam, lParam);
-                HookBase::LeaveHook();
-                return true;
-            };
             HookStatus status;
-            const auto found = UIMessage_callbacks.find(msgid);
+            const auto& found = UIMessage_callbacks.find(msgid);
             if (found == UIMessage_callbacks.end()) {
-                return forward_call();
+                return RawSendUIMessage(msgid, wParam, lParam);
             }
 
             auto it = found->second.begin();
-            const auto end = found->second.end();
+            const auto& end = found->second.end();
             // Pre callbacks
             while (it != end) {
                 if (it->altitude > 0)
@@ -526,7 +559,7 @@ namespace GW {
                 it++;
             }
 
-            const bool result = !status.blocked && forward_call();
+            const bool result = !status.blocked && RawSendUIMessage(msgid, wParam, lParam);
 
             // Post callbacks
             while (it != end) {
@@ -710,6 +743,23 @@ namespace GW {
         {
             return GetEnumPreference_Func && pref < EnumPreference::Count ? GetEnumPreference_Func((uint32_t)pref) : 0;
         }
+        uint32_t GetPreferenceOptions(EnumPreference pref, uint32_t** options_out)
+        {
+            if (!(EnumPreferenceOptions_Addr && pref < EnumPreference::Count))
+                return 0;
+            const auto& info = EnumPreferenceOptions_Addr[(uint32_t)pref];
+            if (options_out)
+                *options_out = info.options;
+            return info.options_count;
+        }
+        uint32_t ClampPreference(NumberPreference pref, uint32_t value) {
+            if (!(NumberPreferenceOptions_Addr && pref < NumberPreference::Count))
+                return value;
+            const auto& info = NumberPreferenceOptions_Addr[(uint32_t)pref];
+            if ((info.flags & 0x1) != 0 && info.clampProc)
+                return info.clampProc(value);
+            return value;
+        }
         uint32_t GetPreference(NumberPreference pref)
         {
             return GetNumberPreference_Func && pref < NumberPreference::Count ? GetNumberPreference_Func((uint32_t)pref) : 0;
@@ -724,57 +774,112 @@ namespace GW {
         }
         bool SetPreference(EnumPreference pref, uint32_t value)
         {
-            if (!(SetEnumPreference_Func && pref < EnumPreference::Count))
+            if (!(SetEnumPreference_Func && GetEnumPreference_Func && pref < EnumPreference::Count))
                 return false;
-            SetEnumPreference_Func((uint32_t)pref, value);
+            uint32_t* opts = 0;
+            uint32_t opts_count = GetPreferenceOptions(pref, &opts);
+            size_t i = 0;
+            while (i < opts_count) {
+                if (opts[i] == value)
+                    break;
+                i++;
+            }
+            if(i == opts_count)
+                return false; // Invalid enum value
+           
+            // Extra validation; technically these options are available but aren't valid for these enums.
+            // Also triggers renderer update if applicable.
+            
             switch (pref) {
             case EnumPreference::AntiAliasing:
-                SetGraphicsRendererValue_Func(0, 2, 5, value);
-                SetGraphicsRendererValue_Func(0, 0, 5, value);
+                if (value == 2)
+                    value = 1;
                 break;
+            case EnumPreference::TerrainQuality:
             case EnumPreference::ShaderQuality:
-                SetGraphicsRendererValue_Func(0, 2, 9, value);
-                SetGraphicsRendererValue_Func(0, 0, 9, value);
+                if (value == 0)
+                    value = 1;
                 break;
             }
+
+            SetEnumPreference_Func((uint32_t)pref, value);
+
+            // Post preference re rendering etc. Run on render loop to avoid issues.
+            GameThread::Enqueue([pref]() {
+                uint32_t value = GetPreference(pref);
+                switch (pref) {
+                case EnumPreference::AntiAliasing:
+                    SetGraphicsRendererValue_Func(0, 2, 5, value);
+                    SetGraphicsRendererValue_Func(0, 0, 5, value);
+                    break;
+                case EnumPreference::ShaderQuality:
+                    SetGraphicsRendererValue_Func(0, 2, 9, value);
+                    SetGraphicsRendererValue_Func(0, 0, 9, value);
+                    break;
+                case EnumPreference::ShadowQuality:
+                    SetInGameShadowQuality_Func(value);
+                    break;
+                case EnumPreference::TerrainQuality:
+                    SetInGameStaticPreference_Func(2, value);
+                    TriggerTerrainRerender_Func();
+                    break;
+                case EnumPreference::Reflections:
+                    SetInGameStaticPreference_Func(1, value);
+                    break;
+                case EnumPreference::InterfaceSize:
+                    SetInGameUIScale_Func(value);
+                    break;
+                }
+                });
+
+            
             return true;
         }
         bool SetPreference(NumberPreference pref, uint32_t value)
         {
+            value = ClampPreference(pref, value); // Clamp here to avoid assertion error later.
             bool ok = SetNumberPreference_Func && pref < NumberPreference::Count ? SetNumberPreference_Func((uint32_t)pref, value), true : false;
             if (!ok)
                 return ok;
-            // Set in-game volume
-            switch (pref) {
-            case NumberPreference::EffectsVolume:
-                if(SetVolume_Func) SetVolume_Func(0, (float)((float)value / 100.f));
-                break;
-            case NumberPreference::DialogVolume:
-                if (SetVolume_Func) SetVolume_Func(4, (float)((float)value / 100.f));
-                break;
-            case NumberPreference::BackgroundVolume:
-                if (SetVolume_Func) SetVolume_Func(1, (float)((float)value / 100.f));
-                break;
-            case NumberPreference::MusicVolume:
-                if (SetVolume_Func) SetVolume_Func(3, (float)((float)value / 100.f));
-                break;
-            case NumberPreference::UIVolume:
-                if (SetVolume_Func) SetVolume_Func(2, (float)((float)value / 100.f));
-                break;
-            case NumberPreference::MasterVolume:
-                if(SetMasterVolume_Func) SetMasterVolume_Func((float)((float)value / 100.f));
-                break;
-            case NumberPreference::TextureQuality:
-                SetGraphicsRendererValue_Func(0, 2, 0xd, value);
-                SetGraphicsRendererValue_Func(0, 0, 0xd, value);
-                break;
-            case NumberPreference::UseBestTextureFiltering:
-                SetGraphicsRendererValue_Func(0, 2, 0xc, value);
-                SetGraphicsRendererValue_Func(0, 0, 0xc, value);
-                break;
-            default:
-                break;
-            }
+            // Post preference re rendering etc. Run on render loop to avoid issues.
+            GameThread::Enqueue([pref]() {
+                uint32_t value = GetPreference(pref);
+                switch (pref) {
+                case NumberPreference::EffectsVolume:
+                    if (SetVolume_Func) SetVolume_Func(0, value);
+                    break;
+                case NumberPreference::DialogVolume:
+                    if (SetVolume_Func) SetVolume_Func(4, value);
+                    break;
+                case NumberPreference::BackgroundVolume:
+                    if (SetVolume_Func) SetVolume_Func(1, value);
+                    break;
+                case NumberPreference::MusicVolume:
+                    if (SetVolume_Func) SetVolume_Func(3, value);
+                    break;
+                case NumberPreference::UIVolume:
+                    if (SetVolume_Func) SetVolume_Func(2, value);
+                    break;
+                case NumberPreference::MasterVolume:
+                    if (SetMasterVolume_Func) SetMasterVolume_Func(value);
+                    break;
+                case NumberPreference::FullscreenGamma:
+                    SetGraphicsRendererValue_Func(0, 2, 0x4, value);
+                    SetGraphicsRendererValue_Func(0, 0, 0x4, value);
+                    break;
+                case NumberPreference::TextureQuality:
+                    SetGraphicsRendererValue_Func(0, 2, 0xd, value);
+                    SetGraphicsRendererValue_Func(0, 0, 0xd, value);
+                    break;
+                case NumberPreference::UseBestTextureFiltering:
+                    SetGraphicsRendererValue_Func(0, 2, 0xc, value);
+                    SetGraphicsRendererValue_Func(0, 0, 0xc, value);
+                    break;
+                default:
+                    break;
+                }
+                });
+
             return ok;
         }
         bool SetPreference(StringPreference pref, wchar_t* value)

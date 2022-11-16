@@ -53,10 +53,10 @@ namespace {
     typedef void(__cdecl* SetWindowVisible_pt)(uint32_t window_id, uint32_t is_visible, void* wParam, void* lParam);
     SetWindowVisible_pt SetWindowVisible_Func = 0;
 
-    typedef void(__cdecl* SetVolume_pt)(uint32_t volume_id, uint32_t amount); // NB: amount is actually a float but we use uint32_t, avoid the cast.
+    typedef void(__cdecl* SetVolume_pt)(uint32_t volume_id, float amount); // NB: amount is actually a float but we use uint32_t, avoid the cast.
     SetVolume_pt SetVolume_Func = 0;
 
-    typedef void(__cdecl* SetMasterVolume_pt)(uint32_t amount); // NB: amount is actually a float but we use uint32_t, avoid the cast.
+    typedef void(__cdecl* SetMasterVolume_pt)(float amount); // NB: amount is actually a float but we use uint32_t, avoid the cast.
     SetMasterVolume_pt SetMasterVolume_Func = 0;
 
     typedef void(__cdecl* SetWindowPosition_pt)(uint32_t window_id, UI::WindowPosition* info, void* wParam, void* lParam);
@@ -95,7 +95,7 @@ namespace {
     // Used to ensure preference values are within range for GW to avoid assertion errors.
     EnumPreferenceInfo* EnumPreferenceOptions_Addr = 0; 
 
-    typedef uint32_t (__cdecl *EnumClampValue_pt)(uint32_t original_value);
+    typedef uint32_t (__cdecl *EnumClampValue_pt)(uint32_t pref_id, uint32_t original_value);
     struct NumberPreferenceInfo {
         wchar_t* name;
         uint32_t flags; // & 0x1 if we have to clamp the value
@@ -757,7 +757,7 @@ namespace GW {
                 return value;
             const auto& info = NumberPreferenceOptions_Addr[(uint32_t)pref];
             if ((info.flags & 0x1) != 0 && info.clampProc)
-                return info.clampProc(value);
+                return info.clampProc((uint32_t)pref,value);
             return value;
         }
         uint32_t GetPreference(NumberPreference pref)
@@ -846,22 +846,22 @@ namespace GW {
                 uint32_t value = GetPreference(pref);
                 switch (pref) {
                 case NumberPreference::EffectsVolume:
-                    if (SetVolume_Func) SetVolume_Func(0, value);
+                    if (SetVolume_Func) SetVolume_Func(0, (float)value / 100.f);
                     break;
                 case NumberPreference::DialogVolume:
-                    if (SetVolume_Func) SetVolume_Func(4, value);
+                    if (SetVolume_Func) SetVolume_Func(4, (float)value / 100.f);
                     break;
                 case NumberPreference::BackgroundVolume:
-                    if (SetVolume_Func) SetVolume_Func(1, value);
+                    if (SetVolume_Func) SetVolume_Func(1, (float)value / 100.f);
                     break;
                 case NumberPreference::MusicVolume:
-                    if (SetVolume_Func) SetVolume_Func(3, value);
+                    if (SetVolume_Func) SetVolume_Func(3, (float)value / 100.f);
                     break;
                 case NumberPreference::UIVolume:
-                    if (SetVolume_Func) SetVolume_Func(2, value);
+                    if (SetVolume_Func) SetVolume_Func(2, (float)value / 100.f);
                     break;
                 case NumberPreference::MasterVolume:
-                    if (SetMasterVolume_Func) SetMasterVolume_Func(value);
+                    if (SetMasterVolume_Func) SetMasterVolume_Func((float)value / 100.f);
                     break;
                 case NumberPreference::FullscreenGamma:
                     SetGraphicsRendererValue_Func(0, 2, 0x4, value);

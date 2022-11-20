@@ -16,6 +16,7 @@ namespace GW {
         Online  = 1,
         DND     = 2,
         Away    = 3,
+        Unknown    = 4
     };
 
     struct Friend {

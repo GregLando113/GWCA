@@ -37,6 +37,7 @@
 #include <GWCA/Managers/SkillbarMgr.h>
 #include <GWCA/Managers/GameThreadMgr.h>
 #include <GWCA/Managers/FriendListMgr.h>
+#include <GWCA/Managers/EventMgr.h>
 
 namespace GW
 {
@@ -64,6 +65,7 @@ namespace GW
         modules.push_back(&MerchantModule);
         modules.push_back(&SkillbarModule);
         modules.push_back(&FriendListModule);
+        modules.push_back(&EventMgrModule);
 
         if (!MemoryMgr::Scan())
             return false;

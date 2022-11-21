@@ -206,7 +206,7 @@ namespace GW {
         enum class StringPreference : uint32_t {
             Unk1,
             Unk2,
-            Unk3,
+            LastCharacterName,
             Count = 0x3
         };
         enum class NumberPreference : uint32_t {

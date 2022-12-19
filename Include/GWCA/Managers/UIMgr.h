@@ -156,6 +156,7 @@ namespace GW {
             kPvPWindowContent           = 0x10000000 | 0xF8,
             kItemUpdated                = 0x10000000 | 0x104, // wparam = *ItemGeneral packet
             kMapChange                  = 0x10000000 | 0x10F, // wparam = map id
+            kEnumPreference             = 0x10000000 | 0x13E, // wparam = { EnumPreference pref_id, uint32_t val }
             kCheckboxPreference         = 0x10000000 | 0x13F,
             kPreferenceChanged          = 0x10000000 | 0x140,
             kUIPositionChanged          = 0x10000000 | 0x141,

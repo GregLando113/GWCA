@@ -123,6 +123,7 @@ namespace {
     uintptr_t ui_drawn_addr = 0;
     uintptr_t shift_screen_addr = 0;
     uintptr_t WorldMapState_Addr = 0;
+    uintptr_t PreferencesInitialised_Addr = 0;
 
     UI::TooltipInfo*** CurrentTooltipPtr = 0;
 
@@ -286,7 +287,11 @@ namespace {
         if (Verify(address))
             shift_screen_addr = *(uintptr_t *)address;
 
-        address = GW::Scanner::Find("\x83\x0e\x02\x57\x6a\x2a", "xxxxxx", -0x2c); // Initialise preferences function start
+        address = Scanner::FindAssertion("p:\\code\\gw\\pref\\prapi.cpp", "location < arrsize(s_flushDelay)", -0x12);
+        if (address && Scanner::IsValidPtr(*(uintptr_t*)address))
+            PreferencesInitialised_Addr = *(uintptr_t*)address;
+
+        address = GW::Scanner::Find("\x83\x0e\x02\x57\x6a\x2a", "xxxxxx", -0x2c); // BuildLoginStruct function start
         if (address) {
             GetCommandLineFlag_Func = (GetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0xf);
             GetCommandLineString_Func = (GetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x32);
@@ -393,6 +398,7 @@ namespace {
         GWCA_INFO("[SCAN] NumberPreferenceOptions_Addr = %p", NumberPreferenceOptions_Addr);
         GWCA_INFO("[SCAN] SetInGameStaticPreference_Func = %p", SetInGameStaticPreference_Func);
         GWCA_INFO("[SCAN] SetInGameUIScale_Func = %p", SetInGameUIScale_Func);
+        GWCA_INFO("[SCAN] PreferencesInitialised_Addr = %p", PreferencesInitialised_Addr);
 
 #ifdef _DEBUG
         GWCA_ASSERT(GetStringPreference_Func);
@@ -425,6 +431,7 @@ namespace {
         GWCA_ASSERT(NumberPreferenceOptions_Addr);
         GWCA_ASSERT(SetInGameStaticPreference_Func);
         GWCA_ASSERT(SetInGameUIScale_Func);
+        GWCA_ASSERT(PreferencesInitialised_Addr);
 #endif
         HookBase::CreateHook(SendUIMessage_Func, OnSendUIMessage, (void **)&RetSendUIMessage);
         HookBase::CreateHook(DoAction_Func, OnDoAction, (void**)&RetDoAction);
@@ -466,6 +473,10 @@ namespace {
         HookBase::RemoveHook(SetTooltip_Func);
         HookBase::RemoveHook(SendUIMessage_Func);
         HookBase::RemoveHook(CreateUIComponent_Func);
+    }
+
+    bool PrefsInitialised() {
+        return PreferencesInitialised_Addr && *(uint32_t*)PreferencesInitialised_Addr == 1;
     }
 }
 
@@ -694,15 +705,7 @@ namespace GW {
         }
 
         void AsyncDecodeStr(const wchar_t *enc_str, std::wstring *out, uint32_t language_id) {
-            if (!ValidateAsyncDecodeStr)
-                return;
-            auto& textParser = GetGameContext()->text_parser;
-            uint32_t prev_language_id = textParser->language_id;
-            if (language_id != -1) {
-                textParser->language_id = language_id;
-            }
-            ValidateAsyncDecodeStr((wchar_t*)enc_str, __calback_copy_wstring, out);
-            textParser->language_id = prev_language_id;
+            return AsyncDecodeStr(enc_str, __calback_copy_wstring, out, language_id);
         }
 
 #define WORD_BIT_MORE       (0x8000)
@@ -741,7 +744,7 @@ namespace GW {
 
         uint32_t GetPreference(EnumPreference pref)
         {
-            return GetEnumPreference_Func && pref < EnumPreference::Count ? GetEnumPreference_Func((uint32_t)pref) : 0;
+            return GetEnumPreference_Func && PrefsInitialised() && pref < EnumPreference::Count ? GetEnumPreference_Func((uint32_t)pref) : 0;
         }
         uint32_t GetPreferenceOptions(EnumPreference pref, uint32_t** options_out)
         {
@@ -753,7 +756,7 @@ namespace GW {
             return info.options_count;
         }
         uint32_t ClampPreference(NumberPreference pref, uint32_t value) {
-            if (!(NumberPreferenceOptions_Addr && pref < NumberPreference::Count))
+            if (!(NumberPreferenceOptions_Addr && PrefsInitialised() && pref < NumberPreference::Count))
                 return value;
             const auto& info = NumberPreferenceOptions_Addr[(uint32_t)pref];
             if ((info.flags & 0x1) != 0 && info.clampProc)
@@ -762,19 +765,19 @@ namespace GW {
         }
         uint32_t GetPreference(NumberPreference pref)
         {
-            return GetNumberPreference_Func && pref < NumberPreference::Count ? GetNumberPreference_Func((uint32_t)pref) : 0;
+            return GetNumberPreference_Func && PrefsInitialised() && pref < NumberPreference::Count ? GetNumberPreference_Func((uint32_t)pref) : 0;
         }
         wchar_t* GetPreference(StringPreference pref)
         {
-            return GetStringPreference_Func && pref < StringPreference::Count ? GetStringPreference_Func((uint32_t)pref) : 0;
+            return GetStringPreference_Func && PrefsInitialised() && pref < StringPreference::Count ? GetStringPreference_Func((uint32_t)pref) : 0;
         }
         bool GetPreference(FlagPreference pref)
         {
-            return GetFlagPreference_Func && pref < FlagPreference::Count ? GetFlagPreference_Func((uint32_t)pref) : 0;
+            return GetFlagPreference_Func && PrefsInitialised() && pref < FlagPreference::Count ? GetFlagPreference_Func((uint32_t)pref) : 0;
         }
         bool SetPreference(EnumPreference pref, uint32_t value)
         {
-            if (!(SetEnumPreference_Func && GetEnumPreference_Func && pref < EnumPreference::Count))
+            if (!(SetEnumPreference_Func && PrefsInitialised() && GetEnumPreference_Func && pref < EnumPreference::Count))
                 return false;
             uint32_t* opts = 0;
             uint32_t opts_count = GetPreferenceOptions(pref, &opts);
@@ -837,6 +840,8 @@ namespace GW {
         }
         bool SetPreference(NumberPreference pref, uint32_t value)
         {
+            if (!PrefsInitialised())
+                return false;
             value = ClampPreference(pref, value); // Clamp here to avoid assertion error later.
             bool ok = SetNumberPreference_Func && pref < NumberPreference::Count ? SetNumberPreference_Func((uint32_t)pref, value), true : false;
             if (!ok)
@@ -884,11 +889,11 @@ namespace GW {
         }
         bool SetPreference(StringPreference pref, wchar_t* value)
         {
-            return SetStringPreference_Func && pref < StringPreference::Count ? SetStringPreference_Func((uint32_t)pref, value), true : false;
+            return SetStringPreference_Func && PrefsInitialised() && pref < StringPreference::Count ? SetStringPreference_Func((uint32_t)pref, value), true : false;
         }
         bool SetPreference(FlagPreference pref, bool value)
         {
-            return SetFlagPreference_Func && pref < FlagPreference::Count ? SetFlagPreference_Func((uint32_t)pref, value), true : false;
+            return SetFlagPreference_Func && PrefsInitialised() && pref < FlagPreference::Count ? SetFlagPreference_Func((uint32_t)pref, value), true : false;
         }
         uint32_t GetFrameLimit() {
             uint32_t frame_limit = CommandLineNumber_Buffer ? CommandLineNumber_Buffer[(uint32_t)NumberCommandLineParameter::FPS] : 0;

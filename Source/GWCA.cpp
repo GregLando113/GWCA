@@ -158,4 +158,9 @@ namespace GW
         const auto* g = GetGameContext();
         return g ? g->agent : nullptr;
     }
+    MapContext* GetMapContext()
+    {
+        const auto* g = GetGameContext();
+        return g ? g->map : nullptr;
+    }
 } // namespace GW

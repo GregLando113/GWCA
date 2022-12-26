@@ -2,6 +2,7 @@
 
 #include <GWCA/GameContainers/List.h>
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/Utilities/Export.h>
 
 namespace GW {
     struct PathingMap;
@@ -43,4 +44,6 @@ namespace GW {
         /* +h007C */ PropsContext *props;
         //... Player coords and shit beyond this point if they are desirable :p
     };
+
+    GWCA_API MapContext* GetMapContext();
 }

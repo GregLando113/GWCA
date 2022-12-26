@@ -63,7 +63,8 @@ namespace GW {
         /* +h0030 */ uint32_t h0030[2];
         /* +h0038 */ float rotation_angle;
         /* +h003C */ float rotation_cos;
-        /* +h0040 */ uint32_t h0034[6];
+        /* +h003C */ float rotation_sin;
+        /* +h0040 */ uint32_t h0034[5];
         /* +h0058 */ RecObject* interactive_model;
         /* +h005C */ uint32_t h005C[4];
         /* +h006C */ uint32_t appearance_bitmap; // Modified when animation changes

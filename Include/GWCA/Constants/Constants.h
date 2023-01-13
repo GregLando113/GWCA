@@ -93,7 +93,7 @@ namespace GW {
         };
 
         enum class ItemType : uint8_t {
-            Salvage, Axe = 2, Bag, Boots, Bow, Vision_Crystal, Chestpiece, Rune_Mod, Usable, Dye,
+            Salvage, Axe = 2, Bag, Boots, Bow, Mission_Item, Chestpiece, Rune_Mod, Usable, Dye,
             Materials_Zcoins, Offhand, Gloves, Hammer = 15, Headpiece, CC_Shards,
             Key, Leggings, Gold_Coin, Quest_Item, Wand, Shield = 24, Staff = 26, Sword,
             Kit = 29, Trophy, Scroll, Daggers, Present, Minipet, Scythe, Spear, Costume_Headpiece = 44, Costume

@@ -265,14 +265,14 @@ namespace GW {
         if (!AddFriend_Func) return false;
         wchar_t* buffer = 0;
         if (!alias) {
-            buffer = (wchar_t*)malloc(wcslen(name) + 1);
+            buffer = new wchar_t[wcslen(name) + 1];
             GWCA_ASSERT(buffer);
             wcscpy(buffer, name);
             alias = buffer;
         }
         AddFriend_Func(name, alias, type);
         if (buffer)
-            free(buffer);
+            delete[] buffer;
         return true;
     }
 

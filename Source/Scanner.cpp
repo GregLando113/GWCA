@@ -126,8 +126,7 @@ uintptr_t GW::Scanner::FunctionFromNearCall(uintptr_t call_instruction_address) 
     return nested_call ? nested_call : function_address;
 }
 
-void GW::Scanner::Initialize(const char* moduleName) {
-    HMODULE hModule = GetModuleHandleA(moduleName);
+void GW::Scanner::Initialize(HMODULE hModule) {
     uint32_t dllImageBase = (uint32_t)hModule;
     IMAGE_NT_HEADERS* pNtHdr = ImageNtHeader(hModule);
     IMAGE_SECTION_HEADER* pSectionHdr = (IMAGE_SECTION_HEADER*)(pNtHdr + 1);
@@ -150,6 +149,10 @@ void GW::Scanner::Initialize(const char* moduleName) {
     }
     if (!(sections[Section::TEXT].start && sections[Section::TEXT].end))
         throw 1;
+}
+
+void GW::Scanner::Initialize(const char* moduleName) {
+    return Initialize(GetModuleHandleA(moduleName));
 }
 
 void GW::Scanner::Initialize(uintptr_t start, size_t size) {

@@ -10,8 +10,9 @@ namespace GW {
         // Initializer to determine scan range.
         void Initialize(uintptr_t start, size_t size);
         void Initialize(const char* moduleName = NULL);
+        void Initialize(HMODULE hModule);
 
-        enum Section : uint8_t {
+        enum Section : unsigned char {
             TEXT,
             RDATA,
             DATA

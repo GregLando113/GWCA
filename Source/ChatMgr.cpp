@@ -696,7 +696,8 @@ namespace GW {
         }
         WriteChatEnc(channel, message_encoded, sender_encoded, transient);
         delete[] message_encoded;
-        delete[] sender_encoded;
+        if(sender_encoded)
+            delete[] sender_encoded;
     }
     void Chat::WriteChatEnc(Channel channel, const wchar_t* message_encoded, const wchar_t* sender_encoded, bool transient) {
         UI::UIChatMessage param;

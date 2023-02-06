@@ -86,9 +86,12 @@ namespace {
 
     void Init() {
         // This function runs every time an update is made to the party window
-        TickButtonUICallback = (UI::UIInteractionCallback)Scanner::Find("\x4D\x08\x83\xEC\x10\x8B\x41\x04\x56\x83\xF8\x04", "xxxxxxxxxxxx", -0x4);
 
-        DWORD address = Scanner::Find("\x8b\x75\x0c\x83\xc4\x04\x83\x3e\x00\x0f?????\xff\x70\x20","xxxxxxxxxx?????xxx",0x12);
+        uintptr_t address = Scanner::Find("\x68\xfb\x0b\x01\x00", "xxxxx", 0x16);
+        if (address)
+            TickButtonUICallback = (UI::UIInteractionCallback)Scanner::FunctionFromNearCall(*(uintptr_t*)address);
+
+        address = Scanner::Find("\x8b\x75\x0c\x83\xc4\x04\x83\x3e\x00\x0f?????\xff\x70\x20","xxxxxxxxxx?????xxx",0x12);
         SetDifficulty_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address);
 
         PartySearchSeek_Func = (PartySearchSeek_pt)Scanner::Find("\x8b\x78\x4c\x8d\x8f\x9c\x00\x00\x00", "xxxxxxxxx", -0xc);

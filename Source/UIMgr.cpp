@@ -270,7 +270,7 @@ namespace {
         if (Verify(address))
             WorldMapState_Addr = *(uintptr_t*)address;
 
-        DoAction_Func = (DoAction_pt)Scanner::Find("\x8B\x75\x08\x57\x8B\xF9\x83\xFE\x09\x75", "xxxxxxxxxx", -0x4);
+        DoAction_Func = (DoAction_pt)Scanner::Find("\x83\xfe\x0b\x75\x14\x68\x77\x01\x00\x00", "xxxxxxxxxx", -0x1b);
 
         SendUIMessage_Func = (SendUIMessage_pt)Scanner::Find(
             "\xE8\x00\x00\x00\x00\x5D\xC3\x89\x45\x08\x5D\xE9", "x????xxxxxxx", -0x1A);

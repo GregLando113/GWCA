@@ -545,6 +545,8 @@ namespace GW {
         bool RawSendUIMessage(UIMessage msgid, void* wParam, void* lParam) {
             if (!RetSendUIMessage)
                 return false;
+            if (((uint32_t)msgid & 0x30000000) == 0x30000000)
+                return true; // Internal GWCA UI Message, used for hooks
             HookBase::EnterHook();
             RetSendUIMessage(msgid, wParam, lParam);
             HookBase::LeaveHook();

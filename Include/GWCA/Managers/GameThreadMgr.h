@@ -14,7 +14,7 @@ namespace GW {
     namespace GameThread {
         GWCA_API void ClearCalls();
 
-        GWCA_API void Enqueue(std::function<void ()> f);
+        void Enqueue(std::function<void ()> f);
 
         typedef HookCallback<> GameThreadCallback;
         GWCA_API void RegisterGameThreadCallback(

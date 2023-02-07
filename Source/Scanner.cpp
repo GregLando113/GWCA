@@ -4,6 +4,7 @@
 
 #include <GWCA/Utilities/Scanner.h>
 #include <DbgHelp.h>
+#include <regex>
 
 #pragma comment( lib, "dbghelp.lib" )
 
@@ -60,6 +61,30 @@ if (assertion_file) {
 return Find(assertion_bytes, assertion_mask, offset);
 }
 uintptr_t GW::Scanner::FindInRange(const char* pattern, const char* mask, int offset, DWORD start, DWORD end) {
+    if (mask == nullptr && std::regex_match(pattern, std::regex{"^([\\dABCDEFabcdef]{2}|\\?) .*$"})) { // ida style pattern
+        auto patternbytes = std::vector<char>{};
+        auto maskbytes = std::vector<char>{};
+        const auto pstart = const_cast<char*>(pattern);
+        const auto pend = const_cast<char*>(pattern) + strlen(pattern);
+
+        for (auto current = pstart; current < pend; ++current) {
+            if (*current == '?') {
+                ++current;
+                if (*current == '?')
+                    ++current;
+                patternbytes.push_back('\?');
+                maskbytes.push_back('?');
+            }
+            else {
+                patternbytes.push_back(static_cast<char>(strtoul(current, &current, 16)));
+                maskbytes.push_back('x');
+            }
+        }
+        patternbytes.push_back('\0');
+        maskbytes.push_back('\0');
+        return FindInRange(patternbytes.data(), maskbytes.data(), offset, start, end);
+    }
+
     char first = pattern[0];
     size_t patternLength = strlen(mask ? mask : pattern);
     bool found = false;

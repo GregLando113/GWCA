@@ -169,6 +169,7 @@ namespace GW {
             kLeaveGuildHall             = 0x10000000 | 0x179,
             kTravel                     = 0x10000000 | 0x17A,
             kOpenWikiUrl                = 0x10000000 | 0x17B, // wparam = char* url
+            kAppendMessageToChat        = 0x10000000 | 0x189, // wparam = wchar_t* message
             kHideHeroPanel              = 0x10000000 | 0x197, // wparam = hero_id
             kShowHeroPanel              = 0x10000000 | 0x198, // wparam = hero_id
             kMoveItem                   = 0x10000000 | 0x19e, // wparam = { item_id, to_bag, to_slot, bool prompt }

@@ -246,9 +246,11 @@ namespace GW {
                 constexpr int FuryTitan = 5200;
                 constexpr int RageTitan2 = 5201;
                 constexpr int DementiaTitan2 = 5202;
+                constexpr int DespairTitan2 = 5203;
 
                 constexpr int TorturewebDryder = 5215;
                 constexpr int GreaterDreamRider = 5216;
+                constexpr int GreaterDreamRider2 = 5217;
             }
 
             namespace UW {

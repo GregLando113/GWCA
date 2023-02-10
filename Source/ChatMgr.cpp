@@ -524,7 +524,7 @@ namespace GW {
 
     void Chat::GetDefaultColors(Channel chan, Color *sender, Color *message) {
         RetGetMessageColor(message, chan);
-        RetGetMessageColor(sender, chan);
+        RetGetSenderColor(sender, chan);
     }
 
     bool Chat::GetIsTyping() {

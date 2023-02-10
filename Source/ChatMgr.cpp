@@ -53,41 +53,8 @@ namespace {
         }
     }
 
-    Chat::Color ChatSenderColor[] = {
-        COLOR_RGB(0xFF, 0xC0, 0x60),
-        COLOR_RGB(0x60, 0xA0, 0xFF),
-        COLOR_RGB(0xC0, 0xD0, 0xFF),
-        COLOR_RGB(0xFF, 0xFF, 0x80),
-        COLOR_RGB(0xCC, 0xCC, 0xCC),
-        COLOR_RGB(0xFF, 0x50, 0xDF),
-        COLOR_RGB(0xFF, 0xFF, 0xFF),
-        COLOR_RGB(0xCC, 0xCC, 0xCC),
-        COLOR_RGB(0xCC, 0xCC, 0xCC),
-        COLOR_RGB(0x00, 0xFF, 0x60),
-        COLOR_RGB(0x80, 0xFF, 0x80),
-        COLOR_RGB(0x80, 0xC0, 0xFF),
-        COLOR_RGB(0xFF, 0xC0, 0xC4),
-        COLOR_RGB(0xFF, 0x90, 0x20),
-        COLOR_RGB(0x80, 0xC0, 0xFF)
-    };
-
-    Chat::Color ChatMessageColor[] = {
-        COLOR_RGB(0xE0, 0xE0, 0xE0),
-        COLOR_RGB(0xE0, 0xE0, 0xE0),
-        COLOR_RGB(0xC0, 0xD0, 0xFF),
-        COLOR_RGB(0xFF, 0xFF, 0xFF),
-        COLOR_RGB(0xB0, 0xB0, 0xB0),
-        COLOR_RGB(0x50, 0xFF, 0xDF),
-        COLOR_RGB(0xFF, 0xFF, 0xFF),
-        COLOR_RGB(0xCC, 0xCC, 0xCC),
-        COLOR_RGB(0x50, 0xFF, 0xDF),
-        COLOR_RGB(0xE0, 0xE0, 0xE0),
-        COLOR_RGB(0x80, 0xFF, 0x80),
-        COLOR_RGB(0xE0, 0xE0, 0xE0),
-        COLOR_RGB(0xFF, 0xC4, 0xC0),
-        COLOR_RGB(0xFF, 0x90, 0x20),
-        COLOR_RGB(0xE0, 0xE0, 0xE0)
-    };
+    std::map<Chat::Channel, Chat::Color> ChatSenderColor;
+    std::map<Chat::Channel, Chat::Color> ChatMessageColor;
 
     void wstring_tolower(std::wstring& s)
     {
@@ -112,7 +79,13 @@ namespace {
     GetChannelColor_pt GetSenderColor_Func;
     Chat::Color* __cdecl OnGetSenderColor(Chat::Color *color, Chat::Channel chan) {
         HookBase::EnterHook();
-        *color = ChatSenderColor[(int)chan];
+        const auto it = ChatSenderColor.find(chan);
+        if (it != ChatSenderColor.end()) {
+            *color = it->second;
+        }
+        else {
+            RetGetSenderColor(color, chan);
+        }
         HookBase::LeaveHook();
         return color;
     };
@@ -122,7 +95,13 @@ namespace {
     GetChannelColor_pt GetMessageColor_Func;
     Chat::Color* __cdecl OnGetMessageColor(Chat::Color *color, Chat::Channel chan) {
         HookBase::EnterHook();
-        *color = ChatMessageColor[(int)chan];
+        const auto it = ChatMessageColor.find(chan);
+        if (it != ChatMessageColor.end()) {
+            *color = it->second;
+        }
+        else {
+            RetGetMessageColor(color, chan);
+        }
         HookBase::LeaveHook();
         return color;
     };
@@ -525,20 +504,22 @@ namespace GW {
     }
 
     Chat::Color Chat::SetSenderColor(Channel chan, Color col) {
-        Color old = ChatSenderColor[(int)chan];
-        ChatSenderColor[(int)chan] = col;
+        Color old = 0;
+        GetChannelColors(chan, &old, 0);
+        ChatSenderColor[chan] = col;
         return old;
     }
 
     Chat::Color Chat::SetMessageColor(Channel chan, Color col) {
-        Color old = ChatMessageColor[(int)chan];
-        ChatMessageColor[(int)chan] = col;
+        Color old = 0;
+        GetChannelColors(chan, 0, &old);
+        ChatMessageColor[chan] = col;
         return old;
     }
 
     void Chat::GetChannelColors(Channel chan, Color *sender, Color *message) {
-        *sender  = ChatSenderColor[chan];
-        *message = ChatMessageColor[chan];
+        if (sender) OnGetSenderColor(sender, chan);
+        if (message) OnGetMessageColor(message, chan);
     }
 
     void Chat::GetDefaultColors(Channel chan, Color *sender, Color *message) {

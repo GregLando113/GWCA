@@ -523,71 +523,8 @@ namespace GW {
     }
 
     void Chat::GetDefaultColors(Channel chan, Color *sender, Color *message) {
-        switch (chan) {
-        case Channel::CHANNEL_ALLIANCE:
-            *sender  = COLOR_RGB(0xFF, 0xC0, 0x60);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        case Channel::CHANNEL_ALLIES:
-            *sender  = COLOR_RGB(0x60, 0xA0, 0xFF);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        case Channel::CHANNEL_GWCA1:
-            *sender  = COLOR_RGB(0xC0, 0xD0, 0xFF);
-            *message = COLOR_RGB(0xC0, 0xD0, 0xFF);
-            break;
-        case Channel::CHANNEL_ALL:
-            *sender  = COLOR_RGB(0xFF, 0xFF, 0x80);
-            *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
-            break;
-        case Channel::CHANNEL_GWCA2:
-            *sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
-            *message = COLOR_RGB(0xB0, 0xB0, 0xB0);
-            break;
-        case Channel::CHANNEL_MODERATOR:
-            *sender  = COLOR_RGB(0xFF, 0x50, 0xDF);
-            *message = COLOR_RGB(0x50, 0xFF, 0xDF);
-            break;
-        case Channel::CHANNEL_EMOTE:
-            *sender  = COLOR_RGB(0xFF, 0xFF, 0xFF);
-            *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
-            break;
-        case Channel::CHANNEL_WARNING:
-            *sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
-            *message = COLOR_RGB(0xCC, 0xCC, 0xCC);
-            break;
-        case Channel::CHANNEL_GWCA3:
-            *sender  = COLOR_RGB(0xCC, 0xCC, 0xCC);
-            *message = COLOR_RGB(0x50, 0xFF, 0xDF);
-            break;
-        case Channel::CHANNEL_GUILD:
-            *sender  = COLOR_RGB(0x00, 0xFF, 0x60);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        case Channel::CHANNEL_GLOBAL:
-            *sender  = COLOR_RGB(0x80, 0xFF, 0x80);
-            *message = COLOR_RGB(0x80, 0xFF, 0x80);
-            break;
-        case Channel::CHANNEL_GROUP:
-            *sender  = COLOR_RGB(0x80, 0xC0, 0xFF);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        case Channel::CHANNEL_TRADE:
-            *sender  = COLOR_RGB(0xFF, 0xC0, 0xC4);
-            *message = COLOR_RGB(0xFF, 0xC4, 0xC0);
-            break;
-        case Channel::CHANNEL_ADVISORY:
-            *sender  = COLOR_RGB(0xFF, 0x90, 0x20);
-            *message = COLOR_RGB(0xFF, 0x90, 0x20);
-            break;
-        case Channel::CHANNEL_WHISPER:
-            *sender  = COLOR_RGB(0x80, 0xC0, 0xFF);
-            *message = COLOR_RGB(0xE0, 0xE0, 0xE0);
-            break;
-        default:
-            *sender = COLOR_RGB(0xFF, 0xFF, 0x80);
-            *message = COLOR_RGB(0xFF, 0xFF, 0xFF);
-        }
+        RetGetMessageColor(message, chan);
+        RetGetMessageColor(sender, chan);
     }
 
     bool Chat::GetIsTyping() {

@@ -241,7 +241,7 @@ namespace GW {
 
     namespace Agents {
 
-        bool GetIsAgentTargettable(const GW::Agent* agent) {
+        bool GetIsAgentTargettable(const GW::Agent* agent, bool allow_minipets = false) {
             if (!agent) return false;
             if (!agent->GetIsLivingType())
                 return true;
@@ -249,7 +249,7 @@ namespace GW {
             if (l->IsPlayer())
                 return true;
             const GW::NPC* npc = GW::Agents::GetNPCByID(l->player_number);
-            if (npc && (npc->npc_flags & 0x10000) == 0)
+            if (npc && ((npc->npc_flags & 0x10000) == 0 || allow_minipets))
                 return true;
             return false;
         }
@@ -259,6 +259,12 @@ namespace GW {
         }
         bool SendDialog(uint32_t dialog_id) {
             return UI::SendUIMessage(UI::UIMessage::kSendDialog, (void*)dialog_id);
+        }
+        bool SendDialogRaw(uint32_t dialog_id) {
+            if (!SendDialog_Func)
+                return false;
+            SendDialog_Func(dialog_id);
+            return true;
         }
 
         AgentArray* GetAgentArray() {

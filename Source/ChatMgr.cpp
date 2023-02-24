@@ -27,8 +27,8 @@ namespace {
 
     // 08 01 07 01 [Time] 01 00 02 00
     // ChatBuffer **ChatBuffer_Addr;
-    Chat::ChatBuffer** ChatBuffer_Addr;
-    uintptr_t IsTyping_Addr;
+    Chat::ChatBuffer** ChatBuffer_Addr = nullptr;
+    uint32_t* IsTyping_FrameId = nullptr;
 
     // There is maybe more.
     // Though, we can probably fix this.
@@ -297,6 +297,20 @@ namespace {
         delete[] message_buffer;
     }
 
+
+    UI::UIInteractionCallback UICallback_AssignEditableText_Func = nullptr;
+    UI::UIInteractionCallback UICallback_AssignEditableText_Ret = nullptr;
+    // When a control is terminated ( message 0xB ) it doesn't clear the IsTyping_FrameId that we're using. Clear it manually.
+    void OnUICallback_AssignEditableText(UI::InteractionMessage* message, void* wParam, void* lParam) {
+        HookBase::EnterHook();
+        if (message->message_id == 0xb && IsTyping_FrameId && *IsTyping_FrameId == message->action_type) {
+            *IsTyping_FrameId = 0;
+            //GWCA_INFO("IsTyping_FrameId manually cleared");
+        }
+        UICallback_AssignEditableText_Ret(message, wParam, lParam);
+        HookBase::LeaveHook();
+    }
+
     void Init() {
         GetSenderColor_Func = (GetChannelColor_pt)Scanner::Find("\xC7\x00\x60\xC0\xFF\xFF\x5D\xC3", "xxxxxxxx", -0x1C);
         GetMessageColor_Func = (GetChannelColor_pt)Scanner::Find("\xC7\x00\xB0\xB0\xB0\xFF\x5D\xC3", "xxxxxxxx", -0x27);
@@ -310,9 +324,16 @@ namespace {
         AddToChatLog_Func = (AddToChatLog_pt)GW::Scanner::Find("\x40\x25\xff\x01\x00\x00", "xxxxxx", -0x97);
         ChatBuffer_Addr = *(Chat::ChatBuffer***)Scanner::Find("\x8B\x45\x08\x83\x7D\x0C\x07\x74", "xxxxxxxx", -4);
 
-        uintptr_t address = Scanner::Find("\x08\xFF\xD0\xC7\x05\x00\x00\x00\x00\x01", "xxxxx????x", +5);
-        if (Verify(address))
-            IsTyping_Addr = *(uintptr_t *)address;
+
+
+
+        uintptr_t address = Scanner::FindAssertion("p:\\code\\engine\\controls\\ctledit.cpp","charCount >= 1",0x37);
+        if (address && Scanner::IsValidPtr(*(uintptr_t*) address))
+            IsTyping_FrameId = *(uint32_t **)address;
+
+        address = Scanner::Find("\x6a\x06\x68\x00\x03\x80\x00","xxxxxxx",-0x4);
+        if (address && Scanner::IsValidPtr(*(uintptr_t*)address, Scanner::TEXT))
+            UICallback_AssignEditableText_Func = *(UI::UIInteractionCallback*)address;
 
         GWCA_INFO("[SCAN] GetSenderColor = %p", GetSenderColor_Func);
         GWCA_INFO("[SCAN] GetMessageColor = %p", GetMessageColor_Func);
@@ -323,7 +344,8 @@ namespace {
         GWCA_INFO("[SCAN] PrintChat = %p", PrintChat_Func);
         GWCA_INFO("[SCAN] AddToChatLog_Func = %p", AddToChatLog_Func);
         GWCA_INFO("[SCAN] ChatBuffer_Addr = %p", ChatBuffer_Addr);
-        GWCA_INFO("[SCAN] IsTyping_Addr = %p", IsTyping_Addr);
+        GWCA_INFO("[SCAN] IsTyping_FrameId = %p", IsTyping_FrameId);
+        GWCA_INFO("[SCAN] UICallback_AssignEditableText_Func = %p", UICallback_AssignEditableText_Func);
 
 #ifdef _DEBUG
         GWCA_ASSERT(GetSenderColor_Func);
@@ -335,7 +357,8 @@ namespace {
         GWCA_ASSERT(PrintChat_Func);
         GWCA_ASSERT(AddToChatLog_Func);
         GWCA_ASSERT(ChatBuffer_Addr);
-        GWCA_ASSERT(IsTyping_Addr);
+        GWCA_ASSERT(IsTyping_FrameId);
+        GWCA_ASSERT(UICallback_AssignEditableText_Func);
 #endif
 
         HookBase::CreateHook(StartWhisper_Func, OnStartWhisper, (void**)& RetStartWhisper);
@@ -346,6 +369,7 @@ namespace {
         HookBase::CreateHook(WriteWhisper_Func, OnWriteWhisper, (void **)&RetWriteWhisper);
         HookBase::CreateHook(PrintChat_Func, OnPrintChat, (void **)&RetPrintChat);
         HookBase::CreateHook(AddToChatLog_Func, OnAddToChatLog, (void**)&RetAddToChatLog);
+        HookBase::CreateHook(UICallback_AssignEditableText_Func, OnUICallback_AssignEditableText, (void**)& UICallback_AssignEditableText_Ret);
     }
 
     void EnableHooks() {
@@ -365,6 +389,8 @@ namespace {
             HookBase::EnableHooks(PrintChat_Func);
         if (AddToChatLog_Func)
             HookBase::EnableHooks(AddToChatLog_Func);
+        if (UICallback_AssignEditableText_Func)
+            HookBase::EnableHooks(UICallback_AssignEditableText_Func);
     }
     void DisableHooks() {
         if (StartWhisper_Func)
@@ -383,6 +409,8 @@ namespace {
             HookBase::DisableHooks(PrintChat_Func);
         if (AddToChatLog_Func)
             HookBase::DisableHooks(AddToChatLog_Func);
+        if(UICallback_AssignEditableText_Func)
+            HookBase::DisableHooks(UICallback_AssignEditableText_Func);
     }
 
     void Exit() {
@@ -394,6 +422,7 @@ namespace {
         HookBase::RemoveHook(WriteWhisper_Func);
         HookBase::RemoveHook(PrintChat_Func);
         HookBase::RemoveHook(AddToChatLog_Func);
+        HookBase::RemoveHook(UICallback_AssignEditableText_Func);
     }
 }
 
@@ -528,10 +557,7 @@ namespace GW {
     }
 
     bool Chat::GetIsTyping() {
-        if (!Verify(IsTyping_Addr))
-            return false;
-        else
-            return (*(uint32_t *)IsTyping_Addr == 1);
+        return IsTyping_FrameId && *IsTyping_FrameId != 0;
     }
 
     void Chat::SendChat(char channel, const wchar_t *msg) {

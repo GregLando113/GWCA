@@ -573,7 +573,7 @@ namespace GW {
         for (size_t i = 0; i < len; i++)
             buffer[i + 1] = static_cast<wchar_t>(msg[i]);
 
-        OnSendChat(buffer, 0);
+        SendChat_Func(buffer, 0);
     }
 
     void Chat::SendChat(char channel, const char *msg) {
@@ -588,7 +588,7 @@ namespace GW {
         for (size_t i = 0; i < len; i++)
             buffer[i + 1] = static_cast<wchar_t>(msg[i]);
 
-        OnSendChat(buffer, 0);
+        SendChat_Func(buffer, 0);
     }
 
     void Chat::SendChat(const wchar_t *from, const wchar_t *msg) {
@@ -597,7 +597,7 @@ namespace GW {
 
         if (swprintf(buffer, 140, L"\"%s,%s", from, msg) < 140) {
             buffer[139] = 0;
-            OnSendChat(buffer, 0);
+            SendChat_Func(buffer, 0);
         }
     }
 
@@ -607,7 +607,7 @@ namespace GW {
 
         if (swprintf(buffer, 140, L"\"%S,%S", from, msg) < 140) {
             buffer[139] = 0;
-            OnSendChat(buffer, 0);
+            SendChat_Func(buffer, 0);
         }
     }
 

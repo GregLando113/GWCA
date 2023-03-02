@@ -12,7 +12,10 @@ uintptr_t GW::MemoryMgr::WinHandlePtr = NULL;
 
 uintptr_t GW::MemoryMgr::GetPersonalDirPtr = NULL;
 
-uint32_t(_cdecl* GW::MemoryMgr::GetGWVersion)(void)  = NULL;
+namespace {
+    typedef uint32_t(__cdecl* GetGWVersion_pt)(void);
+    GetGWVersion_pt GetGWVersion_Func = nullptr;
+}
 
 bool GW::MemoryMgr::Scan() {
     Scanner::Initialize();
@@ -31,20 +34,23 @@ bool GW::MemoryMgr::Scan() {
     GetPersonalDirPtr = Scanner::Find("\x75\x2E\x6A\x01\x6A\x05\x56\x6A\x00", "xxxxxxxxx", -0x53);
 
     address = Scanner::Find("\x6A\x00\x68\x00\x00\x01\x00\x89", "xxxxxxxx", 0x42);
-    if(address)
-        GetGWVersion = (uint32_t(_cdecl*)(void))Scanner::FunctionFromNearCall(address);
+    GetGWVersion_Func = (GetGWVersion_pt)Scanner::FunctionFromNearCall(address);
 
     GWCA_INFO("[SCAN] SkillTimerPtr = %08X", SkillTimerPtr);
     GWCA_INFO("[SCAN] WinHandlePtr = %08X", WinHandlePtr);
     GWCA_INFO("[SCAN] GetPersonalDirPtr = %08X", GetPersonalDirPtr);
-    GWCA_INFO("[SCAN] GetGWVersion = %08X, %d", GetGWVersion, GetGWVersion());
+    GWCA_INFO("[SCAN] GetGWVersion_Func = %p, %d", GetGWVersion_Func, GetGWVersion());
 
 #ifdef _DEBUG
     GWCA_ASSERT(SkillTimerPtr);
     GWCA_ASSERT(WinHandlePtr);
     GWCA_ASSERT(GetPersonalDirPtr);
-    GWCA_ASSERT(GetGWVersion);
+    GWCA_ASSERT(GetGWVersion_Func);
 #endif
 
-    return SkillTimerPtr && WinHandlePtr && GetPersonalDirPtr && GetGWVersion;
+    return SkillTimerPtr && WinHandlePtr && GetPersonalDirPtr && GetGWVersion_Func;
+}
+
+uint32_t GW::MemoryMgr::GetGWVersion() {
+    return GetGWVersion_Func ? GetGWVersion_Func() : 0;
 }

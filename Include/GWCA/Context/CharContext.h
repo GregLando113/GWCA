@@ -28,7 +28,8 @@ namespace GW {
         /* +h0024 */ uint32_t h0024[4];
         /* +h0034 */ Array<void *> h0034;
         /* +h0044 */ Array<void *> h0044;
-        /* +h0054 */ uint32_t h0054[8];
+        /* +h0054 */ uint32_t h0054[4]; // load head variables
+        /* +h0064 */ uint32_t player_uuid[4]; // uuid
         /* +h0074 */ wchar_t player_name[0x14];
         /* +h009C */ uint32_t h009C[20];
         /* +h00EC */ Array<void *> h00EC;

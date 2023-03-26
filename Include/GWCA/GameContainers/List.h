@@ -56,11 +56,11 @@ namespace GW {
             using value_type = T;
 
             iterator()
-                : current(nullptr)
+                : current(nullptr), first(nullptr)
             {
             }
-            explicit iterator(TLink<T>* node)
-                : current(node)
+            explicit iterator(TLink<T>* node, TLink<T>* first = nullptr)
+                : current(node), first(first)
             {
             }
 
@@ -71,6 +71,8 @@ namespace GW {
 
             iterator& operator++()
             {
+                if (current->NextLink() == first && first != nullptr)
+                    iteration++;
                 current = current->NextLink();
                 return *this;
             }
@@ -82,15 +84,17 @@ namespace GW {
                 return it;
             }
 
-            bool operator==(const iterator& other) const { return current == other.current; }
+            bool operator==(const iterator& other) const { return current == other.current && iteration == other.iteration; }
 
             bool operator!=(const iterator& other) const { return !(*this == other); }
 
         private:
             TLink<T>* current;
+            TLink<T>* first;
+            int iteration = 0;
         };
 
-        iterator begin() { return iterator(&link); }
+        iterator begin() { return iterator(&link, &link); }
 
         iterator end()
         {
@@ -98,8 +102,7 @@ namespace GW {
             while (last->Next() != nullptr && last->NextLink() != &link) {
                 last = last->NextLink();
             }
-            iterator it(last);
-            return last->NextLink() == &link ? it : ++it;
+            return iterator(last, &link);
         }
 
         [[nodiscard]] iterator begin() const { return iterator(&link); }
@@ -111,4 +114,4 @@ namespace GW {
         size_t offset{};
         TLink<T> link;
     };
-} // namespace GW
+}

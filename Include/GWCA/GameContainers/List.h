@@ -10,29 +10,29 @@ namespace GW {
         {
             RemoveFromList();
 
-            next_node = (T*)((size_t)this + 1);
+            next_node = reinterpret_cast<T*>(reinterpret_cast<size_t>(this) + 1);
             prev_link = this;
         }
 
         T* Prev()
         {
             T* prevNode = prev_link->prev_link->next_node;
-            if ((size_t)prevNode & 1)
+            if (reinterpret_cast<size_t>(prevNode) & 1)
                 return nullptr;
             return prevNode;
         }
 
         T* Next()
         {
-            if ((size_t)next_node & 1)
+            if (reinterpret_cast<size_t>(next_node) & 1)
                 return nullptr;
             return next_node;
         }
 
         TLink* NextLink()
         {
-            const size_t offset = (size_t)this - ((size_t)prev_link->next_node & ~1);
-            return (TLink*)(((size_t)next_node & ~1) + offset);
+            const size_t offset = reinterpret_cast<size_t>(this) - (reinterpret_cast<size_t>(prev_link->next_node) & ~1);
+            return reinterpret_cast<TLink*>((reinterpret_cast<size_t>(next_node) & ~1) + offset);
         }
 
         TLink* PrevLink() { return prev_link; }
@@ -56,11 +56,13 @@ namespace GW {
             using value_type = T;
 
             iterator()
-                : current(nullptr), first(nullptr)
+                : current(nullptr)
+                , first(nullptr)
             {
             }
             explicit iterator(TLink<T>* node, TLink<T>* first = nullptr)
-                : current(node), first(first)
+                : current(node)
+                , first(first)
             {
             }
 
@@ -99,7 +101,10 @@ namespace GW {
         iterator end()
         {
             TLink<T>* last = &link;
-            while (last->Next() != nullptr && last->NextLink() != &link) {
+            while (last->Next() != nullptr) {
+                if (last->NextLink() == &link) {
+                    return ++iterator(last, &link);
+                }
                 last = last->NextLink();
             }
             return iterator(last, &link);

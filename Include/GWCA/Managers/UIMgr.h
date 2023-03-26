@@ -125,6 +125,7 @@ namespace GW {
             kShowXunlaiChest            = 0x10000000 | 0x40,
             kMinionCountUpdated         = 0x10000000 | 0x46,
             kMoraleChange               = 0x10000000 | 0x47, // wparam = {agent id, morale percent }
+            kLoginStateChanged          = 0x10000000 | 0x50, // wparam = {bool is_logged_in, bool unk }
             kEffectAdd                  = 0x10000000 | 0x55, // wparam = {agent_id, GW::Effect*}
             kEffectRenew                = 0x10000000 | 0x56, // wparam = GW::Effect*
             kEffectRemove               = 0x10000000 | 0x57, // wparam = effect id

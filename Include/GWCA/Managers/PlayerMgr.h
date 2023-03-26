@@ -49,6 +49,8 @@ namespace GW {
 
         GWCA_API QuestLog* GetQuestLog();
 
+        GWCA_API Quest* GetQuest(GW::Constants::QuestID);
+
         GWCA_API GW::Constants::QuestID GetActiveQuestId();
 
         GWCA_API Quest* GetActiveQuest();

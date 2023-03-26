@@ -131,6 +131,15 @@ namespace GW {
             auto* w = GetWorldContext();
             return w && w->quest_log.valid() ? &w->quest_log : nullptr;
         }
+        Quest* GetQuest(GW::Constants::QuestID quest_id) {
+            auto l = GetQuestLog();
+            if (!l) return nullptr;
+            for (auto& q : *l) {
+                if (q.quest_id == quest_id)
+                    return &q;
+            }
+            return nullptr;
+        }
         GW::Constants::QuestID GetActiveQuestId() {
             auto* w = GetWorldContext();
             return w ? w->active_quest_id : (GW::Constants::QuestID)0;

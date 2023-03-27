@@ -138,9 +138,9 @@
 #define GAME_SMSG_EFFECT_REMOVED                    (0x0043) // 67
 #define GAME_SMSG_SCREEN_SHAKE                      (0x0045) // 69
 #define GAME_SMSG_AGENT_DISPLAY_CAPE                (0x0047) // 71
-#define GAME_SMSG_QUEST_GENERAL_INFO                (0x0048) // 72
+#define GAME_SMSG_QUEST_ADD                         (0x0048) // 72
 #define GAME_SMSG_QUEST_DESCRIPTION                 (0x004B) // 75
-#define GAME_SMSG_QUEST_ADD                         (0x004F) // 79
+#define GAME_SMSG_QUEST_GENERAL_INFO                (0x004F) // 79
 #define GAME_SMSG_QUEST_UPDATE_MARKER               (0x0050) // 80
 #define GAME_SMSG_QUEST_REMOVE                      (0x0051) // 81
 #define GAME_SMSG_QUEST_ADD_MARKER                  (0x0052) // 82

@@ -19,6 +19,10 @@ namespace GW {
     namespace Chat {
         enum Channel : int;
     }
+    namespace Constants {
+        enum class QuestID;
+        enum class MapID;
+    }
     namespace Packet {
         namespace StoC {
             struct PacketBase {
@@ -196,6 +200,20 @@ namespace GW {
                 uint8_t unk0;
             };
             constexpr uint32_t Packet<DisplayCape>::STATIC_HEADER = GAME_SMSG_AGENT_DISPLAY_CAPE;
+
+            struct QuestAdd : Packet<QuestAdd> {
+                GW::Constants::QuestID quest_id;
+                Vec3f marker;
+                GW::Constants::MapID map_to;
+                uint32_t log_state;
+                wchar_t location[8];
+                wchar_t name[8];
+                wchar_t npc[8];
+                GW::Constants::MapID map_from;
+            };
+            constexpr uint32_t Packet<QuestAdd>::STATIC_HEADER = GAME_SMSG_QUEST_ADD;
+
+            static_assert(sizeof(QuestAdd) == 0x50);
 
             struct NpcGeneralStats : Packet<NpcGeneralStats> {
                 uint32_t npc_id;

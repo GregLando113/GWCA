@@ -188,6 +188,8 @@ namespace GW {
             kSendMerchantRequestQuote   = 0x30000000 | 0x6,  // wparam = { Merchant::TransactionType type,uint32_t gold_give,Merchant::TransactionInfo give,uint32_t gold_recv,Merchant::TransactionInfo recv }
             kSendMerchantTransactItem   = 0x30000000 | 0x7,  // wparam = { Merchant::TransactionType type, uint32_t unknown, Merchant::QuoteInfo give, Merchant::QuoteInfo recv }
             kSendUseItem                = 0x30000000 | 0x8,  // wparam = uint32_t item_id
+            kSendSetActiveQuest         = 0x30000000 | 0x9,  // wparam = uint32_t quest_id
+            kSendAbandonQuest           = 0x30000000 | 0x10,  // wparam = uint32_t quest_id
         };
 
         enum class NumberCommandLineParameter : uint32_t {

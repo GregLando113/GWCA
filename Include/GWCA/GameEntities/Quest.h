@@ -15,7 +15,7 @@ namespace GW {
         /* +h0008 */ wchar_t* location; // quest category
         /* +h000C */ wchar_t* name; // quest name
         /* +h0010 */ wchar_t* npc; //
-        /* +h0014 */ uint32_t map_from;
+        /* +h0014 */ GW::Constants::MapID map_from;
         /* +h0018 */ Vec3f    marker;
         /* +h0024 */ uint32_t h0024;
         /* +h0028 */ GW::Constants::MapID map_to;

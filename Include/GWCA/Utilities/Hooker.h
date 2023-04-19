@@ -18,7 +18,7 @@ namespace GW {
         static void EnableHooks(void *target = NULL);
         static void DisableHooks(void *target = NULL);
 
-        static void CreateHook(void *target, void *detour, void **trampoline);
+        static int CreateHook(void *target, void *detour, void **trampoline);
         static void RemoveHook(void *target);
 
         static void EnterHook();

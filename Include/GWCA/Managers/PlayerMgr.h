@@ -14,7 +14,7 @@ namespace GW {
     namespace Constants {
         enum class TitleID : uint32_t;
         enum class Profession;
-        enum class QuestID;
+        enum class QuestID : uint32_t;
     }
 
     struct Module;

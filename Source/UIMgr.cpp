@@ -159,6 +159,14 @@ namespace {
     typedef void (__cdecl *SetGraphicsRendererValue_pt)(void* graphics_renderer, uint32_t renderer_mode, uint32_t metric_id, uint32_t value); 
     SetGraphicsRendererValue_pt SetGraphicsRendererValue_Func = 0; // Triggers the graphics device to use the metric given e.g. anti aliasing level
 
+    typedef uint32_t(__cdecl* GetGameRendererMode_pt)(uint32_t game_renderer_context);
+    GetGameRendererMode_pt GetGameRendererMode_Func = 0;
+    typedef void(__cdecl* SetGameRendererMode_pt)(uint32_t game_renderer_context, uint32_t game_renderer_mode);
+    SetGameRendererMode_pt SetGameRendererMode_Func = 0;
+
+    typedef uint32_t(__cdecl* GetGameRendererMetric_pt)(uint32_t game_renderer_context, uint32_t game_renderer_mode, uint32_t metric_key);
+    GetGameRendererMetric_pt GetGameRendererMetric_Func = 0;
+
     typedef void (__cdecl *SetInGameShadowQuality_pt)(uint32_t value); 
     SetInGameShadowQuality_pt SetInGameShadowQuality_Func = 0; // Triggers the game to actually use the shadow quality given.
 
@@ -309,10 +317,6 @@ namespace {
             CommandLineNumber_Buffer += 0x33;
         }
 
-        address = GW::Scanner::Find("\x74\x12\x6a\x16\x6a\x00", "xxxxxx", 0x6);
-        GetGraphicsRendererValue_Func = (GetGraphicsRendererValue_pt)GW::Scanner::FunctionFromNearCall(address);
-        SetGraphicsRendererValue_Func = (SetGraphicsRendererValue_pt)GW::Scanner::FindAssertion("p:\\code\\engine\\gr\\grdev.cpp","metric != GR_METRIC_TEXTURE_MAX_CX",-0x9f);
-
         SetInGameShadowQuality_Func = (SetInGameShadowQuality_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\agentview\\avshadow.cpp","No valid case for switch variable 'value'",-0xca);
 
         address = GW::Scanner::Find("\x83\xc4\x1c\x81\xfe\x20\x03\x00\x00","xxxxxxxxx",0x31);
@@ -365,6 +369,21 @@ namespace {
         DrawOnCompass_Func = (DrawOnCompass_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\char\\charmsg.cpp", "knotCount <= arrsize(message.knotData)",-0x2e);
 
         CreateUIComponent_Func = (CreateUIComponent_pt)GW::Scanner::Find("\x33\xd2\x89\x45\x08\xb9\xac\x01\x00\x00", "xxxxxxxxxx", -0x27);
+
+
+        // Graphics renderer related
+
+        address = GW::Scanner::Find("\x74\x12\x6a\x16\x6a\x00", "xxxxxx", 0x6);
+        GetGraphicsRendererValue_Func = (GetGraphicsRendererValue_pt)GW::Scanner::FunctionFromNearCall(address);
+        SetGraphicsRendererValue_Func = (SetGraphicsRendererValue_pt)GW::Scanner::FindAssertion("p:\\code\\engine\\gr\\grdev.cpp","metric != GR_METRIC_TEXTURE_MAX_CX",-0x9f);
+
+
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\ui\\dialog\\dlgoptgr.cpp", "multiSampleIndex != CTL_DROPLIST_INDEX_NULL", -0x46);
+        SetGameRendererMode_Func = (SetGameRendererMode_pt)GW::Scanner::FunctionFromNearCall(address);
+
+        address = GW::Scanner::Find("\x83\xc4\x1c\x81\xfe\x20\x03\x00\x00", "xxxxxxxxx");
+        GetGameRendererMode_Func = (GetGameRendererMode_pt)GW::Scanner::FunctionFromNearCall(address - 0x1d);
+        GetGameRendererMetric_Func = (GetGameRendererMetric_pt)GW::Scanner::FunctionFromNearCall(address - 0x5);
 
         GWCA_INFO("[SCAN] FrameCache_addr = %p", FrameCache_addr);
         GWCA_INFO("[SCAN] WorldMapState_Addr = %p", WorldMapState_Addr);
@@ -888,9 +907,34 @@ namespace GW {
                     SetGraphicsRendererValue_Func(0, 2, 0xd, value);
                     SetGraphicsRendererValue_Func(0, 0, 0xd, value);
                     break;
+                case NumberPreference::RefreshRate:
+                    SetGraphicsRendererValue_Func(0, 2, 0x8, value);
+                    SetGraphicsRendererValue_Func(0, 0, 0x8, value);
+                    break;
                 case NumberPreference::UseBestTextureFiltering:
                     SetGraphicsRendererValue_Func(0, 2, 0xc, value);
                     SetGraphicsRendererValue_Func(0, 0, 0xc, value);
+                    break;
+                case NumberPreference::ScreenBorderless:
+                    SetGraphicsRendererValue_Func(0, 2, 0x10, value);
+                    break;
+                case NumberPreference::WindowPosX:
+                    SetGraphicsRendererValue_Func(0, 2, 6, value);
+                    break;
+                case NumberPreference::WindowPosY:
+                    SetGraphicsRendererValue_Func(0, 2, 7, value);
+                    break;
+                case NumberPreference::WindowSizeX:
+                    SetGraphicsRendererValue_Func(0, 2, 0xa, value);
+                    break;
+                case NumberPreference::WindowSizeY:
+                    SetGraphicsRendererValue_Func(0, 2, 0xb, value);
+                    break;
+                case NumberPreference::ScreenSizeX:
+                    SetGraphicsRendererValue_Func(0, 0, 0xa, value);
+                    break;
+                case NumberPreference::ScreenSizeY:
+                    SetGraphicsRendererValue_Func(0, 0, 0xb, value);
                     break;
                 default:
                     break;
@@ -921,6 +965,16 @@ namespace GW {
                 return true;
             }
             SetFlagPreference_Func((uint32_t)pref, value);
+            switch (pref) {
+                case (UI::FlagPreference::IsWindowed): {
+                uint32_t pref_value = value ? 2 : 0;
+                uint32_t renderer_value = GetGameRendererMode_Func(0);
+                if (pref_value != renderer_value)
+                    SetGameRendererMode_Func(0, pref_value);
+            }
+
+            }
+
             return true;
         }
         uint32_t GetFrameLimit() {

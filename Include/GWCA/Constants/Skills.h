@@ -2,7 +2,7 @@
 
 namespace GW {
     namespace Constants {
-        enum class SkillID {
+        enum class SkillID : uint32_t {
             No_Skill = 0,
             Healing_Signet,
             Resurrection_Signet,

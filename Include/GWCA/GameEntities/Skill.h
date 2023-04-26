@@ -4,7 +4,7 @@
 
 namespace GW {
     namespace Constants {
-        enum class SkillID;
+        enum class SkillID : uint32_t;
         enum class SkillType;
     }
 

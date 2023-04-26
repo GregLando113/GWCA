@@ -13,7 +13,7 @@ namespace GW {
     typedef Array<AgentEffects> AgentEffectsArray;
 
     namespace Constants {
-        enum class SkillID;
+        enum class SkillID : uint32_t;
     }
 
     struct Module;

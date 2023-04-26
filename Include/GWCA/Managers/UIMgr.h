@@ -216,9 +216,11 @@ namespace GW {
             LastCharacterName,
             Count = 0x3
         };
+
         enum class NumberPreference : uint32_t {
             // number preferences
-            ChatState = 0x1, // 1 == showing chat window, 0 = not showing chat window
+            AutoTournPartySort,
+            ChatState, // 1 == showing chat window, 0 = not showing chat window
             ChatTab,
             DistrictLastVisitedLanguage,
             DistrictLastVisitedLanguage2,
@@ -230,22 +232,28 @@ namespace GW {
             TextLanguage,
             AudioLanguage,
             ChatFilterLevel,
-            SkillListSortMethod = 0x11,
+            RefreshRate,
+            ScreenSizeX,
+            ScreenSizeY,
+            SkillListFilterRarity,
+            SkillListSortMethod,
             SkillListViewMode,
             SoundQuality, // 0 to 100
             StorageBagPage,
-            TextureQuality = 0x16, // TextureLod
+            Territory,
+            TextureQuality, // TextureLod
             UseBestTextureFiltering,
             EffectsVolume, // 0 to 100
             DialogVolume, // 0 to 100
             BackgroundVolume, // 0 to 100
             MusicVolume, // 0 to 100
             UIVolume, // 0 to 100
-            WindowPosX = 0x1E,
+            Vote,
+            WindowPosX,
             WindowPosY,
             WindowSizeX,
             WindowSizeY,
-            SealedSeed = 0x22, // Used in codex arena
+            SealedSeed, // Used in codex arena
             SealedCount, // Used in codex arena
             FieldOfView, // 0 to 100
             CameraRotationSpeed, // 0 to 100
@@ -271,6 +279,7 @@ namespace GW {
             AutoCameraInObserveMode,
             AutoHideUIInObserveMode,
             RememberAccountName = 0x2D,
+            IsWindowed,
             ShowSpendAttributesButton = 0x31, // The game uses this hacky method of showing the "spend attributes" button next to the exp bar.
             ConciseSkillDescriptions,
             DoNotShowSkillTipsOnEffectMonitor,

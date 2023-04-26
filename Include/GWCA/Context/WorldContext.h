@@ -51,7 +51,7 @@ namespace GW {
     static_assert(sizeof(PartyAlly) == 0xc);
 
     namespace Constants {
-        enum class QuestID;
+        enum class QuestID : uint32_t;
     }
 
     struct ControlledMinions {

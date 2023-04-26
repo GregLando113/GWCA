@@ -8,9 +8,8 @@ namespace GW {
     typedef Array<Quest> QuestLog;
 
     namespace Constants {
-        enum class QuestID;
+        enum class QuestID : uint32_t;
         enum class Profession;
-        enum class QuestID;
     }
 
     struct Module;

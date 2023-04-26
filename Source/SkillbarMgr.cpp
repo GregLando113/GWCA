@@ -457,12 +457,15 @@ namespace GW {
             if (profession_state->primary != skill_template.primary) {
                 return false;
             }
-            if (!profession_state->IsProfessionUnlocked(skill_template.secondary)) {
-                return false;
+            if (skill_template.secondary != Constants::Profession::None) {
+                if (!profession_state->IsProfessionUnlocked(skill_template.secondary)) {
+                    return false;
+                }
+                if (profession_state->secondary != skill_template.secondary) {
+                    ChangeSecondProfession(skill_template.secondary);
+                }
             }
-            if (profession_state->secondary != skill_template.secondary) {
-                ChangeSecondProfession(skill_template.secondary);
-            }
+
             LoadSkillbar(skill_template.skills, _countof(skill_template.skills));
             SetAttributes(skill_template.attributes, _countof(skill_template.attributes));
             return true;
@@ -510,8 +513,13 @@ namespace GW {
             if (profession_state->primary != skill_template.primary) {
                 return false;
             }
-            if (profession_state->secondary != skill_template.secondary) {
-                ChangeSecondProfession(skill_template.secondary, hero_index);
+            if (skill_template.secondary != Constants::Profession::None) {
+                if (!profession_state->IsProfessionUnlocked(skill_template.secondary)) {
+                    return false;
+                }
+                if (profession_state->secondary != skill_template.secondary) {
+                    ChangeSecondProfession(skill_template.secondary, hero_index);
+                }
             }
 
             // @Robustness: That cast is not very good :(

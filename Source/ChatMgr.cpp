@@ -40,19 +40,6 @@ namespace {
         true
     };
 
-    Chat::Channel GetChannel(wchar_t opcode) {
-        switch (opcode) {
-            case '!': return Chat::Channel::CHANNEL_ALL;
-            case '@': return Chat::Channel::CHANNEL_GUILD;
-            case '#': return Chat::Channel::CHANNEL_GROUP;
-            case '$': return Chat::Channel::CHANNEL_TRADE;
-            case '%': return Chat::Channel::CHANNEL_ALLIANCE;
-            case '"': return Chat::Channel::CHANNEL_WHISPER;
-            case '/': return Chat::Channel::CHANNEL_COMMAND;
-            default:  return Chat::Channel::CHANNEL_UNKNOW;
-        }
-    }
-
     std::map<Chat::Channel, Chat::Color> ChatSenderColor;
     std::map<Chat::Channel, Chat::Color> ChatMessageColor;
 
@@ -146,7 +133,7 @@ namespace {
 
         HookStatus status;
         for (auto& it : SendChat_callbacks) {
-            it.second(&status, GetChannel(*message), &message[1]);
+            it.second(&status, GW::Chat::GetChannel(*message), &message[1]);
             ++status.altitude;
         }
         if (!status.blocked)
@@ -437,6 +424,21 @@ namespace GW {
         ::DisableHooks, // disable_hooks
     };
 
+    Chat::Channel Chat::GetChannel(char opcode) {
+        switch (opcode) {
+        case '!': return Chat::Channel::CHANNEL_ALL;
+        case '@': return Chat::Channel::CHANNEL_GUILD;
+        case '#': return Chat::Channel::CHANNEL_GROUP;
+        case '$': return Chat::Channel::CHANNEL_TRADE;
+        case '%': return Chat::Channel::CHANNEL_ALLIANCE;
+        case '"': return Chat::Channel::CHANNEL_WHISPER;
+        case '/': return Chat::Channel::CHANNEL_COMMAND;
+        default:  return Chat::Channel::CHANNEL_UNKNOW;
+        }
+    }
+    Chat::Channel Chat::GetChannel(wchar_t opcode) {
+        return GetChannel((char)opcode);
+    }
     void Chat::RegisterSendChatCallback(
         HookEntry *entry,
         const SendChatCallback& callback)
@@ -560,8 +562,10 @@ namespace GW {
         return IsTyping_FrameId && *IsTyping_FrameId != 0;
     }
 
-    void Chat::SendChat(char channel, const wchar_t *msg) {
-        GWCA_ASSERT(SendChat_Func);
+    bool Chat::SendChat(char channel, const wchar_t *msg) {
+        if (!(SendChat_Func && msg && *msg && GetChannel(channel) != Channel::CHANNEL_UNKNOW))
+            return false;
+
         wchar_t buffer[140];
 
         // We could take 140 char long, but the chat only allow 120 ig.
@@ -569,46 +573,44 @@ namespace GW {
         len = len > 120 ? 120 : len;
 
         buffer[0] = static_cast<wchar_t>(channel);
+        wcsncpy(&buffer[1], msg, len);
         buffer[len + 1] = 0;
-        for (size_t i = 0; i < len; i++)
-            buffer[i + 1] = static_cast<wchar_t>(msg[i]);
-
         SendChat_Func(buffer, 0);
+        return true;
     }
 
-    void Chat::SendChat(char channel, const char *msg) {
-        GWCA_ASSERT(SendChat_Func);
+    bool Chat::SendChat(char channel, const char *msg) {
         wchar_t buffer[140];
+        int written = swprintf(buffer, _countof(buffer), L"%S", msg);
+        if (!(written > 0 && written < 140))
+            return false;
+        buffer[written] = 0;
+        return SendChat(channel, buffer);
+    }
 
-        size_t len = strlen(msg);
-        len = len > 120 ? 120 : len;
-
-        buffer[0] = static_cast<wchar_t>(channel);
-        buffer[len + 1] = 0;
-        for (size_t i = 0; i < len; i++)
-            buffer[i + 1] = static_cast<wchar_t>(msg[i]);
-
+    bool Chat::SendChat(const wchar_t *from, const wchar_t *msg) {
+        wchar_t buffer[140];
+        if (!(SendChat_Func && from && *from && msg && *msg))
+            return false;
+        int written = swprintf(buffer, _countof(buffer), L"\"%s,%s", from, msg);
+        if (!(written > 0 && written < 140))
+            return false;
+        buffer[written] = 0;
         SendChat_Func(buffer, 0);
+        return true;
     }
 
-    void Chat::SendChat(const wchar_t *from, const wchar_t *msg) {
+    bool Chat::SendChat(const char *from, const char *msg) {
         GWCA_ASSERT(SendChat_Func);
         wchar_t buffer[140];
-
-        if (swprintf(buffer, 140, L"\"%s,%s", from, msg) < 140) {
-            buffer[139] = 0;
-            SendChat_Func(buffer, 0);
-        }
-    }
-
-    void Chat::SendChat(const char *from, const char *msg) {
-        GWCA_ASSERT(SendChat_Func);
-        wchar_t buffer[140];
-
-        if (swprintf(buffer, 140, L"\"%S,%S", from, msg) < 140) {
-            buffer[139] = 0;
-            SendChat_Func(buffer, 0);
-        }
+        if (!(SendChat_Func && from && *from && msg && *msg))
+            return false;
+        int written = swprintf(buffer, _countof(buffer), L"\"%S,%S", from, msg);
+        if (!(written > 0 && written < 140))
+            return false;
+        buffer[written] = 0;
+        SendChat_Func(buffer, 0);
+        return true;
     }
 
     // Change to WriteChatF(Channel chan, const wchar_t *from, const wchar_t *frmt, ..)

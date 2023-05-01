@@ -61,11 +61,11 @@ namespace GW {
         GWCA_API bool GetIsTyping();
 
         // Send a message to an in-game channel (! for all, @ for guild, etc)
-        GWCA_API void SendChat(char channel, const wchar_t* msg);
-        GWCA_API void SendChat(char channel, const char* msg);
+        GWCA_API bool SendChat(char channel, const wchar_t* msg);
+        GWCA_API bool SendChat(char channel, const char* msg);
 
-        GWCA_API void SendChat(const wchar_t* from, const wchar_t* msg);
-        GWCA_API void SendChat(const char* from, const char* msg);
+        GWCA_API bool SendChat(const wchar_t* from, const wchar_t* msg);
+        GWCA_API bool SendChat(const char* from, const char* msg);
 
         // Write unencoded non-transient message to chat with no sender using print format
         GWCA_API void WriteChatF(Channel channel, const wchar_t* format, ...);
@@ -89,6 +89,8 @@ namespace GW {
         GWCA_API void  GetChannelColors(Channel chan, Color* sender, Color* message);
         GWCA_API void  GetDefaultColors(Channel chan, Color* sender, Color* message);
 
+        GWCA_API Channel GetChannel(char opcode);
+        GWCA_API Channel GetChannel(wchar_t opcode);
         // SendChat callback can modify the msg before it is send.
         // Pay attention to not overflow the buffer.
         typedef HookCallback<Channel, wchar_t*> SendChatCallback;

@@ -62,28 +62,31 @@ namespace {
         return val;
     }
 
-    Constants::Profession GetAttributeProfession(Constants::Attribute attribute, bool* is_primary_attribute) {
+    Constants::Profession GetAttributeProfession(Constants::Attribute attribute, bool* is_primary_attribute = nullptr) {
 
         auto info = GetAttributeConstantData(attribute);
         if (!info)
             return Constants::Profession::None;
-        switch (attribute) {
-        case Constants::Attribute::FastCasting:
-        case Constants::Attribute::SoulReaping:
-        case Constants::Attribute::EnergyStorage:
-        case Constants::Attribute::DivineFavor:
-        case Constants::Attribute::Strength:
-        case Constants::Attribute::Expertise:
-        case Constants::Attribute::CriticalStrikes:
-        case Constants::Attribute::SpawningPower:
-        case Constants::Attribute::Leadership:
-        case Constants::Attribute::Mysticism:
-            *is_primary_attribute = true;
-            break;
-        default:
-            *is_primary_attribute = false;
-            break;
+        if (is_primary_attribute) {
+            switch (attribute) {
+            case Constants::Attribute::FastCasting:
+            case Constants::Attribute::SoulReaping:
+            case Constants::Attribute::EnergyStorage:
+            case Constants::Attribute::DivineFavor:
+            case Constants::Attribute::Strength:
+            case Constants::Attribute::Expertise:
+            case Constants::Attribute::CriticalStrikes:
+            case Constants::Attribute::SpawningPower:
+            case Constants::Attribute::Leadership:
+            case Constants::Attribute::Mysticism:
+                *is_primary_attribute = true;
+                break;
+            default:
+                *is_primary_attribute = false;
+                break;
+            }
         }
+
         return (Constants::Profession)info->profession_id;
     }
 
@@ -209,6 +212,39 @@ namespace {
         }
         return nullptr;
     }
+
+    Constants::Profession GetSkillProfession(Constants::SkillID skill_id) {
+        auto data = GetSkillConstantData(skill_id);
+        return GetAttributeProfession(static_cast<Constants::Attribute>(data ? data->attribute : 0));
+    }
+    bool IsPrimaryAttributeRequired(const SkillTemplate& skill_template, const GW::Constants::Profession profession) {
+        if (profession == GW::Constants::Profession::None)
+            return false;
+        // If any of the attributes in this skill bar rely on the primary profession drop out
+        bool is_primary_attribute = false;
+        for (size_t i = 0; i < _countof(skill_template.attributes); i++) {
+            if (GetAttributeProfession(skill_template.attributes[i].attribute, &is_primary_attribute) == profession
+                && is_primary_attribute)
+                return true;
+        }
+        return false;
+    }
+    bool IsProfessionRequired(const SkillTemplate& skill_template, const GW::Constants::Profession profession) {
+        if (profession == GW::Constants::Profession::None)
+            return false;
+        // If any of the skills in this skill bar rely on the primary profession drop out
+        for (size_t i = 0; i < _countof(skill_template.skills); i++) {
+            if (GetSkillProfession(skill_template.skills[i]) == profession)
+                return true;
+        }
+        // If any of the attributes in this skill bar rely on the primary profession drop out
+        for (size_t i = 0; i < _countof(skill_template.attributes); i++) {
+            if (GetAttributeProfession(skill_template.attributes[i].attribute) == profession)
+                return true;
+        }
+        return false;
+    }
+
 }
 namespace GW {
 
@@ -221,6 +257,7 @@ namespace GW {
         ::DisableHooks,               // disable_hooks
     };
     namespace SkillbarMgr {
+
 
 
         Skill* GetSkillConstantData(Constants::SkillID skill_id) {
@@ -448,16 +485,26 @@ namespace GW {
             AgentLiving* me = Agents::GetPlayerAsAgentLiving();
             if (!me) return false;
 
-            if (me->primary != (BYTE)skill_template.primary)
-                return false;
             const auto profession_state = GetAgentProfessionState(me->agent_id);
             if (!profession_state) {
                 return false;
             }
-            if (profession_state->primary != skill_template.primary) {
-                return false;
+            if (skill_template.primary != Constants::Profession::None && profession_state->primary != skill_template.primary) {
+                if (IsPrimaryAttributeRequired(skill_template, skill_template.primary)) {
+                    // Build contains points in this profession's primary attribute; we can't avoid it.
+                    return false;
+                }
+                if (IsProfessionRequired(skill_template, skill_template.primary)) {
+                    // Primary is required e.g. skills or attributes, but not the primary attribute - it could be loaded as a secondary
+                    if (IsProfessionRequired(skill_template, skill_template.secondary)) {
+                        // Secondary profession is also required, can't use it.
+                        return false; 
+                    }
+                    // Swap primary with secondary (we'll check whether its unlocked later)
+                    skill_template.secondary = skill_template.primary;
+                }
             }
-            if (skill_template.secondary != Constants::Profession::None) {
+            if (skill_template.secondary != Constants::Profession::None && IsProfessionRequired(skill_template, skill_template.secondary)) {
                 if (!profession_state->IsProfessionUnlocked(skill_template.secondary)) {
                     return false;
                 }
@@ -509,14 +556,24 @@ namespace GW {
             if (!profession_state) {
                 return false; // Hero not unlocked??
             }
-
-            if (profession_state->primary != skill_template.primary) {
-                return false;
-            }
-            if (skill_template.secondary != Constants::Profession::None) {
-                if (profession_state->secondary != skill_template.secondary) {
-                    ChangeSecondProfession(skill_template.secondary, hero_index);
+            if (skill_template.primary != Constants::Profession::None && profession_state->primary != skill_template.primary) {
+                if (IsPrimaryAttributeRequired(skill_template, skill_template.primary)) {
+                    // Build contains points in this profession's primary attribute; we can't avoid it.
+                    return false;
                 }
+                if (IsProfessionRequired(skill_template, skill_template.primary)) {
+                    // Primary is required e.g. skills or attributes, but not the primary attribute - it could be loaded as a secondary
+                    if (IsProfessionRequired(skill_template, skill_template.secondary)) {
+                        // Secondary profession is also required, can't use it.
+                        return false; 
+                    }
+                    // Swap primary with secondary (we'll check whether its unlocked later)
+                    skill_template.secondary = skill_template.primary;
+                }
+            }
+            if (skill_template.secondary != Constants::Profession::None && profession_state->secondary != skill_template.secondary) {
+                // NB: Heroes have all secondary professions unlocked?
+                ChangeSecondProfession(skill_template.secondary, hero_index);
             }
 
             // @Robustness: That cast is not very good :(

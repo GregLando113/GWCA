@@ -514,9 +514,6 @@ namespace GW {
                 return false;
             }
             if (skill_template.secondary != Constants::Profession::None) {
-                if (!profession_state->IsProfessionUnlocked(skill_template.secondary)) {
-                    return false;
-                }
                 if (profession_state->secondary != skill_template.secondary) {
                     ChangeSecondProfession(skill_template.secondary, hero_index);
                 }

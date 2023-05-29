@@ -443,6 +443,11 @@ namespace GW {
             auto w = GetWorldContext();
             if (!(w && SetHeroBehavior_Func && w->pets.size()))
                 return false;
+            if (behavior == HeroBehavior::Fight) {
+                const auto target = Agents::GetTargetId();
+                if (!target)
+                    return false;
+            }
             const auto pet_info = GetPetInfo();
             if (!pet_info)
                 return false;

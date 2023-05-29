@@ -443,6 +443,13 @@ namespace GW {
             auto w = GetWorldContext();
             if (!(w && SetHeroBehavior_Func && w->pets.size()))
                 return false;
+
+            // The game doesn't allow you to get this far in "Fight" mode unless you have a target selected, but then honors it if you change target later.
+            // This function doesn't have the same check because it isn't caught by the game as a red flag, so no need to add it to make safe to use.
+            // This means GWCA allows you to use this function to set fight behaviour without a target, which is pretty neat.#
+            
+            // @Enhancement: Patch to avoid the target block in the original code as a qol feature, but not striaght forward to do.
+            // @Enhancement: Add feature to stop GW from reverting behavior once target is dead
             const auto pet_info = GetPetInfo();
             if (!pet_info)
                 return false;

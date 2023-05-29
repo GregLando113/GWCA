@@ -6,10 +6,8 @@
 namespace GW {
     typedef uint32_t AgentID;
 
-    enum class HeroBehavior {
-        Attack,
-        Guard,
-        Avoid
+    enum class HeroBehavior : uint32_t {
+        Fight, Guard, AvoidCombat
     };
 
     struct HeroFlag { // total: 0x20/36

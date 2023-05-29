@@ -165,10 +165,6 @@ namespace GW {
             Profession::Ritualist, // Zei Ri
         };
 
-        enum HeroBehavior : uint32_t {
-            Fight, Guard, AvoidCombat
-        };
-
         enum class TitleID : uint32_t {
             Hero, TyrianCarto, CanthanCarto, Gladiator, Champion, Kurzick,
             Luxon, Drunkard,

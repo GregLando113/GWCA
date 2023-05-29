@@ -13,6 +13,8 @@ namespace GW {
     }
 
     typedef uint32_t ItemID;
+    enum class HeroBehavior : uint32_t;
+
 
     struct NPC;
     struct Quest;
@@ -101,6 +103,18 @@ namespace GW {
     };
     static_assert(sizeof(PartyMoraleLink) == 0xc);
 
+    struct PetInfo {
+        uint32_t agent_id;
+        uint32_t owner_agent_id;
+        wchar_t* pet_name;
+        uint32_t h0010;
+        uint32_t h0014;
+        HeroBehavior behavior;
+        uint32_t h001c;
+
+    };
+    static_assert(sizeof(PetInfo) == 0x1c);
+
 
 
     struct WorldContext {
@@ -159,7 +173,7 @@ namespace GW {
         /* +h0690 */ uint32_t salvage_session_id;
         /* +h0694 */ uint32_t h0694[5];
         /* +h06A8 */ uint32_t playerTeamToken;
-        /* +h06AC */ uint32_t h06AC[4];
+        /* +h06AC */ Array<PetInfo> pets;
         /* +h06BC */ Array<ProfessionState> party_profession_states; // Current state of primary/secondary/unlocked for current player and party heroes, used in skill window. aka attribStates
         /* +h06CC */ Array<void *> h06CC;
         /* +h06DC */ uint32_t h06DC;

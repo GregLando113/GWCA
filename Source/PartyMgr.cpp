@@ -439,6 +439,30 @@ namespace GW {
             }
             return false;
         }
+        bool SetPetBehavior(HeroBehavior behavior) {
+            auto w = GetWorldContext();
+            if (!(w && SetHeroBehavior_Func && w->pets.size()))
+                return false;
+            const auto pet_info = GetPetInfo();
+            if (!pet_info)
+                return false;
+            if(pet_info->behavior != behavior)
+                SetHeroBehavior_Func(pet_info->agent_id, behavior);
+            return true;
+        }
+
+        PetInfo* GetPetInfo(uint32_t owner_agent_id) {
+            auto w = GetWorldContext();
+            if (!(w && w->pets.size()))
+                return nullptr;
+            if (owner_agent_id == 0)
+                owner_agent_id = Agents::GetPlayerId();
+            for (auto& pet : w->pets) {
+                if (pet.owner_agent_id == owner_agent_id)
+                    return &pet;
+            }
+            return nullptr;
+        }
 
         void SetTickToggle(bool enable) {
             tick_work_as_toggle = enable;

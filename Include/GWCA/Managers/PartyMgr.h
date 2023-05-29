@@ -5,9 +5,10 @@
 namespace GW {
     struct GamePos;
     struct PartyInfo;
+    struct PetInfo;
 
     struct Attribute;
-    enum class HeroBehavior;
+    enum class HeroBehavior : uint32_t;
 
     typedef uint32_t AgentID;
 
@@ -79,6 +80,9 @@ namespace GW {
         GWCA_API bool FlagAll(GamePos pos);
         GWCA_API bool UnflagAll();
         GWCA_API bool SetHeroBehavior(uint32_t agent_id, HeroBehavior behavior);
+        GWCA_API bool SetPetBehavior(HeroBehavior behavior);
+
+        GWCA_API PetInfo* GetPetInfo(uint32_t owner_agent_id = 0);
 
         GWCA_API uint32_t GetHeroAgentID(uint32_t hero_index);
         GWCA_API uint32_t GetAgentHeroID(uint32_t agent_id);

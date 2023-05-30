@@ -29,7 +29,7 @@ namespace {
         GW::Hook::LeaveHook();
     };
     void OnSetActiveQuest_UIMessage(GW::HookStatus* status, UI::UIMessage message_id, void* wparam, void*) {
-        GWCA_ASSERT(message_id == UI::UIMessage::kSendSetActiveQuest && wparam);
+        GWCA_ASSERT(message_id == UI::UIMessage::kSendSetActiveQuest);
         if (!status->blocked) {
             SetActiveQuest_Ret((uint32_t)wparam);
         }

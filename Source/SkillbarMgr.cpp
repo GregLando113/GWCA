@@ -30,8 +30,8 @@ namespace {
     using namespace SkillbarMgr;
 
     Skill* skill_array_addr = 0;
-    AttributeInfo* attribute_array_addr = 0;
-    uint32_t ATTRIBUTE_COUNT = 0;
+    AttributeInfo* attribute_array_addr = nullptr;
+    uint32_t attribute_array_count = 0x33;
 
     const char _Base64ToValue[128] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // [0,   16)
@@ -149,7 +149,6 @@ namespace {
         address = GW::Scanner::Find("\xba\x33\x00\x00\x00\x89\x08\x8d\x40\x04", "x?xxxxxxxx", -4);
         if (Scanner::IsValidPtr(*(uintptr_t*)address, Scanner::RDATA)) {
             attribute_array_addr = *(AttributeInfo**)address;
-            ATTRIBUTE_COUNT = *(uint32_t*)(address + 5);
         }
 
         UseSkill_Func = (UseSkill_pt)GW::Scanner::Find( "\x85\xF6\x74\x5B\x83\xFE\x11\x74", "xxxxxxxx", -0x126);
@@ -167,7 +166,7 @@ namespace {
         HookBase::CreateHook(UseSkill_Func, OnUseSkill, (void**)&RetUseSkill);
 
         GWCA_INFO("[SCAN] SkillArray = %p", skill_array_addr);
-        GWCA_INFO("[SCAN] AttributeArray = %p, Count = %d", attribute_array_addr, ATTRIBUTE_COUNT);
+        GWCA_INFO("[SCAN] AttributeArray = %p", attribute_array_addr);
         GWCA_INFO("[SCAN] UseSkill_Func = %p", UseSkill_Func);
         GWCA_INFO("[SCAN] ChangeSecondary_Func = %p", ChangeSecondary_Func);
         GWCA_INFO("[SCAN] LoadAttributes_Func = %p", LoadAttributes_Func);
@@ -215,7 +214,7 @@ namespace {
 
     Constants::Profession GetSkillProfession(Constants::SkillID skill_id) {
         auto data = GetSkillConstantData(skill_id);
-        return GetAttributeProfession(static_cast<Constants::Attribute>(data ? data->attribute : 0));
+        return data ? static_cast<GW::Constants::Profession>(data->profession) : GW::Constants::Profession::None;
     }
     bool IsPrimaryAttributeRequired(const SkillTemplate& skill_template, const GW::Constants::Profession profession) {
         if (profession == GW::Constants::Profession::None)
@@ -265,7 +264,9 @@ namespace GW {
             return skill_array_addr ? &arr[(uint32_t)skill_id] : nullptr;
         }
         AttributeInfo* GetAttributeConstantData(Constants::Attribute attribute_id) {
-            return attribute_array_addr && (uint32_t)attribute_id < ATTRIBUTE_COUNT ? &attribute_array_addr[(uint32_t)attribute_id] : nullptr;
+            if (attribute_array_count <= static_cast<uint32_t>(attribute_id))
+                return nullptr;
+            return &attribute_array_addr[static_cast<uint32_t>(attribute_id)];
         }
 
         bool ChangeSecondProfession(Constants::Profession profession, uint32_t hero_index) {
@@ -414,8 +415,8 @@ namespace GW {
             for (int i = 0; i < attrib_count; i++) {
                 uint32_t attrib_id = (uint32_t)_ReadBits(&it, bits_per_attr);
                 int attrib_val = _ReadBits(&it, 4);
-                if (attrib_id >= ATTRIBUTE_COUNT) {
-                    GWCA_ERR("Attribute id %d is out of range. (count = %d)\n", attrib_id, ATTRIBUTE_COUNT);
+                if (attrib_id >= attribute_array_count) {
+                    GWCA_ERR("Attribute id %d is out of range. (count = %d)\n", attrib_id, attribute_array_count);
                     return false;
                 }
                 if (attrib_val > 12) {

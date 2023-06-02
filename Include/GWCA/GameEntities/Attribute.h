@@ -3,8 +3,13 @@
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
+    namespace Constants {
+        enum class Attribute : uint32_t;
+        enum class Profession;
+    }
+
     struct Attribute { // total: 0x14/20
-        /* +h0000 */ uint32_t id; // ID of attribute
+        /* +h0000 */ Constants::Attribute id; // ID of attribute
         /* +h0004 */ uint32_t level_base; // Level of attribute without modifiers (runes,pcons,etc)
         /* +h0008 */ uint32_t level; // Level with modifiers
         /* +h000C */ uint32_t decrement_points; // Points that you will recieve back if you decrement level.
@@ -12,8 +17,8 @@ namespace GW {
     };
 
     struct AttributeInfo {
-        uint32_t profession_id;
-        uint32_t attribute_id;
+        Constants::Profession profession_id;
+        Constants::Attribute attribute_id;
         uint32_t name_id;
         uint32_t desc_id;
         uint32_t is_pve;

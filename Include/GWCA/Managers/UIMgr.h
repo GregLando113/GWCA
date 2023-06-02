@@ -157,6 +157,7 @@ namespace GW {
             kPvPWindowContent           = 0x10000000 | 0xF8,
             kItemUpdated                = 0x10000000 | 0x104, // wparam = *ItemGeneral packet
             kMapChange                  = 0x10000000 | 0x10F, // wparam = map id
+            kCalledTargetChange         = 0x10000000 | 0x113, // wparam = { player_number, target_id }
             kErrorMessage               = 0x10000000 | 0x117, // wparam = { int error_index, wchar_t* error_encoded_string }
             kEnumPreference             = 0x10000000 | 0x13E, // wparam = { EnumPreference pref_id, uint32_t val }
             kCheckboxPreference         = 0x10000000 | 0x13F,

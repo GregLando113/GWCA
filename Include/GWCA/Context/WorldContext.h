@@ -107,10 +107,10 @@ namespace GW {
         uint32_t agent_id;
         uint32_t owner_agent_id;
         wchar_t* pet_name;
-        uint32_t h0010;
-        uint32_t h0014;
+        uint32_t model_file_id1;
+        uint32_t model_file_id2;
         HeroBehavior behavior;
-        uint32_t h001c;
+        uint32_t locked_target_id;
 
     };
     static_assert(sizeof(PetInfo) == 0x1c);

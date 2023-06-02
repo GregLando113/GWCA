@@ -59,6 +59,8 @@ namespace {
     FlagAll_pt FlagAll_Func = 0;
     typedef void(__cdecl* SetHeroBehavior_pt)(uint32_t agent_id, HeroBehavior behavior);
     SetHeroBehavior_pt SetHeroBehavior_Func = 0;
+    typedef bool(__cdecl* LockPetTarget_pt)(uint32_t pet_agent_id, uint32_t target_id);
+    LockPetTarget_pt LockPetTarget_Func = 0;
 
     bool tick_work_as_toggle = false;
 
@@ -118,7 +120,9 @@ namespace {
         FlagHeroAgent_Func = (FlagHeroAgent_pt)Scanner::FunctionFromNearCall(address + 0x4e);
         FlagAll_Func = (FlagAll_pt)Scanner::FunctionFromNearCall(address + 0x7c);
 
-        SetHeroBehavior_Func = (SetHeroBehavior_pt)Scanner::FindAssertion("p:\\code\\gw\\char\\cli\\chcliapi.cpp", "mode < CHAR_AI_MODES",-0xe);
+        address = Scanner::Find("\x83\xc4\x10\x83\xff\x03\x75\x17", "xxxxxxxx",0x38);
+        LockPetTarget_Func = (LockPetTarget_pt)Scanner::FunctionFromNearCall(address);
+        SetHeroBehavior_Func = (SetHeroBehavior_pt)Scanner::FunctionFromNearCall(address + 0x7);
 
         address = Scanner::Find("\x6a\x00\x68\x00\x02\x02\x00\xff\x77\x04", "xxxxxxxxxx");
         PartyRejectInvite_Func = (DoAction_pt)Scanner::FunctionFromNearCall(address + 0xb6);
@@ -146,6 +150,8 @@ namespace {
         GWCA_INFO("[SCAN] SetHeroBehavior_Func = %p", SetHeroBehavior_Func);
         GWCA_INFO("[SCAN] PartyRejectInvite_Func = %p", PartyRejectInvite_Func);
         GWCA_INFO("[SCAN] PartyAcceptInvite_Func = %p", PartyAcceptInvite_Func);
+        GWCA_INFO("[SCAN] LockPetTarget_Func = %p", LockPetTarget_Func);
+        
 
 #ifdef _DEBUG
         GWCA_ASSERT(TickButtonUICallback);
@@ -166,6 +172,7 @@ namespace {
         GWCA_ASSERT(PartyAcceptInvite_Func);
         GWCA_ASSERT(SetHeroBehavior_Func);
         GWCA_ASSERT(ReturnToOutpost_Func);
+        GWCA_ASSERT(LockPetTarget_Func);
 #endif
         HookBase::CreateHook(TickButtonUICallback, OnTickButtonUICallback, (void**)&TickButtonUICallback_Ret);
     }
@@ -439,20 +446,27 @@ namespace GW {
             }
             return false;
         }
-        bool SetPetBehavior(HeroBehavior behavior) {
+        bool SetPetBehavior(HeroBehavior behavior, uint32_t lock_target_id) {
             auto w = GetWorldContext();
-            if (!(w && SetHeroBehavior_Func && w->pets.size()))
+            if (!(w && SetHeroBehavior_Func && LockPetTarget_Func && w->pets.size()))
                 return false;
 
-            // The game doesn't allow you to get this far in "Fight" mode unless you have a target selected, but then honors it if you change target later.
-            // This function doesn't have the same check because it isn't caught by the game as a red flag, so no need to add it to make safe to use.
-            // This means GWCA allows you to use this function to set fight behaviour without a target, which is pretty neat.#
-            
-            // @Enhancement: Patch to avoid the target block in the original code as a qol feature, but not striaght forward to do.
-            // @Enhancement: Add feature to stop GW from reverting behavior once target is dead
+            // Always need to lock target (current target if fight, otherwise 0)
+
             const auto pet_info = GetPetInfo();
             if (!pet_info)
                 return false;
+            uint32_t target_agent_id = 0;
+            if (behavior == HeroBehavior::Fight) {
+                // Setting fight mode without a valid target results in the same effect as guard mode.
+                // Check and validate target
+                const auto target = static_cast<AgentLiving*>(lock_target_id ? Agents::GetAgentByID(lock_target_id) : Agents::GetTarget());
+                if (!(target && target->GetIsLivingType() && target->allegiance == Constants::Allegiance::Enemy))
+                    return false; // Invalid target
+                target_agent_id = target->agent_id;
+            }
+            if(pet_info->locked_target_id != target_agent_id)
+                LockPetTarget_Func(pet_info->agent_id, target_agent_id);
             if(pet_info->behavior != behavior)
                 SetHeroBehavior_Func(pet_info->agent_id, behavior);
             return true;

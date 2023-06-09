@@ -299,7 +299,8 @@ namespace {
         if (address && Scanner::IsValidPtr(*(uintptr_t*)address))
             PreferencesInitialised_Addr = *(uintptr_t*)address;
 
-        address = GW::Scanner::Find("\x83\x0e\x02\x57\x6a\x27", "xxxxxx", -0x2c); // BuildLoginStruct function start (NB: 0x27 is the count offset of the available command line string args)
+        address = GW::Scanner::Find("\x8d\x85\x78\xf7\xff\xff\x50", "xxxxxxx",0x7);
+        address = GW::Scanner::FunctionFromNearCall(address); // BuildLoginStruct
         if (address) {
             GetCommandLineFlag_Func = (GetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0xf);
             GetCommandLineString_Func = (GetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address + 0x32);

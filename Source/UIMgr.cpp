@@ -315,7 +315,7 @@ namespace {
         if (address && GW::Scanner::IsValidPtr(address, GW::Scanner::TEXT)) {
             GetCommandLineNumber_Func = (GetNumberPreference_pt)address;
             CommandLineNumber_Buffer = *(uint32_t**)(address + 0x29);
-            CommandLineNumber_Buffer += 0x33;
+            CommandLineNumber_Buffer += 0x30; // Offset for command line values
         }
 
         SetInGameShadowQuality_Func = (SetInGameShadowQuality_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\agentview\\avshadow.cpp","No valid case for switch variable 'value'",-0xca);

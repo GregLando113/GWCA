@@ -15,6 +15,7 @@
 #include <GWCA/Context/GuildContext.h>
 #include <GWCA/Context/ItemContext.h>
 #include <GWCA/Context/AgentContext.h>
+#include <GWCA/Context/AccountContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -164,5 +165,10 @@ namespace GW
     {
         const auto* g = GetGameContext();
         return g ? g->map : nullptr;
+    }
+    AccountContext* GetAccountContext()
+    {
+        const auto* g = GetGameContext();
+        return g ? g->account : nullptr;
     }
 } // namespace GW

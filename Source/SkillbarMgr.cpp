@@ -15,6 +15,7 @@
 
 #include <GWCA/Context/GameContext.h>
 #include <GWCA/Context/WorldContext.h>
+#include <GWCA/Context/AccountContext.h>
 
 #include <GWCA/Managers/Module.h>
 
@@ -654,10 +655,18 @@ namespace GW {
             return GetSkillConstantData(*(GW::Constants::SkillID*)tooltip->payload);
         }
         bool GetIsSkillUnlocked(GW::Constants::SkillID skill_id) {
-            GW::GameContext* g = GW::GetGameContext();
-            GW::WorldContext* w = g->world;
+            auto& array = GetAccountContext()->unlocked_account_skills;
 
-            auto& array = w->unlocked_character_skills;
+            uint32_t index = static_cast<uint32_t>(skill_id);
+            uint32_t real_index = index / 32;
+            if (real_index >= array.size())
+                return false;
+            uint32_t shift = index % 32;
+            uint32_t flag = 1U << shift;
+            return (array[real_index] & flag) != 0;
+        }
+        bool GetIsSkillLearnt(GW::Constants::SkillID skill_id) {
+            auto& array = GetWorldContext()->unlocked_character_skills;
 
             uint32_t index = static_cast<uint32_t>(skill_id);
             uint32_t real_index = index / 32;

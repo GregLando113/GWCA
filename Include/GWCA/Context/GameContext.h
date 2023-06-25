@@ -16,6 +16,7 @@ namespace GW {
     struct TradeContext;
     struct WorldContext;
     struct GadgetContext;
+    struct AccountContext;
 
     struct GameContext {
 
@@ -31,7 +32,7 @@ namespace GW {
         /* +h001C */ void* h001C;
         /* +h0020 */ uint32_t some_number; // 0x30 for me at the moment.
         /* +h0024 */ void* h0024;
-        /* +h0028 */ void* h0028;
+        /* +h0028 */ AccountContext* account;
         /* +h002C */ WorldContext* world; // Best name to fit it that I can think of.
         /* +h0030 */ Cinematic *cinematic;
         /* +h0034 */ void* h0034;

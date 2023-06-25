@@ -58,7 +58,10 @@ namespace GW {
         GWCA_API Skillbar *GetPlayerSkillbar();
         GWCA_API Skill* GetHoveredSkill();
 
+        // Whether this skill is unlocked at account level, not necessarily learnt by the current character
         GWCA_API bool GetIsSkillUnlocked(Constants::SkillID skill_id);
+        // Whether the current character has learnt this skill
+        GWCA_API bool GetIsSkillLearnt(Constants::SkillID skill_id);
 
         GWCA_API bool DecodeSkillTemplate(SkillTemplate *result, const char *temp);
         GWCA_API bool EncodeSkillTemplate(const SkillTemplate& in, char* result, size_t result_len);

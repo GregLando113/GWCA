@@ -143,6 +143,7 @@ namespace GW {
             kDialogButton               = 0x10000000 | 0xA1, // wparam = DialogButtonInfo*
             kTargetNPCPartyMember       = 0x10000000 | 0xB1, // wparam = { uint32_t unk, uint32_t agent_id }
             kTargetPlayerPartyMember    = 0x10000000 | 0xB2, // wparam = { uint32_t unk, uint32_t player_number }
+            kInitMerchantList           = 0x10000000 | 0xB3, // wparam = { uint32_t merchant_tab_type, uint32_t unk, uint32_t merchant_agent_id, uint32_t is_pending }
             kQuotedItemPrice            = 0x10000000 | 0xBB, // wparam = { uint32_t item_id, uint32_t price }
             kStartMapLoad               = 0x10000000 | 0xC0, // wparam = { uint32_t map_id, ...}
             kWorldMapUpdated            = 0x10000000 | 0xC5, // Triggered when an area in the world map has been discovered/updated

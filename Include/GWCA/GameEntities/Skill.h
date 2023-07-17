@@ -98,7 +98,7 @@ namespace GW {
 
         bool IsValid() const { return agent_id > 0; }
 
-        SkillbarSkill *GetSkillById(Constants::SkillID skill_id);
+        SkillbarSkill *GetSkillById(Constants::SkillID skill_id, size_t* slot_out = nullptr);
     };
     static_assert(sizeof(Skillbar) == 188, "struct Skillbar has incorect size");
 

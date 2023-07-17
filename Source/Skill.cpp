@@ -11,10 +11,15 @@ namespace GW {
         return recharge - MemoryMgr::GetSkillTimer();
     }
 
-    SkillbarSkill *Skillbar::GetSkillById(Constants::SkillID skill_id) {
+    SkillbarSkill *Skillbar::GetSkillById(Constants::SkillID skill_id, size_t* slot_out) {
         for (size_t i = 0; i < _countof(skills); i++) {
-            if (skills[i].skill_id == skill_id)
+            if (skills[i].skill_id == skill_id) {
+                if (slot_out) {
+                    *slot_out = i;
+                }
                 return &skills[i];
+            }
+                
         }
         return NULL;
     }

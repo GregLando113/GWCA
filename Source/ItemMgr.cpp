@@ -20,6 +20,7 @@
 #include <GWCA/Managers/StoCMgr.h>
 #include <GWCA/Managers/AgentMgr.h>
 #include <GWCA/Managers/UIMgr.h>
+#include <GWCA/Context/AccountContext.h>
 
 namespace {
     using namespace GW;
@@ -41,6 +42,11 @@ namespace {
         uint32_t slot;
         uint32_t type;
     };
+
+    Array<PvPItemUpgradeInfo> unlocked_pvp_item_upgrade_array;
+
+    typedef void(__cdecl* GetPvPItemUpgradeInfoName_pt)(uint32_t pvp_item_upgrade_id, uint32_t name_or_description, wchar_t** name_out,wchar_t** description_out);
+    GetPvPItemUpgradeInfoName_pt GetPvPItemUpgradeInfoName_Func = nullptr;
 
     typedef void (__fastcall *ItemClick_pt)(uint32_t *bag_id, void *edx, ItemClickParam *param);
     ItemClick_pt RetItemClick = 0;
@@ -195,6 +201,16 @@ namespace {
         address = Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\gmweaponbar.cpp", "slotIndex < ITEM_PLAYER_EQUIP_SETS", 0x128);
         PingWeaponSet_Func = (PingWeaponSet_pt)Scanner::FunctionFromNearCall(address);
 
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\const\\constitempvp.cpp", "unlockIndex < ITEM_PVP_UNLOCK_COUNT");
+        if (address) {
+            unlocked_pvp_item_upgrade_array.m_buffer = *(PvPItemUpgradeInfo**)(address + 0x15);
+            unlocked_pvp_item_upgrade_array.m_size = *(size_t*)(address - 0xb);
+        }
+        address = GW::Scanner::Find("\xff\x75\x0c\x81\xc1\xb4\x00\x00\x00","xxxxxxxxx", -0x11);
+        if (GW::Scanner::IsValidPtr(address, GW::Scanner::TEXT)) {
+            GetPvPItemUpgradeInfoName_Func = (GetPvPItemUpgradeInfoName_pt)address;
+        }
+
         GWCA_INFO("[SCAN] StorageOpenPtr = %p", storage_open_addr);
         GWCA_INFO("[SCAN] OnItemClick Function = %p", ItemClick_Func);
         GWCA_INFO("[SCAN] UseItem Function = %p", UseItem_Func);
@@ -209,7 +225,9 @@ namespace {
         GWCA_INFO("[SCAN] SalvageSessionCancel_Func = %p", SalvageSessionCancel_Func);
         GWCA_INFO("[SCAN] SalvageSessionComplete_Func = %p", SalvageSessionComplete_Func);
         GWCA_INFO("[SCAN] SalvageMaterials_Func = %p", SalvageMaterials_Func);
-        GWCA_INFO("[SCAN] SalvageStart_Func = %p", SalvageStart_Func);
+        GWCA_INFO("[SCAN] unlocked_pvp_item_upgrade_array.m_buffer = %p", unlocked_pvp_item_upgrade_array.m_buffer);
+        GWCA_INFO("[SCAN] unlocked_pvp_item_upgrade_array.m_size = %p", unlocked_pvp_item_upgrade_array.m_size);
+        GWCA_INFO("[SCAN] GetPvPItemUpgradeInfoName_Func = %p", GetPvPItemUpgradeInfoName_Func);
 #ifdef _DEBUG
         GWCA_ASSERT(storage_open_addr);
         GWCA_ASSERT(ItemClick_Func);
@@ -226,6 +244,9 @@ namespace {
         GWCA_ASSERT(SalvageSessionComplete_Func);
         GWCA_ASSERT(SalvageMaterials_Func);
         GWCA_ASSERT(SalvageStart_Func);
+        GWCA_ASSERT(unlocked_pvp_item_upgrade_array.m_buffer);
+        GWCA_ASSERT(unlocked_pvp_item_upgrade_array.m_size);
+        GWCA_ASSERT(GetPvPItemUpgradeInfoName_Func);
 #endif
         HookBase::CreateHook(ItemClick_Func, OnItemClick, (void**)&RetItemClick);
         if (PingWeaponSet_Func) {
@@ -647,6 +668,41 @@ namespace GW {
             ChangeEquipmentVisibility_Func((uint32_t)((uint32_t)state << (uint32_t)type), (uint32_t)(0x3 << (uint32_t)type));
             return true;
         }
+
+        const PvPItemUpgradeInfo* GetPvPItemUpgrade(uint32_t pvp_item_upgrade_idx)
+        {
+            const auto& arr = GetPvPItemUpgradesArray();
+            if (pvp_item_upgrade_idx < arr.size()) {
+                return &arr[pvp_item_upgrade_idx];
+            }
+            return nullptr;
+        }
+        const Array<PvPItemUpgradeInfo>& GetPvPItemUpgradesArray()
+        {
+            return unlocked_pvp_item_upgrade_array;
+        }
+        bool GetPvPItemUpgradeEncodedName(uint32_t pvp_item_upgrade_idx, wchar_t** out)
+        {
+            const auto info = GetPvPItemUpgrade(pvp_item_upgrade_idx);
+            if (!(info && GetPvPItemUpgradeInfoName_Func && out))
+                return false;
+            *out = nullptr;
+            wchar_t* tmp;
+            GetPvPItemUpgradeInfoName_Func(pvp_item_upgrade_idx, false, out, &tmp);
+            return *out != nullptr;
+        }
+        bool GetPvPItemUpgradeEncodedDescription(uint32_t pvp_item_upgrade_idx, wchar_t** out)
+        {
+            const auto info = GetPvPItemUpgrade(pvp_item_upgrade_idx);
+            if (!(info && GetPvPItemUpgradeInfoName_Func && out))
+                return false;
+            *out = nullptr;
+            wchar_t* tmp;
+            GetPvPItemUpgradeInfoName_Func(pvp_item_upgrade_idx, false, &tmp, out);
+            return *out != nullptr;
+        }
+
+
     }
 
 } // namespace GW

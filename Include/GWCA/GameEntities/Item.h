@@ -152,6 +152,21 @@ namespace GW {
     };
     static_assert(sizeof(Inventory) == 152, "struct Inventory has incorect size");
 
+    // Static struct for info about available item upgrade info, used for PvP Equipment window
+    struct PvPItemUpgradeInfo {
+        uint32_t file_id;
+        uint32_t name_id;
+        uint32_t upgrade_type; // Axe, Bow, Inscription
+        uint32_t campaign_id;
+        uint32_t interaction;
+        uint32_t is_dev; // boolean; if 1, then don't use in-game
+        uint32_t profession; // if 0xb then is for all professions
+        uint32_t h0018;
+        uint32_t mod_struct_size;
+        uint32_t* mod_struct;
+    };
+    static_assert(sizeof(PvPItemUpgradeInfo) == 0x28);
+
     typedef Array<ItemID> MerchItemArray;
 
     inline size_t Bag::find1(uint32_t model_id, size_t pos) const {

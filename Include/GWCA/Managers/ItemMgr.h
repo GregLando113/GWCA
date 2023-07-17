@@ -12,6 +12,9 @@ namespace GW {
 
     typedef Array<Item *> ItemArray;
 
+    struct PvPItemUpgradeInfo;
+    typedef Array<PvPItemUpgradeInfo*> PvPItemUpgradeInfoArray;
+
     namespace Constants {
         enum class Bag;
     }
@@ -139,5 +142,18 @@ namespace GW {
 
         GWCA_API EquipmentStatus GetEquipmentVisibility(EquipmentType type);
         GWCA_API bool SetEquipmentVisibility(EquipmentType type, EquipmentStatus state);
+
+        // Get pointer to the list of available item upgrades (insignias, runes, weapon mods etc) that can be unlocked for an account. Used in the PvP Equipment window.
+        // Pass size_out to get the array size.
+        GWCA_API const Array<PvPItemUpgradeInfo>& GetPvPItemUpgradesArray();
+
+        // Get info for unlockable pvp item upgrade by index
+        GWCA_API const PvPItemUpgradeInfo* GetPvPItemUpgrade(uint32_t pvp_item_upgrade_idx);
+
+        // Get encoded name of unlockable pvp item upgrade; returns false on failure
+        GWCA_API bool GetPvPItemUpgradeEncodedName(uint32_t pvp_item_upgrade_idx, wchar_t** out);
+
+        // Get encoded description of unlockable pvp item upgrade; returns false on failure
+        GWCA_API bool GetPvPItemUpgradeEncodedDescription(uint32_t pvp_item_upgrade_idx, wchar_t** out);
     };
 }

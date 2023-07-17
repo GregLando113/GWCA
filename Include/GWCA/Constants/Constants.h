@@ -20,7 +20,7 @@ namespace GW {
             None, Warrior, Ranger, Monk, Necromancer, Mesmer,
             Elementalist, Assassin, Ritualist, Paragon, Dervish
         };
-        static std::string GetProfessionAcronym(Profession prof) {
+        static const char* GetProfessionAcronym(Profession prof) {
             switch (prof) {
             case GW::Constants::Profession::None: return "X";
             case GW::Constants::Profession::Warrior: return "W";
@@ -36,7 +36,7 @@ namespace GW {
             default: return "";
             }
         }
-        static std::wstring GetWProfessionAcronym(Profession prof) {
+        static const wchar_t* GetWProfessionAcronym(Profession prof) {
             switch (prof) {
             case GW::Constants::Profession::None: return L"X";
             case GW::Constants::Profession::Warrior: return L"W";

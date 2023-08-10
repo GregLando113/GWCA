@@ -35,6 +35,8 @@ namespace GW {
         } Mat4x3f;
 
         enum Transform : int {
+            TRANSFORM_PROJECTION_MATRIX = 0,
+            TRANSFORM_MODEL_MATRIX = 1,
             // TODO:
             TRANSFORM_COUNT = 5
         };

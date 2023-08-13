@@ -42,8 +42,11 @@ namespace GW {
         };
 
         // Careful, this doesn't return correct values if you have the U mission map, or other things open
-        // prefer to calculate the transformation matrix yourself
+        // prefer to calculate the transformation matrix yourself using Render::GetFieldOfView()
         [[deprecated]] GWCA_API Mat4x3f* GetTransform(Transform transform);
+
+        // this returns the FoV used for rendering
+        GWCA_API float GetFieldOfView();
 
         // Set up a callback for drawing on screen.
         // Will be called after GW render.

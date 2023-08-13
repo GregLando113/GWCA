@@ -41,8 +41,9 @@ namespace GW {
             TRANSFORM_COUNT = 5
         };
 
-
-        GWCA_API Mat4x3f* GetTransform(Transform transform);
+        // Careful, this doesn't return correct values if you have the U mission map, or other things open
+        // prefer to calculate the transformation matrix yourself
+        [[deprecated]] GWCA_API Mat4x3f* GetTransform(Transform transform);
 
         // Set up a callback for drawing on screen.
         // Will be called after GW render.

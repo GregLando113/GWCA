@@ -207,6 +207,7 @@ namespace GW {
     float Render::GetFieldOfView()
     {
         Camera* cam = CameraMgr::GetCamera();
+        if (!cam) return 0.f;
         const float dividend = sqrtf(static_cast<float>(GetViewportWidth()) / static_cast<float>(GetViewportHeight()) + 1.f);
         return atan2(1.0f, dividend / tan(cam->GetFieldOfView() * 0.5f)) * 2.0f;
     }

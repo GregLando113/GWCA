@@ -22,12 +22,12 @@ namespace GW {
         float y = 0.f;
         float z = 0.f;
 
-        Vec3f(float _x, float _y, float _z)
+        constexpr Vec3f(float _x, float _y, float _z)
             : x(_x), y(_y), z(_z)
         {
         }
 
-        Vec3f(int _x, int _y, int _z)
+        constexpr Vec3f(int _x, int _y, int _z)
         {
             x = static_cast<float>(_x);
             y = static_cast<float>(_y);
@@ -37,69 +37,69 @@ namespace GW {
         Vec3f() = default;
     };
 
-    inline Vec3f& operator+=(Vec3f& lhs, Vec3f rhs) {
+    constexpr Vec3f& operator+=(Vec3f& lhs, const Vec3f& rhs) {
         lhs.x += rhs.x;
         lhs.y += rhs.y;
         lhs.z += rhs.z;
         return lhs;
     }
 
-    inline Vec3f operator+(Vec3f lhs, Vec3f rhs) {
+    constexpr Vec3f operator+(Vec3f lhs, const Vec3f& rhs) {
         lhs += rhs;
         return lhs;
     }
 
-    inline Vec3f& operator-=(Vec3f& lhs, Vec3f rhs) {
+    constexpr Vec3f& operator-=(Vec3f& lhs, const Vec3f& rhs) {
         lhs.x -= rhs.x;
         lhs.y -= rhs.y;
         lhs.z -= rhs.z;
         return lhs;
     }
 
-    inline Vec3f operator-(Vec3f lhs, Vec3f rhs) {
+    constexpr Vec3f operator-(Vec3f lhs, const Vec3f& rhs) {
         lhs -= rhs;
         return lhs;
     }
 
-    inline Vec3f operator-(Vec3f v) {
+    constexpr Vec3f operator-(const Vec3f& v) {
         return {-v.x, -v.y, -v.z};
     }
 
-    inline Vec3f& operator*=(Vec3f& lhs, float rhs) {
+    constexpr Vec3f& operator*=(Vec3f& lhs, float rhs) {
         lhs.x *= rhs;
         lhs.y *= rhs;
         lhs.z *= rhs;
         return lhs;
     }
 
-    inline Vec3f operator*(Vec3f lhs, float rhs) {
+    constexpr Vec3f operator*(Vec3f lhs, float rhs) {
         lhs *= rhs;
         return lhs;
     }
 
-    inline Vec3f operator*(float lhs, Vec3f rhs) {
+    constexpr Vec3f operator*(float lhs, Vec3f rhs) {
         rhs *= lhs;
         return rhs;
     }
 
-    inline Vec3f& operator/=(Vec3f& lhs, float rhs) {
+    constexpr Vec3f& operator/=(Vec3f& lhs, float rhs) {
         lhs.x /= rhs;
         lhs.y /= rhs;
         lhs.z /= rhs;
         return lhs;
     }
 
-    inline Vec3f operator/(Vec3f lhs, float rhs) {
+    constexpr Vec3f operator/(Vec3f lhs, float rhs) {
         lhs /= rhs;
         return lhs;
     }
 
-    inline Vec3f operator/(float lhs, Vec3f rhs) {
+    constexpr Vec3f operator/(float lhs, Vec3f rhs) {
         rhs *= lhs;
         return rhs;
     }
 
-    inline bool operator==(Vec3f lhs, Vec3f rhs) {
+    constexpr bool operator==(const Vec3f& lhs, const Vec3f& rhs) {
         return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.z == rhs.z);
     }
 
@@ -107,12 +107,12 @@ namespace GW {
         float x = 0.f;
         float y = 0.f;
 
-        Vec2f(float _x, float _y)
+        constexpr Vec2f(float _x, float _y)
             : x(_x), y(_y)
         {
         }
 
-        Vec2f(int _x, int _y)
+        constexpr Vec2f(int _x, int _y)
         {
             x = static_cast<float>(_x);
             y = static_cast<float>(_y);
@@ -121,77 +121,77 @@ namespace GW {
         Vec2f() = default;
     };
 
-    inline Vec2f& operator+=(Vec2f& lhs, Vec2f rhs)
+    constexpr Vec2f& operator+=(Vec2f& lhs, Vec2f rhs)
     {
         lhs.x += rhs.x;
         lhs.y += rhs.y;
         return lhs;
     }
 
-    inline Vec2f operator+(Vec2f lhs, Vec2f rhs) {
+    constexpr Vec2f operator+(Vec2f lhs, Vec2f rhs) {
         lhs += rhs;
         return lhs;
     }
 
-    inline Vec2f& operator-=(Vec2f& lhs, Vec2f rhs)
+    constexpr Vec2f& operator-=(Vec2f& lhs, Vec2f rhs)
     {
         lhs.x -= rhs.x;
         lhs.y -= rhs.y;
         return lhs;
     }
 
-    inline Vec2f operator-(Vec2f lhs, Vec2f rhs) {
+    constexpr Vec2f operator-(Vec2f lhs, Vec2f rhs) {
         lhs -= rhs;
         return lhs;
     }
 
-    inline Vec2f operator-(Vec2f v) {
+    constexpr Vec2f operator-(Vec2f v) {
         return {-v.x, -v.y};
     }
 
-    inline Vec2f& operator*=(Vec2f& lhs, float rhs) {
+    constexpr Vec2f& operator*=(Vec2f& lhs, float rhs) {
         lhs.x *= rhs;
         lhs.y *= rhs;
         return lhs;
     }
 
-    inline Vec2f operator*(Vec2f lhs, float rhs) {
+    constexpr Vec2f operator*(Vec2f lhs, float rhs) {
         lhs *= rhs;
         return lhs;
     }
 
-    inline Vec2f operator*(float lhs, Vec2f rhs) {
+    constexpr Vec2f operator*(float lhs, Vec2f rhs) {
         rhs *= lhs;
         return rhs;
     }
 
-    inline Vec2f& operator/=(Vec2f& lhs, float rhs) {
+    constexpr Vec2f& operator/=(Vec2f& lhs, float rhs) {
         lhs.x /= rhs;
         lhs.y /= rhs;
         return lhs;
     }
 
-    inline Vec2f operator/(Vec2f lhs, float rhs) {
+    constexpr Vec2f operator/(Vec2f lhs, float rhs) {
         lhs /= rhs;
         return lhs;
     }
 
-    inline Vec2f operator/(float lhs, Vec2f rhs) {
+    constexpr Vec2f operator/(float lhs, Vec2f rhs) {
         rhs *= lhs;
         return rhs;
     }
 
-    inline bool operator==(Vec2f lhs, Vec2f rhs) {
+    constexpr bool operator==(Vec2f lhs, Vec2f rhs) {
         return (lhs.x == rhs.x) && (lhs.y == rhs.y);
     }
 
-    inline float GetSquareDistance(Vec3f p1, Vec3f p2) {
+    constexpr float GetSquareDistance(const Vec3f& p1, const Vec3f& p2) {
         return (p1.x - p2.x) * (p1.x - p2.x) +
                (p1.y - p2.y) * (p1.y - p2.y) +
                (p1.z - p2.z) * (p1.z - p2.z);
     }
 
-    inline float GetSquareDistance(Vec2f p1, Vec2f p2) {
+    constexpr float GetSquareDistance(Vec2f p1, Vec2f p2) {
         return (p1.x - p2.x) * (p1.x - p2.x) +
                (p1.y - p2.y) * (p1.y - p2.y);
     }
@@ -199,11 +199,11 @@ namespace GW {
     float GetDistance(Vec3f p1, Vec3f p2);
     float GetDistance(Vec2f p1, Vec2f p2);
 
-    inline float GetSquaredNorm(Vec3f p) {
+    constexpr float GetSquaredNorm(const Vec3f& p) {
         return (p.x * p.x) + (p.y * p.y) + (p.z * p.z);
     }
 
-    inline float GetSquaredNorm(Vec2f p) {
+    constexpr float GetSquaredNorm(Vec2f p) {
         return (p.x * p.x) + (p.y * p.y);
     }
 
@@ -225,7 +225,7 @@ namespace GW {
         return v;
     }
 
-    inline Vec2f Rotate(Vec2f v, float cos, float sin) {
+    constexpr Vec2f Rotate(Vec2f v, float cos, float sin) {
         Vec2f res;
         res.x = (v.x * cos) - (v.y * sin);
         res.y = (v.x * sin) + (v.y * cos);
@@ -258,7 +258,7 @@ namespace GW {
         }
     };
 
-    inline bool operator==(GamePos lhs, GamePos rhs) {
+    constexpr bool operator==(const GamePos& lhs, const GamePos& rhs) {
         return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.zplane == rhs.zplane);
     }
 }

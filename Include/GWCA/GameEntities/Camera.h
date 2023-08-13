@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GWCA/GameContainers/GamePos.h>
+
 namespace GW {
     struct Camera {
         /* +h0000 */ uint32_t look_at_agent_id;

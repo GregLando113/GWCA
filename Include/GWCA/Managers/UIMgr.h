@@ -17,7 +17,7 @@ namespace GW {
 
         struct ChatTemplate {
             uint32_t        agent_id;
-            uint32_t        type; // 0 = build, 1 = equipement
+            uint32_t        type; // 0 = build, 1 = equipment
             Array<wchar_t>  code;
             wchar_t        *name;
         };

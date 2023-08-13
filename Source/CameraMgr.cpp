@@ -197,7 +197,8 @@ namespace GW {
 
     float CameraMgr::GetFieldOfView() {
         Camera *cam = GetCamera();
-        return cam->GetFieldOfView();
+        constexpr float dividend = 1.0f + 2.0f / 3.0f;
+        return atan2(1.0f, dividend / tan(cam->GetFieldOfView() * 0.5f)) * 2.0f;
     }
 
     float CameraMgr::GetYaw() {

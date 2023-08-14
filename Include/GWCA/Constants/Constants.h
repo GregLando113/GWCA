@@ -10,10 +10,8 @@
 namespace GW {
     namespace Constants {
 
-
         enum class Campaign { Core, Prophecies, Factions, Nightfall, EyeOfTheNorth, BonusMissionPack };
         enum class Difficulty { Normal, Hard };
-
         enum class InstanceType { Outpost, Explorable, Loading };
 
         enum class Profession {
@@ -51,6 +49,12 @@ namespace GW {
             case GW::Constants::Profession::Dervish: return L"D";
             default: return L"";
             }
+        }
+
+        namespace Preference {
+            enum class CharSort : uint32_t {
+                None, Alphabetize, PvPRP
+            };
         }
 
         enum class Attribute : uint32_t {

@@ -52,7 +52,7 @@ namespace GW {
         }
 
         namespace Preference {
-            enum class CharSort : uint32_t {
+            enum class CharSortOrder : uint32_t {
                 None, Alphabetize, PvPRP
             };
         }

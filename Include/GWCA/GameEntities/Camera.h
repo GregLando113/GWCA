@@ -42,6 +42,9 @@ namespace GW {
 
         float GetYaw()          const { return yaw; }
         float GetPitch()        const { return pitch; }
+
+        /// \brief This is not the FoV that GW uses to render
+        /// see GW::Render::GetFieldOfView()
         float GetFieldOfView()  const { return field_of_view; }
 
         void SetYaw(float _yaw) {

@@ -75,8 +75,12 @@ namespace GW {
         GWCA_API void WriteChatEnc(Channel channel, const wchar_t* message, const wchar_t* sender = nullptr, bool transient = false);
 
 
-        typedef std::function<void(const wchar_t*, int, wchar_t**)> CmdCB;
-        GWCA_API void CreateCommand(const wchar_t* cmd, const CmdCB& callback);
+        typedef std::function<bool(const wchar_t*, int, wchar_t**)> CmdCB;
+        typedef std::function<void(const wchar_t*, int, wchar_t**)> voidCmdCB;
+        // return true to capture the input, false if you wish for it to be forwarded to chat.
+        GWCA_API void CreateCommand(const wchar_t* cmd, CmdCB callback);
+        // always block the command from being sent to the chat
+        GWCA_API void CreateCommand(const wchar_t* cmd, voidCmdCB callback);
         GWCA_API CmdCB GetCommand(const wchar_t* cmd);
         GWCA_API void DeleteCommand(const wchar_t* cmd);
 

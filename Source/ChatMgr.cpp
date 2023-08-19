@@ -16,8 +16,6 @@
 namespace {
     using namespace GW;
 
-
-
     bool ShowTimestamps = false;
     bool Timestamp_24hFormat = false;
     bool Timestamp_seconds = false;
@@ -49,11 +47,11 @@ namespace {
             s[i] = towlower(s[i]);
     }
 
-    std::unordered_map<HookEntry *, Chat::SendChatCallback>     SendChat_callbacks;
-    std::unordered_map<HookEntry *, Chat::LocalMessageCallback> LocalMessage_callbacks;
-    std::unordered_map<HookEntry *, Chat::WhisperCallback>      Whisper_callbacks;
-    std::unordered_map<HookEntry*, Chat::PrintChatCallback>     PrintChat_callbacks;
-    std::unordered_map<HookEntry *, Chat::StartWhisperCallback> StartWhisper_callbacks;
+    std::unordered_map<HookEntry*, Chat::SendChatCallback>     SendChat_callbacks;
+    std::unordered_map<HookEntry*, Chat::LocalMessageCallback> LocalMessage_callbacks;
+    std::unordered_map<HookEntry*, Chat::WhisperCallback>      Whisper_callbacks;
+    std::unordered_map<HookEntry*, Chat::PrintChatCallback>    PrintChat_callbacks;
+    std::unordered_map<HookEntry*, Chat::StartWhisperCallback> StartWhisper_callbacks;
     struct ChatLogCallbackEntry {
         int altitude;
         HookEntry* entry;
@@ -115,15 +113,16 @@ namespace {
         HookBase::EnterHook();
         if (*message == '/') {
             int argc;
-            wchar_t **argv;
-            argv = CommandLineToArgvW(message + 1, &argc);
+            wchar_t** argv = CommandLineToArgvW(message + 1, &argc);
             std::wstring cmd = argv[0];
             ::wstring_tolower(cmd);
 
-            auto callback = SlashCmdList.find(cmd);
+            const auto callback = SlashCmdList.find(cmd);
             if (callback != SlashCmdList.end()) {
-                callback->second(message, argc, argv);
-                // No reasons to foward the function call to it's original.
+                const auto capture_input = callback->second(message, argc, argv);
+                if (!capture_input) {
+                    RetSendChat(message, agent_id);
+                }
                 LocalFree(argv);
                 HookBase::LeaveHook();
                 return;
@@ -615,7 +614,7 @@ namespace GW {
 
     // Change to WriteChatF(Channel chan, const wchar_t *from, const wchar_t *frmt, ..)
     // and       WriteChat(Channel chan, const wchar_t *from, const wchar_t *msg)
-    
+
     void Chat::WriteChatF(Channel channel, const wchar_t* format, ...) {
         va_list vl;
         va_start(vl, format);
@@ -677,11 +676,21 @@ namespace GW {
             delete[] param.message;
     }
 
-    void Chat::CreateCommand(const wchar_t* cmd, const CmdCB& callback)
+    void Chat::CreateCommand(const wchar_t* cmd, CmdCB callback)
     {
         std::wstring cpy{cmd};
         ::wstring_tolower(cpy);
-        SlashCmdList[std::move(cpy)] = callback;
+        SlashCmdList[std::move(cpy)] = std::move(callback);
+    }
+
+    void Chat::CreateCommand(const wchar_t* cmd, voidCmdCB callback)
+    {
+        std::wstring cpy{cmd};
+        ::wstring_tolower(cpy);
+        SlashCmdList[std::move(cpy)] = [cb = std::move(callback)](const wchar_t* a, const int b, wchar_t** c) {
+            cb(a, b, c);
+            return true;
+        };
     }
 
     Chat::CmdCB Chat::GetCommand(const wchar_t* cmd)

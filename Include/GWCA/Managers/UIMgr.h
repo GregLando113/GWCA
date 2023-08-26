@@ -202,7 +202,7 @@ namespace GW {
         };
 
         enum class EnumPreference : uint32_t {
-            CharSortOrder, // Unused
+            CharSortOrder,
             AntiAliasing, // multi sampling
             Reflections,
             ShaderQuality,

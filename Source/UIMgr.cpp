@@ -320,15 +320,22 @@ namespace {
 
         SetInGameShadowQuality_Func = (SetInGameShadowQuality_pt)GW::Scanner::FindAssertion("p:\\code\\gw\\agentview\\avshadow.cpp","No valid case for switch variable 'value'",-0xca);
 
-        address = GW::Scanner::Find("\x83\xc4\x1c\x81\xfe\x20\x03\x00\x00","xxxxxxxxx",0x31);
+        address = GW::Scanner::Find("\x83\xc4\x1c\x81\xfe\x20\x03\x00\x00","xxxxxxxxx", 0x31);
         SetInGameUIScale_Func = (SetInGameUIScale_pt)GW::Scanner::FunctionFromNearCall(address);
 
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\ui\\game\\charcreate\\charcreate.cpp", "msg.summaryBytes <= NET_CHARACTER_SUMMARY_MAX");
+        if (address) {
+            SetStringPreference_Func = (SetStringPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x62);
+        }
+
         address = GW::Scanner::FindAssertion("p:\\code\\gw\\ui\\dialog\\dlgoptgr.cpp", "No valid case for switch variable 'quality'");
-        SetEnumPreference_Func = (SetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x84);
-        SetFlagPreference_Func = (SetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x3b);
-        SetNumberPreference_Func = (SetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x61);
-        SetInGameStaticPreference_Func = (SetInGameStaticPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0xf6);
-        TriggerTerrainRerender_Func = (TriggerTerrainRerender_pt)GW::Scanner::FunctionFromNearCall(address - 0x36);
+        if (address) {
+            SetEnumPreference_Func = (SetEnumPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x84);
+            SetFlagPreference_Func = (SetFlagPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x3b);
+            SetNumberPreference_Func = (SetNumberPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0x61);
+            SetInGameStaticPreference_Func = (SetInGameStaticPreference_pt)GW::Scanner::FunctionFromNearCall(address - 0xf6);
+            TriggerTerrainRerender_Func = (TriggerTerrainRerender_pt)GW::Scanner::FunctionFromNearCall(address - 0x36);
+        }
 
         address = GW::Scanner::FindAssertion("p:\\code\\gw\\pref\\prconst.cpp", "pref < arrsize(s_enumInfo)", 0x15);
         if (GW::Scanner::IsValidPtr(address, GW::Scanner::TEXT))
@@ -425,6 +432,7 @@ namespace {
         GWCA_ASSERT(GetEnumPreference_Func);
         GWCA_ASSERT(GetNumberPreference_Func);
         GWCA_ASSERT(GetFlagPreference_Func);
+        GWCA_ASSERT(SetStringPreference_Func);
         GWCA_ASSERT(SetEnumPreference_Func);
         GWCA_ASSERT(SetNumberPreference_Func);
         GWCA_ASSERT(SetFlagPreference_Func);

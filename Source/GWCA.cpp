@@ -46,9 +46,11 @@ namespace GW
     static std::vector<Module *> modules;
     static uintptr_t base_ptr;
     static uintptr_t PreGameContext_addr;
+    static bool _initialized = false;
 
     bool Initialize()
     {
+        if (_initialized) return true;
         modules.push_back(&GameThreadModule);
         modules.push_back(&UIModule);
         modules.push_back(&MapModule);
@@ -99,11 +101,13 @@ namespace GW
                 module->enable_hooks();
         }
 
+        _initialized = true;
         return true;
     }
 
     void DisableHooks()
     {
+        if (!_initialized) return;
         HookBase::DisableHooks();
         for (const Module* module : modules) {
             if (module->disable_hooks)
@@ -113,6 +117,7 @@ namespace GW
 
     void Terminate()
     {
+        if (!_initialized) return;
         DisableHooks();
         for (const Module* module : modules) {
             if (module->exit_module)
@@ -120,6 +125,7 @@ namespace GW
         }
 
         HookBase::Deinitialize();
+        _initialized = false;
     }
 
     GameContext* GetGameContext()

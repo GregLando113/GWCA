@@ -45,7 +45,7 @@ namespace GW {
             CHANNEL_WHISPER = 14,
             CHANNEL_COUNT,
 
-            // non-standard channel, but usefull.
+            // non-standard channel, but useful.
             CHANNEL_COMMAND,
             CHANNEL_UNKNOW = -1
         };

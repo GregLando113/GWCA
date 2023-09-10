@@ -55,6 +55,7 @@ namespace GW {
         uint32_t identifier() const { return mod >> 16; }
         uint32_t arg1() const { return (mod & 0x0000FF00) >> 8; }
         uint32_t arg2() const { return (mod & 0x000000FF); }
+        uint32_t longarg() const { return (mod & 0x0000FFFF); }
         operator bool() const { return mod != 0; }
     };
 
@@ -88,6 +89,10 @@ namespace GW {
 
         inline bool GetIsStackable() const {
             return (interaction & 0x80000) != 0;
+        }
+
+        inline bool GetIsInscribable() const {
+            return (interaction & 0x08000000) != 0;
         }
 
         bool GetIsMaterial() const;

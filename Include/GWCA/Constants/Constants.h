@@ -100,7 +100,7 @@ namespace GW {
             Salvage, Axe = 2, Bag, Boots, Bow, Bundle, Chestpiece, Rune_Mod, Usable, Dye,
             Materials_Zcoins, Offhand, Gloves, Hammer = 15, Headpiece, CC_Shards,
             Key, Leggings, Gold_Coin, Quest_Item, Wand, Shield = 24, Staff = 26, Sword,
-            Kit = 29, Trophy, Scroll, Daggers, Present, Minipet, Scythe, Spear, Costume_Headpiece = 44, Costume
+            Kit = 29, Trophy, Scroll, Daggers, Present, Minipet, Scythe, Spear, Storybook = 43, Costume_Headpiece, Costume
         };
 
         enum HeroID : uint32_t {

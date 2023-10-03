@@ -64,6 +64,8 @@ namespace GW {
         // Note: returns -1 if it doesn't know yet
         GWCA_API int GetIsFullscreen();
 
+        GWCA_API IDirect3DDevice9* GetDevice();
+
         GWCA_API bool GetIsInRenderLoop();
 
         GWCA_API uint32_t GetViewportWidth();

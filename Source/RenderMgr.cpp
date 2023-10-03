@@ -178,6 +178,11 @@ namespace GW {
         return ret;
     }
 
+    IDirect3DDevice9* Render::GetDevice() {
+        return gwdx_ptr ? gwdx_ptr->device : nullptr;
+    }
+
+
     int Render::GetIsFullscreen()
     {
         // this is hacky and might be unreliable

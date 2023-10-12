@@ -47,7 +47,7 @@ namespace GW {
         size_t find1(uint32_t model_id, size_t pos = 0) const;
         size_t find2(const Item *item, size_t pos = 0) const;
     };
-    static_assert(sizeof(Bag) == 40, "struct Bag has incorect size");
+    static_assert(sizeof(Bag) == 40, "struct Bag has incorrect size");
 
     struct ItemModifier {
         uint32_t mod = 0;
@@ -98,13 +98,13 @@ namespace GW {
         bool GetIsMaterial() const;
         bool GetIsZcoin() const;
     };
-    static_assert(sizeof(Item) == 84, "struct Item has incorect size");
+    static_assert(sizeof(Item) == 84, "struct Item has incorrect size");
 
     struct WeaponSet { // total: 0x8/8
         /* +h0000 */ Item *weapon;
         /* +h0004 */ Item *offhand;
     };
-    static_assert(sizeof(WeaponSet) == 8, "struct WeaponSet has incorect size");
+    static_assert(sizeof(WeaponSet) == 8, "struct WeaponSet has incorrect size");
 
     struct Inventory { // total: 0x98/152
         union {
@@ -155,7 +155,7 @@ namespace GW {
         /* +h0090 */ uint32_t gold_character;
         /* +h0094 */ uint32_t gold_storage;
     };
-    static_assert(sizeof(Inventory) == 152, "struct Inventory has incorect size");
+    static_assert(sizeof(Inventory) == 152, "struct Inventory has incorrect size");
 
     // Static struct for info about available item upgrade info, used for PvP Equipment window
     struct PvPItemUpgradeInfo {

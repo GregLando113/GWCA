@@ -172,6 +172,16 @@ namespace GW {
     };
     static_assert(sizeof(PvPItemUpgradeInfo) == 0x28);
 
+    struct PvPItemInfo {
+        uint32_t unk[9];
+    };
+    static_assert(sizeof(PvPItemInfo) == 0x24);
+
+    struct CompositeModelInfo {
+        uint32_t unk[12];
+    };
+    static_assert(sizeof(CompositeModelInfo) == 0x30);
+
     typedef Array<ItemID> MerchItemArray;
 
     inline size_t Bag::find1(uint32_t model_id, size_t pos) const {

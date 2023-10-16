@@ -44,6 +44,8 @@ namespace {
     };
 
     Array<PvPItemUpgradeInfo> unlocked_pvp_item_upgrade_array;
+    Array<PvPItemInfo> pvp_item_array;
+    Array<CompositeModelInfo>* composite_model_info_array;
 
     typedef void(__cdecl* GetPvPItemUpgradeInfoName_pt)(uint32_t pvp_item_upgrade_id, uint32_t name_or_description, wchar_t** name_out,wchar_t** description_out);
     GetPvPItemUpgradeInfoName_pt GetPvPItemUpgradeInfoName_Func = nullptr;
@@ -206,6 +208,19 @@ namespace {
             unlocked_pvp_item_upgrade_array.m_buffer = *(PvPItemUpgradeInfo**)(address + 0x15);
             unlocked_pvp_item_upgrade_array.m_size = *(size_t*)(address - 0xb);
         }
+
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\const\\constitempvp.cpp", "index < ITEM_PVP_ITEM_COUNT");
+        if (address) {
+            pvp_item_array.m_buffer = *(PvPItemInfo**)(address + 0x15);
+            pvp_item_array.m_size = *(size_t*)(address - 0xb);
+        }
+
+        address = GW::Scanner::FindAssertion("p:\\code\\gw\\composite\\data\\cpsdata.cpp", "id < s_items.Count()",-0xb);
+        if (address) {
+            address = (*(uintptr_t*)address) - 8;
+            composite_model_info_array = (Array<CompositeModelInfo>*)address;
+        }
+
         address = GW::Scanner::Find("\xff\x75\x0c\x81\xc1\xb4\x00\x00\x00","xxxxxxxxx", -0x11);
         if (GW::Scanner::IsValidPtr(address, GW::Scanner::TEXT)) {
             GetPvPItemUpgradeInfoName_Func = (GetPvPItemUpgradeInfoName_pt)address;
@@ -681,6 +696,31 @@ namespace GW {
         {
             return unlocked_pvp_item_upgrade_array;
         }
+        const PvPItemInfo* GetPvPItemInfo(uint32_t pvp_item_idx)
+        {
+            const auto& arr = GetPvPItemInfoArray();
+            if (pvp_item_idx < arr.size()) {
+                return &arr[pvp_item_idx];
+            }
+            return nullptr;
+        }
+        const Array<CompositeModelInfo>& GetCompositeModelInfoArray()
+        {
+            return *composite_model_info_array;
+        }
+        const CompositeModelInfo* GetCompositeModelInfo(uint32_t model_file_id)
+        {
+            const auto& arr = GetCompositeModelInfoArray();
+            if (model_file_id < arr.size()) {
+                return &arr[model_file_id];
+            }
+            return nullptr;
+        }
+        const Array<PvPItemInfo>& GetPvPItemInfoArray()
+        {
+            return pvp_item_array;
+        }
+
         bool GetPvPItemUpgradeEncodedName(uint32_t pvp_item_upgrade_idx, wchar_t** out)
         {
             const auto info = GetPvPItemUpgrade(pvp_item_upgrade_idx);

@@ -87,6 +87,7 @@
     <ClCompile Include="..\Source\CtoSMgr.cpp" />
     <ClCompile Include="..\Source\Debug.cpp" />
     <ClCompile Include="..\Source\EffectMgr.cpp" />
+    <ClCompile Include="..\Source\EventMgr.cpp" />
     <ClCompile Include="..\Source\FriendListMgr.cpp" />
     <ClCompile Include="..\Source\GamePos.cpp" />
     <ClCompile Include="..\Source\GameThreadMgr.cpp" />
@@ -100,6 +101,7 @@
     <ClCompile Include="..\Source\MerchantMgr.cpp" />
     <ClCompile Include="..\Source\PartyMgr.cpp" />
     <ClCompile Include="..\Source\PlayerMgr.cpp" />
+    <ClCompile Include="..\Source\QuestMgr.cpp" />
     <ClCompile Include="..\Source\RenderMgr.cpp" />
     <ClCompile Include="..\Source\Scanner.cpp" />
     <ClCompile Include="..\Source\Skill.cpp" />

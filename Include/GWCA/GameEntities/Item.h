@@ -7,6 +7,7 @@ namespace GW {
     typedef uint32_t ItemID;
     namespace Constants {
         enum class Bag;
+        enum class ItemType : uint8_t;
 
         enum class BagType {
             None,
@@ -20,13 +21,40 @@ namespace GW {
 
     struct Item;
     typedef Array<Item *> ItemArray;
+
+    enum class DyeColor : uint8_t {
+        None   = 0,
+        Blue   = 2,
+        Green  = 3,
+        Purple = 4,
+        Red    = 5,
+        Yellow = 6,
+        Brown  = 7,
+        Orange = 8,
+        Silver = 9,
+        Black  = 10,
+        Gray   = 11,
+        White  = 12,
+        Pink   = 13
+    };
     struct DyeInfo {
         uint8_t dye_tint;
-        uint8_t dye1 : 4;
-        uint8_t dye2 : 4;
-        uint8_t dye3 : 4;
-        uint8_t dye4 : 4;
+        DyeColor dye1 : 4;
+        DyeColor dye2 : 4;
+        DyeColor dye3 : 4;
+        DyeColor dye4 : 4;
     };
+    static_assert(sizeof(DyeInfo) == 3, "struct DyeInfo has incorrect size");
+
+    struct ItemData {
+        uint32_t model_file_id = 0;
+        GW::Constants::ItemType type = (GW::Constants::ItemType)0xff;
+        GW::DyeInfo dye = { 0 };
+        uint32_t value = 0;
+        uint32_t interaction = 0;
+    };
+    static_assert(sizeof(ItemData) == 0x10, "struct ItemData has incorect size");
+
     struct Bag { // total: 0x28/40
         /* +h0000 */ Constants::BagType bag_type;
         /* +h0004 */ uint32_t index;
@@ -68,7 +96,7 @@ namespace GW {
         /* +h0014 */ uint32_t       mod_struct_size; // Size of this array.
         /* +h0018 */ wchar_t       *customized;
         /* +h001C */ uint32_t       model_file_id;
-        /* +h0020 */ uint8_t        type;
+        /* +h0020 */ GW::Constants::ItemType        type;
         /* +h0021 */ DyeInfo        dye;
         /* +h0024 */ uint16_t       value;
         /* +h0026 */ uint16_t       h0026;
@@ -178,8 +206,10 @@ namespace GW {
     static_assert(sizeof(PvPItemInfo) == 0x24);
 
     struct CompositeModelInfo {
-        uint32_t unk[12];
+        uint32_t class_flags;
+        uint32_t file_ids[11];
     };
+
     static_assert(sizeof(CompositeModelInfo) == 0x30);
 
     typedef Array<ItemID> MerchItemArray;

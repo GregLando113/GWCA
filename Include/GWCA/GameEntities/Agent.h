@@ -5,10 +5,13 @@
 #include <GWCA/GameContainers/GamePos.h>
 #include <GWCA/Constants/Constants.h>
 
+#include <GWCA/GameEntities/Item.h>
+
 namespace GW {
     typedef uint32_t AgentID;
     typedef uint32_t PlayerNumber;
     typedef uint32_t ItemID;
+    
     namespace Constants {
         enum class Allegiance : uint8_t;
     }
@@ -26,20 +29,6 @@ namespace GW {
 
     // Courtesy of DerMonech14
     struct Equipment {
-        struct DyeInfo {
-            uint8_t h0000;
-            uint8_t dye_id; // Not clean, but check GwArmory to understand
-            uint8_t dye1 : 4;
-            uint8_t dye2 : 4;
-            uint8_t dye3 : 4;
-            uint8_t dye4 : 4;
-        };
-        struct ItemData {
-            uint32_t model_file_id;
-            DyeInfo dye;
-            uint32_t value;
-            uint8_t h000C[4];
-        };
 
         /* +h0000 */ void     *vtable;
         /* +h0004 */ uint32_t h0004;            // always 2 ?
@@ -67,15 +56,20 @@ namespace GW {
         /* +h00A4 */ ItemData costume_head;
             };
         };
-        /* +h00B4 */ ItemID item_id_weapon;
-        /* +h00B8 */ ItemID item_id_offhand;
-        /* +h00BC */ ItemID item_id_chest;
-        /* +h00C0 */ ItemID item_id_legs;
-        /* +h00C4 */ ItemID item_id_head;
-        /* +h00C8 */ ItemID item_id_feet;
-        /* +h00CC */ ItemID item_id_hands;
-        /* +h00D0 */ ItemID item_id_costume_body;
-        /* +h00D4 */ ItemID item_id_costume_head;
+        union {
+            /* +h00B4 */ ItemID item_ids[9];
+            struct {
+                /* +h00B4 */ ItemID item_id_weapon;
+                /* +h00B8 */ ItemID item_id_offhand;
+                /* +h00BC */ ItemID item_id_chest;
+                /* +h00C0 */ ItemID item_id_legs;
+                /* +h00C4 */ ItemID item_id_head;
+                /* +h00C8 */ ItemID item_id_feet;
+                /* +h00CC */ ItemID item_id_hands;
+                /* +h00D0 */ ItemID item_id_costume_body;
+                /* +h00D4 */ ItemID item_id_costume_head;
+            };
+        };
     };
 
     struct TagInfo {

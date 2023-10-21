@@ -326,7 +326,7 @@ namespace GW {
     }
 
     bool Item::GetIsMaterial() const {
-        if (type == static_cast<uint8_t>(Constants::ItemType::Materials_Zcoins)
+        if (type == Constants::ItemType::Materials_Zcoins
             && !GetIsZcoin()) {
             return true;
         }

@@ -623,6 +623,36 @@ namespace GW {
             return NULL;
         }
 
+        Item* GetItemByModelIdAndModifiers(uint32_t modelid, const std::list<ItemModifier> modifiers, int bagStart, int bagEnd) {
+            Bag** bags = GetBagArray();
+            Bag* bag = NULL;
+
+            for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
+                bag = bags[bagIndex];
+                if (!(bag && bag->items.valid())) continue;
+                for (GW::Item* item : bag->items) {
+                    if (item && item->model_id == modelid && item->mod_struct_size == modifiers.size()) {
+                        auto match = true;
+                        auto listIt = modifiers.begin();
+                        for (auto i = 0; i < item->mod_struct_size; i++) {
+                            // Compare each element from the array to the corresponding element in the list
+                            if (!(item->mod_struct[i] == *listIt)) {
+                                match = false;
+                                break;
+                            }
+                            ++listIt;
+                        }
+
+                        if (match) {
+                            return item;
+                        }
+                    }
+                }
+            }
+
+            return NULL;
+        }
+
         uint32_t GetStoragePage(void) {
             return UI::GetPreference(UI::NumberPreference::StorageBagPage);
         }
@@ -646,7 +676,7 @@ namespace GW {
                 ItemClick_callbacks.erase(it);
         }
 
-        void AsyncGetItemByName(const Item* item, std::wstring& res) {
+        void AsyncGetItemName(const Item* item, std::wstring& res) {
             if (!item) return;
             if (!item || !item->complete_name_enc) return;
             wchar_t* str = item->complete_name_enc;

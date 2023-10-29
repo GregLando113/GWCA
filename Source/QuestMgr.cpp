@@ -51,6 +51,8 @@ namespace {
         }
     }
 
+    DoAction_pt RequestQuestInfo_Func = 0;
+
     void Init() {
         DWORD address = 0;
 
@@ -68,12 +70,16 @@ namespace {
             UI::RegisterUIMessageCallback(&SetActiveQuest_HookEntry, UI::UIMessage::kSendSetActiveQuest, OnSetActiveQuest_UIMessage, 0x1);
         }
 
+        RequestQuestInfo_Func = (DoAction_pt)GW::Scanner::FunctionFromNearCall(GW::Scanner::Find("\x68\x4a\x01\x00\x10\xff\x77\x04", "xxxxxxxx", 0x7a));
+
         GWCA_INFO("[SCAN] AbandonQuest_Func = %p", AbandonQuest_Func);
         GWCA_INFO("[SCAN] SetActiveQuest_Func = %p", SetActiveQuest_Func);
+        GWCA_INFO("[SCAN] RequestQuestInfo_Func = %p", RequestQuestInfo_Func);
 
 #ifdef _DEBUG
         GWCA_ASSERT(AbandonQuest_Func);
         GWCA_ASSERT(SetActiveQuest_Func);
+        GWCA_ASSERT(RequestQuestInfo_Func);
 #endif
     }
     void EnableHooks() {
@@ -169,6 +175,19 @@ namespace GW {
         GW::Constants::QuestID GetActiveQuestId() {
             auto* w = GetWorldContext();
             return w ? w->active_quest_id : (GW::Constants::QuestID)0;
+        }
+
+        bool RequestQuestInfo(const Quest* quest)
+        {
+            return quest && RequestQuestInfoId(quest->quest_id);
+        }
+
+        bool RequestQuestInfoId(Constants::QuestID quest_id)
+        {
+            if (!(RequestQuestInfo_Func && GetQuest(quest_id)))
+                return false;
+            RequestQuestInfo_Func((uint32_t)quest_id);
+            return true;
         }
     }
 

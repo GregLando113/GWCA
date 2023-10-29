@@ -36,5 +36,9 @@ namespace GW {
         // Find and populate a wchar_t* buffer with the encoded name of the category the quest belongs to in the quest log. Returns false on failure.
         GWCA_API bool GetQuestEntryGroupName(GW::Constants::QuestID quest_id, wchar_t* out, size_t out_len);
 
+        GWCA_API bool RequestQuestInfo(const Quest* quest);
+        
+        GWCA_API bool RequestQuestInfoId(Constants::QuestID quest_id);
+
     };
 }

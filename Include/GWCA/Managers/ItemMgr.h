@@ -3,6 +3,7 @@
 #include <GWCA/Utilities/Hook.h>
 #include <GWCA/Utilities/Export.h>
 #include <GWCA/GameContainers/Array.h>
+#include <GWCA/GameEntities/Item.h>
 
 namespace GW {
 
@@ -121,6 +122,9 @@ namespace GW {
         // Returns item struct of item with given modelid.
         GWCA_API Item *GetItemByModelId(uint32_t model_id, int bag_start = 1, int bag_end = 4);
 
+        // Returns item struct of item with given modelid and matching modifiers;
+        GWCA_API Item* GetItemByModelIdAndModifiers(uint32_t modelid, const std::list<GW::ItemModifier> modifiers, int bagStart, int bagEnd);
+
         // Returns the current storage pannel (0 based). Note that if material storage is on focus, 0 is returned.
         GWCA_API uint32_t GetStoragePage(void);
 
@@ -139,7 +143,7 @@ namespace GW {
         GWCA_API int GetMaterialSlot(uint32_t model_id);
         GWCA_API int GetMaterialSlot(const Item *item);
 
-        GWCA_API void AsyncGetItemByName(const Item *item, std::wstring& name);
+        GWCA_API void AsyncGetItemName(const Item *item, std::wstring& name);
 
         GWCA_API EquipmentStatus GetEquipmentVisibility(EquipmentType type);
         GWCA_API bool SetEquipmentVisibility(EquipmentType type, EquipmentStatus state);

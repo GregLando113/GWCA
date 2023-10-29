@@ -123,7 +123,7 @@ namespace GW {
         GWCA_API Item *GetItemByModelId(uint32_t model_id, int bag_start = 1, int bag_end = 4);
 
         // Returns item struct of item with given modelid and matching modifiers;
-        GWCA_API Item* GetItemByModelIdAndModifiers(uint32_t modelid, const std::list<GW::ItemModifier> modifiers, int bagStart, int bagEnd);
+        GWCA_API Item* GetItemByModelIdAndModifiers(uint32_t modelid, const ItemModifier* modifiers, uint32_t modifiers_len, int bagStart = 1, int bagEnd = 4);
 
         // Returns the current storage pannel (0 based). Note that if material storage is on focus, 0 is returned.
         GWCA_API uint32_t GetStoragePage(void);

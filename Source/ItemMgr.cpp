@@ -638,34 +638,24 @@ namespace GW {
             return NULL;
         }
 
-        Item* GetItemByModelIdAndModifiers(uint32_t modelid, const std::list<ItemModifier> modifiers, int bagStart, int bagEnd) {
+        
+        Item* GetItemByModelIdAndModifiers(uint32_t modelid, const ItemModifier* modifiers, uint32_t modifiers_len, int bagStart, int bagEnd) {
             Bag** bags = GetBagArray();
-            Bag* bag = NULL;
+            if (!(bags && modifiers_len && modifiers))
+                return nullptr;
 
             for (int bagIndex = bagStart; bagIndex <= bagEnd; ++bagIndex) {
-                bag = bags[bagIndex];
-                if (!(bag && bag->items.valid())) continue;
-                for (GW::Item* item : bag->items) {
-                    if (item && item->model_id == modelid && item->mod_struct_size == modifiers.size()) {
-                        auto match = true;
-                        auto listIt = modifiers.begin();
-                        for (auto i = 0; i < item->mod_struct_size; i++) {
-                            // Compare each element from the array to the corresponding element in the list
-                            if (!(item->mod_struct[i] == *listIt)) {
-                                match = false;
-                                break;
-                            }
-                            ++listIt;
-                        }
-
-                        if (match) {
-                            return item;
-                        }
-                    }
+                const auto bag = bags[bagIndex];
+                if (!bag) continue;
+                for (const auto item : bag->items) {
+                    if (!(item && item->mod_struct_size == modifiers_len && item->model_id == modelid))
+                        continue;
+                    if (memcmp(item->mod_struct, modifiers, sizeof(*modifiers) * modifiers_len) == 0)
+                        return item;
                 }
             }
 
-            return NULL;
+            return nullptr;
         }
 
         uint32_t GetStoragePage(void) {

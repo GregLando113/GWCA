@@ -1036,7 +1036,65 @@ namespace GW {
                 uint32_t title_id;
                 uint32_t new_value;
             };
-            constexpr uint32_t Packet<UpdateTitle>::STATIC_HEADER = GAME_SMSG_TITLE_UDPATE;
+            constexpr uint32_t Packet<UpdateTitle>::STATIC_HEADER = GAME_SMSG_TITLE_UPDATE;
+
+            struct TitleInfo : Packet<TitleInfo> {
+                uint32_t title_id;
+                uint32_t unk_flags;
+                uint32_t value;
+                uint32_t h000c; // Maybe an id for current rank
+                uint32_t current_rank_minimum_value;
+                uint32_t h0014; // Maybe an id for next rank
+                uint32_t next_rank_minimum_value;
+                uint32_t num_ranks;
+                uint32_t h0020; // Maybe an id for e.g. base rank?  Matches h000c for wisdom on my r1 wisdom alt acc
+                wchar_t progress_display_enc_string[8];
+                wchar_t mouseover_hint_enc_string[8];
+            };
+            constexpr uint32_t Packet<TitleInfo>::STATIC_HEADER = GAME_SMSG_TITLE_TRACK_INFO;
+
+            namespace PlayerAttrId {
+                constexpr uint32_t EXPERIENCE = 0;
+                constexpr uint32_t KURZICK_FACTION = 1;
+                constexpr uint32_t KURZICK_FACTION_TOTAL = 2;
+                constexpr uint32_t LUXON_FACTION = 3;
+                constexpr uint32_t LUXON_FACTION_TOTAL = 4;
+                constexpr uint32_t IMPERIAL_FACTION = 5;
+                constexpr uint32_t IMPERIAL_FACTION_TOTAL = 6;
+                constexpr uint32_t HERO_SKILL_POINTS = 7;
+                constexpr uint32_t HERO_SKILL_POINTS_TOTAL = 8;
+                constexpr uint32_t LEVEL = 9;
+                constexpr uint32_t MORALE_PERCENT = 10;
+                constexpr uint32_t BALTHAZAR_FACTION = 11;
+                constexpr uint32_t BALTHAZAR_FACTION_TOTAL = 12;
+                constexpr uint32_t SKILL_POINTS = 13;
+                constexpr uint32_t SKILL_POINTS_TOTAL = 14;
+            };
+
+            struct PlayerAttrUpdate : Packet<PlayerAttrUpdate> {
+                uint32_t attr_id;
+                int32_t modifier;
+            };
+            constexpr uint32_t Packet<PlayerAttrUpdate>::STATIC_HEADER = GAME_SMSG_PLAYER_ATTR_UPDATE;
+
+            struct PlayerAttrSet : Packet<PlayerAttrSet> {
+                uint32_t experience;
+                uint32_t kurzick_faction;
+                uint32_t kurzick_faction_total;
+                uint32_t luxon_faction;
+                uint32_t luxon_faction_total;
+                uint32_t imperial_faction;
+                uint32_t imperial_faction_total;
+                uint32_t hero_skill_points;
+                uint32_t hero_skill_points_total;
+                uint32_t level;
+                uint32_t morale_percent; // Percentage of health/energy available due to morale/death penalty.  Ranges from 40 to 110.
+                uint32_t balthazar_faction;
+                uint32_t balthazar_faction_total;
+                uint32_t skill_points;
+                uint32_t skill_points_total;
+            };
+            constexpr uint32_t Packet<PlayerAttrSet>::STATIC_HEADER = GAME_SMSG_PLAYER_ATTR_SET;
         }
     }
 }

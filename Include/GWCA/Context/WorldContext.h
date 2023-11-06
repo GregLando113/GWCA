@@ -156,10 +156,10 @@ namespace GW {
         /* +h05A4 */ Array<void *> cartographed_areas; // Struct size = 0x20
         /* +h05B4 */ uint32_t h05B4[2];
         /* +h05BC */ Array<ControlledMinions> controlled_minion_count;
-        /* +h05CC */ Array<uint32_t> missions_bonus;
-        /* +h05DC */ Array<uint32_t> missions_completed;
-        /* +h05EC */ Array<uint32_t> missions_bonus_hm;
-        /* +h05FC */ Array<uint32_t> missions_completed_hm;
+        /* +h05CC */ Array<uint32_t> missions_completed;
+        /* +h05DC */ Array<uint32_t> missions_bonus;
+        /* +h05EC */ Array<uint32_t> missions_completed_hm;
+        /* +h05FC */ Array<uint32_t> missions_bonus_hm;
         /* +h060C */ Array<uint32_t> unlocked_map;
         /* +h061C */ uint32_t h061C[2];
         /* +h0624 */ PartyMemberMoraleInfo* player_morale_info;

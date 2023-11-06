@@ -3,6 +3,9 @@
 #include <GWCA/GameContainers/Array.h>
 
 namespace GW {
+    namespace Constants {
+        enum class Campaign;
+    }
     struct MissionMapIcon { // total: 0x28/40
         /* +h0000 */ uint32_t index;
         /* +h0004 */ float X;
@@ -18,6 +21,15 @@ namespace GW {
     static_assert(sizeof(MissionMapIcon) == 40, "struct MissionMapIcon has incorect size");
 
     typedef Array<MissionMapIcon> MissionMapIconArray;
+
+    enum class Continent : uint32_t {
+        Kryta,
+        DevContinent,
+        Cantha,
+        BattleIsles,
+        Elona,
+        RealmOfTorment
+    };
 
     enum class RegionType : uint32_t {
         AllianceBattle,
@@ -77,8 +89,8 @@ namespace GW {
 
     // https://github.com/entice/gw-interface/blob/master/GuildWarsInterface/Datastructures/Const/AreaInfo.cs
     struct AreaInfo { // total: 0x7C/124
-        /* +h0000 */ uint32_t campaign;
-        /* +h0004 */ uint32_t continent;
+        /* +h0000 */ Constants::Campaign campaign;
+        /* +h0004 */ Continent continent;
         /* +h0008 */ Region region;
         /* +h000C */ RegionType type;
         /* +h0010 */ uint32_t flags;

@@ -1,3 +1,5 @@
+<h1 style="text-align: center;font-color: #ff0000;">Project moved to https://github.com/gwdevhub/GWCA.</p> 
+
 # GWCA++ #
 
 Another C++ API to interface with the Guild Wars client.

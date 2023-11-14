@@ -1053,22 +1053,22 @@ namespace GW {
             };
             constexpr uint32_t Packet<TitleInfo>::STATIC_HEADER = GAME_SMSG_TITLE_TRACK_INFO;
 
-            namespace PlayerAttrId {
-                constexpr uint32_t EXPERIENCE = 0;
-                constexpr uint32_t KURZICK_FACTION = 1;
-                constexpr uint32_t KURZICK_FACTION_TOTAL = 2;
-                constexpr uint32_t LUXON_FACTION = 3;
-                constexpr uint32_t LUXON_FACTION_TOTAL = 4;
-                constexpr uint32_t IMPERIAL_FACTION = 5;
-                constexpr uint32_t IMPERIAL_FACTION_TOTAL = 6;
-                constexpr uint32_t HERO_SKILL_POINTS = 7;
-                constexpr uint32_t HERO_SKILL_POINTS_TOTAL = 8;
-                constexpr uint32_t LEVEL = 9;
-                constexpr uint32_t MORALE_PERCENT = 10;
-                constexpr uint32_t BALTHAZAR_FACTION = 11;
-                constexpr uint32_t BALTHAZAR_FACTION_TOTAL = 12;
-                constexpr uint32_t SKILL_POINTS = 13;
-                constexpr uint32_t SKILL_POINTS_TOTAL = 14;
+            enum class PlayerAttrId {
+                Experience = 0,
+                Kurzick_Faction,
+                Kurzick_Faction_Total,
+                Luxon_Faction,
+                Luxon_Faction_Total,
+                Imperial_Faction,
+                Imperial_Faction_Total,
+                Hero_Skill_Points,
+                Hero_Skill_Points_Total,
+                Level,
+                Morale_Percent,
+                Balthazar_Faction,
+                Balthazar_Faction_Total,
+                Skill_Points,
+                Skill_Points_Total
             };
 
             struct PlayerAttrUpdate : Packet<PlayerAttrUpdate> {

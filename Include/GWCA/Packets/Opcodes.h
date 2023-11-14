@@ -220,7 +220,7 @@
 #define GAME_SMSG_INSTANCE_LOADED                   (0x00F1) // 241
 #define GAME_SMSG_TITLE_RANK_DATA                   (0x00F2) // 242
 #define GAME_SMSG_TITLE_RANK_DISPLAY                (0x00F3) // 243
-#define GAME_SMSG_TITLE_UDPATE                        (0x00F4) // 244
+#define GAME_SMSG_TITLE_UPDATE                        (0x00F4) // 244
 #define GAME_SMSG_TITLE_TRACK_INFO                  (0x00F5) // 245
 #define GAME_SMSG_ITEM_PRICE_QUOTE                  (0x00F6) // 246
 #define GAME_SMSG_ITEM_PRICES                       (0x00F8) // 248
